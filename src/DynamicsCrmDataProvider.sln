@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamicsCrmDataProvider", "DynamicsCrmDataProvider\DynamicsCrmDataProvider.csproj", "{61D9051D-4C85-419F-97DC-D56D4A72C5E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamicsCrmDataProvider.Tests", "DynamicsCrmDataProvider.Tests\DynamicsCrmDataProvider.Tests.csproj", "{35FB72AA-FD92-4A2D-9E52-B5E221687E56}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{31343D89-C6F5-4397-91EC-2DF4CCAA849B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{61D9051D-4C85-419F-97DC-D56D4A72C5E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61D9051D-4C85-419F-97DC-D56D4A72C5E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61D9051D-4C85-419F-97DC-D56D4A72C5E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61D9051D-4C85-419F-97DC-D56D4A72C5E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35FB72AA-FD92-4A2D-9E52-B5E221687E56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35FB72AA-FD92-4A2D-9E52-B5E221687E56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35FB72AA-FD92-4A2D-9E52-B5E221687E56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35FB72AA-FD92-4A2D-9E52-B5E221687E56}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
