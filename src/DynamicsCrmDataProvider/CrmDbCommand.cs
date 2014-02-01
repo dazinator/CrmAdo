@@ -57,6 +57,11 @@ namespace DynamicsCrmDataProvider
             set { _DbConnection = value; }
         }
 
+        internal CrmDbConnection CrmDbConnection
+        {
+            get { return DbConnection as CrmDbConnection; }
+        }
+
         protected override DbTransaction DbTransaction { get; set; }
 
         public override bool DesignTimeVisible { get; set; }
