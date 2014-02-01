@@ -125,20 +125,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="bin\Debug\DynamicsCrmDataProvider.Tests.dll" />
-    <Content Include="bin\Debug\DynamicsCrmDataProvider.Tests.pdb" />
-    <Content Include="bin\Debug\nunit.framework.dll" />
-    <Content Include="bin\Debug\nunit.framework.xml" />
-    <Content Include="bin\tools\CrmSvcUtil.exe" />
-    <Content Include="bin\tools\CrmSvcUtil.xml" />
-    <Content Include="bin\tools\Microsoft.Crm.Sdk.Proxy.dll" />
-    <Content Include="bin\tools\Microsoft.Xrm.Client.dll" />
-    <Content Include="bin\tools\Microsoft.Xrm.Sdk.dll" />
-    <Content Include="bin\tools\SolutionPackager.exe" />
-    <Content Include="bin\tools\WebsiteCopy.exe" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="bin\Release\" />
     <Folder Include="Fakes\" />
   </ItemGroup>
   <ItemGroup>
