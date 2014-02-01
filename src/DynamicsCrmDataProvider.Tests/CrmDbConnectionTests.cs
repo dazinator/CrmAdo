@@ -1,37 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DynamicsCrmDataProvider.Dynamics;
-using DynamicsCrmDataProvider.Tests.Fakes;
 using Microsoft.Xrm.Sdk;
 using NUnit.Framework;
 using Rhino.Mocks;
 
 namespace DynamicsCrmDataProvider.Tests
 {
-    [TestFixture]
-    public abstract class BaseTest<TTestSubject>
-    {
-        protected virtual TTestSubject CreateTestSubject()
-        {
-            return Activator.CreateInstance<TTestSubject>();
-        }
-
-        protected virtual TTestSubject CreateTestSubject(params object[] args)
-        {
-            return (TTestSubject)Activator.CreateInstance(typeof(TTestSubject), args);
-        }
-
-    }
-
-
-
-
-
     [TestFixture()]
     public class CrmDbConnectionTests : BaseTest<CrmDbConnection>
     {
@@ -47,7 +22,9 @@ namespace DynamicsCrmDataProvider.Tests
         {
             // Arrange
             var fakeOrgService = MockRepository.GenerateMock<IOrganizationService, IDisposable>();
-            var mockServiceProvider = new FakeCrmServiceProvider(fakeOrgService, null, null);
+            var mockServiceProvider = MockRepository.GenerateMock<ICrmServiceProvider>();
+            mockServiceProvider
+                .Stub(c => c.GetOrganisationService()).Return(fakeOrgService);
             var dbConnection = CreateTestSubject(mockServiceProvider);
             // Act
             dbConnection.Open();
@@ -65,8 +42,6 @@ namespace DynamicsCrmDataProvider.Tests
             var mockServiceProvider = MockRepository.GenerateMock<ICrmServiceProvider>();
             mockServiceProvider
                 .Stub(c => c.GetOrganisationService()).Return(fakeOrgService);
-
-            //  new FakeCrmServiceProvider(fakeOrgService, null, null);
             var dbConnection = CreateTestSubject(mockServiceProvider);
 
             // Act
@@ -81,20 +56,24 @@ namespace DynamicsCrmDataProvider.Tests
         {
             // Arrange
             var fakeOrgService = MockRepository.GenerateMock<IOrganizationService, IDisposable>();
-            var mockServiceProvider = new FakeCrmServiceProvider(fakeOrgService, null, null);
+            var mockServiceProvider = MockRepository.GenerateMock<ICrmServiceProvider>();
+            mockServiceProvider
+                .Stub(c => c.GetOrganisationService()).Return(fakeOrgService);
             var dbConnection = CreateTestSubject(mockServiceProvider);
-
+        
+            // Act
             using (dbConnection)
             {
                 dbConnection.Open();
             }
+
+            // Assert
             Assert.That(dbConnection.State == ConnectionState.Closed);
         }
 
         [Test]
         public void Should_Dispose_Organisation_Service_Instance_On_Close()
         {
-            // Arrange
             // Arrange
             var fakeOrgService = MockRepository.GenerateMock<IOrganizationService, IDisposable>();
             var mockServiceProvider = MockRepository.GenerateMock<ICrmServiceProvider>();
@@ -110,6 +89,36 @@ namespace DynamicsCrmDataProvider.Tests
             // Assert
             var orgs = fakeOrgService as IDisposable;
             orgs.AssertWasCalled(o => o.Dispose(), options => options.Repeat.Once());
+        }
+
+        [Test]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void Should_Throw_On_Attempt_To_Open_A_Non_Closed_Connection()
+        {
+            // Arrange
+            var fakeOrgService = MockRepository.GenerateMock<IOrganizationService, IDisposable>();
+            var mockServiceProvider = MockRepository.GenerateMock<ICrmServiceProvider>();
+            mockServiceProvider
+                .Stub(c => c.GetOrganisationService()).Return(fakeOrgService);
+            var dbConnection = CreateTestSubject(mockServiceProvider);
+
+            // Act
+            dbConnection.Open();
+            dbConnection.Open();
+        }
+
+        [Test]
+        public void Should_Be_Able_To_Spawn_A_Command()
+        {
+            // Arrange
+            var dbConnection = CreateTestSubject();
+
+            // Act
+            var command = dbConnection.CreateCommand();
+
+            // Assert
+            Assert.That(command != null);
+
         }
     }
 }

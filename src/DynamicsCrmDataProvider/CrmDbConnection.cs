@@ -6,9 +6,11 @@ using Microsoft.Xrm.Sdk;
 
 namespace DynamicsCrmDataProvider
 {
+    /// <summary>
+    /// Represents a connection to Dynamics Crm.
+    /// </summary>
     public class CrmDbConnection : DbConnection
     {
-
         private ICrmServiceProvider _CrmServiceProvider = null;
 
         #region Constructor
@@ -56,7 +58,7 @@ namespace DynamicsCrmDataProvider
         }
 
         #endregion
-     
+
         public override void Open()
         {
             if (_State == ConnectionState.Closed)
@@ -87,6 +89,18 @@ namespace DynamicsCrmDataProvider
             _State = ConnectionState.Closed;
         }
 
+        protected override DbCommand CreateDbCommand()
+        {
+            return new CrmDbCommand(this);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            //TODO: Close crm connection.
+            Close();
+            base.Dispose(disposing);
+        }
+
         #region Not Implemented
         protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
         {
@@ -113,18 +127,9 @@ namespace DynamicsCrmDataProvider
         {
             get { throw new NotImplementedException(); }
         }
-        
-        protected override DbCommand CreateDbCommand()
-        {
-            throw new NotImplementedException();
-        }
+
+
         #endregion
 
-        protected override void Dispose(bool disposing)
-        {
-            //TODO: Close crm connection.
-            Close();
-            base.Dispose(disposing);
-        }
     }
 }

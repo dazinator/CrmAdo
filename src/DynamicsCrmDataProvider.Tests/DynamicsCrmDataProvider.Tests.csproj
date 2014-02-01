@@ -115,11 +115,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CrmDbConnection.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="BaseTest.cs" />
+    <Compile Include="CrmDbCommandTests.cs" />
     <Compile Include="CrmDbConnectionTests.cs" />
-    <Compile Include="Fakes\FakeCrmServiceProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\Release\" />
+    <Folder Include="Fakes\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DynamicsCrmDataProvider\DynamicsCrmDataProvider.csproj">

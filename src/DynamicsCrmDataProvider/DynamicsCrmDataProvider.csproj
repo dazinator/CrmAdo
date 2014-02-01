@@ -93,9 +93,15 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CrmCommandExecutor.cs" />
+    <Compile Include="CrmDbCommand.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CrmDbConnection.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="CrmDbDataReader.cs" />
+    <Compile Include="CrmDbTypeConverter.cs" />
     <Compile Include="Dynamics\CrmClientCredentialsProvider.cs" />
     <Compile Include="Dynamics\CrmConnectionProvider.cs" />
     <Compile Include="Dynamics\CrmOrganisationManager.cs" />
@@ -111,6 +117,7 @@
     <Compile Include="Dynamics\ICrmOrganisationManager.cs" />
     <Compile Include="Dynamics\ICrmServiceProvider.cs" />
     <Compile Include="Dynamics\OrganisationDoesNotExistException.cs" />
+    <Compile Include="ICrmCommandExecutor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
