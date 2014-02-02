@@ -14,7 +14,7 @@ namespace DynamicsCrmDataProvider.Tests
     public class CrmQueryExpressionProviderTests : BaseTest<CrmQueryExpressionProvider>
     {
         [Test]
-        public void Should_Create_Query_Expression_For_All_Columns_Of_Entity()
+        public void Select_Clause_Contains_Star()
         {
             // Arrange
             var sql = "Select * From contact";
@@ -31,7 +31,7 @@ namespace DynamicsCrmDataProvider.Tests
         }
 
         [Test]
-        public void Should_Create_Query_Expression_For_Named_Columns_Of_Entity()
+        public void Select_Clause_Contains_Attribute_Names()
         {
             // Arrange
             var sql = "Select contactid, firstname, lastname From contact";
@@ -52,7 +52,7 @@ namespace DynamicsCrmDataProvider.Tests
 
         [Test]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void Should_Throw_When_No_Columns_Selected()
+        public void Throws_When_Select_Clause_Contains_No_Columns()
         {
             // Arrange
             var sql = "Select From contact";
@@ -67,7 +67,7 @@ namespace DynamicsCrmDataProvider.Tests
 
         [Test]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void Should_Throw_When_No_From_Entity_Specified()
+        public void Throws_When_No_From_Clause()
         {
             // Arrange
             var sql = "Select * From";
@@ -82,7 +82,7 @@ namespace DynamicsCrmDataProvider.Tests
 
         [Test]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void Should_Throw_When_Not_A_Select_Statement()
+        public void Throws_When_Not_A_Select_Statement()
         {
             // Arrange
             var sql = "Insert into MyTest (mycolumn) values('test')";
@@ -96,7 +96,7 @@ namespace DynamicsCrmDataProvider.Tests
         }
 
         [Test]
-        public void Should_Create_Query_Expression_With_Where_Equals_Criteria_And_String_Literals()
+        public void Where_Clause_Equals_String_Literal_Value()
         {
             // Arrange
             var sql = "Select contactid, firstname, lastname From contact Where firstname = 'Julius' and lastname = 'Caeser'";
@@ -125,7 +125,7 @@ namespace DynamicsCrmDataProvider.Tests
         }
 
         [Test]
-        public void Should_Create_Query_Expression_With_Where_Equals_Criteria_And_Numeric_Values()
+        public void Where_Clause_Equals_Numeric_Literal_Value()
         {
             // Arrange
             var sql = "Select contactid, title, lastname From contact Where title = 1000000 and lastname = 'Caeser'";
@@ -154,7 +154,7 @@ namespace DynamicsCrmDataProvider.Tests
         }
 
         [Test]
-        public void Should_Create_Query_Expression_With_Where_Not_Equals_Criteria_And_String_Literals()
+        public void Where_Clause_Not_Equals_String_Literal_Value()
         {
             // Arrange
             var sql = "Select contactid, firstname, lastname From contact Where firstname <> 'Julius' and lastname <> 'Caeser'";
@@ -180,10 +180,38 @@ namespace DynamicsCrmDataProvider.Tests
             Assert.That(queryExpression.Criteria.Conditions[1].Values, Contains.Item("Caeser"));
 
         }
-     
+
+        [Test]
+        public void Where_Clause_Not_Equals_Numeric_Literal_Value()
+        {
+            // Arrange
+            var sql = "Select contactid, firstname, iscustomer From contact Where firstname <> 'Julius' and iscustomer <> 1";
+            var commandBuilder = new CommandBuilder();
+            var cmd = commandBuilder.GetCommand(sql);
+
+            var subject = CreateTestSubject();
+            // Act
+            var queryExpression = subject.CreateQueryExpression(cmd as SelectBuilder);
+            // Assert
+            Assert.That(queryExpression.ColumnSet.AllColumns == false);
+            Assert.That(queryExpression.ColumnSet.Columns[0] == "contactid");
+            Assert.That(queryExpression.ColumnSet.Columns[1] == "firstname");
+            Assert.That(queryExpression.ColumnSet.Columns[2] == "iscustomer");
+            Assert.That(queryExpression.EntityName == "contact");
+            Assert.That(queryExpression.Criteria.Conditions.Count, Is.EqualTo(2));
+            Assert.That(queryExpression.Criteria.FilterOperator, Is.EqualTo(LogicalOperator.And));
+            Assert.That(queryExpression.Criteria.Conditions[0].AttributeName == "firstname");
+            Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.NotEqual));
+            Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item("Julius"));
+            Assert.That(queryExpression.Criteria.Conditions[1].AttributeName == "iscustomer");
+            Assert.That(queryExpression.Criteria.Conditions[1].Operator, Is.EqualTo(ConditionOperator.NotEqual));
+            Assert.That(queryExpression.Criteria.Conditions[1].Values, Contains.Item(1));
+
+        }
+
         [Test]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void Should_Throw_When_Query_Contains_Where_Clause_Equals_Condition_With_No_Attribute_Name()
+        public void Throws_When_Where_Clause_Equals_Does_Not_Refer_To_Attribute_Name()
         {
             // Arrange
             var sql = "Select contactid, firstname, lastname From contact Where 'Julius' = 'Julius' and lastname = 'Caeser'";
