@@ -87,6 +87,9 @@
     <Reference Include="Rhino.Mocks">
       <HintPath>..\..\lib\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
     </Reference>
+    <Reference Include="SQLGeneration">
+      <HintPath>..\..\lib\SQLGeneration.2.3.0.0\lib\net40\SQLGeneration.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -116,6 +119,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseTest.cs" />
+    <Compile Include="CrmQueryExpressionProviderTests.cs" />
+    <Compile Include="ExperimentationWithSelectBuilder.cs" />
     <Compile Include="CrmDbCommandTests.cs" />
     <Compile Include="CrmDbConnectionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

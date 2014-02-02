@@ -3,11 +3,27 @@ using System.Collections.Generic;
 using System.Data;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using SQLGeneration.Builders;
+using SQLGeneration.Generators;
 
 namespace DynamicsCrmDataProvider
 {
     public class CrmCommandExecutor : ICrmCommandExecutor
     {
+        private ICrmQueryExpressionProvider _CrmQueryExpressionProvider;
+
+        #region Constructor
+        public CrmCommandExecutor()
+            : this(new CrmQueryExpressionProvider())
+        {
+        }
+
+        public CrmCommandExecutor(ICrmQueryExpressionProvider queryExpressionProvider)
+        {
+            _CrmQueryExpressionProvider = queryExpressionProvider;
+        }
+        #endregion
+        
         public EntityCollection ExecuteCommand(CrmDbCommand command)
         {
             //TODO: Should process the command text, and execute a query to dynamics, returning the Entity Collection results.
@@ -45,8 +61,14 @@ namespace DynamicsCrmDataProvider
 
         private EntityCollection ProcessTextCommand(CrmDbCommand command)
         {
-            //TODO:  We will treat the command as SQL, and parse it to build a QueryExpression which we feed to the dynamics sdk to get some results..
-            throw new System.NotImplementedException();
+            //  string commandText = "SELECT CustomerId, FirstName, LastName, Created FROM Customer";
+            var commandText = command.CommandText;
+            var commandBuilder = new CommandBuilder();
+            var cmd = commandBuilder.GetCommand(commandText);
+            var queryExpression = _CrmQueryExpressionProvider.CreateQueryExpression(cmd as SelectBuilder);
+            var orgService = command.CrmDbConnection.OrganizationService;
+            var results = orgService.RetrieveMultiple(queryExpression);
+            return results;
         }
 
         private EntityCollection ProcessStoredProcedureCommand(CrmDbCommand command)
