@@ -79,6 +79,7 @@
       <summary>Gets or sets how the host name should be compared.</summary>
       <returns>The comparison method used in the host name.</returns>
     </member>
+    <member name="P:Microsoft.ServiceBus.BasicHttpRelayBinding.IsDynamic"></member>
     <member name="P:Microsoft.ServiceBus.BasicHttpRelayBinding.MaxBufferPoolSize">
       <summary>Gets or sets the maximum size allowed for a buffer pool that stores TCP messages processed by the binding.</summary>
       <returns>The maximum size allowed for a buffer pool that stores TCP messages processed by the binding.</returns>
@@ -297,6 +298,9 @@
     <member name="F:Microsoft.ServiceBus.ExceptionErrorCodes.ConflictGeneric">
       <summary>A generic conflict error.</summary>
     </member>
+    <member name="F:Microsoft.ServiceBus.ExceptionErrorCodes.ConflictOperationInProgress">
+      <summary />
+    </member>
     <member name="F:Microsoft.ServiceBus.ExceptionErrorCodes.CorrelationFiltersExceeded">
       <summary>The correlation filters exceeded its allowable maximum number.</summary>
     </member>
@@ -444,6 +448,7 @@
       <summary>Initializes the specified binding element with the settings from the current instance of the <see cref="T:Microsoft.ServiceBus.HttpRelayTransportBindingElement" /> binding element.</summary>
       <param name="httpTransportElement">The binding element to initialize.</param>
     </member>
+    <member name="P:Microsoft.ServiceBus.HttpRelayTransportBindingElement.IsDynamic"></member>
     <member name="P:Microsoft.ServiceBus.HttpRelayTransportBindingElement.KeepAliveEnabled">
       <summary>Gets or sets a value that indicates whether to make a persistent connection to a service endpoint. </summary>
       <returns>true if the request to the service endpoint should contain a Connection HTTP header with the value Keep-alive; otherwise, false. The default is true.</returns>
@@ -1012,6 +1017,8 @@
       <returns>A new instance of <see cref="T:Microsoft.ServiceBus.NamespaceManager" />.</returns>
       <param name="connectionString">The connection sting used.</param>
     </member>
+    <member name="M:Microsoft.ServiceBus.NamespaceManager.CreateNotificationHub(Microsoft.ServiceBus.Notifications.NotificationHubDescription)"></member>
+    <member name="M:Microsoft.ServiceBus.NamespaceManager.CreateNotificationHubAsync(Microsoft.ServiceBus.Notifications.NotificationHubDescription)"></member>
     <member name="M:Microsoft.ServiceBus.NamespaceManager.CreateQueue(Microsoft.ServiceBus.Messaging.QueueDescription)">
       <summary>Creates a new queue in the service namespace with the specified queue description.</summary>
       <returns>The <see cref="T:Microsoft.ServiceBus.Messaging.QueueDescription" /> of the newly created queue.</returns>
@@ -1041,6 +1048,8 @@
       <returns>The <see cref="T:Microsoft.ServiceBus.Messaging.QueueDescription" /> of the newly created queue.</returns>
       <param name="path">The path of the queue relative to the service namespace base address.</param>
     </member>
+    <member name="M:Microsoft.ServiceBus.NamespaceManager.CreateRelayAsync(Microsoft.ServiceBus.Messaging.RelayDescription)"></member>
+    <member name="M:Microsoft.ServiceBus.NamespaceManager.CreateRelayAsync(System.String,Microsoft.ServiceBus.RelayType)"></member>
     <member name="M:Microsoft.ServiceBus.NamespaceManager.CreateSubscription(Microsoft.ServiceBus.Messaging.SubscriptionDescription)">
       <summary>Creates a new subscription in the service namespace with the specified subscription description.</summary>
       <returns>The <see cref="T:Microsoft.ServiceBus.Messaging.SubscriptionDescription" /> of the newly created subscription.</returns>
@@ -1143,6 +1152,8 @@
       <returns>The asynchronously created topic.</returns>
       <param name="path">The path of the topic relative to the service namespace base address.</param>
     </member>
+    <member name="M:Microsoft.ServiceBus.NamespaceManager.DeleteNotificationHub(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.NamespaceManager.DeleteNotificationHubAsync(System.String)"></member>
     <member name="M:Microsoft.ServiceBus.NamespaceManager.DeleteQueue(System.String)">
       <summary>Deletes the queue described by the path relative to the service namespace base address.</summary>
       <param name="path">The path of the queue relative to the service namespace base address.</param>
@@ -1159,6 +1170,7 @@
       <returns>The asynchronously deleted queue.</returns>
       <param name="path">The path of the queue relative to the service namespace base address.</param>
     </member>
+    <member name="M:Microsoft.ServiceBus.NamespaceManager.DeleteRelayAsync(System.String)"></member>
     <member name="M:Microsoft.ServiceBus.NamespaceManager.DeleteSubscription(System.String,System.String)">
       <summary>Deletes the subscription with the specified topic path and subscription name.</summary>
       <param name="topicPath">The topic path relative to the service namespace base address.</param>
@@ -1298,6 +1310,10 @@
       <returns>A <see cref="T:Microsoft.ServiceBus.Messaging.TopicDescription" /> handle to the topic, or null if the topic does not exist in the service namespace.</returns>
       <param name="result">An <see cref="T:System.IAsyncResult" /> object that represents the result of the update topic operation.</param>
     </member>
+    <member name="M:Microsoft.ServiceBus.NamespaceManager.GetNotificationHub(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.NamespaceManager.GetNotificationHubAsync(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.NamespaceManager.GetNotificationHubs"></member>
+    <member name="M:Microsoft.ServiceBus.NamespaceManager.GetNotificationHubsAsync"></member>
     <member name="M:Microsoft.ServiceBus.NamespaceManager.GetQueue(System.String)">
       <summary>Retrieves a queue from the service namespace.</summary>
       <returns>A <see cref="T:Microsoft.ServiceBus.Messaging.QueueDescription" /> handle to the queue, or a <see cref="T:Microsoft.ServiceBus.Messaging.MessagingEntityNotFoundException" /> exception if the queue does not exist in the service namespace.</returns>
@@ -1335,6 +1351,8 @@
       <returns>The asynchronously retrieved queues.</returns>
       <param name="filter">The string used to filter the queues to be retrieved.</param>
     </member>
+    <member name="M:Microsoft.ServiceBus.NamespaceManager.GetRelayAsync(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.NamespaceManager.GetRelaysAsync"></member>
     <member name="M:Microsoft.ServiceBus.NamespaceManager.GetRules(System.String,System.String)">
       <summary>Retrieves an enumerable collection of all rules in the service namespace.</summary>
       <returns>Returns an <see cref="T:System.Collections.Generic.IEnumerable`1" /> object that represents the collection of all rules in the service namespace or returns an empty collection if no rule exists.</returns>
@@ -1441,6 +1459,8 @@
       <summary>Asynchronously retrieves a string of the format "YYYY-MM" that indicates the maximum supported protocol version that the server or service can handle.</summary>
       <returns>The asynchronously retrieved information.</returns>
     </member>
+    <member name="M:Microsoft.ServiceBus.NamespaceManager.NotificationHubExists(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.NamespaceManager.NotificationHubExistsAsync(System.String)"></member>
     <member name="F:Microsoft.ServiceBus.NamespaceManager.ProtocolVersion">
       <summary>Specifies the string of the format "YYYY-MM" that indicates the client's protocol version.</summary>
     </member>
@@ -1454,6 +1474,7 @@
       <returns>The asynchronous operation.</returns>
       <param name="path">The path of the queue relative to the service namespace base address.</param>
     </member>
+    <member name="M:Microsoft.ServiceBus.NamespaceManager.RelayExistsAsync(System.String)"></member>
     <member name="P:Microsoft.ServiceBus.NamespaceManager.Settings">
       <summary>Gets the service namespace client settings.</summary>
       <returns>A <see cref="T:Microsoft.ServiceBus.NamespaceManagerSettings" /> object that represents the service namespace client settings.</returns>
@@ -1480,6 +1501,8 @@
       <returns>The asynchronous operation.</returns>
       <param name="path">The path of the topic relative to the service namespace base address.</param>
     </member>
+    <member name="M:Microsoft.ServiceBus.NamespaceManager.UpdateNotificationHub(Microsoft.ServiceBus.Notifications.NotificationHubDescription)"></member>
+    <member name="M:Microsoft.ServiceBus.NamespaceManager.UpdateNotificationHubAsync(Microsoft.ServiceBus.Notifications.NotificationHubDescription)"></member>
     <member name="M:Microsoft.ServiceBus.NamespaceManager.UpdateQueue(Microsoft.ServiceBus.Messaging.QueueDescription)">
       <summary>Enables you to suspend or resume the queue.</summary>
       <returns>The <see cref="T:Microsoft.ServiceBus.Messaging.QueueDescription" /> of the updated queue.</returns>
@@ -1490,6 +1513,7 @@
       <returns>The asynchronous operation.</returns>
       <param name="description">A <see cref="T:Microsoft.ServiceBus.Messaging.QueueDescription" /> object describing the queue to be suspended or resumed.</param>
     </member>
+    <member name="M:Microsoft.ServiceBus.NamespaceManager.UpdateRelayAsync(Microsoft.ServiceBus.Messaging.RelayDescription)"></member>
     <member name="M:Microsoft.ServiceBus.NamespaceManager.UpdateSubscription(Microsoft.ServiceBus.Messaging.SubscriptionDescription)">
       <summary>Enables you to suspend or resume the subscription.</summary>
       <returns>The <see cref="T:Microsoft.ServiceBus.Messaging.SubscriptionDescription" /> of the updated subscription.</returns>
@@ -1777,6 +1801,7 @@
       <param name="transport">The transport binding element.</param>
       <param name="encoding">The encoding binding element.</param>
     </member>
+    <member name="P:Microsoft.ServiceBus.NetTcpRelayBindingBase.IsDynamic"></member>
     <member name="P:Microsoft.ServiceBus.NetTcpRelayBindingBase.ListenBacklog">
       <summary>Gets or sets the maximum number of queued connection requests that can be pending.</summary>
       <returns>Returns the maximum number of queued connection requests that can be pending. The default is 10.</returns>
@@ -2044,6 +2069,11 @@
     <member name="F:Microsoft.ServiceBus.RelayEventSubscriberAuthenticationType.RelayAccessToken">
       <summary>If specified by a NetEventRelay listener, the client is required to provide a relay access token. </summary>
     </member>
+    <member name="T:Microsoft.ServiceBus.RelayNotFoundException"></member>
+    <member name="M:Microsoft.ServiceBus.RelayNotFoundException.#ctor"></member>
+    <member name="M:Microsoft.ServiceBus.RelayNotFoundException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)"></member>
+    <member name="M:Microsoft.ServiceBus.RelayNotFoundException.#ctor(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.RelayNotFoundException.#ctor(System.String,System.Exception)"></member>
     <member name="T:Microsoft.ServiceBus.RelayTransportProtectionMode">
       <summary>Describes the types of protection on a transport relay. </summary>
     </member>
@@ -2055,6 +2085,22 @@
     </member>
     <member name="F:Microsoft.ServiceBus.RelayTransportProtectionMode.None">
       <summary>Security is disabled.</summary>
+    </member>
+    <member name="T:Microsoft.ServiceBus.RelayType"></member>
+    <member name="F:Microsoft.ServiceBus.RelayType.Http">
+      <summary />
+    </member>
+    <member name="F:Microsoft.ServiceBus.RelayType.NetEvent">
+      <summary />
+    </member>
+    <member name="F:Microsoft.ServiceBus.RelayType.NetOneway">
+      <summary />
+    </member>
+    <member name="F:Microsoft.ServiceBus.RelayType.NetTcp">
+      <summary />
+    </member>
+    <member name="F:Microsoft.ServiceBus.RelayType.None">
+      <summary />
     </member>
     <member name="T:Microsoft.ServiceBus.RetryExponential">
       <summary>Represents a retry policy that performs a specified number of retries, using a randomized exponential backoff scheme to determine the interval between retries.</summary>
@@ -2824,6 +2870,7 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
       <param name="context">The context. </param>
       <typeparam name="T">The type of object to get. </typeparam>
     </member>
+    <member name="P:Microsoft.ServiceBus.TcpRelayTransportBindingElement.IsDynamic"></member>
     <member name="P:Microsoft.ServiceBus.TcpRelayTransportBindingElement.RelayClientAuthenticationType">
       <summary>Gets or sets the type of authentication used by the service client.</summary>
       <returns>Returns <see cref="T:Microsoft.ServiceBus.RelayClientAuthenticationType" />.Contains the authentication type. The default value is RelayAccessToken.</returns>
@@ -3348,6 +3395,7 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
       <summary>Gets or sets the comparison mode used on the host name.</summary>
       <returns>The comparison mode used on the host name.</returns>
     </member>
+    <member name="P:Microsoft.ServiceBus.WebHttpRelayBinding.IsDynamic"></member>
     <member name="P:Microsoft.ServiceBus.WebHttpRelayBinding.MaxBufferPoolSize">
       <summary>Gets or sets the maximum buffer pool size used by the transport.</summary>
       <returns>Returns the maximum buffer pool size. The default is 524288 bytes.</returns>
@@ -3527,6 +3575,7 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
       <summary>Gets or sets the comparison mode used on the host name.</summary>
       <returns>The comparison mode used on the host name.</returns>
     </member>
+    <member name="P:Microsoft.ServiceBus.WSHttpRelayBindingBase.IsDynamic"></member>
     <member name="P:Microsoft.ServiceBus.WSHttpRelayBindingBase.MaxBufferPoolSize">
       <summary>Gets or sets the maximum amount of memory allocated for the buffer manager that manages the buffers required by endpoints using this Windows Azure Service Bus binding. </summary>
       <returns>Returns <see cref="T:System.Int64" />.The maximum size, in bytes, for the pool of buffers used by an endpoint configured with this binding. The default value is 65,536 bytes.</returns>
@@ -3700,6 +3749,7 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
       <summary>Initializes this binding configuration element with the content of the specified binding collection.</summary>
       <param name="binding">A collection of binding elements.</param>
     </member>
+    <member name="P:Microsoft.ServiceBus.Configuration.BasicHttpRelayBindingElement.IsDynamic"></member>
     <member name="P:Microsoft.ServiceBus.Configuration.BasicHttpRelayBindingElement.MaxBufferPoolSize">
       <summary>Gets or sets the maximum size for a buffer pool that stores messages processed by the binding.</summary>
       <returns>Returns an <see cref="T:System.Int64" /> that contains the buffer pool size. The default value is 512*1024 bytes. The minimum value is 0.</returns>
@@ -3875,6 +3925,7 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
       <summary>Initializes this binding configuration element with the content of the specified binding element.</summary>
       <param name="bindingElement">The binding element to initialize from.</param>
     </member>
+    <member name="P:Microsoft.ServiceBus.Configuration.HttpRelayTransportElement.IsDynamic"></member>
     <member name="P:Microsoft.ServiceBus.Configuration.HttpRelayTransportElement.KeepAliveEnabled">
       <summary>Gets or sets a Boolean value from the configuration file that indicates whether to make a persistent connection to the internet resource.</summary>
       <returns>true if a persistent connection to the internet resource is maintained; otherwise, false.</returns>
@@ -4159,6 +4210,7 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
       <summary>Initializes the contents of this binding configuration element from the property values of a specified binding.</summary>
       <param name="binding">The binding to initialize from.</param>
     </member>
+    <member name="P:Microsoft.ServiceBus.Configuration.NetTcpRelayBindingElement.IsDynamic"></member>
     <member name="P:Microsoft.ServiceBus.Configuration.NetTcpRelayBindingElement.ListenBacklog">
       <summary>Gets or sets a value in the App.config file that specifies the maximum number of channels that can wait to be accepted on the listener.</summary>
       <returns>Returns the maximum number of queued connection requests that can be pending. The default is 10.</returns>
@@ -4427,6 +4479,7 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
       <summary>Copies the content of the specified configuration element to this configuration element.</summary>
       <param name="from">The configuration elements to be copied.</param>
     </member>
+    <member name="P:Microsoft.ServiceBus.Configuration.TcpRelayTransportElement.IsDynamic"></member>
     <member name="P:Microsoft.ServiceBus.Configuration.TcpRelayTransportElement.ListenBacklog">
       <summary>Gets or sets an XML value containing the maximum number of queued connection requests that can be pending.</summary>
       <returns>Returns the maximum number of queued connection requests that can be pending. The default is 10.</returns>
@@ -4541,6 +4594,7 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
       <summary>Initializes the contents of this binding configuration element from the property values of a specified binding.</summary>
       <param name="binding">The binding to update this configuration element from.</param>
     </member>
+    <member name="P:Microsoft.ServiceBus.Configuration.WebHttpRelayBindingElement.IsDynamic"></member>
     <member name="P:Microsoft.ServiceBus.Configuration.WebHttpRelayBindingElement.MaxBufferPoolSize">
       <summary>Gets or sets the maximum amount of memory allocated for the buffer manager that manages the buffers required by endpoints that use this binding.</summary>
       <returns>Returns the maximum size, in bytes, for the pool of buffers used by an endpoint configured with this binding. The default value is 65,536 bytes.</returns>
@@ -4675,6 +4729,7 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
       <summary>Initializes this binding configuration element with the content of the specified binding.</summary>
       <param name="binding">A binding.</param>
     </member>
+    <member name="P:Microsoft.ServiceBus.Configuration.WSHttpRelayBindingBaseElement.IsDynamic"></member>
     <member name="P:Microsoft.ServiceBus.Configuration.WSHttpRelayBindingBaseElement.MaxBufferPoolSize">
       <summary>Gets or sets the maximum size of the buffer pool that stores messages processed by the <see cref="T:Microsoft.ServiceBus.WSHttpRelayBinding" /> binding.</summary>
       <returns>The maximum size of the buffer pool that stores messages processed by the <see cref="T:Microsoft.ServiceBus.WSHttpRelayBinding" /> binding. The default is 524288 bytes.</returns>
@@ -5084,14 +5139,6 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
       <summary>Gets or sets the date when the namespace was created.</summary>
       <returns>The date when the namespace was created.</returns>
     </member>
-    <member name="P:Microsoft.ServiceBus.Management.NamespaceDescription.CurrentState">
-      <summary>Gets or sets the current state of the namespace.</summary>
-      <returns>The current state of the namespace.</returns>
-    </member>
-    <member name="P:Microsoft.ServiceBus.Management.NamespaceDescription.DataCenter">
-      <summary>Gets or sets the datacenter associated with the namespace.</summary>
-      <returns>The datacenter associated with the namespace.</returns>
-    </member>
     <member name="P:Microsoft.ServiceBus.Management.NamespaceDescription.DefaultKey">
       <summary>Gets or sets the default key for the namespace.</summary>
       <returns>The default key for the namespace.</returns>
@@ -5104,25 +5151,9 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
       <summary>Gets or sets the name of the namespace.</summary>
       <returns>The name of the namespace.</returns>
     </member>
-    <member name="P:Microsoft.ServiceBus.Management.NamespaceDescription.ProjectKey">
-      <summary>Gets or sets the project key associated with the namespace.</summary>
-      <returns>The project key associated with the namespace.</returns>
-    </member>
     <member name="P:Microsoft.ServiceBus.Management.NamespaceDescription.Region">
       <summary>Gets or sets the geographic region(s) of the Microsoft datacenters in which Customer Data will be stored.</summary>
       <returns>The geographic region(s) of the Microsoft datacenters in which Customer Data will be stored.</returns>
-    </member>
-    <member name="P:Microsoft.ServiceBus.Management.NamespaceDescription.ScaleUnit">
-      <summary>Gets or sets the scale unit associated with this instance.</summary>
-      <returns>The scale unit associated with this instance.</returns>
-    </member>
-    <member name="P:Microsoft.ServiceBus.Management.NamespaceDescription.ScaleUnitKey">
-      <summary>Gets or sets the scale unit key associated with this instance.</summary>
-      <returns>The scale unit key associated with this instance.</returns>
-    </member>
-    <member name="P:Microsoft.ServiceBus.Management.NamespaceDescription.ScopeKey">
-      <summary>Gets or sets the scope key associated with this instance.</summary>
-      <returns>The scope key associated with this instance.</returns>
     </member>
     <member name="F:Microsoft.ServiceBus.Management.NamespaceDescription.Serializer">
       <summary>The data contract serializer associated with the namespace.</summary>
@@ -5138,14 +5169,6 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
     <member name="P:Microsoft.ServiceBus.Management.NamespaceDescription.SubscriptionId">
       <summary>Gets or sets the namespace subscription identifier.</summary>
       <returns>The namespace subscription identifier.</returns>
-    </member>
-    <member name="P:Microsoft.ServiceBus.Management.NamespaceDescription.TargetState">
-      <summary>Gets or sets the namespace target state.</summary>
-      <returns>The namespace target state.</returns>
-    </member>
-    <member name="P:Microsoft.ServiceBus.Management.NamespaceDescription.UpdatedAt">
-      <summary>Gets or sets when the namespace was updated.</summary>
-      <returns>The date when the namespace was updated.</returns>
     </member>
     <member name="T:Microsoft.ServiceBus.Management.NamespaceState">
       <summary>Enumerates the different namespace states.</summary>
@@ -5179,6 +5202,31 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
     </member>
     <member name="F:Microsoft.ServiceBus.Management.NamespaceState.Unknown">
       <summary>The namespace is unknown.</summary>
+    </member>
+    <member name="T:Microsoft.ServiceBus.Management.NotificationHubPlan"></member>
+    <member name="M:Microsoft.ServiceBus.Management.NotificationHubPlan.#ctor"></member>
+    <member name="P:Microsoft.ServiceBus.Management.NotificationHubPlan.Revision"></member>
+    <member name="P:Microsoft.ServiceBus.Management.NotificationHubPlan.SelectedSKUMaxUnits"></member>
+    <member name="P:Microsoft.ServiceBus.Management.NotificationHubPlan.SelectedSKUMinUnits"></member>
+    <member name="F:Microsoft.ServiceBus.Management.NotificationHubPlan.SKU"></member>
+    <member name="P:Microsoft.ServiceBus.Management.NotificationHubPlan.UpdatedAt"></member>
+    <member name="T:Microsoft.ServiceBus.Management.NotificationHubSKU"></member>
+    <member name="M:Microsoft.ServiceBus.Management.NotificationHubSKU.#ctor"></member>
+    <member name="P:Microsoft.ServiceBus.Management.NotificationHubSKU.MaxAllowedDevicesPerUnit"></member>
+    <member name="P:Microsoft.ServiceBus.Management.NotificationHubSKU.MaxAllowedOperationsPerDayPerUnit"></member>
+    <member name="P:Microsoft.ServiceBus.Management.NotificationHubSKU.MaxAllowedRegistrationsPerUnit"></member>
+    <member name="P:Microsoft.ServiceBus.Management.NotificationHubSKU.MaxAllowedUnits"></member>
+    <member name="P:Microsoft.ServiceBus.Management.NotificationHubSKU.MinAllowedUnits"></member>
+    <member name="F:Microsoft.ServiceBus.Management.NotificationHubSKU.SKU"></member>
+    <member name="T:Microsoft.ServiceBus.Management.NotificationHubSKUType"></member>
+    <member name="F:Microsoft.ServiceBus.Management.NotificationHubSKUType.Free">
+      <summary />
+    </member>
+    <member name="F:Microsoft.ServiceBus.Management.NotificationHubSKUType.Premium">
+      <summary />
+    </member>
+    <member name="F:Microsoft.ServiceBus.Management.NotificationHubSKUType.Standard">
+      <summary />
     </member>
     <member name="T:Microsoft.ServiceBus.Management.Property">
       <summary>Represents the service bus property.</summary>
@@ -5280,6 +5328,8 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
     <member name="T:Microsoft.ServiceBus.Messaging.AllowRule">
       <summary>Represents the rule to allow.</summary>
     </member>
+    <member name="M:Microsoft.ServiceBus.Messaging.AllowRule.#ctor"></member>
+    <member name="M:Microsoft.ServiceBus.Messaging.AllowRule.#ctor(System.String,Microsoft.ServiceBus.Messaging.AllowRuleClaimType,System.String,System.Collections.Generic.IEnumerable{Microsoft.ServiceBus.Messaging.AccessRights})"></member>
     <member name="M:Microsoft.ServiceBus.Messaging.AllowRule.#ctor(System.String,System.String,System.String,System.Collections.Generic.IEnumerable{Microsoft.ServiceBus.Messaging.AccessRights})">
       <summary>Initializes a new instance of <see cref="T:Microsoft.ServiceBus.Messaging.AllowRule" /> class.</summary>
       <param name="issuerName">The distinguished name of the certificate issuer.</param>
@@ -5290,6 +5340,13 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
     <member name="P:Microsoft.ServiceBus.Messaging.AllowRule.KeyName">
       <summary>Gets or sets the allow rule key name.</summary>
       <returns>The allow rule key name.</returns>
+    </member>
+    <member name="T:Microsoft.ServiceBus.Messaging.AllowRuleClaimType"></member>
+    <member name="F:Microsoft.ServiceBus.Messaging.AllowRuleClaimType.Role">
+      <summary />
+    </member>
+    <member name="F:Microsoft.ServiceBus.Messaging.AllowRuleClaimType.Upn">
+      <summary />
     </member>
     <member name="T:Microsoft.ServiceBus.Messaging.AuthorizationRule">
       <summary>Defines the Azure Service Bus authorization rule that is used to determine whether an operation is permissible or not.</summary>
@@ -5331,6 +5388,7 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
       <summary>Gets or sets the date and time when the authorization rule was modified.</summary>
       <returns>The date and time when the authorization rule was modified.</returns>
     </member>
+    <member name="F:Microsoft.ServiceBus.Messaging.AuthorizationRule.NameIdentifierClaimType"></member>
     <member name="M:Microsoft.ServiceBus.Messaging.AuthorizationRule.OnValidate">
       <summary>Enables derived classes to provide custom handling when validating the authorization rule.</summary>
     </member>
@@ -5342,6 +5400,12 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
       <summary>Gets or sets the list of rights.</summary>
       <returns>The list of rights.</returns>
     </member>
+    <member name="F:Microsoft.ServiceBus.Messaging.AuthorizationRule.RoleClaimType"></member>
+    <member name="F:Microsoft.ServiceBus.Messaging.AuthorizationRule.RoleRoleClaimType"></member>
+    <member name="F:Microsoft.ServiceBus.Messaging.AuthorizationRule.SharedAccessKeyClaimType"></member>
+    <member name="F:Microsoft.ServiceBus.Messaging.AuthorizationRule.ShortNameIdentifierClaimType"></member>
+    <member name="F:Microsoft.ServiceBus.Messaging.AuthorizationRule.ShortUpnClaimType"></member>
+    <member name="F:Microsoft.ServiceBus.Messaging.AuthorizationRule.UpnClaimType"></member>
     <member name="M:Microsoft.ServiceBus.Messaging.AuthorizationRule.ValidateRights(System.Collections.Generic.IEnumerable{Microsoft.ServiceBus.Messaging.AccessRights})">
       <summary>Checks the validity of the specified access rights.</summary>
       <param name="value">The access rights to check.</param>
@@ -6240,6 +6304,11 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.CreatedAt">
       <summary>The CreatedAt string.</summary>
     </member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.CurrentAbsoluteSKUUnits"></member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.CurrentSKUUnits"></member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.DailyMaxActiveDevices"></member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.DailyMaxActiveRegistrations"></member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.DailyOperations"></member>
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.DatabaseName">
       <summary>The DatabaseName string.</summary>
     </member>
@@ -6294,6 +6363,7 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.Enabled">
       <summary>The Enabled string.</summary>
     </member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.EnablePartitioning"></member>
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.EncryptionCertificate">
       <summary>The EncryptionCertificate string.</summary>
     </member>
@@ -6405,6 +6475,7 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.IsAnonymousAccessible">
       <summary>The IsAnonymousAccessible string.</summary>
     </member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.IsDynamic"></member>
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.IsExpress">
       <summary>The IsExpress string.</summary>
     </member>
@@ -6429,6 +6500,10 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.ManagementSuffix">
       <summary>The ManagementSuffix string.</summary>
     </member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.MaxAllowedDevicesPerUnit"></member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.MaxAllowedOperationsPerDayPerUnit"></member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.MaxAllowedRegistrationsPerUnit"></member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.MaxAllowedUnits"></member>
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.MaxCorrelationFiltersPerTopic">
       <summary>The MaxCorrelationFiltersPerTopic string.</summary>
     </member>
@@ -6459,6 +6534,7 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.MessageCountDetails">
       <summary>The MessageCountDetails string.</summary>
     </member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.MinAllowedUnits"></member>
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.MpnsCredential">
       <summary>The MpnsCredential string.</summary>
     </member>
@@ -6495,6 +6571,8 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.NotificationHubDescription">
       <summary>The NotificationHubDescription string.</summary>
     </member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.NotificationHubPlan"></member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.NotificationHubSKU"></member>
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.NotificationOutcome">
       <summary>The NotificationOutcome string.</summary>
     </member>
@@ -6504,9 +6582,7 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.Outcome">
       <summary>The Outcome string.</summary>
     </member>
-    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.PartitioningPolicy">
-      <summary>The PartitioningPolicy string.</summary>
-    </member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.PartitionCount"></member>
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.Path">
       <summary>The Path string.</summary>
     </member>
@@ -6528,6 +6604,7 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.PrimaryKey">
       <summary>The PrimaryKey string.</summary>
     </member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.PublishToRegistry"></member>
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.PutMethod">
       <summary>The PutMethod string.</summary>
     </member>
@@ -6567,12 +6644,15 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.RelayDescription">
       <summary>The RelayDescription string.</summary>
     </member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.RelayType"></member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.RequiresClientAuthorization"></member>
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.RequiresDuplicateDetection">
       <summary>The RequiresDuplicateDetection string.</summary>
     </member>
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.RequiresSession">
       <summary>The RequiresSession string.</summary>
     </member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.RequiresTransportSecurity"></member>
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.Result">
       <summary>The Result string.</summary>
     </member>
@@ -6582,9 +6662,7 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.Rights">
       <summary>The Rights string.</summary>
     </member>
-    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.RPHttpsPort">
-      <summary>The RPHttpsPort string.</summary>
-    </member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.RPHttpsUrl"></member>
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.RuleAction">
       <summary>The RuleAction string.</summary>
     </member>
@@ -6612,6 +6690,8 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.SecondaryKey">
       <summary>The SecondaryKey string.</summary>
     </member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.SelectedSKUMaxUnits"></member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.SelectedSKUMinUnits"></member>
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.Service">
       <summary>The Service string.</summary>
     </member>
@@ -6636,6 +6716,7 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.SizeInBytes">
       <summary>The SizeInBytes string.</summary>
     </member>
+    <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.SKU"></member>
     <member name="F:Microsoft.ServiceBus.Messaging.ManagementStrings.SmtpCredential">
       <summary>The SmtpCredential string.</summary>
     </member>
@@ -7334,6 +7415,8 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
       <param name="result">The result.</param>
       <param name="messages">The received message collection.</param>
     </member>
+    <member name="M:Microsoft.ServiceBus.Messaging.MessageReceiver.OnMessage(System.Action{Microsoft.ServiceBus.Messaging.BrokeredMessage},Microsoft.ServiceBus.Messaging.OnMessageOptions)"></member>
+    <member name="M:Microsoft.ServiceBus.Messaging.MessageReceiver.OnMessageAsync(System.Func{Microsoft.ServiceBus.Messaging.BrokeredMessage,System.Threading.Tasks.Task},Microsoft.ServiceBus.Messaging.OnMessageOptions)"></member>
     <member name="M:Microsoft.ServiceBus.Messaging.MessageReceiver.OnPeek(Microsoft.ServiceBus.Tracing.TrackingContext,System.Int64,System.Int32,System.TimeSpan)">
       <summary>Executes upon calling the Peek operation.</summary>
       <returns>The messages peeked.</returns>
@@ -8982,15 +9065,6 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
       <summary>Gets the object that manages entities, such as queues, topics, subscriptions and rules in the paired namespace.</summary>
       <returns>The object that manages entities, such as queues, topics, subscriptions and rules in the paired namespace.</returns>
     </member>
-    <member name="T:Microsoft.ServiceBus.Messaging.PartitioningPolicy">
-      <summary>Enumerates the partitioning policy for the messages.</summary>
-    </member>
-    <member name="F:Microsoft.ServiceBus.Messaging.PartitioningPolicy.MessagePartitioning">
-      <summary>Partitions the messages.</summary>
-    </member>
-    <member name="F:Microsoft.ServiceBus.Messaging.PartitioningPolicy.NoPartitioning">
-      <summary>No partitioning allowed.</summary>
-    </member>
     <member name="T:Microsoft.ServiceBus.Messaging.PartitionNotOwnedException">
       <summary>The exception that is thrown for signaling partition not owned errors.</summary>
     </member>
@@ -9887,13 +9961,20 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
     <member name="T:Microsoft.ServiceBus.Messaging.RelayDescription">
       <summary>Represents a relay description.</summary>
     </member>
-    <member name="M:Microsoft.ServiceBus.Messaging.RelayDescription.#ctor">
-      <summary>Initializes a new instance of the <see cref="T:Microsoft.ServiceBus.Messaging.RelayDescription" /> class.</summary>
-    </member>
+    <member name="M:Microsoft.ServiceBus.Messaging.RelayDescription.#ctor(System.String,Microsoft.ServiceBus.RelayType)"></member>
+    <member name="P:Microsoft.ServiceBus.Messaging.RelayDescription.Authorization"></member>
     <member name="P:Microsoft.ServiceBus.Messaging.RelayDescription.CollectionName">
       <summary>Gets or sets the name of the collection associated with the relay.</summary>
       <returns>The name of the collection associated with the relay.</returns>
     </member>
+    <member name="P:Microsoft.ServiceBus.Messaging.RelayDescription.CreatedAt"></member>
+    <member name="P:Microsoft.ServiceBus.Messaging.RelayDescription.IsDynamic"></member>
+    <member name="P:Microsoft.ServiceBus.Messaging.RelayDescription.ListenerCount"></member>
+    <member name="P:Microsoft.ServiceBus.Messaging.RelayDescription.Path"></member>
+    <member name="P:Microsoft.ServiceBus.Messaging.RelayDescription.RelayType"></member>
+    <member name="P:Microsoft.ServiceBus.Messaging.RelayDescription.RequiresClientAuthorization"></member>
+    <member name="P:Microsoft.ServiceBus.Messaging.RelayDescription.RequiresTransportSecurity"></member>
+    <member name="P:Microsoft.ServiceBus.Messaging.RelayDescription.UpdatedAt"></member>
     <member name="T:Microsoft.ServiceBus.Messaging.RuleAction">
       <summary>Represents the filter actions which are allowed for the transformation of a message that have been matched by a filter expression.</summary>
     </member>
@@ -9970,10 +10051,9 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
     <member name="M:Microsoft.ServiceBus.Messaging.RuntimeEntityDescription.#ctor">
       <summary>Initializes a new instance of the <see cref="T:Microsoft.ServiceBus.Messaging.RuntimeEntityDescription" /> class.</summary>
     </member>
-    <member name="P:Microsoft.ServiceBus.Messaging.RuntimeEntityDescription.PartitioningPolicy">
-      <summary>Gets or sets the partitioning policy of the entity.</summary>
-      <returns>The partitioning policy of the entity.</returns>
-    </member>
+    <member name="P:Microsoft.ServiceBus.Messaging.RuntimeEntityDescription.EnablePartitioning"></member>
+    <member name="P:Microsoft.ServiceBus.Messaging.RuntimeEntityDescription.PartitionCount"></member>
+    <member name="P:Microsoft.ServiceBus.Messaging.RuntimeEntityDescription.RequiresDuplicateDetection"></member>
     <member name="M:Microsoft.ServiceBus.Messaging.RuntimeEntityDescription.ToString">
       <summary>Returns a string representation of <see cref="T:Microsoft.ServiceBus.Messaging.RuntimeEntityDescription" />.</summary>
       <returns>A string representation of <see cref="T:Microsoft.ServiceBus.Messaging.RuntimeEntityDescription" />.</returns>
@@ -10029,10 +10109,6 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
     <member name="P:Microsoft.ServiceBus.Messaging.SendAvailabilityPairedNamespaceOptions.PingPrimaryInterval">
       <summary>Gets or sets the interval of pings.</summary>
       <returns>The interval of pings.</returns>
-    </member>
-    <member name="P:Microsoft.ServiceBus.Messaging.SendAvailabilityPairedNamespaceOptions.SyphonRetryInterval">
-      <summary>Gets or sets the syphon retry interval.</summary>
-      <returns>The syphon retry interval.</returns>
     </member>
     <member name="T:Microsoft.ServiceBus.Messaging.ServerBusyException">
       <summary>The exception that is thrown when a server is overloaded with logical operations.</summary>
@@ -11588,6 +11664,32 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
       <summary>Gets or set a value that indicates whether redirection is enabled.</summary>
       <returns>true if redirection is enabled; otherwise, false.</returns>
     </member>
+    <member name="T:Microsoft.ServiceBus.Notifications.ApnsCredential"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.ApnsCredential.#ctor"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.ApnsCredential.#ctor(System.Byte[],System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.ApnsCredential.#ctor(System.String,System.String)"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.ApnsCredential.ApnsCertificate"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.ApnsCredential.CertificateKey"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.ApnsCredential.Endpoint"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.ApnsCredential.OnValidate(System.Boolean)"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.AppleNotification"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.AppleNotification.#ctor(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.AppleNotification.#ctor(System.String,System.Nullable{System.DateTime})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.AppleNotification.#ctor(System.String,System.Nullable{System.DateTime},System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.AppleNotification.#ctor(System.String,System.String)"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.AppleNotification.Expiry"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.AppleRegistrationDescription"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.AppleRegistrationDescription.#ctor(Microsoft.ServiceBus.Notifications.AppleRegistrationDescription)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.AppleRegistrationDescription.#ctor(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.AppleRegistrationDescription.#ctor(System.String,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.AppleRegistrationDescription.DeviceToken"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.AppleTemplateRegistrationDescription"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.AppleTemplateRegistrationDescription.#ctor(Microsoft.ServiceBus.Notifications.AppleTemplateRegistrationDescription)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.AppleTemplateRegistrationDescription.#ctor(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.AppleTemplateRegistrationDescription.#ctor(System.String,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.AppleTemplateRegistrationDescription.#ctor(System.String,System.String,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.AppleTemplateRegistrationDescription.BodyTemplate"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.AppleTemplateRegistrationDescription.Expiry"></member>
     <member name="T:Microsoft.ServiceBus.Notifications.CDataMember">
       <summary>Represents the notifications of the <see cref="T:Microsoft.ServiceBus.Notifications.CDataMember" />.</summary>
     </member>
@@ -11633,6 +11735,228 @@ This mode additionally requires outbound port 819 for the NAT prediction algorit
       <summary>Writes XML data into its XML representation.</summary>
       <param name="writer">The XML writer to write.</param>
     </member>
+    <member name="T:Microsoft.ServiceBus.Notifications.CollectionQueryResult`1">
+      <typeparam name="T"></typeparam>
+    </member>
+    <member name="P:Microsoft.ServiceBus.Notifications.CollectionQueryResult`1.ContinuationToken"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.CollectionQueryResult`1.GetEnumerator"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.CollectionQueryResult`1.System#Collections#IEnumerable#GetEnumerator"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.GcmCredential"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.GcmCredential.#ctor"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.GcmCredential.#ctor(System.String)"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.GcmCredential.GcmEndpoint"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.GcmCredential.GoogleApiKey"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.GcmCredential.OnValidate(System.Boolean)"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.GcmNotification"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.GcmNotification.#ctor(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.GcmNotification.#ctor(System.String,System.String)"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.GcmRegistrationDescription"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.GcmRegistrationDescription.#ctor(Microsoft.ServiceBus.Notifications.GcmRegistrationDescription)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.GcmRegistrationDescription.#ctor(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.GcmRegistrationDescription.#ctor(System.String,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.GcmRegistrationDescription.GcmRegistrationId"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.GcmTemplateRegistrationDescription"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.GcmTemplateRegistrationDescription.#ctor(Microsoft.ServiceBus.Notifications.GcmTemplateRegistrationDescription)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.GcmTemplateRegistrationDescription.#ctor(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.GcmTemplateRegistrationDescription.#ctor(System.String,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.GcmTemplateRegistrationDescription.#ctor(System.String,System.String,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.GcmTemplateRegistrationDescription.BodyTemplate"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.MpnsCredential"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsCredential.#ctor"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsCredential.#ctor(System.Byte[],System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsCredential.#ctor(System.Security.Cryptography.X509Certificates.X509Certificate,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsCredential.#ctor(System.String,System.String)"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.MpnsCredential.CertificateKey"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.MpnsCredential.MpnsCertificate"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsCredential.OnValidate(System.Boolean)"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.MpnsHeaderCollection"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsHeaderCollection.#ctor"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.MpnsNotification"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsNotification.#ctor(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsNotification.#ctor(System.String,System.Collections.Generic.IDictionary{System.String,System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsNotification.#ctor(System.String,System.Collections.Generic.IDictionary{System.String,System.String},System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsNotification.#ctor(System.String,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsNotification.#ctor(System.Xml.XmlDocument)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsNotification.#ctor(System.Xml.XmlDocument,System.Collections.Generic.IDictionary{System.String,System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsNotification.#ctor(System.Xml.XmlDocument,System.Collections.Generic.IDictionary{System.String,System.String},System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsNotification.#ctor(System.Xml.XmlDocument,System.String)"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.MpnsRegistrationDescription"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsRegistrationDescription.#ctor(Microsoft.ServiceBus.Notifications.MpnsRegistrationDescription)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsRegistrationDescription.#ctor(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsRegistrationDescription.#ctor(System.String,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsRegistrationDescription.#ctor(System.Uri)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsRegistrationDescription.#ctor(System.Uri,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.MpnsRegistrationDescription.ChannelUri"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.MpnsTemplateRegistrationDescription"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsTemplateRegistrationDescription.#ctor(Microsoft.ServiceBus.Notifications.MpnsTemplateRegistrationDescription)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsTemplateRegistrationDescription.#ctor(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsTemplateRegistrationDescription.#ctor(System.String,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsTemplateRegistrationDescription.#ctor(System.String,System.String,System.Collections.Generic.IDictionary{System.String,System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsTemplateRegistrationDescription.#ctor(System.String,System.String,System.Collections.Generic.IDictionary{System.String,System.String},System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsTemplateRegistrationDescription.#ctor(System.String,System.String,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsTemplateRegistrationDescription.#ctor(System.String,System.Xml.XmlDocument)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsTemplateRegistrationDescription.#ctor(System.Uri)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsTemplateRegistrationDescription.#ctor(System.Uri,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsTemplateRegistrationDescription.#ctor(System.Uri,System.String,System.Collections.Generic.IDictionary{System.String,System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsTemplateRegistrationDescription.#ctor(System.Uri,System.String,System.Collections.Generic.IDictionary{System.String,System.String},System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsTemplateRegistrationDescription.#ctor(System.Uri,System.String,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.MpnsTemplateRegistrationDescription.#ctor(System.Uri,System.Xml.XmlDocument)"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.MpnsTemplateRegistrationDescription.BodyTemplate"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.MpnsTemplateRegistrationDescription.MpnsHeaders"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.Notification"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.Notification.#ctor(System.Collections.Generic.IDictionary{System.String,System.String},System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.Notification.AddOrUpdateHeader(System.String,System.String)"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.Notification.Body"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.Notification.ContentType"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.Notification.Headers"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.Notification.OnValidateAndPopulateHeaders"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.Notification.PlatformType"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.Notification.Tag"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.NotificationHubClient"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.CreateAppleNativeRegistrationAsync(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.CreateAppleNativeRegistrationAsync(System.String,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.CreateAppleTemplateRegistrationAsync(System.String,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.CreateAppleTemplateRegistrationAsync(System.String,System.String,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.CreateClientFromConnectionString(System.String,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.CreateClientFromConnectionString(System.String,System.String,System.Boolean)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.CreateGcmNativeRegistrationAsync(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.CreateGcmNativeRegistrationAsync(System.String,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.CreateGcmTemplateRegistrationAsync(System.String,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.CreateGcmTemplateRegistrationAsync(System.String,System.String,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.CreateMpnsNativeRegistrationAsync(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.CreateMpnsNativeRegistrationAsync(System.String,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.CreateMpnsTemplateRegistrationAsync(System.String,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.CreateMpnsTemplateRegistrationAsync(System.String,System.String,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.CreateRegistrationAsync``1(``0)">
+      <typeparam name="T"></typeparam>
+    </member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.CreateWindowsNativeRegistrationAsync(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.CreateWindowsNativeRegistrationAsync(System.String,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.CreateWindowsTemplateRegistrationAsync(System.String,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.CreateWindowsTemplateRegistrationAsync(System.String,System.String,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.DeleteRegistrationAsync(Microsoft.ServiceBus.Notifications.RegistrationDescription)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.DeleteRegistrationAsync(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.DeleteRegistrationAsync(System.String,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.DeleteRegistrationsByChannelAsync(System.String)"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.NotificationHubClient.EnableTestSend"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.GetAllRegistrationsAsync(System.Int32)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.GetAllRegistrationsAsync(System.String,System.Int32)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.GetRegistrationAsync``1(System.String)">
+      <typeparam name="TRegistrationDescription"></typeparam>
+    </member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.GetRegistrationsByChannelAsync(System.String,System.Int32)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.GetRegistrationsByChannelAsync(System.String,System.String,System.Int32)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.GetRegistrationsByTagAsync(System.String,System.Int32)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.GetRegistrationsByTagAsync(System.String,System.String,System.Int32)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.RegistrationExistsAsync(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.SendAppleNativeNotificationAsync(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.SendAppleNativeNotificationAsync(System.String,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.SendGcmNativeNotificationAsync(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.SendGcmNativeNotificationAsync(System.String,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.SendMpnsNativeNotificationAsync(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.SendMpnsNativeNotificationAsync(System.String,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.SendNotificationAsync(Microsoft.ServiceBus.Notifications.Notification)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.SendTemplateNotificationAsync(System.Collections.Generic.IDictionary{System.String,System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.SendTemplateNotificationAsync(System.Collections.Generic.IDictionary{System.String,System.String},System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.SendWindowsNativeNotificationAsync(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.SendWindowsNativeNotificationAsync(System.String,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.UpdateRegistrationAsync``1(``0)">
+      <typeparam name="T"></typeparam>
+    </member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubClient.UpdateRegistrationsWithNewPnsHandleAsync(System.String,System.String)"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.NotificationHubDescription"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubDescription.#ctor(System.String)"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.NotificationHubDescription.ApnsCredential"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.NotificationHubDescription.Authorization"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.NotificationHubDescription.DailyMaxActiveDevices"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.NotificationHubDescription.DailyMaxActiveRegistrations"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.NotificationHubDescription.DailyOperations"></member>
+    <member name="F:Microsoft.ServiceBus.Notifications.NotificationHubDescription.DefaultFullSasRuleName"></member>
+    <member name="F:Microsoft.ServiceBus.Notifications.NotificationHubDescription.DefaultListenSasRuleName"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.NotificationHubDescription.GcmCredential"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.NotificationHubDescription.IsAnonymousAccessible"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.NotificationHubDescription.MpnsCredential"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.NotificationHubDescription.Path"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.NotificationHubDescription.RegistrationTtl"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubDescription.SetAccessPasswords(System.String,System.String,System.String,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationHubDescription.SetDefaultAccessPasswords(System.String,System.String)"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.NotificationHubDescription.UserMetadata"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.NotificationHubDescription.WnsCredential"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.NotificationOutcome"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.NotificationOutcome.#ctor"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.NotificationOutcome.Failure"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.NotificationOutcome.Results"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.NotificationOutcome.State"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.NotificationOutcome.Success"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.NotificationOutcome.TrackingId"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.NotificationOutcomeState"></member>
+    <member name="F:Microsoft.ServiceBus.Notifications.NotificationOutcomeState.DetailedStateAvailable">
+      <summary />
+    </member>
+    <member name="F:Microsoft.ServiceBus.Notifications.NotificationOutcomeState.Enqueued">
+      <summary />
+    </member>
+    <member name="T:Microsoft.ServiceBus.Notifications.PnsCredential"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.PnsCredential.BlockedOn"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.PnsCredential.Item(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.PnsCredential.OnValidate(System.Boolean)"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.PnsCredential.Properties"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.RegistrationDescription"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.RegistrationDescription.#ctor(Microsoft.ServiceBus.Notifications.RegistrationDescription)"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.RegistrationDescription.ETag"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.RegistrationDescription.ExpirationTime"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.RegistrationDescription.GenerateUrlSafeBase64(System.Byte[])"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.RegistrationDescription.RegistrationId"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.RegistrationDescription.TagCount(System.String)"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.RegistrationDescription.Tags"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.RegistrationDescription.ValidateTags(System.String)"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.RegistrationResult"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.RegistrationResult.#ctor"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.RegistrationResult.ApplicationPlatform"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.RegistrationResult.Outcome"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.RegistrationResult.PnsHandle"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.RegistrationResult.RegistrationId"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.TemplateNotification"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.TemplateNotification.#ctor(System.Collections.Generic.IDictionary{System.String,System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.TemplateNotification.#ctor(System.Collections.Generic.IDictionary{System.String,System.String},System.String)"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.WindowsNotification"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsNotification.#ctor(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsNotification.#ctor(System.String,System.Collections.Generic.IDictionary{System.String,System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsNotification.#ctor(System.String,System.Collections.Generic.IDictionary{System.String,System.String},System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsNotification.#ctor(System.String,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsNotification.#ctor(System.Xml.XmlDocument)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsNotification.#ctor(System.Xml.XmlDocument,System.Collections.Generic.IDictionary{System.String,System.String},System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsNotification.#ctor(System.Xml.XmlDocument,System.String)"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.WindowsRegistrationDescription"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsRegistrationDescription.#ctor(Microsoft.ServiceBus.Notifications.WindowsRegistrationDescription)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsRegistrationDescription.#ctor(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsRegistrationDescription.#ctor(System.String,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsRegistrationDescription.#ctor(System.Uri)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsRegistrationDescription.#ctor(System.Uri,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.WindowsRegistrationDescription.ChannelUri"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.WindowsTemplateRegistrationDescription"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsTemplateRegistrationDescription.#ctor(Microsoft.ServiceBus.Notifications.WindowsTemplateRegistrationDescription)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsTemplateRegistrationDescription.#ctor(System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsTemplateRegistrationDescription.#ctor(System.String,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsTemplateRegistrationDescription.#ctor(System.String,System.String,System.Collections.Generic.IDictionary{System.String,System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsTemplateRegistrationDescription.#ctor(System.String,System.String,System.Collections.Generic.IDictionary{System.String,System.String},System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsTemplateRegistrationDescription.#ctor(System.String,System.String,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsTemplateRegistrationDescription.#ctor(System.String,System.Xml.XmlDocument)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsTemplateRegistrationDescription.#ctor(System.Uri)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsTemplateRegistrationDescription.#ctor(System.Uri,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsTemplateRegistrationDescription.#ctor(System.Uri,System.String,System.Collections.Generic.IDictionary{System.String,System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsTemplateRegistrationDescription.#ctor(System.Uri,System.String,System.Collections.Generic.IDictionary{System.String,System.String},System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsTemplateRegistrationDescription.#ctor(System.Uri,System.String,System.Collections.Generic.IEnumerable{System.String})"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WindowsTemplateRegistrationDescription.#ctor(System.Uri,System.Xml.XmlDocument)"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.WindowsTemplateRegistrationDescription.BodyTemplate"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.WindowsTemplateRegistrationDescription.WnsHeaders"></member>
+    <member name="T:Microsoft.ServiceBus.Notifications.WnsCredential"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WnsCredential.#ctor"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WnsCredential.#ctor(System.String,System.String)"></member>
+    <member name="M:Microsoft.ServiceBus.Notifications.WnsCredential.OnValidate(System.Boolean)"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.WnsCredential.PackageSid"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.WnsCredential.SecretKey"></member>
+    <member name="P:Microsoft.ServiceBus.Notifications.WnsCredential.WindowsLiveEndpoint"></member>
     <member name="T:Microsoft.ServiceBus.Notifications.WnsHeaderCollection">
       <summary>Represents the collection of Windows Push Notification Services (WNS) headers.</summary>
     </member>

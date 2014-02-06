@@ -14,22 +14,7 @@ namespace DynamicsCrmDataProvider
         /// <returns></returns>
         public QueryExpression CreateQueryExpression(SelectBuilder builder)
         {
-            if (builder == null)
-            {
-                throw new InvalidOperationException("Command Text must be a Select statement.");
-            }
-            if (!builder.From.Any())
-            {
-                throw new InvalidOperationException("The select statement must include a From clause.");
-            }
-            if (builder.From.Count() > 1)
-            {
-                throw new NotSupportedException("The select statement must select from a single entity.");
-            }
-            if (!builder.Projection.Any())
-            {
-                throw new InvalidOperationException("The select statement must select atleast 1 attribute.");
-            }
+            GuardSelectBuilder(builder);
 
             // This is the entity being selected.
             var fromTable = (Table)((AliasedSource)builder.From.First()).Source;
@@ -64,95 +49,12 @@ namespace DynamicsCrmDataProvider
                 //TODO: Should only be one where clause?
                 foreach (var where in builder.Where)
                 {
-
-                    Column column = null;
                     var condition = new ConditionExpression();
-                    bool isColumnLeft = false;
-
                     var filter = where as OrderFilter;
                     if (filter != null)
                     {
-                        var left = filter.LeftHand;
-                        var right = filter.RightHand;
-                        column = left as Column;
-                        if (column != null)
-                        {
-                            isColumnLeft = true;
-                            condition.AttributeName = column.Name.ToLower();
-                        }
-                        else
-                        {
-                            column = right as Column;
-                            if (column != null)
-                            {
-                                condition.AttributeName = column.Name.ToLower();
-                            }
-                        }
-
-                        // Support Equals
-                        var equalTo = where as EqualToFilter;
-                        if (equalTo != null)
-                        {
-                            condition.Operator = ConditionOperator.Equal;
-                            if (column == null)
-                            {
-                                throw new InvalidOperationException("The query contains a WHERE clause with an Equals condition, however one side of the Equals condition must refer to an attribute name.");
-                            }
-
-                            Literal lit = null;
-                            if (isColumnLeft)
-                            {
-                                lit = right as Literal;
-                            }
-                            else
-                            {
-                                lit = left as Literal;
-                            }
-
-                            if (lit != null)
-                            {
-                                object litVal = GitLiteralValue(lit);
-                                condition.Values.Add(litVal);
-                                query.Criteria.Conditions.Add(condition);
-                                continue;
-                            }
-
-                            throw new NotSupportedException();
-
-                        }
-
-                        // Support Not Equals
-                        var notEqualTo = where as NotEqualToFilter;
-                        if (notEqualTo != null)
-                        {
-                            condition.Operator = ConditionOperator.NotEqual;
-                            if (column == null)
-                            {
-                                throw new InvalidOperationException("The query contains a WHERE clause with an Equals condition, however one side of the Equals condition must refer to an attribute name.");
-                            }
-
-                            Literal lit = null;
-                            if (isColumnLeft)
-                            {
-                                lit = right as Literal;
-                            }
-                            else
-                            {
-                                lit = left as Literal;
-                            }
-
-                            if (lit != null)
-                            {
-                                object litVal = GitLiteralValue(lit);
-                                condition.Values.Add(litVal);
-                                query.Criteria.Conditions.Add(condition);
-                                continue;
-                            }
-
-                            throw new NotSupportedException();
-
-                        }
-
+                        ProcessOrderFilter(query, condition, filter);
+                        continue;
                     }
 
                     throw new NotSupportedException();
@@ -160,6 +62,187 @@ namespace DynamicsCrmDataProvider
             }
             return query;
         }
+
+        private void ProcessOrderFilter(QueryExpression query, ConditionExpression condition, OrderFilter filter)
+        {
+            bool isColumnLeft = false;
+
+            var left = filter.LeftHand;
+            var right = filter.RightHand;
+            var leftcolumn = left as Column;
+            var rightcolumn = right as Column;
+
+            if (leftcolumn != null)
+            {
+                isColumnLeft = true;
+            }
+
+            Column firstColumn = leftcolumn ?? rightcolumn;
+
+            // defaullt attribute name for the filter condition.
+            if (firstColumn != null)
+            {
+                condition.AttributeName = firstColumn.Name.ToLower();
+            }
+
+            // Support Equals
+            var equalTo = filter as EqualToFilter;
+            if (equalTo != null)
+            {
+                AppendColumnCondition(condition, ConditionOperator.Equal, filter, firstColumn, isColumnLeft);
+                query.Criteria.Conditions.Add(condition);
+                return;
+            }
+
+            // Support Not Equals
+            var notEqualTo = filter as NotEqualToFilter;
+            if (notEqualTo != null)
+            {
+                AppendColumnCondition(condition, ConditionOperator.NotEqual, filter, firstColumn, isColumnLeft);
+                query.Criteria.Conditions.Add(condition);
+                return;
+            }
+
+            // Support Greater Than
+            var greaterThan = filter as GreaterThanFilter;
+            if (greaterThan != null)
+            {
+                AppendColumnCondition(condition, ConditionOperator.GreaterThan, filter, firstColumn, isColumnLeft);
+                query.Criteria.Conditions.Add(condition);
+                return;
+            }
+
+            // Support Greater Than Equal
+            var greaterEqual = filter as GreaterThanEqualToFilter;
+            if (greaterEqual != null)
+            {
+                AppendColumnCondition(condition, ConditionOperator.GreaterEqual, filter, firstColumn, isColumnLeft);
+                query.Criteria.Conditions.Add(condition);
+                return;
+            }
+
+            // Support Less Than
+            var lessThan = filter as LessThanFilter;
+            if (lessThan != null)
+            {
+                AppendColumnCondition(condition, ConditionOperator.LessThan, filter, firstColumn, isColumnLeft);
+                query.Criteria.Conditions.Add(condition);
+                return;
+            }
+
+            // Support Less Than Equal
+            var lessThanEqual = filter as LessThanEqualToFilter;
+            if (lessThanEqual != null)
+            {
+                AppendColumnCondition(condition, ConditionOperator.LessEqual, filter, firstColumn, isColumnLeft);
+                query.Criteria.Conditions.Add(condition);
+                return;
+            }
+        }
+
+        private void AppendColumnCondition(ConditionExpression condition, ConditionOperator conditionOperator, OrderFilter greaterThan, Column column, bool isColumnLeft)
+        {
+            condition.Operator = conditionOperator;
+            if (column == null)
+            {
+                throw new InvalidOperationException("The query contains a WHERE clause, however one side of the where condition must refer to an attribute name.");
+            }
+            Literal lit = null;
+            if (isColumnLeft)
+            {
+                lit = greaterThan.RightHand as Literal;
+            }
+            else
+            {
+                lit = greaterThan.LeftHand as Literal;
+            }
+
+            if (lit != null)
+            {
+                object litVal = GitLiteralValue(lit);
+                // is the literal a 
+                condition.Values.Add(litVal);
+                return;
+            }
+
+            throw new NotSupportedException();
+        }
+
+        // ReSharper disable UnusedParameter.Local
+        // This method is solely for pre condition checking.
+        private void GuardSelectBuilder(SelectBuilder builder)
+        // ReSharper restore UnusedParameter.Local
+        {
+            if (builder == null)
+            {
+                throw new InvalidOperationException("Command Text must be a Select statement.");
+            }
+            if (!builder.From.Any())
+            {
+                throw new InvalidOperationException("The select statement must include a From clause.");
+            }
+            if (builder.From.Count() > 1)
+            {
+                throw new NotSupportedException("The select statement must select from a single entity.");
+            }
+            if (!builder.Projection.Any())
+            {
+                throw new InvalidOperationException("The select statement must select atleast 1 attribute.");
+            }
+        }
+
+        //private void AppendColumnNotEqualTo(ConditionExpression condition, NotEqualToFilter notEqualTo, Column column, bool isColumnLeft)
+        //{
+        //    condition.Operator = ConditionOperator.NotEqual;
+        //    if (column == null)
+        //    {
+        //        throw new InvalidOperationException("The query contains a WHERE clause with an Not Equals condition, however one side of the Not Equals condition must refer to an attribute name.");
+        //    }
+        //    Literal lit = null;
+        //    if (isColumnLeft)
+        //    {
+        //        lit = notEqualTo.RightHand as Literal;
+        //    }
+        //    else
+        //    {
+        //        lit = notEqualTo.LeftHand as Literal;
+        //    }
+
+        //    if (lit != null)
+        //    {
+        //        object litVal = GitLiteralValue(lit);
+        //        condition.Values.Add(litVal);
+        //        return;
+        //    }
+
+        //    throw new NotSupportedException();
+        //}
+
+        //private void AppendColumnEqualTo(ConditionExpression condition, EqualToFilter equalTo, Column column, bool isColumnLeft)
+        //{
+        //    condition.Operator = ConditionOperator.Equal;
+        //    if (column == null)
+        //    {
+        //        throw new InvalidOperationException("The query contains a WHERE clause with an Equals condition, however one side of the Equals condition must refer to an attribute name.");
+        //    }
+        //    Literal lit = null;
+        //    if (isColumnLeft)
+        //    {
+        //        lit = equalTo.RightHand as Literal;
+        //    }
+        //    else
+        //    {
+        //        lit = equalTo.LeftHand as Literal;
+        //    }
+        //    if (lit != null)
+        //    {
+        //        object litVal = GitLiteralValue(lit);
+        //        condition.Values.Add(litVal);
+        //        return;
+        //    }
+
+        //    throw new NotSupportedException();
+        //}
 
         private object GitLiteralValue(Literal lit)
         {
@@ -176,12 +259,30 @@ namespace DynamicsCrmDataProvider
             numberLiteral = lit as NumericLiteral;
             if (numberLiteral != null)
             {
-                return numberLiteral.Value;
+                // cast down from double if possible..
+                checked
+                {
+                    try
+                    {
+                        int intValue = (int)numberLiteral.Value;
+                        return intValue;
+                    }
+                    catch (OverflowException)
+                    {
+                        //   can't down cast to int so remain as double.
+                        return numberLiteral.Value;
+                    }
+                }
+
             }
 
             throw new NotSupportedException("Unknown Literal");
 
         }
 
+
+
     }
+
+
 }
