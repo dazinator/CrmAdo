@@ -125,6 +125,7 @@ namespace DynamicsCrmDataProvider.Tests
         public void Should_Convert_Filter_Condition_To_Correct_Query_Expression_Condition(string filterOperator, object value, string filterFormatString)
         {
             // Arrange
+            // Formulate DML (SQL) statement from test case data.
             var columnName = "firstname";
             if (value == null || !value.GetType().IsArray)
             {
@@ -140,18 +141,22 @@ namespace DynamicsCrmDataProvider.Tests
                 {
                     formatArgs.Add(arg);
                 }
-                // The values are in an array, so reformat the format string replacing each item in the array.
                 filterFormatString = string.Format(filterFormatString, formatArgs.ToArray());
             }
-
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} ", filterFormatString);
+            // Convery the DML (SQL) statement to a SelectBuilder object which an object representation of the DML.
             var commandBuilder = new CommandBuilder();
             var cmd = commandBuilder.GetCommand(sql);
 
+            // Create test subject.
             var subject = CreateTestSubject();
+
             // Act
+            // Ask our test subject to Convert the SelectBuilder to a Query Expression.
             var queryExpression = subject.CreateQueryExpression(cmd as SelectBuilder);
+
             // Assert
+            // Verify that the Query Expression looks as expected in order to work agaisnt the Dynamics SDK.
             Assert.That(queryExpression.ColumnSet.AllColumns == false);
             Assert.That(queryExpression.ColumnSet.Columns[0] == "contactid");
             Assert.That(queryExpression.ColumnSet.Columns[1] == "firstname");
@@ -256,14 +261,13 @@ namespace DynamicsCrmDataProvider.Tests
                     break;
             }
 
-            //TODO: Haven;t yet implemented support for the following dynamics crm condition operators:
+            //TODO: Haven't yet implemented support for the following dynamics crm condition operators..
             //ConditionOperator.BeginsWith // LIKE 'X%' 
             //ConditionOperator.EndsWith // LIKE '%text';
             //ConditionOperator.Contains // LIKE '%X%'
             //ConditionOperator.DoesNotBeginWith // NOT LIKE 'text%';
             //ConditionOperator.DoesNotEndWith // NOT LIKE '%text';
             //ConditionOperator.DoesNotContain // NOT LIKE '%X%' 
-
             //ConditionOperator.Between // >= x and <= y
             //ConditionOperator.NotBetween // <= x and >= y
             //ConditionOperator.NotOn //  -The value is not on the specified date.
