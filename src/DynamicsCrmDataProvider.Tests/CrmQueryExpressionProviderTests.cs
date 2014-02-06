@@ -166,13 +166,15 @@ namespace DynamicsCrmDataProvider.Tests
         [TestCase(">", 1, "{0} {1} {2}", TestName = "Greater Than Filter with a Numeric Constant")]
         [TestCase("<", "SomeValue", "{0} {1} '{2}'", TestName = "Less Than Filter with a String Constant")]
         [TestCase("<", 1, "{0} {1} {2}", TestName = "Less Than Filter with a Numeric Constant")]
+        [TestCase("IS NULL", null, "{0} {1} {2}", TestName = "Is Null Filter")]
+        [TestCase("IS NOT NULL", null, "{0} {1}", TestName = "Is Not Null Filter")]
         public void Should_Convert_Filter_Condition_To_Correct_Query_Expression_Condition(string filterOperator, object value, string filterFormatString)
         {
             // Arrange
             var columnName = "firstname";
             filterFormatString = string.Format(filterFormatString, columnName, filterOperator, value);
 
-            //   var filterCondition = string.Format("{0} {1}", filterOperator, filterValue);
+           //   var filterCondition = string.Format("{0} {1}", filterOperator, filterValue);
 
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} ", filterFormatString);
             var commandBuilder = new CommandBuilder();
@@ -189,27 +191,40 @@ namespace DynamicsCrmDataProvider.Tests
             Assert.That(queryExpression.Criteria.Conditions.Count, Is.EqualTo(1));
             Assert.That(queryExpression.Criteria.FilterOperator, Is.EqualTo(LogicalOperator.And));
             Assert.That(queryExpression.Criteria.Conditions[0].AttributeName == "firstname");
-            Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(value));
 
             switch (filterOperator)
             {
                 case "=":
                     Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.Equal));
+                    Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(value));
                     break;
                 case "<>":
                     Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.NotEqual));
+                    Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(value));
                     break;
                 case ">":
                     Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.GreaterThan));
+                    Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(value));
                     break;
                 case "<":
                     Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.LessThan));
+                    Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(value));
                     break;
                 case ">=":
                     Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.GreaterEqual));
+                    Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(value));
                     break;
                 case "<=":
                     Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.LessEqual));
+                    Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(value));
+                    break;
+                case "IS NULL":
+                    Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.Null));
+                    Assert.That(queryExpression.Criteria.Conditions[0].Values, Is.Empty);
+                    break;
+                case "IS NOT NULL":
+                    Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.NotNull));
+                    Assert.That(queryExpression.Criteria.Conditions[0].Values, Is.Empty);
                     break;
                 default:
                     Assert.Fail("Unhandled test case.");
@@ -234,7 +249,7 @@ namespace DynamicsCrmDataProvider.Tests
 
             //ConditionOperator.Between // >= x and <= y
             //ConditionOperator.NotBetween // <= x and >= y
-          
+
             // ConditionOperator.NotOn // <> value  -The value is not on the specified date.
             // ConditionOperator.On // = value The value is on the specified date.
 

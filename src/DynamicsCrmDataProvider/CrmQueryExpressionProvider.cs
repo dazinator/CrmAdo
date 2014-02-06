@@ -50,10 +50,17 @@ namespace DynamicsCrmDataProvider
                 foreach (var where in builder.Where)
                 {
                     var condition = new ConditionExpression();
-                    var filter = where as OrderFilter;
-                    if (filter != null)
+                    var orderFilter = where as OrderFilter;
+                    if (orderFilter != null)
                     {
-                        ProcessOrderFilter(query, condition, filter);
+                        ProcessOrderFilter(query, condition, orderFilter);
+                        continue;
+                    }
+
+                    var nullFilter = where as NullFilter;
+                    if (nullFilter != null)
+                    {
+                        ProcessNullFilter(query, condition, nullFilter);
                         continue;
                     }
 
@@ -61,6 +68,33 @@ namespace DynamicsCrmDataProvider
                 }
             }
             return query;
+        }
+
+        private void ProcessNullFilter(QueryExpression query, ConditionExpression condition, NullFilter nullFilter)
+        {
+
+            var left = nullFilter.LeftHand;
+            var leftcolumn = left as Column;
+          
+            // defaullt attribute name for the filter condition.
+            if (leftcolumn != null)
+            {
+                condition.AttributeName = leftcolumn.Name.ToLower();
+            }
+            else
+            {
+                throw new NotSupportedException("Null operator only works agains a column value.");
+            }
+
+            var conditionOperator = ConditionOperator.Null;
+            if (nullFilter.Not)
+            {
+                conditionOperator = ConditionOperator.NotNull;
+            }
+
+            AppendColumnCondition(condition, conditionOperator, nullFilter, leftcolumn);
+            query.Criteria.Conditions.Add(condition);
+            return;
         }
 
         private void ProcessOrderFilter(QueryExpression query, ConditionExpression condition, OrderFilter filter)
@@ -89,7 +123,7 @@ namespace DynamicsCrmDataProvider
             var equalTo = filter as EqualToFilter;
             if (equalTo != null)
             {
-                AppendColumnCondition(condition, ConditionOperator.Equal, filter, firstColumn, isColumnLeft);
+                AppendColumnConditionWithValue(condition, ConditionOperator.Equal, filter, firstColumn, isColumnLeft);
                 query.Criteria.Conditions.Add(condition);
                 return;
             }
@@ -98,7 +132,7 @@ namespace DynamicsCrmDataProvider
             var notEqualTo = filter as NotEqualToFilter;
             if (notEqualTo != null)
             {
-                AppendColumnCondition(condition, ConditionOperator.NotEqual, filter, firstColumn, isColumnLeft);
+                AppendColumnConditionWithValue(condition, ConditionOperator.NotEqual, filter, firstColumn, isColumnLeft);
                 query.Criteria.Conditions.Add(condition);
                 return;
             }
@@ -107,7 +141,7 @@ namespace DynamicsCrmDataProvider
             var greaterThan = filter as GreaterThanFilter;
             if (greaterThan != null)
             {
-                AppendColumnCondition(condition, ConditionOperator.GreaterThan, filter, firstColumn, isColumnLeft);
+                AppendColumnConditionWithValue(condition, ConditionOperator.GreaterThan, filter, firstColumn, isColumnLeft);
                 query.Criteria.Conditions.Add(condition);
                 return;
             }
@@ -116,7 +150,7 @@ namespace DynamicsCrmDataProvider
             var greaterEqual = filter as GreaterThanEqualToFilter;
             if (greaterEqual != null)
             {
-                AppendColumnCondition(condition, ConditionOperator.GreaterEqual, filter, firstColumn, isColumnLeft);
+                AppendColumnConditionWithValue(condition, ConditionOperator.GreaterEqual, filter, firstColumn, isColumnLeft);
                 query.Criteria.Conditions.Add(condition);
                 return;
             }
@@ -125,7 +159,7 @@ namespace DynamicsCrmDataProvider
             var lessThan = filter as LessThanFilter;
             if (lessThan != null)
             {
-                AppendColumnCondition(condition, ConditionOperator.LessThan, filter, firstColumn, isColumnLeft);
+                AppendColumnConditionWithValue(condition, ConditionOperator.LessThan, filter, firstColumn, isColumnLeft);
                 query.Criteria.Conditions.Add(condition);
                 return;
             }
@@ -134,15 +168,16 @@ namespace DynamicsCrmDataProvider
             var lessThanEqual = filter as LessThanEqualToFilter;
             if (lessThanEqual != null)
             {
-                AppendColumnCondition(condition, ConditionOperator.LessEqual, filter, firstColumn, isColumnLeft);
+                AppendColumnConditionWithValue(condition, ConditionOperator.LessEqual, filter, firstColumn, isColumnLeft);
                 query.Criteria.Conditions.Add(condition);
                 return;
             }
         }
 
-        private void AppendColumnCondition(ConditionExpression condition, ConditionOperator conditionOperator, OrderFilter greaterThan, Column column, bool isColumnLeft)
+        private void AppendColumnConditionWithValue(ConditionExpression condition, ConditionOperator conditionOperator, OrderFilter greaterThan, Column column, bool isColumnLeft)
         {
-            condition.Operator = conditionOperator;
+
+            //  condition.Operator = conditionOperator;
             if (column == null)
             {
                 throw new InvalidOperationException("The query contains a WHERE clause, however one side of the where condition must refer to an attribute name.");
@@ -160,12 +195,22 @@ namespace DynamicsCrmDataProvider
             if (lit != null)
             {
                 object litVal = GitLiteralValue(lit);
-                // is the literal a 
-                condition.Values.Add(litVal);
+                AppendColumnCondition(condition, conditionOperator, greaterThan, column, litVal);
                 return;
             }
 
             throw new NotSupportedException();
+        }
+
+        private void AppendColumnCondition(ConditionExpression condition, ConditionOperator conditionOperator, Filter filter, Column column, params object[] values)
+        {
+            condition.Operator = conditionOperator;
+            if (values != null)
+            {
+                // is the literal a 
+                condition.Values.AddRange(values);
+                return;
+            }
         }
 
         // ReSharper disable UnusedParameter.Local
