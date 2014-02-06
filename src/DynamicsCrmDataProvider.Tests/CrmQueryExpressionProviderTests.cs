@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using DynamicsCrmDataProvider.Dynamics;
@@ -116,8 +117,10 @@ namespace DynamicsCrmDataProvider.Tests
         [TestCase("LIKE", "SomeValue", "{0} {1} '{2}'", TestName = "Like Filter with a String Constant")]
         [TestCase("NOT LIKE", "SomeValue", "{0} {1} '{2}'", TestName = "Not Like Filter with a String Constant")]
         [TestCase("IN", new string[] { "Julius", "Justin" }, "{0} {1} ('{2}', '{3}')", TestName = "In Filter with string array")]
+        [TestCase("IN", new int[] { 1, 2 }, "{0} {1} ({2}, {3})", TestName = "In Filter with Numeric array")]
         [TestCase("IN", new string[] { "097e0140-c269-430c-9caf-d2cffe261d8b", "897e0140-c269-430c-9caf-d2cffe261d8c" }, "{0} {1} ('{2}', '{3}')", TestName = "In Filter with Guid array")]
         [TestCase("NOT IN", new string[] { "Julius", "Justin" }, "{0} {1} ('{2}', '{3}')", TestName = "Not In Filter with string array")]
+        [TestCase("NOT IN", new int[] { 5, 10 }, "{0} {1} ({2}, {3})", TestName = "Not In Filter with Numeric array")]
         [TestCase("NOT IN", new string[] { "097e0140-c269-430c-9caf-d2cffe261d8b", "897e0140-c269-430c-9caf-d2cffe261d8c" }, "{0} {1} ('{2}', '{3}')", TestName = "Not In Filter with Guid array")]
         public void Should_Convert_Filter_Condition_To_Correct_Query_Expression_Condition(string filterOperator, object value, string filterFormatString)
         {
@@ -132,8 +135,11 @@ namespace DynamicsCrmDataProvider.Tests
                 var formatArgs = new List<object>();
                 formatArgs.Add(columnName);
                 formatArgs.Add(filterOperator);
-                var args = value as IEnumerable<object>;
-                formatArgs.AddRange(args);
+                var args = value as IEnumerable;
+                foreach (var arg in args)
+                {
+                    formatArgs.Add(arg);
+                }
                 // The values are in an array, so reformat the format string replacing each item in the array.
                 filterFormatString = string.Format(filterFormatString, formatArgs.ToArray());
             }
@@ -250,6 +256,7 @@ namespace DynamicsCrmDataProvider.Tests
                     break;
             }
 
+            //TODO: Haven;t yet implemented support for the following dynamics crm condition operators:
             //ConditionOperator.BeginsWith // LIKE 'X%' 
             //ConditionOperator.EndsWith // LIKE '%text';
             //ConditionOperator.Contains // LIKE '%X%'
@@ -259,9 +266,8 @@ namespace DynamicsCrmDataProvider.Tests
 
             //ConditionOperator.Between // >= x and <= y
             //ConditionOperator.NotBetween // <= x and >= y
-
-            // ConditionOperator.NotOn // <> value  -The value is not on the specified date.
-            // ConditionOperator.On // = value The value is on the specified date.
+            //ConditionOperator.NotOn //  -The value is not on the specified date.
+            //ConditionOperator.On // = The value is on the specified date.
 
         }
 
