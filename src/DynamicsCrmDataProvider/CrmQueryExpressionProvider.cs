@@ -406,7 +406,16 @@ namespace DynamicsCrmDataProvider
             stringLit = lit as StringLiteral;
             if (stringLit != null)
             {
-                return stringLit.Value;
+                // cast to GUID?
+                Guid val;
+                if (Guid.TryParse(stringLit.Value, out val))
+                {
+                    return val;
+                }
+                else
+                {
+                    return stringLit.Value;
+                }
             }
 
             numberLiteral = lit as NumericLiteral;

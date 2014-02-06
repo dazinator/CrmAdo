@@ -116,7 +116,9 @@ namespace DynamicsCrmDataProvider.Tests
         [TestCase("LIKE", "SomeValue", "{0} {1} '{2}'", TestName = "Like Filter with a String Constant")]
         [TestCase("NOT LIKE", "SomeValue", "{0} {1} '{2}'", TestName = "Not Like Filter with a String Constant")]
         [TestCase("IN", new string[] { "Julius", "Justin" }, "{0} {1} ('{2}', '{3}')", TestName = "In Filter with string array")]
+        [TestCase("IN", new string[] { "097e0140-c269-430c-9caf-d2cffe261d8b", "897e0140-c269-430c-9caf-d2cffe261d8c" }, "{0} {1} ('{2}', '{3}')", TestName = "In Filter with Guid array")]
         [TestCase("NOT IN", new string[] { "Julius", "Justin" }, "{0} {1} ('{2}', '{3}')", TestName = "Not In Filter with string array")]
+        [TestCase("NOT IN", new string[] { "097e0140-c269-430c-9caf-d2cffe261d8b", "897e0140-c269-430c-9caf-d2cffe261d8c" }, "{0} {1} ('{2}', '{3}')", TestName = "Not In Filter with Guid array")]
         public void Should_Convert_Filter_Condition_To_Correct_Query_Expression_Condition(string filterOperator, object value, string filterFormatString)
         {
             // Arrange
@@ -200,6 +202,16 @@ namespace DynamicsCrmDataProvider.Tests
                     {
                         foreach (var val in value as Array)
                         {
+                            Guid guidVal;
+                            if (val is string)
+                            {
+                                if (Guid.TryParse(val as string, out guidVal))
+                                {
+                                    Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(guidVal));
+                                    continue;
+                                }
+                            }
+
                             Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(val));
                         }
                     }
@@ -214,6 +226,16 @@ namespace DynamicsCrmDataProvider.Tests
                     {
                         foreach (var val in value as Array)
                         {
+                            Guid guidVal;
+                            if (val is string)
+                            {
+                                if (Guid.TryParse(val as string, out guidVal))
+                                {
+                                    Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(guidVal));
+                                    continue;
+                                }
+                            }
+
                             Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(val));
                         }
                     }
