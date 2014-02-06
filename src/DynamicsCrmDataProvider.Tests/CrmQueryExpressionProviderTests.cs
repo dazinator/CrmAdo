@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using DynamicsCrmDataProvider.Dynamics;
 using Microsoft.Xrm.Sdk;
@@ -95,7 +96,7 @@ namespace DynamicsCrmDataProvider.Tests
             var queryExpression = subject.CreateQueryExpression(cmd as SelectBuilder);
 
         }
-       
+
 
         [Test]
         [TestCase("=", "SomeValue", "{0} {1} '{2}'", TestName = "Equals Filter with a String Constant")]
@@ -112,13 +113,28 @@ namespace DynamicsCrmDataProvider.Tests
         [TestCase("<", 1, "{0} {1} {2}", TestName = "Less Than Filter with a Numeric Constant")]
         [TestCase("IS NULL", null, "{0} {1} {2}", TestName = "Is Null Filter")]
         [TestCase("IS NOT NULL", null, "{0} {1}", TestName = "Is Not Null Filter")]
+        [TestCase("LIKE", "SomeValue", "{0} {1} '{2}'", TestName = "Like Filter with a String Constant")]
+        [TestCase("NOT LIKE", "SomeValue", "{0} {1} '{2}'", TestName = "Not Like Filter with a String Constant")]
+        [TestCase("IN", new string[] { "Julius", "Justin" }, "{0} {1} ('{2}', '{3}')", TestName = "In Filter with string array")]
+        [TestCase("NOT IN", new string[] { "Julius", "Justin" }, "{0} {1} ('{2}', '{3}')", TestName = "Not In Filter with string array")]
         public void Should_Convert_Filter_Condition_To_Correct_Query_Expression_Condition(string filterOperator, object value, string filterFormatString)
         {
             // Arrange
             var columnName = "firstname";
-            filterFormatString = string.Format(filterFormatString, columnName, filterOperator, value);
-
-           //   var filterCondition = string.Format("{0} {1}", filterOperator, filterValue);
+            if (value == null || !value.GetType().IsArray)
+            {
+                filterFormatString = string.Format(filterFormatString, columnName, filterOperator, value);
+            }
+            else
+            {
+                var formatArgs = new List<object>();
+                formatArgs.Add(columnName);
+                formatArgs.Add(filterOperator);
+                var args = value as IEnumerable<object>;
+                formatArgs.AddRange(args);
+                // The values are in an array, so reformat the format string replacing each item in the array.
+                filterFormatString = string.Format(filterFormatString, formatArgs.ToArray());
+            }
 
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} ", filterFormatString);
             var commandBuilder = new CommandBuilder();
@@ -170,19 +186,47 @@ namespace DynamicsCrmDataProvider.Tests
                     Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.NotNull));
                     Assert.That(queryExpression.Criteria.Conditions[0].Values, Is.Empty);
                     break;
+                case "LIKE":
+                    Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.Like));
+                    Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(value));
+                    break;
+                case "NOT LIKE":
+                    Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.NotLike));
+                    Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(value));
+                    break;
+                case "IN":
+                    Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.In));
+                    if (value != null && value.GetType().IsArray)
+                    {
+                        foreach (var val in value as Array)
+                        {
+                            Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(val));
+                        }
+                    }
+                    else
+                    {
+                        Assert.Fail("Unhandled test case for IN expression.");
+                    }
+                    break;
+                case "NOT IN":
+                    Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.NotIn));
+                    if (value != null && value.GetType().IsArray)
+                    {
+                        foreach (var val in value as Array)
+                        {
+                            Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(val));
+                        }
+                    }
+                    else
+                    {
+                        Assert.Fail("Unhandled test case for IN expression.");
+                    }
+
+                    break;
                 default:
                     Assert.Fail("Unhandled test case.");
                     break;
             }
-
-            // ConditionOperator.Null // IS NULL
-            // ConditionOperator.NotNull // IS NOT NULL
-
-            // ConditionOperator.Like // LIKE ''
-            // ConditionOperator.NotLike // NOT LIKE ''
-
-            // ConditionOperator.In // IN (value1, value2, value 3)
-            // ConditionOperator.NotIn // NOT IN (value1, value2, value 3)
 
             //ConditionOperator.BeginsWith // LIKE 'X%' 
             //ConditionOperator.EndsWith // LIKE '%text';

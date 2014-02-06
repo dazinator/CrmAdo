@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xrm.Sdk.Query;
 using SQLGeneration.Builders;
@@ -64,10 +66,74 @@ namespace DynamicsCrmDataProvider
                         continue;
                     }
 
+                    var likeFilter = where as LikeFilter;
+                    if (likeFilter != null)
+                    {
+                        ProcessLikeFilter(query, condition, likeFilter);
+                        continue;
+                    }
+
+                    var inFilter = where as InFilter;
+                    if (inFilter != null)
+                    {
+                        ProcessInFilter(query, condition, inFilter);
+                        continue;
+                    }
+
                     throw new NotSupportedException();
                 }
             }
             return query;
+        }
+
+        private void ProcessInFilter(QueryExpression query, ConditionExpression condition, InFilter filter)
+        {
+            // Support Like
+            var left = filter.LeftHand;
+            var leftcolumn = left as Column;
+
+            // defaullt attribute name for the filter condition.
+            if (leftcolumn != null)
+            {
+                condition.AttributeName = leftcolumn.Name.ToLower();
+            }
+            else
+            {
+                throw new NotSupportedException("IN operator only works agains a column value.");
+            }
+
+            var conditionOperator = ConditionOperator.In;
+            if (filter.Not)
+            {
+                conditionOperator = ConditionOperator.NotIn;
+            }
+            var values = filter.Values;
+
+            if (values.IsValueList)
+            {
+                var valuesList = values as ValueList;
+
+                if (valuesList != null)
+                {
+                    var inValues = new object[valuesList.Values.Count()];
+                    int index = 0;
+                    foreach (var item in valuesList.Values)
+                    {
+                        var literal = item as Literal;
+                        if (literal == null)
+                        {
+                            throw new ArgumentException("The values list must contain literals.");
+                        }
+                        inValues[index] = GitLiteralValue(literal);
+                        index++;
+                    }
+                    AppendColumnCondition(condition, conditionOperator, filter, leftcolumn, inValues);
+                    query.Criteria.Conditions.Add(condition);
+                    return;
+                }
+                throw new ArgumentException("The values list for the IN expression is null");
+            }
+            throw new NotSupportedException();
         }
 
         private void ProcessNullFilter(QueryExpression query, ConditionExpression condition, NullFilter nullFilter)
@@ -75,7 +141,7 @@ namespace DynamicsCrmDataProvider
 
             var left = nullFilter.LeftHand;
             var leftcolumn = left as Column;
-          
+
             // defaullt attribute name for the filter condition.
             if (leftcolumn != null)
             {
@@ -172,6 +238,35 @@ namespace DynamicsCrmDataProvider
                 query.Criteria.Conditions.Add(condition);
                 return;
             }
+
+        }
+
+        private void ProcessLikeFilter(QueryExpression query, ConditionExpression condition, LikeFilter filter)
+        {
+
+            // Support Like
+            var left = filter.LeftHand;
+            var leftcolumn = left as Column;
+
+            // defaullt attribute name for the filter condition.
+            if (leftcolumn != null)
+            {
+                condition.AttributeName = leftcolumn.Name.ToLower();
+            }
+            else
+            {
+                throw new NotSupportedException("Null operator only works agains a column value.");
+            }
+
+            var conditionOperator = ConditionOperator.Like;
+            if (filter.Not)
+            {
+                conditionOperator = ConditionOperator.NotLike;
+            }
+
+            AppendColumnCondition(condition, conditionOperator, filter, leftcolumn, filter.RightHand.Value);
+            query.Criteria.Conditions.Add(condition);
+            return;
         }
 
         private void AppendColumnConditionWithValue(ConditionExpression condition, ConditionOperator conditionOperator, OrderFilter greaterThan, Column column, bool isColumnLeft)
@@ -208,7 +303,20 @@ namespace DynamicsCrmDataProvider
             if (values != null)
             {
                 // is the literal a 
-                condition.Values.AddRange(values);
+                foreach (var value in values)
+                {
+                    if (value is Array)
+                    {
+                        foreach (var o in value as Array)
+                        {
+                            condition.Values.Add(o);
+                        }
+                    }
+                    else
+                    {
+                        condition.Values.Add(value);
+                    }
+                }
                 return;
             }
         }
@@ -324,6 +432,7 @@ namespace DynamicsCrmDataProvider
             throw new NotSupportedException("Unknown Literal");
 
         }
+
 
 
 
