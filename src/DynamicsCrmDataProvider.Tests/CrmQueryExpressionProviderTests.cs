@@ -122,6 +122,12 @@ namespace DynamicsCrmDataProvider.Tests
         [TestCase("NOT IN", new string[] { "Julius", "Justin" }, "{0} {1} ('{2}', '{3}')", TestName = "Not In Filter with string array")]
         [TestCase("NOT IN", new int[] { 5, 10 }, "{0} {1} ({2}, {3})", TestName = "Not In Filter with Numeric array")]
         [TestCase("NOT IN", new string[] { "097e0140-c269-430c-9caf-d2cffe261d8b", "897e0140-c269-430c-9caf-d2cffe261d8c" }, "{0} {1} ('{2}', '{3}')", TestName = "Not In Filter with Guid array")]
+        [TestCase("LIKE", "SomeValue%", "{0} {1} '{2}'", TestName = "Starts With Filter")]
+        [TestCase("LIKE", "%SomeValue", "{0} {1} '{2}'", TestName = "Ends With Filter")]
+        [TestCase("LIKE", "%SomeValue%", "{0} {1} '{2}'", TestName = "Contains Filter")]
+        [TestCase("NOT LIKE", "SomeValue%", "{0} {1} '{2}'", TestName = "Does Not Start With Filter")]
+        [TestCase("NOT LIKE", "%SomeValue", "{0} {1} '{2}'", TestName = "Does Not End With Filter")]
+        [TestCase("NOT LIKE", "%SomeValue%", "{0} {1} '{2}'", TestName = "Does Not Contain Filter")]
         public void Should_Convert_Filter_Condition_To_Correct_Query_Expression_Condition(string filterOperator, object value, string filterFormatString)
         {
             // Arrange
@@ -200,12 +206,104 @@ namespace DynamicsCrmDataProvider.Tests
                     Assert.That(queryExpression.Criteria.Conditions[0].Values, Is.Empty);
                     break;
                 case "LIKE":
-                    Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.Like));
-                    Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(value));
+
+                    if (value != null)
+                    {
+                        bool startsWith = false;
+                        bool endsWith = false;
+                        var stringVal = value.ToString();
+                        startsWith = stringVal.EndsWith("%");
+                        endsWith = stringVal.StartsWith("%");
+                        if (startsWith && endsWith)
+                        {
+                            // contains..
+                            var actualValue = stringVal.Remove(0, 1);
+                            if (actualValue.Length > 0 && actualValue.EndsWith("%"))
+                            {
+                                actualValue = actualValue.Remove(actualValue.Length - 1, 1);
+                            }
+                            Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.Contains));
+                            Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(actualValue));
+                        }
+                        else if (startsWith)
+                        {
+                            // starts with..
+                            var actualValue = stringVal.Remove(stringVal.Length - 1, 1);
+                            Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.BeginsWith));
+                            Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(actualValue));
+
+                        }
+                        else if (endsWith)
+                        {
+                            // ends with
+                            var actualValue = stringVal.Remove(0, 1);
+                            Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.EndsWith));
+                            Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(actualValue));
+                        }
+                        else
+                        {
+                            // like
+                            Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.Like));
+                            Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(value));
+                        }
+
+
+
+                    }
+                    else
+                    {
+                        Assert.Fail("Unhandled test case data");
+                    }
+
                     break;
                 case "NOT LIKE":
-                    Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.NotLike));
-                    Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(value));
+                    if (value != null)
+                    {
+                        bool startsWith = false;
+                        bool endsWith = false;
+                        var stringVal = value.ToString();
+                        startsWith = stringVal.EndsWith("%");
+                        endsWith = stringVal.StartsWith("%");
+                        if (startsWith && endsWith)
+                        {
+                            // contains..
+                            var actualValue = stringVal.Remove(0, 1);
+                            if (actualValue.Length > 0 && actualValue.EndsWith("%"))
+                            {
+                                actualValue = actualValue.Remove(actualValue.Length - 1, 1);
+                            }
+                            Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.DoesNotContain));
+                            Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(actualValue));
+                        }
+                        else if (startsWith)
+                        {
+                            // starts with..
+                            var actualValue = stringVal.Remove(stringVal.Length - 1, 1);
+                            Assert.That(queryExpression.Criteria.Conditions[0].Operator,
+                                        Is.EqualTo(ConditionOperator.DoesNotBeginWith));
+                            Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(actualValue));
+
+                        }
+                        else if (endsWith)
+                        {
+                            // ends with
+                            var actualValue = stringVal.Remove(0, 1);
+                            Assert.That(queryExpression.Criteria.Conditions[0].Operator,
+                                        Is.EqualTo(ConditionOperator.DoesNotEndWith));
+                            Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(actualValue));
+                        }
+                        else
+                        {
+                            // like
+                            Assert.That(queryExpression.Criteria.Conditions[0].Operator,
+                                        Is.EqualTo(ConditionOperator.NotLike));
+                            Assert.That(queryExpression.Criteria.Conditions[0].Values, Contains.Item(value));
+                        }
+                    }
+                    else
+                    {
+                        Assert.Fail("Unhandled test case data");
+                    }
                     break;
                 case "IN":
                     Assert.That(queryExpression.Criteria.Conditions[0].Operator, Is.EqualTo(ConditionOperator.In));
@@ -262,12 +360,7 @@ namespace DynamicsCrmDataProvider.Tests
             }
 
             //TODO: Haven't yet implemented support for the following dynamics crm condition operators..
-            //ConditionOperator.BeginsWith // LIKE 'X%' 
-            //ConditionOperator.EndsWith // LIKE '%text';
-            //ConditionOperator.Contains // LIKE '%X%'
-            //ConditionOperator.DoesNotBeginWith // NOT LIKE 'text%';
-            //ConditionOperator.DoesNotEndWith // NOT LIKE '%text';
-            //ConditionOperator.DoesNotContain // NOT LIKE '%X%' 
+          
             //ConditionOperator.Between // >= x and <= y
             //ConditionOperator.NotBetween // <= x and >= y
             //ConditionOperator.NotOn //  -The value is not on the specified date.

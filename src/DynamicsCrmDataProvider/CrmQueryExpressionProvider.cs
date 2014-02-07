@@ -258,13 +258,70 @@ namespace DynamicsCrmDataProvider
                 throw new NotSupportedException("Null operator only works agains a column value.");
             }
 
-            var conditionOperator = ConditionOperator.Like;
-            if (filter.Not)
-            {
-                conditionOperator = ConditionOperator.NotLike;
-            }
+            // detect like expressions for begins with, ends with and contains..
 
-            AppendColumnCondition(condition, conditionOperator, filter, leftcolumn, filter.RightHand.Value);
+            var val = filter.RightHand.Value;
+            bool startsWith = val.EndsWith("%");
+            bool endsWith = val.StartsWith("%");
+           
+            ConditionOperator conditionoperator;
+
+            if (startsWith)
+            {
+                if (endsWith)
+                {
+                    // contains
+                    if (filter.Not)
+                    {
+                        conditionoperator = ConditionOperator.DoesNotContain;
+                    }
+                    else
+                    {
+                         conditionoperator = ConditionOperator.Contains;
+                    }
+                    val = filter.RightHand.Value.Trim('%');
+                }
+                else
+                {
+                    // starts with
+                    val = filter.RightHand.Value.TrimEnd('%');
+                    if (filter.Not)
+                    {
+                        conditionoperator = ConditionOperator.DoesNotBeginWith;
+                    }
+                    else
+                    {
+                        conditionoperator = ConditionOperator.BeginsWith;
+                    }
+                }
+            }
+            else if(endsWith)
+            {
+                // ends with;
+                // contains
+                val = filter.RightHand.Value.TrimStart('%');
+                if (filter.Not)
+                {
+                    conditionoperator = ConditionOperator.DoesNotEndWith;
+                }
+                else
+                {
+                    conditionoperator = ConditionOperator.EndsWith;
+                }
+            }
+            else
+            {
+                if (filter.Not)
+                {
+                    conditionoperator = ConditionOperator.NotLike;
+                }
+                else
+                {
+                    conditionoperator = ConditionOperator.Like;
+                }
+
+            }
+            AppendColumnCondition(condition, conditionoperator, filter, leftcolumn, val);
             query.Criteria.Conditions.Add(condition);
             return;
         }
