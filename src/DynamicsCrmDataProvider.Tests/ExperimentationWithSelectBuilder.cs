@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using DynamicsCrmDataProvider.Dynamics;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using NUnit.Core;
 using NUnit.Framework;
 using Rhino.Mocks;
 using SQLGeneration.Builders;
@@ -64,23 +66,6 @@ namespace DynamicsCrmDataProvider.Tests
                 }
             }
 
-
-            // Should not have the entity name.
-
-            // for each column
-            // selectBuilder.Sources[firstFrom].Column("");
-            //var columnSet = new ColumnSet()
-
-
-            //if(selectBuilder.Sources== null || selectBuilder.Sources.Any())
-
-            //    var customerId = builder.Source["Customer"].Column("CustomerId");
-            //    var parameter = new Placeholder("@CustomerId");
-            //    var filter = new EqualToFilter(customerId, parameter);
-            //    builder.AddWhere(filter);
-
-            //    var formatter = new Formatter();
-            //    commandText = formatter.GetCommandText(builder);
         }
 
         [Test]
@@ -110,6 +95,36 @@ namespace DynamicsCrmDataProvider.Tests
 
             //    var formatter = new Formatter();
             //    commandText = formatter.GetCommandText(builder);
+        }
+
+        [Category("Integration")]
+        [Test]
+        public void DeleteThis()
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var command = conn.CreateCommand();
+                command.CommandText = "SELECT contactid, firstname, lastname FROM Contact WHERE firstname LIKE 'D%'";
+                //   command.CommandType = CommandType.Text;
+                int resultCount = 0;
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        resultCount++;
+                        var contactId = (Guid)reader["contactid"];
+                        var firstName = (string)reader["firstname"];
+                        var lastName = (string)reader["lastname"];
+                        Console.WriteLine(string.Format("{0} {1} {2}", contactId, firstName, lastName));
+                    }
+                }
+                Console.WriteLine("There were " + resultCount + " results..");
+            }
+
+
+
         }
 
     }

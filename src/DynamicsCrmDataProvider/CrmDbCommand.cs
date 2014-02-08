@@ -14,6 +14,7 @@ namespace DynamicsCrmDataProvider
         private DbConnection _DbConnection;
         private string _CommandText = string.Empty;
         private ICrmCommandExecutor _CrmCommandExecutor;
+        private CommandType _CommandType;
 
         #region Constructor
         public CrmDbCommand()
@@ -34,6 +35,7 @@ namespace DynamicsCrmDataProvider
             _DbConnection = connection;
             _CommandText = commandText;
             _CrmCommandExecutor = crmCommandExecutor;
+            _CommandType = CommandType.Text;
         }
         #endregion
 
@@ -47,7 +49,11 @@ namespace DynamicsCrmDataProvider
 
         public override int CommandTimeout { get; set; }
 
-        public override CommandType CommandType { get; set; }
+        public override CommandType CommandType
+        {
+            get { return _CommandType; }
+            set { _CommandType = value; }
+        }
 
         public override UpdateRowSource UpdatedRowSource { get; set; }
 

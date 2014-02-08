@@ -62,10 +62,7 @@ namespace DynamicsCrmDataProvider
         private EntityCollection ProcessTextCommand(CrmDbCommand command)
         {
             //  string commandText = "SELECT CustomerId, FirstName, LastName, Created FROM Customer";
-            var commandText = command.CommandText;
-            var commandBuilder = new CommandBuilder();
-            var cmd = commandBuilder.GetCommand(commandText);
-            var queryExpression = _CrmQueryExpressionProvider.CreateQueryExpression(cmd as SelectBuilder);
+             var queryExpression = _CrmQueryExpressionProvider.CreateQueryExpression(command);
             var orgService = command.CrmDbConnection.OrganizationService;
             var results = orgService.RetrieveMultiple(queryExpression);
             return results;

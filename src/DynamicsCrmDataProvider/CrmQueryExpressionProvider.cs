@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using Microsoft.Xrm.Sdk.Query;
 using SQLGeneration.Builders;
+using SQLGeneration.Generators;
 
 namespace DynamicsCrmDataProvider
 {
@@ -14,8 +16,12 @@ namespace DynamicsCrmDataProvider
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public QueryExpression CreateQueryExpression(SelectBuilder builder)
+        public QueryExpression CreateQueryExpression(CrmDbCommand command)
         {
+            var commandText = command.CommandText;
+            var commandBuilder = new CommandBuilder();
+            var builder = commandBuilder.GetCommand(commandText) as SelectBuilder;
+
             GuardSelectBuilder(builder);
 
             // This is the entity being selected.
@@ -24,26 +30,7 @@ namespace DynamicsCrmDataProvider
 
             // detect all columns..
             var query = new QueryExpression(firstEntityName);
-            query.ColumnSet = new ColumnSet();
-            if (builder.Projection.Count() == 1)
-            {
-                var column = builder.Projection.First().ProjectionItem;
-                if (column is AllColumns)
-                {
-                    query.ColumnSet.AllColumns = true;
-                }
-                else
-                {
-                    query.ColumnSet.AddColumn(column.GetProjectionName());
-                }
-            }
-            else
-            {
-                foreach (var projection in builder.Projection)
-                {
-                    query.ColumnSet.AddColumn(projection.ProjectionItem.GetProjectionName());
-                }
-            }
+            query.ColumnSet = GetColumnSet(builder.Projection);
 
             // do where clause..
             if (builder.Where != null && builder.Where.Any())
@@ -84,6 +71,31 @@ namespace DynamicsCrmDataProvider
                 }
             }
             return query;
+        }
+
+        private ColumnSet GetColumnSet(IEnumerable<AliasedProjection> projection)
+        {
+            var columnSet = new ColumnSet();
+            if (projection.Count() == 1)
+            {
+                var column = projection.First().ProjectionItem;
+                if (column is AllColumns)
+                {
+                    columnSet.AllColumns = true;
+                }
+                else
+                {
+                    columnSet.AddColumn(column.GetProjectionName());
+                }
+            }
+            else
+            {
+                foreach (var projItem in projection)
+                {
+                    columnSet.AddColumn(projItem.ProjectionItem.GetProjectionName());
+                }
+            }
+            return columnSet;
         }
 
         private void ProcessInFilter(QueryExpression query, ConditionExpression condition, InFilter filter)
@@ -263,7 +275,7 @@ namespace DynamicsCrmDataProvider
             var val = filter.RightHand.Value;
             bool startsWith = val.EndsWith("%");
             bool endsWith = val.StartsWith("%");
-           
+
             ConditionOperator conditionoperator;
 
             if (startsWith)
@@ -277,7 +289,7 @@ namespace DynamicsCrmDataProvider
                     }
                     else
                     {
-                         conditionoperator = ConditionOperator.Contains;
+                        conditionoperator = ConditionOperator.Contains;
                     }
                     val = filter.RightHand.Value.Trim('%');
                 }
@@ -295,7 +307,7 @@ namespace DynamicsCrmDataProvider
                     }
                 }
             }
-            else if(endsWith)
+            else if (endsWith)
             {
                 // ends with;
                 // contains

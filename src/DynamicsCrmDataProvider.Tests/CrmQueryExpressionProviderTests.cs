@@ -21,12 +21,13 @@ namespace DynamicsCrmDataProvider.Tests
         {
             // Arrange
             var sql = "Select * From contact";
-            var commandBuilder = new CommandBuilder();
-            var cmd = commandBuilder.GetCommand(sql);
+            var cmd = new CrmDbCommand(null);
+            cmd.CommandText = sql;
+          //  var cmd = commandBuilder.GetCommand(sql);
 
             var subject = CreateTestSubject();
             // Act
-            var queryExpression = subject.CreateQueryExpression(cmd as SelectBuilder);
+            var queryExpression = subject.CreateQueryExpression(cmd);
             // Assert
             Assert.That(queryExpression.ColumnSet.AllColumns == true);
             Assert.That(queryExpression.EntityName == "contact");
@@ -38,12 +39,12 @@ namespace DynamicsCrmDataProvider.Tests
         {
             // Arrange
             var sql = "Select contactid, firstname, lastname From contact";
-            var commandBuilder = new CommandBuilder();
-            var cmd = commandBuilder.GetCommand(sql);
 
+            var cmd = new CrmDbCommand(null);
+            cmd.CommandText = sql;
             var subject = CreateTestSubject();
             // Act
-            var queryExpression = subject.CreateQueryExpression(cmd as SelectBuilder);
+            var queryExpression = subject.CreateQueryExpression(cmd);
             // Assert
             Assert.That(queryExpression.ColumnSet.AllColumns == false);
             Assert.That(queryExpression.ColumnSet.Columns[0] == "contactid");
@@ -59,12 +60,12 @@ namespace DynamicsCrmDataProvider.Tests
         {
             // Arrange
             var sql = "Select From contact";
-            var commandBuilder = new CommandBuilder();
-            var cmd = commandBuilder.GetCommand(sql);
+            var cmd = new CrmDbCommand(null);
+            cmd.CommandText = sql;
 
             var subject = CreateTestSubject();
             // Act
-            var queryExpression = subject.CreateQueryExpression(cmd as SelectBuilder);
+            var queryExpression = subject.CreateQueryExpression(cmd);
 
         }
 
@@ -74,12 +75,12 @@ namespace DynamicsCrmDataProvider.Tests
         {
             // Arrange
             var sql = "Select * From";
-            var commandBuilder = new CommandBuilder();
-            var cmd = commandBuilder.GetCommand(sql);
+            var cmd = new CrmDbCommand(null);
+            cmd.CommandText = sql;
 
             var subject = CreateTestSubject();
             // Act
-            var queryExpression = subject.CreateQueryExpression(cmd as SelectBuilder);
+            var queryExpression = subject.CreateQueryExpression(cmd);
 
         }
 
@@ -89,12 +90,12 @@ namespace DynamicsCrmDataProvider.Tests
         {
             // Arrange
             var sql = "Insert into MyTest (mycolumn) values('test')";
-            var commandBuilder = new CommandBuilder();
-            var cmd = commandBuilder.GetCommand(sql);
+            var cmd = new CrmDbCommand(null);
+            cmd.CommandText = sql;
 
             var subject = CreateTestSubject();
             // Act
-            var queryExpression = subject.CreateQueryExpression(cmd as SelectBuilder);
+            var queryExpression = subject.CreateQueryExpression(cmd);
 
         }
 
@@ -151,15 +152,15 @@ namespace DynamicsCrmDataProvider.Tests
             }
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} ", filterFormatString);
             // Convery the DML (SQL) statement to a SelectBuilder object which an object representation of the DML.
-            var commandBuilder = new CommandBuilder();
-            var cmd = commandBuilder.GetCommand(sql);
+            var cmd = new CrmDbCommand(null);
+            cmd.CommandText = sql;
 
             // Create test subject.
             var subject = CreateTestSubject();
 
             // Act
             // Ask our test subject to Convert the SelectBuilder to a Query Expression.
-            var queryExpression = subject.CreateQueryExpression(cmd as SelectBuilder);
+            var queryExpression = subject.CreateQueryExpression(cmd);
 
             // Assert
             // Verify that the Query Expression looks as expected in order to work agaisnt the Dynamics SDK.
@@ -374,12 +375,12 @@ namespace DynamicsCrmDataProvider.Tests
         {
             // Arrange
             var sql = "Select contactid, firstname, lastname From contact Where 'Julius' = 'Julius' and lastname = 'Caeser'";
-            var commandBuilder = new CommandBuilder();
-            var cmd = commandBuilder.GetCommand(sql);
+            var cmd = new CrmDbCommand(null);
+            cmd.CommandText = sql;
 
             var subject = CreateTestSubject();
             // Act
-            var queryExpression = subject.CreateQueryExpression(cmd as SelectBuilder);
+            var queryExpression = subject.CreateQueryExpression(cmd);
 
         }
 

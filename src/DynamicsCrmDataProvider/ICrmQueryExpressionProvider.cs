@@ -10,6 +10,6 @@ namespace DynamicsCrmDataProvider
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        QueryExpression CreateQueryExpression(SelectBuilder builder);
+        QueryExpression CreateQueryExpression(CrmDbCommand command);
     }
 }
