@@ -8,6 +8,7 @@ namespace DynamicsCrmDataProvider
         {
             if (val == null)
             {
+                
                 return DBNull.Value;
             }
             else

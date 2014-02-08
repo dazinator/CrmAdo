@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 
 namespace DynamicsCrmDataProvider
 {
@@ -7,4 +9,6 @@ namespace DynamicsCrmDataProvider
         EntityCollection ExecuteCommand(CrmDbCommand command);
         int ExecuteNonQueryCommand(CrmDbCommand command);
     }
+
+   
 }

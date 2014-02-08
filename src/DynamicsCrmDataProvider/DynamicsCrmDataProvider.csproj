@@ -116,11 +116,14 @@
     <Compile Include="CrmQueryExpressionProvider.cs" />
     <Compile Include="Dynamics\CrmClientCredentialsProvider.cs" />
     <Compile Include="Dynamics\CrmConnectionProvider.cs" />
+    <Compile Include="Dynamics\Metadata\EntityMetadataRepository.cs" />
+    <Compile Include="Dynamics\Metadata\EntityMetadataUtils.cs" />
+    <Compile Include="Dynamics\Metadata\CrmMetaData.cs" />
     <Compile Include="Dynamics\CrmOrganisationManager.cs" />
     <Compile Include="Dynamics\CrmServiceProvider.cs" />
-    <Compile Include="Dynamics\EntityAttributeBuilder.cs" />
-    <Compile Include="Dynamics\EntityConstruction.cs" />
-    <Compile Include="Dynamics\EntityMetadataBuilder.cs" />
+    <Compile Include="Dynamics\Metadata\EntityAttributeBuilder.cs" />
+    <Compile Include="Dynamics\Metadata\EntityConstruction.cs" />
+    <Compile Include="Dynamics\Metadata\EntityMetadataBuilder.cs" />
     <Compile Include="Dynamics\EntityUtils.cs" />
     <Compile Include="Dynamics\ExplicitConnectionStringProviderWithFallbackToConfig.cs" />
     <Compile Include="Dynamics\FailedToConnectToCrmException.cs" />
@@ -128,6 +131,7 @@
     <Compile Include="Dynamics\ICrmConnectionProvider.cs" />
     <Compile Include="Dynamics\ICrmOrganisationManager.cs" />
     <Compile Include="Dynamics\ICrmServiceProvider.cs" />
+    <Compile Include="Dynamics\Metadata\IEntityMetadataRepository.cs" />
     <Compile Include="Dynamics\OrganisationDoesNotExistException.cs" />
     <Compile Include="ICrmCommandExecutor.cs" />
     <Compile Include="ICrmQueryExpressionProvider.cs" />
