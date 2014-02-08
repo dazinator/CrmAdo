@@ -29,8 +29,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'IntergationTesting|AnyCPU'">
-    <OutputPath>bin\IntergationTesting\</OutputPath>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'IntegrationTesting|AnyCPU'">
+    <OutputPath>bin\IntegrationTesting\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AntiXSSLibrary">
@@ -133,6 +133,10 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="app.Debug.config">
+      <DependentUpon>app.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="app.IntegrationTesting.config">
       <DependentUpon>app.config</DependentUpon>
       <SubType>Designer</SubType>
     </None>
