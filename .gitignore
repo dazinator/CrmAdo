@@ -158,5 +158,4 @@ $RECYCLE.BIN/
 # =========================
 # Sensitive Config
 # =========================
-App.IntegrationTest.config
-CrmUp.Console.exe.config
+app.IntegrationTesting.config
