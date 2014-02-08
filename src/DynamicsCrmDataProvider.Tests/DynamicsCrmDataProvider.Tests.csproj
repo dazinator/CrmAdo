@@ -125,7 +125,7 @@
   <ItemGroup>
     <Compile Include="BaseTest.cs" />
     <Compile Include="CrmQueryExpressionProviderTests.cs" />
-    <Compile Include="ExperimentationWithSelectBuilder.cs" />
+    <Compile Include="IntegrationTests.cs" />
     <Compile Include="CrmDbCommandTests.cs" />
     <Compile Include="CrmDbConnectionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

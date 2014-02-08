@@ -412,60 +412,7 @@ namespace DynamicsCrmDataProvider
                 throw new InvalidOperationException("The select statement must select atleast 1 attribute.");
             }
         }
-
-        //private void AppendColumnNotEqualTo(ConditionExpression condition, NotEqualToFilter notEqualTo, Column column, bool isColumnLeft)
-        //{
-        //    condition.Operator = ConditionOperator.NotEqual;
-        //    if (column == null)
-        //    {
-        //        throw new InvalidOperationException("The query contains a WHERE clause with an Not Equals condition, however one side of the Not Equals condition must refer to an attribute name.");
-        //    }
-        //    Literal lit = null;
-        //    if (isColumnLeft)
-        //    {
-        //        lit = notEqualTo.RightHand as Literal;
-        //    }
-        //    else
-        //    {
-        //        lit = notEqualTo.LeftHand as Literal;
-        //    }
-
-        //    if (lit != null)
-        //    {
-        //        object litVal = GitLiteralValue(lit);
-        //        condition.Values.Add(litVal);
-        //        return;
-        //    }
-
-        //    throw new NotSupportedException();
-        //}
-
-        //private void AppendColumnEqualTo(ConditionExpression condition, EqualToFilter equalTo, Column column, bool isColumnLeft)
-        //{
-        //    condition.Operator = ConditionOperator.Equal;
-        //    if (column == null)
-        //    {
-        //        throw new InvalidOperationException("The query contains a WHERE clause with an Equals condition, however one side of the Equals condition must refer to an attribute name.");
-        //    }
-        //    Literal lit = null;
-        //    if (isColumnLeft)
-        //    {
-        //        lit = equalTo.RightHand as Literal;
-        //    }
-        //    else
-        //    {
-        //        lit = equalTo.LeftHand as Literal;
-        //    }
-        //    if (lit != null)
-        //    {
-        //        object litVal = GitLiteralValue(lit);
-        //        condition.Values.Add(litVal);
-        //        return;
-        //    }
-
-        //    throw new NotSupportedException();
-        //}
-
+        
         private object GitLiteralValue(Literal lit)
         {
             // Support string literals.
@@ -511,9 +458,7 @@ namespace DynamicsCrmDataProvider
 
         }
 
-
-
-
+        
     }
 
 
