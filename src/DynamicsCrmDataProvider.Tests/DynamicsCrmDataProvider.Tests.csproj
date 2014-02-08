@@ -91,8 +91,9 @@
     <Reference Include="Rhino.Mocks">
       <HintPath>..\..\lib\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
     </Reference>
-    <Reference Include="SQLGeneration">
-      <HintPath>..\..\lib\SQLGeneration.2.3.0.0\lib\net40\SQLGeneration.dll</HintPath>
+    <Reference Include="SQLGeneration, Version=2.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\SQLGeneration.2.3.1.0\lib\net40\SQLGeneration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -133,11 +134,15 @@
     <None Include="app.config" />
     <None Include="app.Debug.config">
       <DependentUpon>app.config</DependentUpon>
+      <SubType>Designer</SubType>
     </None>
     <None Include="app.Release.config">
       <DependentUpon>app.config</DependentUpon>
+      <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Fakes\" />
