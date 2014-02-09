@@ -6,7 +6,7 @@ namespace DynamicsCrmDataProvider
 {
     public interface ICrmCommandExecutor
     {
-        EntityCollection ExecuteCommand(CrmDbCommand command);
+        EntityResultSet ExecuteCommand(CrmDbCommand command);
         int ExecuteNonQueryCommand(CrmDbCommand command);
     }
 

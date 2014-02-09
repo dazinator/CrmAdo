@@ -114,11 +114,14 @@
     <Compile Include="CrmDbDataReader.cs" />
     <Compile Include="CrmDbTypeConverter.cs" />
     <Compile Include="CrmQueryExpressionProvider.cs" />
+    <Compile Include="DataReaderExtensions.cs" />
     <Compile Include="Dynamics\CrmClientCredentialsProvider.cs" />
     <Compile Include="Dynamics\CrmConnectionProvider.cs" />
+    <Compile Include="Dynamics\Metadata\CrmEntityMetadata.cs" />
     <Compile Include="Dynamics\Metadata\EntityMetadataRepository.cs" />
     <Compile Include="Dynamics\Metadata\EntityMetadataUtils.cs" />
-    <Compile Include="Dynamics\Metadata\CrmMetaData.cs" />
+    <Compile Include="Dynamics\Metadata\ICrmMetaDataProvider.cs" />
+    <Compile Include="Dynamics\Metadata\InMemoryCachedCrmMetaDataProvider.cs" />
     <Compile Include="Dynamics\CrmOrganisationManager.cs" />
     <Compile Include="Dynamics\CrmServiceProvider.cs" />
     <Compile Include="Dynamics\Metadata\EntityAttributeBuilder.cs" />

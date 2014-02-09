@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using DynamicsCrmDataProvider.Dynamics;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using SQLGeneration.Builders;
@@ -11,24 +13,29 @@ namespace DynamicsCrmDataProvider
     public class CrmCommandExecutor : ICrmCommandExecutor
     {
         private ICrmQueryExpressionProvider _CrmQueryExpressionProvider;
+        private ICrmMetaDataProvider _MetadataProvider;
 
         #region Constructor
-        public CrmCommandExecutor()
-            : this(new CrmQueryExpressionProvider())
+        public CrmCommandExecutor(CrmDbConnection connection)
+            : this(new CrmQueryExpressionProvider(), connection)
         {
         }
 
-        public CrmCommandExecutor(ICrmQueryExpressionProvider queryExpressionProvider)
+        public CrmCommandExecutor(ICrmQueryExpressionProvider queryExpressionProvider, CrmDbConnection connection)
         {
             _CrmQueryExpressionProvider = queryExpressionProvider;
+            if (connection != null)
+            {
+                _MetadataProvider = connection.MetadataProvider;
+            }
         }
         #endregion
-        
-        public EntityCollection ExecuteCommand(CrmDbCommand command)
+
+        public EntityResultSet ExecuteCommand(CrmDbCommand command)
         {
             //TODO: Should process the command text, and execute a query to dynamics, returning the Entity Collection results.
             // what would these command types mean in terms of dynamics queries?
-            EntityCollection results = null;
+            EntityResultSet results = null;
             switch (command.CommandType)
             {
                 case CommandType.Text:
@@ -44,7 +51,7 @@ namespace DynamicsCrmDataProvider
             return results;
         }
 
-        private EntityCollection ProcessTableDirectCommand(CrmDbCommand command)
+        private EntityResultSet ProcessTableDirectCommand(CrmDbCommand command)
         {
             // The command should be the name of a single entity.
             var entityName = command.CommandText;
@@ -56,19 +63,40 @@ namespace DynamicsCrmDataProvider
             var orgService = command.CrmDbConnection.OrganizationService;
             // Todo: possibly support paging by returning a PagedEntityCollection implementation? 
             var results = orgService.RetrieveMultiple(new QueryExpression(entityName) { ColumnSet = new ColumnSet(true) });
-            return results;
+            var resultSet = new EntityResultSet();
+            if (_MetadataProvider != null)
+            {
+                resultSet.ColumnMetadata = _MetadataProvider.GetEntityMetadata(entityName).Attributes;
+                resultSet.ColumnMetadata.Reverse();
+            }
+            resultSet.Results = results;
+            return resultSet;
         }
 
-        private EntityCollection ProcessTextCommand(CrmDbCommand command)
+        private EntityResultSet ProcessTextCommand(CrmDbCommand command)
         {
             //  string commandText = "SELECT CustomerId, FirstName, LastName, Created FROM Customer";
-             var queryExpression = _CrmQueryExpressionProvider.CreateQueryExpression(command);
+            var queryExpression = _CrmQueryExpressionProvider.CreateQueryExpression(command);
             var orgService = command.CrmDbConnection.OrganizationService;
             var results = orgService.RetrieveMultiple(queryExpression);
-            return results;
+
+            var resultSet = new EntityResultSet();
+            if (_MetadataProvider != null)
+            {
+                var entityMetadata = _MetadataProvider.GetEntityMetadata(queryExpression.EntityName);
+                var columns = (from c in entityMetadata.Attributes
+                               join s in queryExpression.ColumnSet.Columns
+                                   on c.LogicalName equals s
+                               select c).Reverse().ToList();
+                resultSet.ColumnMetadata = columns;
+
+            }
+
+            resultSet.Results = results;
+            return resultSet;
         }
 
-        private EntityCollection ProcessStoredProcedureCommand(CrmDbCommand command)
+        private EntityResultSet ProcessStoredProcedureCommand(CrmDbCommand command)
         {
             // What would a stored procedure be in terms of Dynamics Crm SDK?
             // Perhaps this could be used for exectuign fetch xml commands...?

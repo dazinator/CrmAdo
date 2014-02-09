@@ -12,6 +12,7 @@ namespace DynamicsCrmDataProvider
     public class CrmDbConnection : DbConnection
     {
         private ICrmServiceProvider _CrmServiceProvider = null;
+        private ICrmMetaDataProvider _MetadataProvider = null;
 
         #region Constructor
 
@@ -27,7 +28,7 @@ namespace DynamicsCrmDataProvider
             connectionProvider.OrganisationServiceConnectionString = connectionString;
             var credentialsProvider = new CrmClientCredentialsProvider();
             _CrmServiceProvider = new CrmServiceProvider(connectionProvider, credentialsProvider);
-
+            _MetadataProvider = new InMemoryCachedCrmMetaDataProvider(new EntityMetadataRepository(_CrmServiceProvider));
         }
 
         public CrmDbConnection(ICrmServiceProvider serviceProvider)
@@ -128,6 +129,10 @@ namespace DynamicsCrmDataProvider
             get { throw new NotImplementedException(); }
         }
 
+        public ICrmMetaDataProvider MetadataProvider
+        {
+            get { return _MetadataProvider; }
+        }
 
         #endregion
 

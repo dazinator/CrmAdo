@@ -80,8 +80,8 @@ namespace DynamicsCrmDataProvider.Tests
                     {
                         resultCount++;
                         var contactId = (Guid)reader["contactid"];
-                        var firstName = (string)reader["firstname"];
-                        var lastName = (string)reader["lastname"];
+                        var firstName = (string)reader.SafeGetString(1);
+                        var lastName = (string)reader.SafeGetString(2);
                         Console.WriteLine(string.Format("{0} {1} {2}", contactId, firstName, lastName));
                     }
                     Console.WriteLine("There were " + resultCount + " results..");

@@ -27,7 +27,7 @@ namespace DynamicsCrmDataProvider
         {
         }
         public CrmDbCommand(CrmDbConnection connection, string commandText)
-            : this(connection, commandText, new CrmCommandExecutor())
+            : this(connection, commandText, new CrmCommandExecutor(connection))
         {
         }
         public CrmDbCommand(CrmDbConnection connection, string commandText, ICrmCommandExecutor crmCommandExecutor)
@@ -115,9 +115,9 @@ namespace DynamicsCrmDataProvider
             // Use the ExecuteScalar method to retrieve a single value (for example, an aggregate value) from a database. This requires less code than using the ExecuteReader method and performing the operations necessary to generate the single value using the data returned by a DbDataReader.
             // If the first column of the first row in the result set is not found, a null reference (Nothing in Visual Basic) is returned. If the value in the database is null, the query returns DBNull.Value.
             var results = _CrmCommandExecutor.ExecuteCommand(this);
-            if (results != null && results.Entities != null && results.Entities.Any())
+            if (results != null && results.Results != null && results.Results.Entities != null && results.Results.Entities.Any())
             {
-                var first = results.Entities[0];
+                var first = results.Results.Entities[0];
                 if (first.Attributes.Any())
                 {
                     var value = first.Attributes.FirstOrDefault().Value;

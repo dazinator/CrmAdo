@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -10,15 +11,10 @@ using Microsoft.Xrm.Sdk.Metadata;
 namespace DynamicsCrmDataProvider
 {
 
-    public class ColumnMetadata
+    public class EntityResultSet
     {
-        public string Name { get; set; }
-        public string DataTypeName
-        {
-            get { return this.AttributeTypeCode.ToString(); }
-        }
-        public AttributeTypeCode AttributeTypeCode { get; set; }
-        public Type DataType { get; set; }
+        public EntityCollection Results { get; set; }
+        public List<AttributeMetadata> ColumnMetadata { get; set; }
     }
 
     public class CrmDbDataReader : DbDataReader
@@ -29,41 +25,43 @@ namespace DynamicsCrmDataProvider
         private const int StartPosition = -1;
         private int _Position = StartPosition;
         private bool _HasRows;
-        private Entity _FirstResult;
-        private List<ColumnMetadata> _Metadata;
+        private List<AttributeMetadata> _Metadata;
+        // private List<ColumnMetadata> _Metadata;
         private int _ResultSetCount = 0;
         // private int _TotalRecordCount = 0;
 
-        public CrmDbDataReader(EntityCollection results)
+        public CrmDbDataReader(EntityResultSet results)
             : this(results, null)
         {
 
         }
 
-        public CrmDbDataReader(EntityCollection results, DbConnection dbConnection)
+        public CrmDbDataReader(EntityResultSet results, DbConnection dbConnection)
         {
             // TODO: Complete member initialization
-            this._Results = results;
+            this._Results = results.Results;
+            _Metadata = results.ColumnMetadata;
             this._DbConnection = dbConnection;
             _IsOpen = true;
             // TODO: Change the below - shouldnt discover metadata from the first item, should retreive the metadata from CRM in advance.
             // ALSO Extend metadata with fields for EntityReference Name, Option Set Name, and possibly some other formatted values.
-            _Metadata = new List<ColumnMetadata>();
-            if (results.Entities != null && _Results.Entities.Any())
+            //  _Metadata = new List<ColumnMetadata>();
+            if (_Results.Entities != null && _Results.Entities.Any())
             {
                 _HasRows = true;
                 _ResultSetCount = _Results.Entities.Count;
-                _FirstResult = results.Entities[0];
-                foreach (var att in _FirstResult.Attributes)
-                {
-                    var columnMeta = new ColumnMetadata();
-                    columnMeta.Name = att.Key;
-                    // TODO: This needs to be set properly..
-                    columnMeta.AttributeTypeCode = AttributeTypeCode.String;
-                    // THIS IS BAD - VALUE COULD BE NULL..
-                    columnMeta.DataType = att.Value.GetType();
-                    _Metadata.Add(columnMeta);
-                }
+
+                // _FirstResult = results.[0];
+                //foreach (var att in _FirstResult.Attributes)
+                //{
+                //    var columnMeta = new ColumnMetadata();
+                //    columnMeta.Name = att.Key;
+                //    // TODO: This needs to be set properly..
+                //    columnMeta.AttributeTypeCode = AttributeTypeCode.String;
+                //    // THIS IS BAD - VALUE COULD BE NULL..
+                //    columnMeta.DataType = att.Value.GetType();
+                //    _Metadata.Add(columnMeta);
+                //}
             }
         }
 
@@ -142,10 +140,10 @@ namespace DynamicsCrmDataProvider
 
         #region Metadata - Leaving a Lot to be desired here..
 
-        private Entity FirstResult()
-        {
-            return _FirstResult;
-        }
+        //private Entity FirstResult()
+        //{
+        //    return _FirstResult;
+        //}
 
         public override int FieldCount
         {
@@ -154,7 +152,7 @@ namespace DynamicsCrmDataProvider
 
         public override string GetName(int ordinal)
         {
-            return _Metadata[ordinal].Name;
+            return _Metadata[ordinal].LogicalName;
         }
 
         public override int GetOrdinal(string name)
@@ -162,7 +160,7 @@ namespace DynamicsCrmDataProvider
             int ordinal = 0;
             foreach (var m in _Metadata)
             {
-                if (m.Name == name)
+                if (m.LogicalName == name)
                 {
                     return ordinal;
                 }
@@ -174,12 +172,59 @@ namespace DynamicsCrmDataProvider
 
         public override string GetDataTypeName(int ordinal)
         {
-            return _Metadata[ordinal].DataTypeName;
+            return _Metadata[ordinal].AttributeTypeName.Value;
         }
 
         public override Type GetFieldType(int ordinal)
         {
-            return _Metadata[ordinal].DataType;
+            switch (_Metadata[ordinal].AttributeType)
+            {
+                case AttributeTypeCode.BigInt:
+                    return typeof(long);
+                case AttributeTypeCode.Boolean:
+                    return typeof(bool);
+                case AttributeTypeCode.CalendarRules:
+                    return typeof(string);
+                case AttributeTypeCode.Customer:
+                    return typeof(Guid);
+                case AttributeTypeCode.DateTime:
+                    return typeof(DateTime);
+                case AttributeTypeCode.Decimal:
+                    return typeof(decimal);
+                case AttributeTypeCode.Double:
+                    return typeof(double);
+                case AttributeTypeCode.EntityName:
+                    return typeof(string);
+                case AttributeTypeCode.Integer:
+                    return typeof(int);
+                case AttributeTypeCode.Lookup:
+                    return typeof(Guid);
+                case AttributeTypeCode.ManagedProperty:
+                    return typeof(bool);
+                case AttributeTypeCode.Memo:
+                    return typeof(string);
+                case AttributeTypeCode.Money:
+                    return typeof(decimal);
+                case AttributeTypeCode.Owner:
+                    return typeof(Guid);
+                case AttributeTypeCode.PartyList:
+                    return typeof(string);
+                case AttributeTypeCode.Picklist:
+                    return typeof(int);
+                case AttributeTypeCode.State:
+                    return typeof(int);
+                case AttributeTypeCode.Status:
+                    return typeof(int);
+                case AttributeTypeCode.String:
+                    return typeof(string);
+                case AttributeTypeCode.Uniqueidentifier:
+                    return typeof(Guid);
+                case AttributeTypeCode.Virtual:
+                    return typeof(string);
+                default:
+                    throw new NotSupportedException();
+
+            }
         }
 
         public override DataTable GetSchemaTable()
@@ -207,7 +252,33 @@ namespace DynamicsCrmDataProvider
         public override object GetValue(int ordinal)
         {
             var name = GetName(ordinal);
-            return _Results[_Position][name];
+            var record = _Results[_Position];
+            if (!record.Attributes.ContainsKey(name))
+            {
+                return DBNull.Value;
+            }
+            return record[name];
+        }
+
+        public T GetValue<T>(int ordinal)
+        {
+            var name = GetName(ordinal);
+            try
+            {
+               
+                var record = _Results[_Position];
+                if (!record.Attributes.ContainsKey(name))
+                {
+                    return default(T);
+                }
+                return (T)record[name];
+            }
+            catch (InvalidCastException e)
+            {
+                Debug.Write("error!");
+                throw;
+            }
+         
         }
 
         public override int GetValues(object[] values)
@@ -223,18 +294,18 @@ namespace DynamicsCrmDataProvider
         public override bool IsDBNull(int ordinal)
         {
             var value = GetValue(ordinal);
-            return value == null;
+            return value == null || value == DBNull.Value;
         }
 
         public override bool GetBoolean(int ordinal)
         {
-            var value = GetValue(ordinal);
-            return (bool)value;
+            var value = GetValue<bool>(ordinal);
+            return value;
         }
 
         public override byte GetByte(int ordinal)
         {
-            var value = GetValue(ordinal);
+            var value = GetValue<byte>(ordinal);
             return (byte)value;
         }
 
@@ -245,7 +316,7 @@ namespace DynamicsCrmDataProvider
 
         public override char GetChar(int ordinal)
         {
-            var value = GetValue(ordinal);
+            var value = GetValue<char>(ordinal);
             return (char)value;
         }
 
@@ -256,56 +327,56 @@ namespace DynamicsCrmDataProvider
 
         public override Guid GetGuid(int ordinal)
         {
-            var value = GetValue(ordinal);
+            var value = GetValue<Guid>(ordinal);
             return (Guid)value;
         }
 
         public override short GetInt16(int ordinal)
         {
-            var value = GetValue(ordinal);
+            var value = GetValue<Int16>(ordinal);
             return (Int16)value;
         }
 
         public override int GetInt32(int ordinal)
         {
             // If the value is an option set, return the value of the option.
-            var value = GetValue(ordinal);
+            var value = GetValue<int>(ordinal);
             return (int)value;
         }
 
         public override long GetInt64(int ordinal)
         {
-            var value = GetValue(ordinal);
+            var value = GetValue<long>(ordinal);
             return (long)value;
         }
 
         public override DateTime GetDateTime(int ordinal)
         {
-            var value = GetValue(ordinal);
+            var value = GetValue<DateTime>(ordinal);
             return (DateTime)value;
         }
 
         public override string GetString(int ordinal)
         {
-            var value = GetValue(ordinal);
+            var value = GetValue<string>(ordinal);
             return (string)value;
         }
 
         public override decimal GetDecimal(int ordinal)
         {
-            var value = GetValue(ordinal);
+            var value = GetValue<decimal>(ordinal);
             return (decimal)value;
         }
 
         public override double GetDouble(int ordinal)
         {
-            var value = GetValue(ordinal);
+            var value = GetValue<double>(ordinal);
             return (double)value;
         }
 
         public override float GetFloat(int ordinal)
         {
-            var value = GetValue(ordinal);
+            var value = GetValue<float>(ordinal);
             return (float)value;
         }
 
