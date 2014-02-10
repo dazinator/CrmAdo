@@ -6,6 +6,8 @@ using System.Data;
 using System.Linq;
 using DynamicsCrmDataProvider.Dynamics;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Metadata.Query;
 using Microsoft.Xrm.Sdk.Query;
 using NUnit.Core;
 using NUnit.Framework;
@@ -76,7 +78,7 @@ namespace DynamicsCrmDataProvider.Tests
                 using (var reader = command.ExecuteReader())
                 {
                     int resultCount = 0;
-                    while (reader.Read())
+                    foreach (var result in reader)
                     {
                         resultCount++;
                         var contactId = (Guid)reader["contactid"];
@@ -84,8 +86,97 @@ namespace DynamicsCrmDataProvider.Tests
                         var lastName = (string)reader.SafeGetString(2);
                         Console.WriteLine(string.Format("{0} {1} {2}", contactId, firstName, lastName));
                     }
+                    //while (reader.Read())
+                    //{
+
+                    //}
                     Console.WriteLine("There were " + resultCount + " results..");
                 }
+            }
+
+        }
+
+        [Test(Description = "Integration tests that gets metadata from crm.")]
+        public void Should_Get_Changed_Metadata()
+        {
+            // arrange
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
+                                                       new CrmClientCredentialsProvider());
+
+            var sut = new EntityMetadataRepository(serviceProvider);
+            // act
+            var contactMetadata = sut.GetEntityMetadata("contact");
+
+            // assert
+            Assert.That(contactMetadata, Is.Not.Null);
+            Assert.That(contactMetadata, Is.Not.Null);
+        
+            Assert.That(contactMetadata.Attributes, Is.Not.Null);
+            Assert.That(contactMetadata.Attributes.FirstOrDefault(a => a.LogicalName == "firstname"), Is.Not.Null);
+            Assert.That(contactMetadata.Attributes.FirstOrDefault(a => a.LogicalName == "lastname"), Is.Not.Null);
+        }
+
+        [Test(Description = "Integration tests that gets metadata from crm.")]
+        public void Another_Test()
+        {
+           
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
+                                                       new CrmClientCredentialsProvider());
+
+            // var sut = new EntityMetadataRepository(serviceProvider);
+            // retrieve the current timestamp value;
+            var entityFilter = new MetadataFilterExpression(LogicalOperator.And);
+            entityFilter.Conditions.Add(new MetadataConditionExpression("LogicalName", MetadataConditionOperator.Equals, "contact"));
+            var props = new MetadataPropertiesExpression();
+            props.AllProperties = true;
+
+            //LabelQueryExpression labels = new LabelQueryExpression();
+            var entityQueryExpression = new EntityQueryExpression()
+            {
+                Criteria = entityFilter,
+                Properties = props,
+                AttributeQuery = new AttributeQueryExpression()
+                {
+                    Properties = props
+                }
+            };
+
+            var retrieveMetadataChangesRequest = new RetrieveMetadataChangesRequest()
+            {
+                Query = entityQueryExpression,
+                ClientVersionStamp = null,
+                DeletedMetadataFilters = DeletedMetadataFilters.All,
+
+            };
+            try
+            {
+                IOrganizationService service = serviceProvider.GetOrganisationService();
+                using (service as IDisposable)
+                {
+
+                    // act
+                    // arrange
+                    var watch = new System.Diagnostics.Stopwatch();
+                    watch.Start();
+                    var contactMetadata = (RetrieveMetadataChangesResponse)service.Execute(retrieveMetadataChangesRequest);
+                    watch.Stop();
+                    Console.WriteLine("Elapsed " + watch.Elapsed.ToString());
+                    // assert
+                    Assert.That(contactMetadata, Is.Not.Null);
+                    Assert.That(contactMetadata.EntityMetadata, Is.Not.Null);
+                    Assert.That(contactMetadata.EntityMetadata[0], Is.Not.Null);
+                    Assert.That(contactMetadata.EntityMetadata[0].Attributes, Is.Not.Null);
+                    Assert.That(contactMetadata.EntityMetadata[0].Attributes.FirstOrDefault(a => a.LogicalName == "firstname"), Is.Not.Null);
+                    Assert.That(contactMetadata.EntityMetadata[0].Attributes.FirstOrDefault(a => a.LogicalName == "lastname"), Is.Not.Null);
+
+                }
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+                //    throw new Exception("Unable to obtain changes in CRM metadata using client timestamp: " + retrieveMetadataChangesRequest.ClientVersionStamp + " as CRM returned a fault. See inner exception for details.", e);
             }
 
         }

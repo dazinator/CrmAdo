@@ -47,6 +47,7 @@ namespace DynamicsCrmDataProvider.Dynamics
 
             return changes;
         }
+     
 
         /// <summary>
         /// Ensures the metadata is refreshed and uptodate and returns it.
@@ -98,7 +99,7 @@ namespace DynamicsCrmDataProvider.Dynamics
                 // var deletedFields = latestEntityMetadataResponse.DeletedMetadata.Where(att => att.HasChanged.GetValueOrDefault()).ToList();
 
             }
-
+            
             // Loop through all metadata items, and add missing change units.
             bool hasSchemaChanges = (modifiedFields != null && modifiedFields.Any()) || (deletedFields != null && deletedFields.Any());
             if (hasSchemaChanges)
