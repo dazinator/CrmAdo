@@ -172,7 +172,8 @@ namespace DynamicsCrmDataProvider
 
         public override string GetDataTypeName(int ordinal)
         {
-            return _Metadata[ordinal].AttributeTypeName.Value;
+            var columnMeta = _Metadata[ordinal];
+            return columnMeta.AttributeTypeName.Value;
         }
 
         public override Type GetFieldType(int ordinal)
