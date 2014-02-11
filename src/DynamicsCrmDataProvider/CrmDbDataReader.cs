@@ -39,6 +39,10 @@ namespace DynamicsCrmDataProvider
         public CrmDbDataReader(EntityResultSet results, DbConnection dbConnection)
         {
             // TODO: Complete member initialization
+            if (results == null)
+            {
+                throw new ArgumentNullException("results");
+            }
             this._Results = results.Results;
             _Metadata = results.ColumnMetadata;
             this._DbConnection = dbConnection;
@@ -173,7 +177,7 @@ namespace DynamicsCrmDataProvider
         public override string GetDataTypeName(int ordinal)
         {
             var columnMeta = _Metadata[ordinal];
-            return columnMeta.AttributeTypeName.Value;
+            return columnMeta.AttributeType.Value.ToString();
         }
 
         public override Type GetFieldType(int ordinal)

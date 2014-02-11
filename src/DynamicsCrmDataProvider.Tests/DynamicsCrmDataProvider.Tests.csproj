@@ -124,6 +124,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseTest.cs" />
+    <Compile Include="CrmDbProviderFactoryTests.cs" />
+    <Compile Include="CrmDbDataReaderTests.cs" />
     <Compile Include="CrmQueryExpressionProviderTests.cs" />
     <Compile Include="IntegrationTests.cs" />
     <Compile Include="CrmDbCommandTests.cs" />
@@ -185,4 +187,7 @@
     <!--Publish copies the untransformed App.config to deployment directory so overwrite it-->
     <Copy Condition="Exists('$(DeployedConfig)')" SourceFiles="$(IntermediateOutputPath)$(TargetFileName).config" DestinationFiles="$(DeployedConfig)" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /Q /Y "$(TargetDir)DynamicsCrmDataProvider.*" "$(ProjectDir)bin\"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

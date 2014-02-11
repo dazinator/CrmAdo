@@ -1,0 +1,18 @@
+ For this ADO.NET Provider to be shown in tools such as visual studio, excel etc,
+
+ the following config entry must be added to the machine.config file.
+ 
+ <runtime> 
+      <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+         <probing privatePath="C:\Program Files\DynamicsCrmAdoNetProvider\bin"/>
+      </assemblyBinding>
+ </runtime>
+
+
+  <system.data>
+    <DbProviderFactories>
+      <add name="Open Source Dynamics Crm Data Provider" invariant="System.Data.DynamicsCrm.2013" description=".NET Framework Data Provider for Microsoft Dynamics Crm 2013" type="DynamicsCrmDataProvider.CrmDbProviderFactory, DynamicsCrmDataProvider"/>
+    </DbProviderFactories>
+  </system.data>
+
+ The private path should point to the directory with the DynamicsCrmDataProvider.dll in.

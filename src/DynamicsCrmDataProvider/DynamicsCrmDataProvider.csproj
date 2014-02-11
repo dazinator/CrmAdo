@@ -35,6 +35,12 @@
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Key.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AntiXSSLibrary">
       <HintPath>..\..\lib\Microsoft.CrmSdk.Extensions.6.0.2\lib\net40\AntiXSSLibrary.dll</HintPath>
@@ -112,6 +118,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="CrmDbDataReader.cs" />
+    <Compile Include="CrmDbProviderFactory.cs" />
     <Compile Include="CrmDbTypeConverter.cs" />
     <Compile Include="CrmQueryExpressionProvider.cs" />
     <Compile Include="DataReaderExtensions.cs" />
@@ -142,9 +149,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Key.pfx" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /Q /Y "$(TargetDir)$(TargetName).*" "C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\bin\"
+
+</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
