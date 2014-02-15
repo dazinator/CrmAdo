@@ -422,7 +422,7 @@ namespace DynamicsCrmDataProvider.Tests
             Assert.That(queryExpression.LinkEntities, Is.Not.Null);
             Assert.That(queryExpression.LinkEntities[0], Is.Not.Null);
             Assert.That(queryExpression.LinkEntities[0].JoinOperator, Is.EqualTo(join));
-
+        
 
 
         }
@@ -464,7 +464,7 @@ namespace DynamicsCrmDataProvider.Tests
 
             var moreSql =
             string.Format(
-                "Select contactid, firstname, lastname From contact INNER JOIN address on contact.id = address.contactid LEFT JOIN occupant on contact.contactid = occupant.contactid ",
+                "Select C.contactid, C.firstname, C.lastname, O.fullname From contact C INNER JOIN address A on c.id = A.contactid LEFT JOIN occupant O on C.contactid = O.contactid ",
                 joinType);
 
             builder = commandBuilder.GetCommand(moreSql) as SelectBuilder;
