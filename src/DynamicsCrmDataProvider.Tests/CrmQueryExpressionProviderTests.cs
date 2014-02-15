@@ -443,8 +443,6 @@ namespace DynamicsCrmDataProvider.Tests
             LogUtils.LogCommand(builder, logBuilder);
             logBuilder.AppendLine();
           
-
-          
             var nestedJoinsSql =
                 string.Format(
                     "Select contactid, firstname, lastname From contact INNER JOIN address on contact.id = address.contactid INNER JOIN occupant on address.addressid = occupant.addressid ",

@@ -17,15 +17,47 @@ namespace DynamicsCrmDataProvider.Tests
 
             var indent = GetIndent(indentLevel);
 
-            logBuilder.AppendLine(string.Format("{0}Command, Type: {1}", indent, command.GetType().FullName));
-            logBuilder.AppendLine(string.Format("{0} Text: {1}", indent, commandText));
+            logBuilder.AppendLine(string.Format("{0} {1}", indent, command.GetType().FullName.ToUpper()));
+            logBuilder.AppendLine(string.Format("{0} Command Text: {1}", indent, commandText));
 
             if (command is SelectBuilder)
             {
                 var selCommand = command as SelectBuilder;
+                logBuilder.AppendLine(string.Format("{0} PROJECTION ", indent));
+                LogProjection(selCommand.Projection, logBuilder, indentLevel);
+
+                logBuilder.AppendLine(string.Format("{0} FROM ", indent));
                 LogFrom(selCommand.From, logBuilder, indentLevel);
             }
-           
+
+        }
+
+        private static void LogProjection(IEnumerable<AliasedProjection> projection, StringBuilder logBuilder, int indentLevel)
+        {
+            var indent = GetIndent(indentLevel);
+            foreach (var f in projection)
+            {
+                if (f != null)
+                {
+                    logBuilder.AppendLine(string.Format("{0} Column Alias: {1}", indent, f.Alias));
+                    LogUtils.LogProjectionItem(f.ProjectionItem, logBuilder, indentLevel);
+                }
+            }
+        }
+
+        private static void LogProjectionItem(IProjectionItem projectionItem, StringBuilder logBuilder, int indentLevel)
+        {
+            var indent = GetIndent(indentLevel);
+            var column = projectionItem as Column;
+            if (column != null)
+            {
+                logBuilder.AppendLine(string.Format("{0} Column Name: {1}, Qualify? {2}", indent, column.Name, column.Qualify.GetValueOrDefault()));
+                if (column.Source != null)
+                {
+                    logBuilder.AppendLine(string.Format("{0} Column Source: ", indent));
+                    LogAliasedSource(column.Source, logBuilder, indentLevel + 1);
+                }
+            }
         }
 
         public static void LogFrom(IEnumerable<IJoinItem> from, StringBuilder stringBuilder, int indentLevel = 0)
@@ -36,11 +68,11 @@ namespace DynamicsCrmDataProvider.Tests
                 {
                     if (f is Join)
                     {
-                        LogUtils.LogJoin(f as Join, stringBuilder, 0);
+                        LogUtils.LogJoin(f as Join, stringBuilder, indentLevel);
                     }
                     else if (f is AliasedSource)
                     {
-                        LogUtils.LogAliasedSource(f as AliasedSource, stringBuilder, 0);
+                        LogUtils.LogAliasedSource(f as AliasedSource, stringBuilder, indentLevel);
                     }
                 }
             }
