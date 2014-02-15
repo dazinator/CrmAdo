@@ -24,13 +24,34 @@ namespace DynamicsCrmDataProvider
 
             GuardSelectBuilder(builder);
 
-            // This is the entity being selected.
-            var fromTable = (Table)((AliasedSource)builder.From.First()).Source;
-            var firstEntityName = fromTable.Name.ToLower();
+            //// This is the entity being selected.
+            //if (builder.From.First() is SQLGeneration.Builders.Join)
+            //{
 
-            // detect all columns..
-            var query = new QueryExpression(firstEntityName);
-            query.ColumnSet = GetColumnSet(builder.Projection);
+            //}
+            var query = new QueryExpression();
+
+            var joinItem = builder.From.First() as IJoinItem;
+            var asource = joinItem as AliasedSource;
+            var join = joinItem as Join;
+
+            if (join != null)
+            {
+                throw new NotSupportedException("Joins are not yet supported");
+            }
+
+            if (asource != null)
+            {
+                if (asource.Source.IsTable)
+                {
+                    var table = asource.Source as Table;
+                    ProcessTable(builder, table, query);
+                }
+                else
+                {
+                    throw new NotSupportedException("The From keyword must be used in conjunction with a table / entity name. Subqueries not supported.");
+                }
+            }
 
             // do where clause..
             if (builder.Where != null && builder.Where.Any())
@@ -71,6 +92,14 @@ namespace DynamicsCrmDataProvider
                 }
             }
             return query;
+        }
+
+        private void ProcessTable(SelectBuilder builder, Table table, QueryExpression query)
+        {
+            var entityName = table.Name.ToLower();
+            query.EntityName = entityName;
+            // detect all columns..
+            query.ColumnSet = GetColumnSet(builder.Projection);
         }
 
         private ColumnSet GetColumnSet(IEnumerable<AliasedProjection> projection)
@@ -412,7 +441,7 @@ namespace DynamicsCrmDataProvider
                 throw new InvalidOperationException("The select statement must select atleast 1 attribute.");
             }
         }
-        
+
         private object GitLiteralValue(Literal lit)
         {
             // Support string literals.
@@ -458,7 +487,7 @@ namespace DynamicsCrmDataProvider
 
         }
 
-        
+
     }
 
 

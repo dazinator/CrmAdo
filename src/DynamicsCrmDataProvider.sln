@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		Machine Config.txt = Machine Config.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynamicsCrmDataProvider.IntegrationTests", "DynamicsCrmDataProvider.IntegrationTests\DynamicsCrmDataProvider.IntegrationTests.csproj", "{050B2CC8-C601-4792-B0B7-50B4514C618B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,8 +23,8 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{61D9051D-4C85-419F-97DC-D56D4A72C5E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{61D9051D-4C85-419F-97DC-D56D4A72C5E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{61D9051D-4C85-419F-97DC-D56D4A72C5E3}.IntegrationTesting|Any CPU.ActiveCfg = IntergationTesting|Any CPU
-		{61D9051D-4C85-419F-97DC-D56D4A72C5E3}.IntegrationTesting|Any CPU.Build.0 = IntergationTesting|Any CPU
+		{61D9051D-4C85-419F-97DC-D56D4A72C5E3}.IntegrationTesting|Any CPU.ActiveCfg = IntegrationTesting|Any CPU
+		{61D9051D-4C85-419F-97DC-D56D4A72C5E3}.IntegrationTesting|Any CPU.Build.0 = IntegrationTesting|Any CPU
 		{61D9051D-4C85-419F-97DC-D56D4A72C5E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61D9051D-4C85-419F-97DC-D56D4A72C5E3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{35FB72AA-FD92-4A2D-9E52-B5E221687E56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -31,6 +33,12 @@ Global
 		{35FB72AA-FD92-4A2D-9E52-B5E221687E56}.IntegrationTesting|Any CPU.Build.0 = IntegrationTesting|Any CPU
 		{35FB72AA-FD92-4A2D-9E52-B5E221687E56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{35FB72AA-FD92-4A2D-9E52-B5E221687E56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{050B2CC8-C601-4792-B0B7-50B4514C618B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{050B2CC8-C601-4792-B0B7-50B4514C618B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{050B2CC8-C601-4792-B0B7-50B4514C618B}.IntegrationTesting|Any CPU.ActiveCfg = Debug|Any CPU
+		{050B2CC8-C601-4792-B0B7-50B4514C618B}.IntegrationTesting|Any CPU.Build.0 = Debug|Any CPU
+		{050B2CC8-C601-4792-B0B7-50B4514C618B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{050B2CC8-C601-4792-B0B7-50B4514C618B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

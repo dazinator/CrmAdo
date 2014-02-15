@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{61D9051D-4C85-419F-97DC-D56D4A72C5E3}</ProjectGuid>
+    <ProjectGuid>{050B2CC8-C601-4792-B0B7-50B4514C618B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DynamicsCrmDataProvider</RootNamespace>
-    <AssemblyName>DynamicsCrmDataProvider</AssemblyName>
+    <RootNamespace>DynamicsCrmDataProvider.IntegrationTests</RootNamespace>
+    <AssemblyName>DynamicsCrmDataProvider.IntegrationTests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -29,17 +29,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'IntegrationTesting|AnyCPU' ">
-    <OutputPath>bin\IntergationTesting\</OutputPath>
-    <DefineConstants>DEBUG</DefineConstants>
-    <DebugType>full</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Key.pfx</AssemblyOriginatorKeyFile>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'IntegrationTesting|AnyCPU'">
+    <OutputPath>bin\IntegrationTesting\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AntiXSSLibrary">
@@ -76,10 +67,31 @@
     <Reference Include="Microsoft.Xrm.Sdk.Deployment">
       <HintPath>..\..\lib\Microsoft.CrmSdk.Deployment.6.0.2\lib\net40\Microsoft.Xrm.Sdk.Deployment.dll</HintPath>
     </Reference>
+    <Reference Include="nunit.core">
+      <HintPath>..\..\lib\NUnitTestAdapter.1.0\lib\nunit.core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="nunit.core.interfaces">
+      <HintPath>..\..\lib\NUnitTestAdapter.1.0\lib\nunit.core.interfaces.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\lib\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.util">
+      <HintPath>..\..\lib\NUnitTestAdapter.1.0\lib\nunit.util.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="NUnit.VisualStudio.TestAdapter">
+      <HintPath>..\..\lib\NUnitTestAdapter.1.0\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="SQLGeneration, Version=2.3.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Rhino.Mocks">
+      <HintPath>..\..\lib\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLGeneration">
       <HintPath>..\..\lib\SQLGeneration.2.3.1.0\lib\net40\SQLGeneration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -110,54 +122,43 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CrmCommandExecutor.cs" />
-    <Compile Include="CrmDbCommand.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="CrmDbConnection.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="CrmDbDataReader.cs" />
-    <Compile Include="CrmDbProviderFactory.cs" />
-    <Compile Include="CrmDbTypeConverter.cs" />
-    <Compile Include="CrmQueryExpressionProvider.cs" />
-    <Compile Include="DataReaderExtensions.cs" />
-    <Compile Include="Dynamics\CrmClientCredentialsProvider.cs" />
-    <Compile Include="Dynamics\CrmConnectionProvider.cs" />
-    <Compile Include="Dynamics\Metadata\CrmEntityMetadata.cs" />
-    <Compile Include="Dynamics\Metadata\EntityMetadataRepository.cs" />
-    <Compile Include="Dynamics\Metadata\EntityMetadataUtils.cs" />
-    <Compile Include="Dynamics\Metadata\ICrmMetaDataProvider.cs" />
-    <Compile Include="Dynamics\Metadata\InMemoryCachedCrmMetaDataProvider.cs" />
-    <Compile Include="Dynamics\CrmOrganisationManager.cs" />
-    <Compile Include="Dynamics\CrmServiceProvider.cs" />
-    <Compile Include="Dynamics\Metadata\EntityAttributeBuilder.cs" />
-    <Compile Include="Dynamics\Metadata\EntityConstruction.cs" />
-    <Compile Include="Dynamics\Metadata\EntityMetadataBuilder.cs" />
-    <Compile Include="Dynamics\EntityUtils.cs" />
-    <Compile Include="Dynamics\ExplicitConnectionStringProviderWithFallbackToConfig.cs" />
-    <Compile Include="Dynamics\FailedToConnectToCrmException.cs" />
-    <Compile Include="Dynamics\ICrmClientCredentialsProvider.cs" />
-    <Compile Include="Dynamics\ICrmConnectionProvider.cs" />
-    <Compile Include="Dynamics\ICrmOrganisationManager.cs" />
-    <Compile Include="Dynamics\ICrmServiceProvider.cs" />
-    <Compile Include="Dynamics\Metadata\IEntityMetadataRepository.cs" />
-    <Compile Include="Dynamics\OrganisationDoesNotExistException.cs" />
-    <Compile Include="ICrmCommandExecutor.cs" />
-    <Compile Include="ICrmQueryExpressionProvider.cs" />
+    <Compile Include="BaseTest.cs" />
+    <Compile Include="IntegrationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Key.pfx" />
+    <None Include="app.Debug.config">
+      <DependentUpon>app.config</DependentUpon>
+    </None>
+    <None Include="app.IntegrationTesting.config">
+      <DependentUpon>app.config</DependentUpon>
+    </None>
+    <None Include="app.Release.config">
+      <DependentUpon>app.config</DependentUpon>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\tools\CrmSvcUtil.exe" />
+    <Content Include="bin\tools\CrmSvcUtil.xml" />
+    <Content Include="bin\tools\Microsoft.Crm.Sdk.Proxy.dll" />
+    <Content Include="bin\tools\Microsoft.Xrm.Client.dll" />
+    <Content Include="bin\tools\Microsoft.Xrm.Sdk.dll" />
+    <Content Include="bin\tools\SolutionPackager.exe" />
+    <Content Include="bin\tools\WebsiteCopy.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\Debug\" />
+    <Folder Include="bin\Release\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DynamicsCrmDataProvider\DynamicsCrmDataProvider.csproj">
+      <Project>{61d9051d-4c85-419f-97dc-d56d4a72c5e3}</Project>
+      <Name>DynamicsCrmDataProvider</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>xcopy /Q /Y "$(TargetDir)$(TargetName).*" "C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\bin\"
-
-</PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -165,4 +166,24 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <UsingTask TaskName="TransformXml" AssemblyFile="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Web\Microsoft.Web.Publishing.Tasks.dll" />
+  <Target Name="AfterCompile" Condition="Exists('app.$(Configuration).config')">
+    <!--Generate transformed app config in the intermediate directory-->
+    <TransformXml Source="app.config" Destination="$(IntermediateOutputPath)$(TargetFileName).config" Transform="app.$(Configuration).config" />
+    <!--Force build process to use the transformed configuration file from now on.-->
+    <ItemGroup>
+      <AppConfigWithTargetPath Remove="app.config" />
+      <AppConfigWithTargetPath Include="$(IntermediateOutputPath)$(TargetFileName).config">
+        <TargetPath>$(TargetFileName).config</TargetPath>
+      </AppConfigWithTargetPath>
+    </ItemGroup>
+  </Target>
+  <!--Override After Publish to support ClickOnce AfterPublish. Target replaces the untransformed config file copied to the deployment directory with the transformed one.-->
+  <Target Name="AfterPublish">
+    <PropertyGroup>
+      <DeployedConfig>$(_DeploymentApplicationDir)$(TargetName)$(TargetExt).config$(_DeploymentFileMappingExtension)</DeployedConfig>
+    </PropertyGroup>
+    <!--Publish copies the untransformed App.config to deployment directory so overwrite it-->
+    <Copy Condition="Exists('$(DeployedConfig)')" SourceFiles="$(IntermediateOutputPath)$(TargetFileName).config" DestinationFiles="$(DeployedConfig)" />
+  </Target>
 </Project>

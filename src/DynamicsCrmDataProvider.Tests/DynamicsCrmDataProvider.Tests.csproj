@@ -31,6 +31,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'IntegrationTesting|AnyCPU'">
     <OutputPath>bin\IntegrationTesting\</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AntiXSSLibrary">
@@ -127,18 +128,16 @@
     <Compile Include="CrmDbProviderFactoryTests.cs" />
     <Compile Include="CrmDbDataReaderTests.cs" />
     <Compile Include="CrmQueryExpressionProviderTests.cs" />
-    <Compile Include="IntegrationTests.cs" />
     <Compile Include="CrmDbCommandTests.cs" />
     <Compile Include="CrmDbConnectionTests.cs" />
+    <Compile Include="LogUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="app.Debug.config">
-      <DependentUpon>app.config</DependentUpon>
+    <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="app.IntegrationTesting.config">
+    <None Include="app.Debug.config">
       <DependentUpon>app.config</DependentUpon>
       <SubType>Designer</SubType>
     </None>
@@ -150,9 +149,7 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Fakes\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\DynamicsCrmDataProvider\DynamicsCrmDataProvider.csproj">
       <Project>{61D9051D-4C85-419F-97DC-D56D4A72C5E3}</Project>

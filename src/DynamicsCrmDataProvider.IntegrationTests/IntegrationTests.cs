@@ -2,20 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Data;
 using System.Linq;
 using DynamicsCrmDataProvider.Dynamics;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata.Query;
 using Microsoft.Xrm.Sdk.Query;
-using NUnit.Core;
 using NUnit.Framework;
-using Rhino.Mocks;
-using SQLGeneration.Builders;
-using SQLGeneration.Generators;
 
-namespace DynamicsCrmDataProvider.Tests
+namespace DynamicsCrmDataProvider.IntegrationTests
 {
     [TestFixture()]
     public class IntegrationTests

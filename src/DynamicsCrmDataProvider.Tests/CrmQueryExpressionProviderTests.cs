@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using System.Text;
 using DynamicsCrmDataProvider.Dynamics;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
@@ -23,7 +25,7 @@ namespace DynamicsCrmDataProvider.Tests
             var sql = "Select * From contact";
             var cmd = new CrmDbCommand(null);
             cmd.CommandText = sql;
-          //  var cmd = commandBuilder.GetCommand(sql);
+            //  var cmd = commandBuilder.GetCommand(sql);
 
             var subject = CreateTestSubject();
             // Act
@@ -361,7 +363,7 @@ namespace DynamicsCrmDataProvider.Tests
             }
 
             //TODO: Haven't yet implemented support for the following dynamics crm condition operators..
-          
+
             //ConditionOperator.Between // >= x and <= y
             //ConditionOperator.NotBetween // <= x and >= y
             //ConditionOperator.NotOn //  -The value is not on the specified date.
@@ -383,6 +385,101 @@ namespace DynamicsCrmDataProvider.Tests
             var queryExpression = subject.CreateQueryExpression(cmd);
 
         }
+
+
+        [Test]
+        [TestCase("INNER")]
+        [TestCase("LEFT")]
+        public void Should_Support_Joins(String joinType)
+        {
+            var join = JoinOperator.Natural;
+
+            switch (joinType)
+            {
+                case "INNER":
+                    join = JoinOperator.Inner;
+                    //  Enum.Parse(typeof(JoinOperator), joinType)
+                    break;
+                case "LEFT":
+                    join = JoinOperator.LeftOuter;
+                    break;
+            }
+
+
+            var sql = string.Format("Select contactid, firstname, lastname From contact {0} JOIN address on contact.id = address.contactid", joinType);
+
+            var cmd = new CrmDbCommand(null);
+            cmd.CommandText = sql;
+
+            // Create test subject.
+            var subject = CreateTestSubject();
+
+            // Act
+            // Ask our test subject to Convert the SelectBuilder to a Query Expression.
+            var queryExpression = subject.CreateQueryExpression(cmd);
+
+            //Assert
+            Assert.That(queryExpression.LinkEntities, Is.Not.Null);
+            Assert.That(queryExpression.LinkEntities[0], Is.Not.Null);
+            Assert.That(queryExpression.LinkEntities[0].JoinOperator, Is.EqualTo(join));
+
+
+
+        }
+
+        [Category("Experimentation")]
+        [Test]
+        public void Experiment_With_Joins()
+        {
+
+            var logBuilder = new StringBuilder();
+            
+            string joinType = "INNER";
+            var sql = string.Format("Select contactid, firstname, lastname From contact AS CONTACT {0} JOIN address AS ADDRESS on contact.contactid = address.contactid", joinType);
+
+            var commandText = sql;
+            var commandBuilder = new CommandBuilder();
+            var builder = commandBuilder.GetCommand(commandText) as SelectBuilder;
+            LogUtils.LogCommand(builder, logBuilder);
+            logBuilder.AppendLine();
+          
+
+          
+            var nestedJoinsSql =
+                string.Format(
+                    "Select contactid, firstname, lastname From contact INNER JOIN address on contact.id = address.contactid INNER JOIN occupant on address.addressid = occupant.addressid ",
+                    joinType);
+
+            builder = commandBuilder.GetCommand(nestedJoinsSql) as SelectBuilder;
+            LogUtils.LogCommand(builder, logBuilder);
+            logBuilder.AppendLine();
+
+            var anotherJoinSql =
+             string.Format(
+                 "Select contactid, firstname, lastname From contact INNER JOIN address on contact.id = address.contactid INNER JOIN occupant on contact.contactid = occupant.contactid ",
+                 joinType);
+
+            builder = commandBuilder.GetCommand(anotherJoinSql) as SelectBuilder;
+            LogUtils.LogCommand(builder, logBuilder);
+            logBuilder.AppendLine();
+
+
+            var moreSql =
+            string.Format(
+                "Select contactid, firstname, lastname From contact INNER JOIN address on contact.id = address.contactid LEFT JOIN occupant on contact.contactid = occupant.contactid ",
+                joinType);
+
+            builder = commandBuilder.GetCommand(moreSql) as SelectBuilder;
+            LogUtils.LogCommand(builder, logBuilder);
+            logBuilder.AppendLine();
+
+
+            Console.Write(logBuilder.ToString());
+
+        }
+
+       
+
 
     }
 }
