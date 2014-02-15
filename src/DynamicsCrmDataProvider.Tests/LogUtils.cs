@@ -39,8 +39,11 @@ namespace DynamicsCrmDataProvider.Tests
             {
                 if (f != null)
                 {
-                    logBuilder.AppendLine(string.Format("{0} Column Alias: {1}", indent, f.Alias));
-                    LogUtils.LogProjectionItem(f.ProjectionItem, logBuilder, indentLevel);
+                    if (!string.IsNullOrEmpty(f.Alias))
+                    {
+                        logBuilder.AppendLine(string.Format("{0} Column Alias: {1}", indent, f.Alias));
+                    }
+                    LogUtils.LogProjectionItem(f.ProjectionItem, logBuilder, indentLevel); 
                 }
             }
         }
@@ -95,19 +98,19 @@ namespace DynamicsCrmDataProvider.Tests
             var indent = GetIndent(level);
             if (join != null)
             {
-                stringBuilder.AppendLine(string.Format("{0}Join, Type: {1}", indent, join.GetType().FullName));
+                stringBuilder.AppendLine(string.Format("{0} {1}", indent, join.GetType().Name));
                 var binaryJoin = join as BinaryJoin;
                 if (binaryJoin != null)
                 {
 
                     if (binaryJoin.LeftHand != null)
                     {
-                        stringBuilder.AppendLine(string.Format("{0} Left Side:", indent));
+                        stringBuilder.AppendLine(string.Format("{0} Left:", indent));
                         LogJoin(binaryJoin.LeftHand, stringBuilder, level + 1);
                     }
                     if (binaryJoin.RightHand != null)
                     {
-                        stringBuilder.AppendLine(string.Format("{0} Right Side:", indent));
+                        stringBuilder.AppendLine(string.Format("{0} Right:", indent));
                         AliasedSource asource = binaryJoin.RightHand;
                         LogAliasedSource(asource, stringBuilder, level + 1);
                     }
@@ -131,8 +134,8 @@ namespace DynamicsCrmDataProvider.Tests
             var indent = GetIndent(level);
             if (source != null)
             {
-                stringBuilder.AppendLine(string.Format("{0}Aliased Source, Type: {1}", indent, source.GetType().FullName));
-                if (source.Alias != null)
+                stringBuilder.AppendLine(string.Format("{0} {1}", indent, source.GetType().FullName));
+                if (!string.IsNullOrEmpty(source.Alias))
                 {
                     stringBuilder.AppendLine(string.Format("{0} Alias: {1}", indent, source.Alias));
                 }
@@ -141,20 +144,21 @@ namespace DynamicsCrmDataProvider.Tests
                 {
                     IRightJoinItem joinItem = source.Source;
                     var sourceName = joinItem.GetSourceName();
-                    stringBuilder.AppendLine(string.Format("{0} Source name: {1}", indent, sourceName));
-                    stringBuilder.AppendLine(string.Format("{0} Source Join Item type: {1}", indent, joinItem.GetType().FullName));
+                    stringBuilder.AppendLine(string.Format("{0} {1}", indent, joinItem.GetType().FullName));
+                    stringBuilder.AppendLine(string.Format("{0} Source Name: {1}", indent, sourceName));
+                 
                     if (joinItem.IsTable)
                     {
                         var table = joinItem as Table;
-                        stringBuilder.AppendLine(string.Format("{0}   Table name: {1}", indent, table.Name));
-                        stringBuilder.AppendLine(string.Format("{0}   Table qualifier: {1}", indent, table.Qualifier));
+                        stringBuilder.AppendLine(string.Format("{0}   Table Name: {1}", indent, table.Name));
+                        stringBuilder.AppendLine(string.Format("{0}   Table Qualifier: {1}", indent, table.Qualifier));
                     }
                     else
                     {
                         var join = joinItem as Join;
                         if (join != null)
                         {
-
+                            LogJoin(join, stringBuilder, level + 1);
                         }
                         else
                         {
