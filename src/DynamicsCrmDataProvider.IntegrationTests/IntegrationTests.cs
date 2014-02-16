@@ -112,69 +112,82 @@ namespace DynamicsCrmDataProvider.IntegrationTests
             Assert.That(contactMetadata.Attributes.FirstOrDefault(a => a.LogicalName == "lastname"), Is.Not.Null);
         }
 
-        [Test(Description = "Integration tests that gets metadata from crm.")]
-        public void Another_Test()
+
+        [Test(Description = "Queries using a join")]
+        public void Should_Get_Results_From_Crm_When_Using_A_Join()
         {
-           
+            // arrange
             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
             var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
                                                        new CrmClientCredentialsProvider());
 
-            // var sut = new EntityMetadataRepository(serviceProvider);
-            // retrieve the current timestamp value;
-            var entityFilter = new MetadataFilterExpression(LogicalOperator.And);
-            entityFilter.Conditions.Add(new MetadataConditionExpression("LogicalName", MetadataConditionOperator.Equals, "contact"));
-            var props = new MetadataPropertiesExpression();
-            props.AllProperties = true;
+            var sut = new EntityMetadataRepository(serviceProvider);
+            // act
+            var contactMetadata = sut.GetEntityMetadata("contact");
 
-            //LabelQueryExpression labels = new LabelQueryExpression();
-            var entityQueryExpression = new EntityQueryExpression()
+            // assert
+            Assert.That(contactMetadata, Is.Not.Null);
+            Assert.That(contactMetadata, Is.Not.Null);
+
+            Assert.That(contactMetadata.Attributes, Is.Not.Null);
+            Assert.That(contactMetadata.Attributes.FirstOrDefault(a => a.LogicalName == "firstname"), Is.Not.Null);
+            Assert.That(contactMetadata.Attributes.FirstOrDefault(a => a.LogicalName == "lastname"), Is.Not.Null);
+        }
+
+        [Test]
+        [TestCase("INNER")]
+        [TestCase("LEFT")]
+        public void Should_Be_Able_To_Select_Using_Table_Joins(String joinType)
+        {
+            var join = JoinOperator.Natural;
+
+            switch (joinType)
             {
-                Criteria = entityFilter,
-                Properties = props,
-                AttributeQuery = new AttributeQueryExpression()
+                case "INNER":
+                    join = JoinOperator.Inner;
+                    //  Enum.Parse(typeof(JoinOperator), joinType)
+                    break;
+                case "LEFT":
+                    join = JoinOperator.LeftOuter;
+                    break;
+            }
+
+
+            var sql = string.Format("Select C.contactid, C.firstname, C.lastname, A.line1 From contact C {0} JOIN customeraddress A on C.contactid = A.parentid", joinType);
+
+            var cmd = new CrmDbCommand(null);
+            cmd.CommandText = sql;
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var command = conn.CreateCommand();
+
+                Console.WriteLine("Executing command " + sql);
+                command.CommandText = sql;
+                //   command.CommandType = CommandType.Text;
+
+                using (var reader = command.ExecuteReader())
                 {
-                    Properties = props
-                }
-            };
-
-            var retrieveMetadataChangesRequest = new RetrieveMetadataChangesRequest()
-            {
-                Query = entityQueryExpression,
-                ClientVersionStamp = null,
-                DeletedMetadataFilters = DeletedMetadataFilters.All,
-
-            };
-            try
-            {
-                IOrganizationService service = serviceProvider.GetOrganisationService();
-                using (service as IDisposable)
-                {
-
-                    // act
-                    // arrange
-                    var watch = new System.Diagnostics.Stopwatch();
-                    watch.Start();
-                    var contactMetadata = (RetrieveMetadataChangesResponse)service.Execute(retrieveMetadataChangesRequest);
-                    watch.Stop();
-                    Console.WriteLine("Elapsed " + watch.Elapsed.ToString());
-                    // assert
-                    Assert.That(contactMetadata, Is.Not.Null);
-                    Assert.That(contactMetadata.EntityMetadata, Is.Not.Null);
-                    Assert.That(contactMetadata.EntityMetadata[0], Is.Not.Null);
-                    Assert.That(contactMetadata.EntityMetadata[0].Attributes, Is.Not.Null);
-                    Assert.That(contactMetadata.EntityMetadata[0].Attributes.FirstOrDefault(a => a.LogicalName == "firstname"), Is.Not.Null);
-                    Assert.That(contactMetadata.EntityMetadata[0].Attributes.FirstOrDefault(a => a.LogicalName == "lastname"), Is.Not.Null);
-
+                    int resultCount = 0;
+                    foreach (var result in reader)
+                    {
+                        resultCount++;
+                        var contactId = (Guid)reader["C.contactid"];
+                        var firstName = (string)reader.SafeGetString(1);
+                        var lastName = (string)reader.SafeGetString(2);
+                        var line1 = (string)reader.SafeGetString(3);
+                        var alsoLine1 = (string)reader.SafeGetString("A.line1");
+                        Console.WriteLine(string.Format("{0} {1} {2} {3}", contactId, firstName, lastName, line1));
+                    }
+                    Console.WriteLine("There were " + resultCount + " results..");
                 }
             }
-            catch (Exception e)
-            {
-                Console.Write(e);
-                //    throw new Exception("Unable to obtain changes in CRM metadata using client timestamp: " + retrieveMetadataChangesRequest.ClientVersionStamp + " as CRM returned a fault. See inner exception for details.", e);
-            }
+
 
         }
+
 
     }
 }

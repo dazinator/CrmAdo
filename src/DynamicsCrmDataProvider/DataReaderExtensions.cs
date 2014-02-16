@@ -10,6 +10,13 @@ namespace DynamicsCrmDataProvider
 {
     public static class DataReaderExtensions
     {
+
+        public static string SafeGetString(this DbDataReader reader, string colName)
+        {
+            var ordinal = reader.GetOrdinal(colName);
+            return SafeGetString(reader, ordinal);
+        }
+
         public static string SafeGetString(this DbDataReader reader, int colIndex)
         {
             if (!reader.IsDBNull(colIndex))
@@ -17,6 +24,8 @@ namespace DynamicsCrmDataProvider
             else
                 return string.Empty;
         }
+
+      
 
      
 

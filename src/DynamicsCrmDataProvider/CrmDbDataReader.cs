@@ -3,6 +3,8 @@ using System.Collections;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
+using System.Linq;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 
 namespace DynamicsCrmDataProvider
@@ -107,7 +109,7 @@ namespace DynamicsCrmDataProvider
             return new DbEnumerator(this, this._DbConnection != null);
         }
 
-        #region Metadata 
+        #region Metadata
 
         public override int FieldCount
         {
@@ -124,14 +126,27 @@ namespace DynamicsCrmDataProvider
             int ordinal = 0;
             foreach (var m in _Results.ColumnMetadata)
             {
-                if (m.ColumnName == name)
+                if (m.ColumnName.ToLower() == name.ToLower())
                 {
                     return ordinal;
                 }
                 ordinal++;
             }
+            // ok be nice.. but look for a better way to do this in future..
+            // in case they are using an alias for the default entity (crm doesn't support this when using QueryExpression) then check for that..
+            ordinal = 0;
+            foreach (var m in _Results.ColumnMetadata)
+            {
+                if (m.IsSameLogicalName(name))
+                {
+                    return ordinal;
+                }
+                ordinal++;
+            }
+
             // Throw an exception if the ordinal cannot be found.
-            throw new IndexOutOfRangeException("Could not find specified column in results");
+            var availableColumns = string.Join(",", (from c in _Results.ColumnMetadata select c.ColumnName));
+            throw new IndexOutOfRangeException("The column named " + name + " was not found in the available columns: " + availableColumns);
         }
 
         public override string GetDataTypeName(int ordinal)
@@ -221,25 +236,36 @@ namespace DynamicsCrmDataProvider
             {
                 return DBNull.Value;
             }
-            return record[name];
+            var val = record[name];
+            if (_Results.ColumnMetadata[ordinal].HasAlias)
+            {
+                var aliasedVal  = val as AliasedValue;
+                if (aliasedVal != null)
+                {
+                    //if (!typeof(T).IsAssignableFrom(typeof(AliasedValue)))
+                    //{
+                    return aliasedVal.Value;
+                    // }
+                }
+            }
+
+            return val;
         }
 
         public T GetValue<T>(int ordinal)
         {
-            var name = GetName(ordinal);
             try
             {
-
-                var record = _Results.Results[_Position];
-                if (!record.Attributes.ContainsKey(name))
+                var val = GetValue(ordinal);
+                if (val == DBNull.Value)
                 {
                     return default(T);
                 }
-                return (T)record[name];
+                return (T)val;
             }
             catch (InvalidCastException e)
             {
-                Debug.Write("error!");
+                Debug.Write("error casting value to T!");
                 throw;
             }
 

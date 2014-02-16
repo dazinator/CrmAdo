@@ -141,14 +141,14 @@ namespace DynamicsCrmDataProvider
             var entMeta = entityMetadata[linkEntity.LinkToEntityName];
             if (linkEntity.Columns.AllColumns)
             {
-                columns.AddRange((from c in entMeta.Attributes select new ColumnMetadata(c)).Reverse());
+                columns.AddRange((from c in entMeta.Attributes select new ColumnMetadata(c, linkEntity.EntityAlias)).Reverse());
             }
             else
             {
                 columns.AddRange((from c in entMeta.Attributes
                                   join s in linkEntity.Columns.Columns
                                       on c.LogicalName equals s
-                                  select new ColumnMetadata(c)).Reverse());
+                                  select new ColumnMetadata(c, linkEntity.EntityAlias)).Reverse());
 
             }
 
