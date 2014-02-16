@@ -111,6 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BetterCrmQueryExpressionProvider.cs" />
+    <Compile Include="ColumnMetadata.cs" />
     <Compile Include="CrmCommandExecutor.cs" />
     <Compile Include="CrmDbCommand.cs">
       <SubType>Component</SubType>
@@ -145,6 +146,7 @@
     <Compile Include="Dynamics\ICrmServiceProvider.cs" />
     <Compile Include="Dynamics\Metadata\IEntityMetadataRepository.cs" />
     <Compile Include="Dynamics\OrganisationDoesNotExistException.cs" />
+    <Compile Include="EntityResultSet.cs" />
     <Compile Include="ICrmCommandExecutor.cs" />
     <Compile Include="ICrmQueryExpressionProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

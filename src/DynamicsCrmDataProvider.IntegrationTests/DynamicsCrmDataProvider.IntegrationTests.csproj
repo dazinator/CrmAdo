@@ -31,6 +31,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'IntegrationTesting|AnyCPU'">
     <OutputPath>bin\IntegrationTesting\</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AntiXSSLibrary">
@@ -129,6 +130,9 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="app.Debug.config">
+      <DependentUpon>app.config</DependentUpon>
+    </None>
+    <None Include="app.IntegrationTesting.config">
       <DependentUpon>app.config</DependentUpon>
     </None>
     <None Include="app.Release.config">

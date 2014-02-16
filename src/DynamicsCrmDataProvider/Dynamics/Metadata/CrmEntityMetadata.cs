@@ -10,9 +10,11 @@ namespace DynamicsCrmDataProvider.Dynamics
         public string Timestamp { get; set; }
         public string EntityName { get; set; }
 
-
-
         public List<AttributeMetadata> Attributes { get; set; }
+
+        /// <summary>
+        /// This lock is taken when the metadata "Refresh" method is run, as during that time the object can be modified with the latest updates.
+        /// </summary>
         private static object _Lock = new object();
 
         public void Refresh(List<AttributeMetadata> modifiedFields, List<Guid> deletedFields)

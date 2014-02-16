@@ -25,7 +25,7 @@ namespace DynamicsCrmDataProvider.Tests
         public void Should_Be_Able_To_Create_A_New_Data_Reader()
         {
             var results = new EntityResultSet();
-            results.ColumnMetadata = new List<AttributeMetadata>();
+            results.ColumnMetadata = new List<ColumnMetadata>();
             results.Results = new EntityCollection(new List<Entity>());
             var subject = CreateTestSubject(results);
         }
@@ -35,11 +35,15 @@ namespace DynamicsCrmDataProvider.Tests
         {
             var conn = MockRepository.GenerateMock<CrmDbConnection>();
             var results = new EntityResultSet();
-            results.ColumnMetadata = new List<AttributeMetadata>();
+            results.ColumnMetadata = new List<ColumnMetadata>();
             var firstName = MockRepository.GenerateMock<AttributeMetadata>();
             var lastname = MockRepository.GenerateMock<AttributeMetadata>();
-            results.ColumnMetadata.Add(firstName);
-            results.ColumnMetadata.Add(lastname);
+            var firstNameC = new ColumnMetadata(firstName);
+            var lastnameC = new ColumnMetadata(lastname);
+
+
+            results.ColumnMetadata.Add(firstNameC);
+            results.ColumnMetadata.Add(lastnameC);
             results.Results = new EntityCollection(new List<Entity>());
             var result = new Entity("contact");
             result.Id = Guid.NewGuid();
@@ -50,33 +54,49 @@ namespace DynamicsCrmDataProvider.Tests
         }
 
         [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void Should_Close_Connection_When_Finished_Reading()
         {
             var conn = MockRepository.GenerateMock<CrmDbConnection>();
             var results = new EntityResultSet();
-            results.ColumnMetadata = new List<AttributeMetadata>();
-            var firstName = MockRepository.GenerateMock<AttributeMetadata>();
-            var lastname = MockRepository.GenerateMock<AttributeMetadata>();
-            firstName.LogicalName = "firstname";
-            lastname.LogicalName = "lastname";
-            firstName.Stub(a => a.AttributeType).Return(AttributeTypeCode.String);
-            lastname.Stub(a => a.AttributeType).Return(AttributeTypeCode.String);
+            results.ColumnMetadata = new List<ColumnMetadata>();
+          
+         //   var firstName = new AttributeMetadata();
+          //  var lastname = new AttributeMetadata();
 
+            var firstNameC = MockRepository.GenerateMock<ColumnMetadata>();
+            firstNameC.Stub(a => a.ColumnName).Return("firstname");
+            firstNameC.Stub(a => a.ColumnDataType()).Return("string");
+            firstNameC.Stub(a => a.AttributeType()).Return( AttributeTypeCode.String);
+
+            var lastnameC = MockRepository.GenerateMock<ColumnMetadata>();
+            lastnameC.Stub(a => a.ColumnName).Return("lastname");
+            lastnameC.Stub(a => a.ColumnDataType()).Return("string");
+            lastnameC.Stub(a => a.AttributeType()).Return(AttributeTypeCode.String);
+          //  lastnameC.AttributeMetadata
+         
+           // var firstName = MockRepository.GenerateMock<AttributeMetadata>();
+            //var lastname = MockRepository.GenerateMock<AttributeMetadata>();
+          //  firstName.LogicalName = "firstname";
+          //  lastname.LogicalName = "lastname";
+           
+            //lastname.Stub(a => a.LogicalName).Return("lastname");
+            //firstName.Stub(a => a.AttributeType).Return(AttributeTypeCode.String);
+            //lastname.Stub(a => a.AttributeType).Return(AttributeTypeCode.String);
+
+            results.ColumnMetadata.Add(firstNameC);
+            results.ColumnMetadata.Add(lastnameC);
             results.Results = new EntityCollection(new List<Entity>());
             var result = new Entity("contact");
             result.Id = Guid.NewGuid();
             result["firstname"] = "joe";
             result["lastname"] = "schmoe";
             results.Results.Entities.Add(result);
-            var subject = CreateTestSubject(conn, results);
+            var subject = new CrmDbDataReader(results, conn);
             foreach (var r in subject)
             {
 
             }
-            subject.Close();
             conn.AssertWasCalled(o => o.Close(), options => options.Repeat.Once());
-
 
         }
 

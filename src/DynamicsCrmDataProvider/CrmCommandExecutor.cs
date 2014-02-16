@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using DynamicsCrmDataProvider.Dynamics;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
 using SQLGeneration.Builders;
 using SQLGeneration.Generators;
@@ -66,7 +67,8 @@ namespace DynamicsCrmDataProvider
             var resultSet = new EntityResultSet();
             if (_MetadataProvider != null)
             {
-                resultSet.ColumnMetadata = _MetadataProvider.GetEntityMetadata(entityName).Attributes;
+                resultSet.ColumnMetadata = new List<ColumnMetadata>();
+                resultSet.ColumnMetadata.AddRange(from a in _MetadataProvider.GetEntityMetadata(entityName).Attributes select new ColumnMetadata(a));
                 resultSet.ColumnMetadata.Reverse();
             }
             resultSet.Results = results;
@@ -79,22 +81,86 @@ namespace DynamicsCrmDataProvider
             var queryExpression = _CrmQueryExpressionProvider.CreateQueryExpression(command);
             var orgService = command.CrmDbConnection.OrganizationService;
             var results = orgService.RetrieveMultiple(queryExpression);
-
             var resultSet = new EntityResultSet();
-            if (_MetadataProvider != null)
-            {
-                var entityMetadata = _MetadataProvider.GetEntityMetadata(queryExpression.EntityName);
-                var columns = (from c in entityMetadata.Attributes
-                               join s in queryExpression.ColumnSet.Columns
-                                   on c.LogicalName equals s
-                               select c).Reverse().ToList();
-                resultSet.ColumnMetadata = columns;
-
-            }
-
+            PopulateMetadata(resultSet, queryExpression);
             resultSet.Results = results;
             return resultSet;
         }
+
+        #region Metadata
+        private void PopulateMetadata(EntityResultSet resultSet, QueryExpression queryExpression)
+        {
+            if (_MetadataProvider != null)
+            {
+                var metaData = new Dictionary<string, CrmEntityMetadata>();
+                var columns = new List<ColumnMetadata>();
+                PopulateColumnMetadata(queryExpression, metaData, columns);
+                resultSet.ColumnMetadata = columns;
+            }
+        }
+
+        public void PopulateColumnMetadata(QueryExpression query, Dictionary<string, CrmEntityMetadata> entityMetadata, List<ColumnMetadata> columns)
+        {
+            // get metadata for this entities columns..
+            if (!entityMetadata.ContainsKey(query.EntityName))
+            {
+                entityMetadata[query.EntityName] = _MetadataProvider.GetEntityMetadata(query.EntityName);
+            }
+
+            var entMeta = entityMetadata[query.EntityName];
+            if (query.ColumnSet.AllColumns)
+            {
+                columns.AddRange((from c in entMeta.Attributes select new ColumnMetadata(c)).Reverse());
+            }
+            else
+            {
+                columns.AddRange((from c in entMeta.Attributes
+                                  join s in query.ColumnSet.Columns
+                                      on c.LogicalName equals s
+                                  select new ColumnMetadata(c)).Reverse());
+
+            }
+
+            if (query.LinkEntities != null && query.LinkEntities.Any())
+            {
+                foreach (var l in query.LinkEntities)
+                {
+                    PopulateColumnMetadata(l, entityMetadata, columns);
+                }
+            }
+        }
+
+        public void PopulateColumnMetadata(LinkEntity linkEntity, Dictionary<string, CrmEntityMetadata> entityMetadata, List<ColumnMetadata> columns)
+        {
+            // get metadata for this entities columns..
+            if (!entityMetadata.ContainsKey(linkEntity.LinkToEntityName))
+            {
+                entityMetadata[linkEntity.LinkToEntityName] = _MetadataProvider.GetEntityMetadata(linkEntity.LinkToEntityName);
+            }
+
+            var entMeta = entityMetadata[linkEntity.LinkToEntityName];
+            if (linkEntity.Columns.AllColumns)
+            {
+                columns.AddRange((from c in entMeta.Attributes select new ColumnMetadata(c)).Reverse());
+            }
+            else
+            {
+                columns.AddRange((from c in entMeta.Attributes
+                                  join s in linkEntity.Columns.Columns
+                                      on c.LogicalName equals s
+                                  select new ColumnMetadata(c)).Reverse());
+
+            }
+
+            if (linkEntity.LinkEntities != null && linkEntity.LinkEntities.Any())
+            {
+                foreach (var l in linkEntity.LinkEntities)
+                {
+                    PopulateColumnMetadata(l, entityMetadata, columns);
+                }
+            }
+        }
+        #endregion
 
         private EntityResultSet ProcessStoredProcedureCommand(CrmDbCommand command)
         {
@@ -111,4 +177,5 @@ namespace DynamicsCrmDataProvider
             return -1;
         }
     }
+
 }

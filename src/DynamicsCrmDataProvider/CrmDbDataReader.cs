@@ -1,34 +1,20 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
-using System.Linq;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 
 namespace DynamicsCrmDataProvider
 {
-
-    public class EntityResultSet
-    {
-        public EntityCollection Results { get; set; }
-        public List<AttributeMetadata> ColumnMetadata { get; set; }
-    }
-
     public class CrmDbDataReader : DbDataReader
     {
-        private EntityCollection _Results;
+        //private EntityCollection _Results;
         private DbConnection _DbConnection;
         private bool _IsOpen;
         private const int StartPosition = -1;
         private int _Position = StartPosition;
-        private bool _HasRows;
-        private List<AttributeMetadata> _Metadata;
-        // private List<ColumnMetadata> _Metadata;
-        private int _ResultSetCount = 0;
-        // private int _TotalRecordCount = 0;
+        private EntityResultSet _Results;
 
         public CrmDbDataReader(EntityResultSet results)
             : this(results, null)
@@ -43,30 +29,9 @@ namespace DynamicsCrmDataProvider
             {
                 throw new ArgumentNullException("results");
             }
-            this._Results = results.Results;
-            _Metadata = results.ColumnMetadata;
+            this._Results = results;
             this._DbConnection = dbConnection;
             _IsOpen = true;
-            // TODO: Change the below - shouldnt discover metadata from the first item, should retreive the metadata from CRM in advance.
-            // ALSO Extend metadata with fields for EntityReference Name, Option Set Name, and possibly some other formatted values.
-            //  _Metadata = new List<ColumnMetadata>();
-            if (_Results.Entities != null && _Results.Entities.Any())
-            {
-                _HasRows = true;
-                _ResultSetCount = _Results.Entities.Count;
-
-                // _FirstResult = results.[0];
-                //foreach (var att in _FirstResult.Attributes)
-                //{
-                //    var columnMeta = new ColumnMetadata();
-                //    columnMeta.Name = att.Key;
-                //    // TODO: This needs to be set properly..
-                //    columnMeta.AttributeTypeCode = AttributeTypeCode.String;
-                //    // THIS IS BAD - VALUE COULD BE NULL..
-                //    columnMeta.DataType = att.Value.GetType();
-                //    _Metadata.Add(columnMeta);
-                //}
-            }
         }
 
         private int _Depth = 0;
@@ -111,10 +76,10 @@ namespace DynamicsCrmDataProvider
         {
             // Return true if it is possible to advance and if you are still positioned
             // on a valid row.
-            if (++_Position >= _ResultSetCount)
+            if (++_Position >= _Results.ResultCount())
             {
                 // come to end of result set.. if more available need to load them..
-                if (!_Results.MoreRecords)
+                if (!_Results.Results.MoreRecords)
                 {
                     return false;
                 }
@@ -134,7 +99,7 @@ namespace DynamicsCrmDataProvider
 
         public override bool HasRows
         {
-            get { return _HasRows; }
+            get { return _Results.HasResults(); }
         }
 
         public override IEnumerator GetEnumerator()
@@ -142,29 +107,24 @@ namespace DynamicsCrmDataProvider
             return new DbEnumerator(this, this._DbConnection != null);
         }
 
-        #region Metadata - Leaving a Lot to be desired here..
-
-        //private Entity FirstResult()
-        //{
-        //    return _FirstResult;
-        //}
+        #region Metadata 
 
         public override int FieldCount
         {
-            get { return _Metadata.Count; }
+            get { return _Results.ColumnMetadata.Count; }
         }
 
         public override string GetName(int ordinal)
         {
-            return _Metadata[ordinal].LogicalName;
+            return _Results.ColumnMetadata[ordinal].ColumnName;
         }
 
         public override int GetOrdinal(string name)
         {
             int ordinal = 0;
-            foreach (var m in _Metadata)
+            foreach (var m in _Results.ColumnMetadata)
             {
-                if (m.LogicalName == name)
+                if (m.ColumnName == name)
                 {
                     return ordinal;
                 }
@@ -176,13 +136,12 @@ namespace DynamicsCrmDataProvider
 
         public override string GetDataTypeName(int ordinal)
         {
-            var columnMeta = _Metadata[ordinal];
-            return columnMeta.AttributeType.Value.ToString();
+            return _Results.ColumnMetadata[ordinal].ColumnDataType();
         }
 
         public override Type GetFieldType(int ordinal)
         {
-            switch (_Metadata[ordinal].AttributeType)
+            switch (_Results.ColumnMetadata[ordinal].AttributeType())
             {
                 case AttributeTypeCode.BigInt:
                     return typeof(long);
@@ -240,7 +199,7 @@ namespace DynamicsCrmDataProvider
 
         #endregion
 
-        #region Field Data Retrieval
+        #region Field Value Retrieval
 
         public override object this[int ordinal]
         {
@@ -257,7 +216,7 @@ namespace DynamicsCrmDataProvider
         public override object GetValue(int ordinal)
         {
             var name = GetName(ordinal);
-            var record = _Results[_Position];
+            var record = _Results.Results[_Position];
             if (!record.Attributes.ContainsKey(name))
             {
                 return DBNull.Value;
@@ -270,8 +229,8 @@ namespace DynamicsCrmDataProvider
             var name = GetName(ordinal);
             try
             {
-               
-                var record = _Results[_Position];
+
+                var record = _Results.Results[_Position];
                 if (!record.Attributes.ContainsKey(name))
                 {
                     return default(T);
@@ -283,7 +242,7 @@ namespace DynamicsCrmDataProvider
                 Debug.Write("error!");
                 throw;
             }
-         
+
         }
 
         public override int GetValues(object[] values)

@@ -35,8 +35,8 @@ Global
 		{35FB72AA-FD92-4A2D-9E52-B5E221687E56}.Release|Any CPU.Build.0 = Release|Any CPU
 		{050B2CC8-C601-4792-B0B7-50B4514C618B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{050B2CC8-C601-4792-B0B7-50B4514C618B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{050B2CC8-C601-4792-B0B7-50B4514C618B}.IntegrationTesting|Any CPU.ActiveCfg = Debug|Any CPU
-		{050B2CC8-C601-4792-B0B7-50B4514C618B}.IntegrationTesting|Any CPU.Build.0 = Debug|Any CPU
+		{050B2CC8-C601-4792-B0B7-50B4514C618B}.IntegrationTesting|Any CPU.ActiveCfg = IntegrationTesting|Any CPU
+		{050B2CC8-C601-4792-B0B7-50B4514C618B}.IntegrationTesting|Any CPU.Build.0 = IntegrationTesting|Any CPU
 		{050B2CC8-C601-4792-B0B7-50B4514C618B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{050B2CC8-C601-4792-B0B7-50B4514C618B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
