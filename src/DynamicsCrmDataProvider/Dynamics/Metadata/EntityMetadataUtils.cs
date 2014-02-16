@@ -42,6 +42,5 @@ namespace DynamicsCrmDataProvider.Dynamics
             var entity = (EntityMetadata)serializer.ReadObject(reader);
             return entity;
         }
-
     }
 }

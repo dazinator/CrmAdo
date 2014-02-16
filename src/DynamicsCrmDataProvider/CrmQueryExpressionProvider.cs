@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using DynamicsCrmDataProvider.Dynamics;
 using Microsoft.Xrm.Sdk.Query;
 using SQLGeneration.Builders;
 using SQLGeneration.Generators;
@@ -14,50 +15,40 @@ namespace DynamicsCrmDataProvider
         /// <summary>
         /// Creates a QueryExpression from the given Select command.
         /// </summary>
-        /// <param name="builder"></param>
         /// <returns></returns>
         public QueryExpression CreateQueryExpression(CrmDbCommand command)
         {
             var commandText = command.CommandText;
             var commandBuilder = new CommandBuilder();
             var builder = commandBuilder.GetCommand(commandText) as SelectBuilder;
-
             GuardSelectBuilder(builder);
+            var query = FromCommand(builder);
+            return query;
+        }
 
-            //// This is the entity being selected.
-            //if (builder.From.First() is SQLGeneration.Builders.Join)
-            //{
-
-            //}
+        public static QueryExpression FromCommand(ICommand command)
+        {
             var query = new QueryExpression();
-
-            var joinItem = builder.From.First() as IJoinItem;
-            var asource = joinItem as AliasedSource;
-            var join = joinItem as Join;
-
-            if (join != null)
+            //  query.EntityName
+            if (command is SelectBuilder)
             {
-                throw new NotSupportedException("Joins are not yet supported");
+                var selCommand = command as SelectBuilder;
+                AddFrom(selCommand.From, query);
+                AddColumns(selCommand.Projection, query);
+                AddWhere(selCommand.Where, query);
             }
+            return query;
+        }
 
-            if (asource != null)
-            {
-                if (asource.Source.IsTable)
-                {
-                    var table = asource.Source as Table;
-                    ProcessTable(builder, table, query);
-                }
-                else
-                {
-                    throw new NotSupportedException("The From keyword must be used in conjunction with a table / entity name. Subqueries not supported.");
-                }
-            }
+        #region Where and Filters
 
+        private static void AddWhere(IEnumerable<IFilter> whereFilter, QueryExpression query)
+        {
             // do where clause..
-            if (builder.Where != null && builder.Where.Any())
+            if (whereFilter != null && whereFilter.Any())
             {
                 //TODO: Should only be one where clause?
-                foreach (var where in builder.Where)
+                foreach (var where in whereFilter)
                 {
                     var condition = new ConditionExpression();
                     var orderFilter = where as OrderFilter;
@@ -91,43 +82,9 @@ namespace DynamicsCrmDataProvider
                     throw new NotSupportedException();
                 }
             }
-            return query;
         }
 
-        private void ProcessTable(SelectBuilder builder, Table table, QueryExpression query)
-        {
-            var entityName = table.Name.ToLower();
-            query.EntityName = entityName;
-            // detect all columns..
-            query.ColumnSet = GetColumnSet(builder.Projection);
-        }
-
-        private ColumnSet GetColumnSet(IEnumerable<AliasedProjection> projection)
-        {
-            var columnSet = new ColumnSet();
-            if (projection.Count() == 1)
-            {
-                var column = projection.First().ProjectionItem;
-                if (column is AllColumns)
-                {
-                    columnSet.AllColumns = true;
-                }
-                else
-                {
-                    columnSet.AddColumn(column.GetProjectionName());
-                }
-            }
-            else
-            {
-                foreach (var projItem in projection)
-                {
-                    columnSet.AddColumn(projItem.ProjectionItem.GetProjectionName());
-                }
-            }
-            return columnSet;
-        }
-
-        private void ProcessInFilter(QueryExpression query, ConditionExpression condition, InFilter filter)
+        private static void ProcessInFilter(QueryExpression query, ConditionExpression condition, InFilter filter)
         {
             // Support Like
             var left = filter.LeftHand;
@@ -177,7 +134,7 @@ namespace DynamicsCrmDataProvider
             throw new NotSupportedException();
         }
 
-        private void ProcessNullFilter(QueryExpression query, ConditionExpression condition, NullFilter nullFilter)
+        private static void ProcessNullFilter(QueryExpression query, ConditionExpression condition, NullFilter nullFilter)
         {
 
             var left = nullFilter.LeftHand;
@@ -204,7 +161,7 @@ namespace DynamicsCrmDataProvider
             return;
         }
 
-        private void ProcessOrderFilter(QueryExpression query, ConditionExpression condition, OrderFilter filter)
+        private static void ProcessOrderFilter(QueryExpression query, ConditionExpression condition, OrderFilter filter)
         {
             bool isColumnLeft = false;
 
@@ -282,7 +239,7 @@ namespace DynamicsCrmDataProvider
 
         }
 
-        private void ProcessLikeFilter(QueryExpression query, ConditionExpression condition, LikeFilter filter)
+        private static void ProcessLikeFilter(QueryExpression query, ConditionExpression condition, LikeFilter filter)
         {
 
             // Support Like
@@ -367,7 +324,7 @@ namespace DynamicsCrmDataProvider
             return;
         }
 
-        private void AppendColumnConditionWithValue(ConditionExpression condition, ConditionOperator conditionOperator, OrderFilter greaterThan, Column column, bool isColumnLeft)
+        private static void AppendColumnConditionWithValue(ConditionExpression condition, ConditionOperator conditionOperator, OrderFilter greaterThan, Column column, bool isColumnLeft)
         {
 
             //  condition.Operator = conditionOperator;
@@ -395,7 +352,7 @@ namespace DynamicsCrmDataProvider
             throw new NotSupportedException();
         }
 
-        private void AppendColumnCondition(ConditionExpression condition, ConditionOperator conditionOperator, Filter filter, Column column, params object[] values)
+        private static void AppendColumnCondition(ConditionExpression condition, ConditionOperator conditionOperator, Filter filter, Column column, params object[] values)
         {
             condition.Operator = conditionOperator;
             if (values != null)
@@ -418,10 +375,281 @@ namespace DynamicsCrmDataProvider
                 return;
             }
         }
+        #endregion
+
+        #region From and Joins
+        public static void AddFrom(IEnumerable<IJoinItem> @from, QueryExpression query)
+        {
+            foreach (var f in from)
+            {
+                if (f != null)
+                {
+                    if (f is Join)
+                    {
+                        AddJoin(f as Join, query);
+                    }
+                    else if (f is AliasedSource)
+                    {
+                        // only reached if no Joins used in select query.
+                        var aliasedSource = f as AliasedSource;
+                        if (aliasedSource.Source.IsTable)
+                        {
+                            var table = aliasedSource.Source as Table;
+                            query.EntityName = GetTableLogicalEntityName(table);
+                        }
+                        else
+                        {
+                            throw new NotSupportedException("The From keyword must be used in conjunction with a table / entity name. Subqueries not supported.");
+                        }
+
+                    }
+                }
+            }
+        }
+
+        public static void AddJoin(Join @join, QueryExpression query)
+        {
+            if (join != null)
+            {
+
+                var binaryJoin = join as BinaryJoin;
+                var linkEntity = new LinkEntity();
+                bool isFirstFrom = false;
+                if (binaryJoin != null)
+                {
+                    // Recurse to the left..
+
+                    if (binaryJoin.LeftHand != null)
+                    {
+                        if (binaryJoin.LeftHand.ToString() == "SQLGeneration.Builders.JoinStart")
+                        {
+                            // this is the very far left hand the join line!
+                            isFirstFrom = true;
+                        }
+
+                        if (!isFirstFrom)
+                        {
+                            // There is another join expression to the left - recurse to process that one first..
+
+                            AddJoin(binaryJoin.LeftHand, query);
+                        }
+                        else
+                        {
+                            // the first one is special..
+
+                        }
+                    }
+
+                    // Are we an inner or outer join?
+                    var innerJoin = binaryJoin as InnerJoin;
+                    if (innerJoin != null)
+                    {
+                        linkEntity.JoinOperator = JoinOperator.Inner;
+                    }
+                    else
+                    {
+                        var outer = binaryJoin as LeftOuterJoin;
+                        if (outer != null)
+                        {
+                            linkEntity.JoinOperator = JoinOperator.LeftOuter;
+                        }
+                        else
+                        {
+                            throw new NotSupportedException("Join type not supported.");
+                        }
+                    }
+
+                    if (binaryJoin.RightHand != null)
+                    {
+                        // This is what we are joining on to..
+                        AliasedSource asource = binaryJoin.RightHand;
+                        if (!string.IsNullOrEmpty(asource.Alias))
+                        {
+                            linkEntity.EntityAlias = asource.Alias;
+                        }
+                    }
+
+                }
+                var filteredJoin = join as FilteredJoin;
+                if (filteredJoin != null)
+                {
+                    //   stringBuilder.AppendLine(string.Format("{0} On filters:", indent));
+
+                    Column leftColumn = null;
+                    Column rightColumn = null;
+                    //string leftTableAlias = leftTable
+                    Table leftTable = null;
+                    Table rightTable = null;
+                    int onCount = 0;
+                    string leftEntityName = string.Empty;
+
+                    foreach (var on in filteredJoin.OnFilters)
+                    {
+                        onCount++;
+                        // Support Equals
+                        var equalTo = on as EqualToFilter;
+                        if (equalTo != null)
+                        {
+                            leftColumn = equalTo.LeftHand as Column;
+                            rightColumn = equalTo.RightHand as Column;
+                            GuardOnColumn(leftColumn);
+                            GuardOnColumn(rightColumn);
+
+                            leftTable = leftColumn.Source.Source as Table;
+                            rightTable = rightColumn.Source.Source as Table;
+                            leftEntityName = GetTableLogicalEntityName(leftTable);
+
+                            if (isFirstFrom)
+                            {
+                                // The left table of the first from statement is the main entity
+                                query.EntityName = leftEntityName;
+                                // detect all columns..
+                                // query.ColumnSet = GetColumnSet(projectionItems);
+                            }
+
+                            linkEntity.LinkFromEntityName = leftEntityName;
+                            linkEntity.LinkToEntityName = GetTableLogicalEntityName(rightTable);
+                            linkEntity.LinkFromAttributeName = GetColumnLogicalAttributeName(leftColumn);
+                            linkEntity.LinkToAttributeName = GetColumnLogicalAttributeName(rightColumn);
+
+                        }
+                        else
+                        {
+                            throw new NotSupportedException("When using an ON condition, only Equal To operator is supported. For example: INNER JOIN X ON Y.ID = X.ID");
+                        }
+                        //  stringBuilder.AppendLine(string.Format("{0}  Filter Type: {1}", indent, on.GetType().FullName));
+                    }
+
+                    if (onCount > 1)
+                    {
+                        throw new NotSupportedException("You can only use one ON condition. For example: INNER JOIN X ON Y.ID = X.ID is supported, but INNER JOIN X ON Y.ID = X.ID AND Y.NAME = X.NAME is not supported.");
+                    }
+
+                    // add the right columns to the link entities
+
+                    // need to add the link entity onto the query - or onto the appropriate link entity in the chain..
+                    // if the left entity name has a link entity in the query, then 
+                    LinkEntity existing = null;
+                    if (!query.LinkEntities.Any() || isFirstFrom)
+                    {
+                        if (query.EntityName != linkEntity.LinkFromEntityName)
+                        {
+                            throw new InvalidOperationException(
+                                "The first JOIN in the query must link from the main entity which in your case is " +
+                                linkEntity + " but the first join in your query links from: " +
+                                linkEntity.LinkFromEntityName + " which is an unknown entity,");
+                        }
+                        query.LinkEntities.Add(linkEntity);
+                    }
+                    else
+                    {
+
+                        bool isAliased = !string.IsNullOrEmpty(leftColumn.Source.Alias);
+                        var match = string.IsNullOrEmpty(leftColumn.Source.Alias)
+                                           ? leftEntityName
+                                           : leftColumn.Source.Alias;
+
+
+                        var leftLink = query.FindLinkEntity(match, isAliased);
+                        if (leftLink == null)
+                        {
+                            throw new InvalidOperationException("Could not perform join, as " + match + " is an unknown entity.");
+                        }
+
+                        leftLink.LinkEntities.Add(linkEntity);
+                    }
+
+                }
+            }
+        }
+        #endregion
+
+        #region Select and Projections
+        private static void AddColumns(IEnumerable<AliasedProjection> projection, QueryExpression query)
+        {
+            if (projection.Count() == 1)
+            {
+                var aliasedColumn = projection.First().ProjectionItem;
+                if (aliasedColumn is AllColumns)
+                {
+                    query.IncludeAllColumns();
+                    return;
+                }
+            }
+            // var projItemsBySource = projection.Where(p=>p.ProjectionItem is Column && ((Column)p.ProjectionItem).Source. ).Where(p=>(.Source)
+            foreach (var projItem in projection)
+            {
+                AddColumn(projItem, query);
+            }
+        }
+
+        private static void AddColumn(AliasedProjection projection, QueryExpression query)
+        {
+            string colAlias = projection.Alias;
+            if (!string.IsNullOrEmpty(colAlias))
+            {
+                throw new NotSupportedException("Column aliases are not supported.");
+            }
+
+            var col = projection.ProjectionItem as Column;
+            if (col != null)
+            {
+                bool isAliasedSource = !string.IsNullOrEmpty(col.Source.Alias);
+                var sourceName = string.IsNullOrEmpty(col.Source.Alias)
+                                     ? GetTableLogicalEntityName(col.Source.Source as Table)
+                                     : col.Source.Alias;
+                var linkItem = query.FindLinkEntity(sourceName, isAliasedSource);
+                if (linkItem == null)
+                {
+                    query.ColumnSet.AddColumn(GetColumnLogicalAttributeName(col));
+                    // wehn we can;t find the source, assume default entity..
+                    //   throw new InvalidOperationException("Could not find source named: " + sourceName);
+                }
+                else
+                {
+                    linkItem.Columns.AddColumn(GetColumnLogicalAttributeName(col));
+                }
+
+            }
+            else
+            {
+                throw new NotSupportedException("Only columns that are attribute names are supported.");
+            }
+        }
+
+        #endregion
+
+        #region Util
+
+        private static void GuardOnColumn(Column column)
+        {
+            if (column == null)
+            {
+                throw new NotSupportedException("The ON operator used in the Join statement must have a column name on it's left and right side.");
+            }
+            if (column.Source == null || column.Source.Source == null)
+            {
+                throw new NotSupportedException("No column source found for column: " + column.Name + " do you need to prefix that with the table name?");
+            }
+            if (!column.Source.Source.IsTable)
+            {
+                throw new NotSupportedException("The ON operator used in the Join statement has a column name that is not from an entity table. Column Name: " + column.Name);
+            }
+        }
+
+        private static string GetColumnLogicalAttributeName(Column column)
+        {
+            return column.Name.ToLower();
+        }
+
+        private static string GetTableLogicalEntityName(Table table)
+        {
+            return table.Name.ToLower();
+        }
 
         // ReSharper disable UnusedParameter.Local
         // This method is solely for pre condition checking.
-        private void GuardSelectBuilder(SelectBuilder builder)
+        private static void GuardSelectBuilder(SelectBuilder builder)
         // ReSharper restore UnusedParameter.Local
         {
             if (builder == null)
@@ -442,7 +670,7 @@ namespace DynamicsCrmDataProvider
             }
         }
 
-        private object GitLiteralValue(Literal lit)
+        private static object GitLiteralValue(Literal lit)
         {
             // Support string literals.
             StringLiteral stringLit = null;
@@ -487,8 +715,7 @@ namespace DynamicsCrmDataProvider
 
         }
 
+        #endregion
 
     }
-
-
 }

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 
 namespace DynamicsCrmDataProvider.Dynamics
 { // ReSharper disable CheckNamespace 
@@ -47,6 +48,8 @@ namespace DynamicsCrmDataProvider.Dynamics
             var entity = (Entity)serializer.ReadObject(reader);
             return entity;
         }
+
+     
 
     }
 

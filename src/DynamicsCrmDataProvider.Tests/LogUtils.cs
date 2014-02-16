@@ -28,6 +28,7 @@ namespace DynamicsCrmDataProvider.Tests
 
                 logBuilder.AppendLine(string.Format("{0} FROM ", indent));
                 LogFrom(selCommand.From, logBuilder, indentLevel);
+               
             }
 
         }
@@ -122,7 +123,38 @@ namespace DynamicsCrmDataProvider.Tests
                     stringBuilder.AppendLine(string.Format("{0} On filters:", indent));
                     foreach (var on in filteredJoin.OnFilters)
                     {
-                        stringBuilder.AppendLine(string.Format("{0}  Filter Type: {1}", indent, on.GetType().FullName));
+                        // Support Equals
+                        var equalTo = on as EqualToFilter;
+                        if (equalTo != null)
+                        {
+                            
+                            var leftColumn = equalTo.LeftHand as Column;
+                            var rightColumn = equalTo.RightHand as Column;
+                            if (leftColumn == null || rightColumn == null)
+                            {
+                                throw new NotSupportedException("The ON operator used in the Join statement must have a column name on it's left and right side.");
+                            }
+
+                            stringBuilder.AppendLine(string.Format("{0}  Filter Type: {1}", indent, on.GetType().FullName));
+                            stringBuilder.AppendLine(string.Format("{0}    Left Column Name: {1}", indent, leftColumn.Name));
+                            if (leftColumn.Source != null)
+                            {
+                                stringBuilder.AppendLine(string.Format("{0}    Left Column Source", indent));
+                                LogAliasedSource(leftColumn.Source, stringBuilder, level + 1);
+                                // 
+                            }
+
+                            stringBuilder.AppendLine(string.Format("{0}    Right Column Name: {1}", indent, rightColumn.Name));
+                            if (rightColumn.Source != null)
+                            {
+                                stringBuilder.AppendLine(string.Format("{0}    Right Column Source", indent));
+                                LogAliasedSource(rightColumn.Source, stringBuilder, level + 1);
+                                // 
+                            }
+
+                            return;
+                        }
+                        
                     }
                 }
 

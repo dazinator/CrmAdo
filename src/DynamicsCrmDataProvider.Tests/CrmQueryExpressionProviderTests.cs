@@ -386,11 +386,10 @@ namespace DynamicsCrmDataProvider.Tests
 
         }
 
-
         [Test]
         [TestCase("INNER")]
         [TestCase("LEFT")]
-        public void Should_Support_Joins(String joinType)
+        public void Should_Be_Able_To_Select_Using_Table_Joins(String joinType)
         {
             var join = JoinOperator.Natural;
 
@@ -406,7 +405,7 @@ namespace DynamicsCrmDataProvider.Tests
             }
 
 
-            var sql = string.Format("Select contactid, firstname, lastname From contact {0} JOIN address on contact.id = address.contactid", joinType);
+            var sql = string.Format("Select C.contactid, C.firstname, C.lastname, A.addressline1 From contact C {0} JOIN address A on C.contactid = A.contactid", joinType);
 
             var cmd = new CrmDbCommand(null);
             cmd.CommandText = sql;
@@ -419,65 +418,23 @@ namespace DynamicsCrmDataProvider.Tests
             var queryExpression = subject.CreateQueryExpression(cmd);
 
             //Assert
+            Assert.That(queryExpression.ColumnSet.Columns.Count, Is.EqualTo(3));
             Assert.That(queryExpression.LinkEntities, Is.Not.Null);
             Assert.That(queryExpression.LinkEntities[0], Is.Not.Null);
+            Assert.That(queryExpression.LinkEntities[0].LinkFromEntityName, Is.EqualTo("contact"));
+            Assert.That(queryExpression.LinkEntities[0].LinkToEntityName, Is.EqualTo("address"));
+            Assert.That(queryExpression.LinkEntities[0].LinkFromAttributeName, Is.EqualTo("contactid"));
+            Assert.That(queryExpression.LinkEntities[0].LinkToAttributeName, Is.EqualTo("contactid"));
+            Assert.That(queryExpression.LinkEntities[0].EntityAlias, Is.EqualTo("A"));
             Assert.That(queryExpression.LinkEntities[0].JoinOperator, Is.EqualTo(join));
-        
+            Assert.That(queryExpression.LinkEntities[0].Columns, Is.Not.Null);
+            Assert.That(queryExpression.LinkEntities[0].Columns.Columns, Contains.Item("addressline1"));
 
 
         }
-
-        [Category("Experimentation")]
-        [Test]
-        public void Experiment_With_Joins()
-        {
-
-            var logBuilder = new StringBuilder();
-            
-            string joinType = "INNER";
-            var sql = string.Format("Select contactid, firstname, lastname From contact AS CONTACT {0} JOIN address AS ADDRESS on contact.contactid = address.contactid", joinType);
-
-            var commandText = sql;
-            var commandBuilder = new CommandBuilder();
-            var builder = commandBuilder.GetCommand(commandText) as SelectBuilder;
-            LogUtils.LogCommand(builder, logBuilder);
-            logBuilder.AppendLine();
-          
-            var nestedJoinsSql =
-                string.Format(
-                    "Select contactid, firstname, lastname From contact INNER JOIN address on contact.id = address.contactid INNER JOIN occupant on address.addressid = occupant.addressid ",
-                    joinType);
-
-            builder = commandBuilder.GetCommand(nestedJoinsSql) as SelectBuilder;
-            LogUtils.LogCommand(builder, logBuilder);
-            logBuilder.AppendLine();
-
-            var anotherJoinSql =
-             string.Format(
-                 "Select contactid, firstname, lastname From contact INNER JOIN address on contact.id = address.contactid INNER JOIN occupant on contact.contactid = occupant.contactid ",
-                 joinType);
-
-            builder = commandBuilder.GetCommand(anotherJoinSql) as SelectBuilder;
-            LogUtils.LogCommand(builder, logBuilder);
-            logBuilder.AppendLine();
-
-
-            var moreSql =
-            string.Format(
-                "Select C.contactid, C.firstname, C.lastname, O.fullname From contact C INNER JOIN address A on c.id = A.contactid LEFT JOIN occupant O on C.contactid = O.contactid ",
-                joinType);
-
-            builder = commandBuilder.GetCommand(moreSql) as SelectBuilder;
-            LogUtils.LogCommand(builder, logBuilder);
-            logBuilder.AppendLine();
-
-
-            Console.Write(logBuilder.ToString());
-
-        }
-
-       
 
 
     }
 }
+
+

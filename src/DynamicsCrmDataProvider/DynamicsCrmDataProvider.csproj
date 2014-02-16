@@ -110,6 +110,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BetterCrmQueryExpressionProvider.cs" />
     <Compile Include="CrmCommandExecutor.cs" />
     <Compile Include="CrmDbCommand.cs">
       <SubType>Component</SubType>
@@ -127,6 +128,7 @@
     <Compile Include="Dynamics\Metadata\CrmEntityMetadata.cs" />
     <Compile Include="Dynamics\Metadata\EntityMetadataRepository.cs" />
     <Compile Include="Dynamics\Metadata\EntityMetadataUtils.cs" />
+    <Compile Include="Dynamics\Metadata\EntityQueryUtils.cs" />
     <Compile Include="Dynamics\Metadata\ICrmMetaDataProvider.cs" />
     <Compile Include="Dynamics\Metadata\InMemoryCachedCrmMetaDataProvider.cs" />
     <Compile Include="Dynamics\CrmOrganisationManager.cs" />
