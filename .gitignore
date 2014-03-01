@@ -158,4 +158,4 @@ $RECYCLE.BIN/
 # =========================
 # Sensitive Config
 # =========================
-*IntegrationTesting.config
+app.IntegrationTesting.config
