@@ -132,6 +132,7 @@
     <None Include="app.Debug.config">
       <DependentUpon>app.config</DependentUpon>
     </None>
+    <None Include="app.IntegrationTesting.config" />
     <None Include="app.Release.config">
       <DependentUpon>app.config</DependentUpon>
     </None>
