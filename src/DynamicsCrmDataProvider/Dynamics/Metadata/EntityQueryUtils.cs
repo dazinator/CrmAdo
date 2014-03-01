@@ -34,7 +34,7 @@ namespace DynamicsCrmDataProvider.Dynamics
                         {
                             return l;
                         }
-                        var found = FindLinkEntity(linkEntity, aliasOrLogicalName, isAlias);
+                        var found = FindLinkEntity(l, aliasOrLogicalName, isAlias);
                         if (found != null)
                         {
                             return found;
@@ -49,7 +49,7 @@ namespace DynamicsCrmDataProvider.Dynamics
                         {
                             return l;
                         }
-                        var found = FindLinkEntity(linkEntity, aliasOrLogicalName, isAlias);
+                        var found = FindLinkEntity(l, aliasOrLogicalName, isAlias);
                         if (found != null)
                         {
                             return found;

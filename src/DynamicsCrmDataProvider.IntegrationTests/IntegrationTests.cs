@@ -19,25 +19,25 @@ namespace DynamicsCrmDataProvider.IntegrationTests
         // ============================================================================================================
         [Category("Integration")]
         [Test(Description = "Integration tests that perform a variety of select queries against CRM.")]
-        [TestCase("=", "Donald", "{0} {1} '{2}'", TestName = "Equals Filter with a String Constant")]
-        [TestCase("<>", "Donald", "{0} {1} '{2}'", TestName = "Not Equals Filter with a String Constant")]
-        [TestCase(">=", "Donald", "{0} {1} '{2}'", TestName = "Greater Than Or Equals Filter with a String Constant")]
-        [TestCase("<=", "Donald", "{0} {1} '{2}'", TestName = "Less Than Or Equals Filter with a String Constant")]
-        [TestCase(">", "Donald", "{0} {1} '{2}'", TestName = "Greater Than Filter with a String Constant")]
-        [TestCase("<", "Donald", "{0} {1} '{2}'", TestName = "Less Than Filter with a String Constant")]
-        [TestCase("IS NULL", null, "{0} {1} {2}", TestName = "Is Null Filter")]
-        [TestCase("IS NOT NULL", null, "{0} {1}", TestName = "Is Not Null Filter")]
-        [TestCase("LIKE", "Donald", "{0} {1} '{2}'", TestName = "Like Filter with a String Constant")]
-        [TestCase("NOT LIKE", "Donald", "{0} {1} '{2}'", TestName = "Not Like Filter with a String Constant")]
-        [TestCase("IN", new string[] { "Donald", "Daz" }, "{0} {1} ('{2}', '{3}')", TestName = "In Filter with string array")]
-        [TestCase("NOT IN", new string[] { "Donald", "Daz" }, "{0} {1} ('{2}', '{3}')", TestName = "Not In Filter with string array")]
-        [TestCase("LIKE", "Donald%", "{0} {1} '{2}'", TestName = "Starts With Filter")]
-        [TestCase("LIKE", "%nald", "{0} {1} '{2}'", TestName = "Ends With Filter")]
-        [TestCase("LIKE", "%onal%", "{0} {1} '{2}'", TestName = "Contains Filter")]
-        [TestCase("NOT LIKE", "D%", "{0} {1} '{2}'", TestName = "Does Not Start With Filter")]
-        [TestCase("NOT LIKE", "%d", "{0} {1} '{2}'", TestName = "Does Not End With Filter")]
-        [TestCase("NOT LIKE", "%onal%", "{0} {1} '{2}'", TestName = "Does Not Contain Filter")]
-        public void Should_Get_Results_From_Crm_When_Filtering_On_String_Attribute(string filterOperator, object value, string filterFormatString)
+        [TestCase("=", "Donald", "{0} {1} '{2}'", TestName = "Should Support Equals a String Constant")]
+        [TestCase("<>", "Donald", "{0} {1} '{2}'", TestName = "Should Support Not Equals a String Constant")]
+        [TestCase(">=", "Donald", "{0} {1} '{2}'", TestName = "Should Support Greater Than Or Equals a String Constant")]
+        [TestCase("<=", "Donald", "{0} {1} '{2}'", TestName = "Should Support Less Than Or Equals Filter a String Constant")]
+        [TestCase(">", "Donald", "{0} {1} '{2}'", TestName = "Should Support Greater Than a String Constant")]
+        [TestCase("<", "Donald", "{0} {1} '{2}'", TestName = "Should Support Less Than a String Constant")]
+        [TestCase("IS NULL", null, "{0} {1} {2}", TestName = "Should Support Is Null")]
+        [TestCase("IS NOT NULL", null, "{0} {1}", TestName = "Should Support Is Not Null")]
+        [TestCase("LIKE", "Donald", "{0} {1} '{2}'", TestName = "Should Support Like a String Constant")]
+        [TestCase("NOT LIKE", "Donald", "{0} {1} '{2}'", TestName = "Should Support Not Like a String Constant")]
+        [TestCase("IN", new string[] { "Donald", "Daz" }, "{0} {1} ('{2}', '{3}')", TestName = "Should Support In a string array")]
+        [TestCase("NOT IN", new string[] { "Donald", "Daz" }, "{0} {1} ('{2}', '{3}')", TestName = "Should Support Not In a string array")]
+        [TestCase("LIKE", "Donald%", "{0} {1} '{2}'", TestName = "Should Support Starts With Like")]
+        [TestCase("LIKE", "%nald", "{0} {1} '{2}'", TestName = "Should Support Ends With")]
+        [TestCase("LIKE", "%onal%", "{0} {1} '{2}'", TestName = "Should Support Contains")]
+        [TestCase("NOT LIKE", "D%", "{0} {1} '{2}'", TestName = "Should Support Does Not Start With")]
+        [TestCase("NOT LIKE", "%d", "{0} {1} '{2}'", TestName = "Should Support Does Not End With")]
+        [TestCase("NOT LIKE", "%onal%", "{0} {1} '{2}'", TestName = "Should Support Does Not Contain")]
+        public void Should_Get_Results_When_Querying_Crm_Using_Filter_Operators(string filterOperator, object value, string filterFormatString)
         {
             // Arrange
             // Formulate DML (SQL) statement from test case data.
@@ -111,29 +111,7 @@ namespace DynamicsCrmDataProvider.IntegrationTests
             Assert.That(contactMetadata.Attributes.FirstOrDefault(a => a.LogicalName == "firstname"), Is.Not.Null);
             Assert.That(contactMetadata.Attributes.FirstOrDefault(a => a.LogicalName == "lastname"), Is.Not.Null);
         }
-
-
-        [Test(Description = "Queries using a join")]
-        public void Should_Get_Results_From_Crm_When_Using_A_Join()
-        {
-            // arrange
-            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
-            var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
-                                                       new CrmClientCredentialsProvider());
-
-            var sut = new EntityMetadataRepository(serviceProvider);
-            // act
-            var contactMetadata = sut.GetEntityMetadata("contact");
-
-            // assert
-            Assert.That(contactMetadata, Is.Not.Null);
-            Assert.That(contactMetadata, Is.Not.Null);
-
-            Assert.That(contactMetadata.Attributes, Is.Not.Null);
-            Assert.That(contactMetadata.Attributes.FirstOrDefault(a => a.LogicalName == "firstname"), Is.Not.Null);
-            Assert.That(contactMetadata.Attributes.FirstOrDefault(a => a.LogicalName == "lastname"), Is.Not.Null);
-        }
-
+        
         [Test]
         [TestCase("INNER")]
         [TestCase("LEFT")]
@@ -181,6 +159,45 @@ namespace DynamicsCrmDataProvider.IntegrationTests
                         var alsoLine1 = (string)reader.SafeGetString("A.line1");
                         Console.WriteLine(string.Format("{0} {1} {2} {3}", contactId, firstName, lastName, line1));
                     }
+                    Console.WriteLine("There were " + resultCount + " results..");
+                }
+            }
+
+
+        }
+
+
+        [Test]
+        [TestCase(TestName="Experiment for contains and not contains")]
+        public void Experiment_For_Contains_And_Not_Contains()
+        {
+            var sql = string.Format("Select contactid, firstname, lastname From contact Where firstname Like '%ax%' ");
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var command = conn.CreateCommand();
+
+                Console.WriteLine("Executing command " + sql);
+                command.CommandText = sql;
+                //   command.CommandType = CommandType.Text;
+
+                using (var reader = command.ExecuteReader())
+                {
+                    int resultCount = 0;
+                    foreach (var result in reader)
+                    {
+                        resultCount++;
+                        var contactId = (Guid)reader["contactid"];
+                        var firstName = (string)reader.SafeGetString(1);
+                        var lastName = (string)reader.SafeGetString(2);
+                        Console.WriteLine(string.Format("{0} {1} {2}", contactId, firstName, lastName));
+                    }
+                    //while (reader.Read())
+                    //{
+
+                    //}
                     Console.WriteLine("There were " + resultCount + " results..");
                 }
             }

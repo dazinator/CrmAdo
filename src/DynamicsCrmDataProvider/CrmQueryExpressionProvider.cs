@@ -125,8 +125,8 @@ namespace DynamicsCrmDataProvider
                         inValues[index] = GitLiteralValue(literal);
                         index++;
                     }
-                    AppendColumnCondition(condition, conditionOperator, filter, leftcolumn, inValues);
-                    query.Criteria.Conditions.Add(condition);
+                    SetConditionExpressionValue(condition, conditionOperator, inValues);
+                    AddConditionExpressionToQuery(leftcolumn.Source, query, condition);
                     return;
                 }
                 throw new ArgumentException("The values list for the IN expression is null");
@@ -156,9 +156,8 @@ namespace DynamicsCrmDataProvider
                 conditionOperator = ConditionOperator.NotNull;
             }
 
-            AppendColumnCondition(condition, conditionOperator, nullFilter, leftcolumn);
-            query.Criteria.Conditions.Add(condition);
-            return;
+            SetConditionExpressionValue(condition, conditionOperator);
+            AddConditionExpressionToQuery(leftcolumn.Source, query, condition);
         }
 
         private static void ProcessOrderFilter(QueryExpression query, ConditionExpression condition, OrderFilter filter)
@@ -187,8 +186,8 @@ namespace DynamicsCrmDataProvider
             var equalTo = filter as EqualToFilter;
             if (equalTo != null)
             {
-                AppendColumnConditionWithValue(condition, ConditionOperator.Equal, filter, firstColumn, isColumnLeft);
-                query.Criteria.Conditions.Add(condition);
+                SetColumnCondition(condition, ConditionOperator.Equal, filter, firstColumn, isColumnLeft);
+                AddConditionExpressionToQuery(firstColumn.Source, query, condition);
                 return;
             }
 
@@ -196,8 +195,8 @@ namespace DynamicsCrmDataProvider
             var notEqualTo = filter as NotEqualToFilter;
             if (notEqualTo != null)
             {
-                AppendColumnConditionWithValue(condition, ConditionOperator.NotEqual, filter, firstColumn, isColumnLeft);
-                query.Criteria.Conditions.Add(condition);
+                SetColumnCondition(condition, ConditionOperator.NotEqual, filter, firstColumn, isColumnLeft);
+                AddConditionExpressionToQuery(firstColumn.Source, query, condition);
                 return;
             }
 
@@ -205,8 +204,8 @@ namespace DynamicsCrmDataProvider
             var greaterThan = filter as GreaterThanFilter;
             if (greaterThan != null)
             {
-                AppendColumnConditionWithValue(condition, ConditionOperator.GreaterThan, filter, firstColumn, isColumnLeft);
-                query.Criteria.Conditions.Add(condition);
+                SetColumnCondition(condition, ConditionOperator.GreaterThan, filter, firstColumn, isColumnLeft);
+                AddConditionExpressionToQuery(firstColumn.Source, query, condition);
                 return;
             }
 
@@ -214,8 +213,8 @@ namespace DynamicsCrmDataProvider
             var greaterEqual = filter as GreaterThanEqualToFilter;
             if (greaterEqual != null)
             {
-                AppendColumnConditionWithValue(condition, ConditionOperator.GreaterEqual, filter, firstColumn, isColumnLeft);
-                query.Criteria.Conditions.Add(condition);
+                SetColumnCondition(condition, ConditionOperator.GreaterEqual, filter, firstColumn, isColumnLeft);
+                AddConditionExpressionToQuery(firstColumn.Source, query, condition);
                 return;
             }
 
@@ -223,8 +222,8 @@ namespace DynamicsCrmDataProvider
             var lessThan = filter as LessThanFilter;
             if (lessThan != null)
             {
-                AppendColumnConditionWithValue(condition, ConditionOperator.LessThan, filter, firstColumn, isColumnLeft);
-                query.Criteria.Conditions.Add(condition);
+                SetColumnCondition(condition, ConditionOperator.LessThan, filter, firstColumn, isColumnLeft);
+                AddConditionExpressionToQuery(firstColumn.Source, query, condition);
                 return;
             }
 
@@ -232,8 +231,8 @@ namespace DynamicsCrmDataProvider
             var lessThanEqual = filter as LessThanEqualToFilter;
             if (lessThanEqual != null)
             {
-                AppendColumnConditionWithValue(condition, ConditionOperator.LessEqual, filter, firstColumn, isColumnLeft);
-                query.Criteria.Conditions.Add(condition);
+                SetColumnCondition(condition, ConditionOperator.LessEqual, filter, firstColumn, isColumnLeft);
+                AddConditionExpressionToQuery(firstColumn.Source, query, condition);
                 return;
             }
 
@@ -271,13 +270,16 @@ namespace DynamicsCrmDataProvider
                     // contains
                     if (filter.Not)
                     {
-                        conditionoperator = ConditionOperator.DoesNotContain;
+                        // Does Not contain operator not recognised by Xrm sdk??? 
+                       // conditionoperator = ConditionOperator.DoesNotContain;
+                        conditionoperator = ConditionOperator.NotLike;
                     }
                     else
                     {
-                        conditionoperator = ConditionOperator.Contains;
+                       //  Contains operator causes Xrm organisation servuce to throw "Generic SQL error"??? 
+                        conditionoperator = ConditionOperator.Like;
                     }
-                    val = filter.RightHand.Value.Trim('%');
+                   // val = filter.RightHand.Value.Trim('%');
                 }
                 else
                 {
@@ -319,62 +321,11 @@ namespace DynamicsCrmDataProvider
                 }
 
             }
-            AppendColumnCondition(condition, conditionoperator, filter, leftcolumn, val);
-            query.Criteria.Conditions.Add(condition);
-            return;
+            SetConditionExpressionValue(condition, conditionoperator, val);
+            AddConditionExpressionToQuery(leftcolumn.Source, query, condition);
         }
 
-        private static void AppendColumnConditionWithValue(ConditionExpression condition, ConditionOperator conditionOperator, OrderFilter greaterThan, Column column, bool isColumnLeft)
-        {
 
-            //  condition.Operator = conditionOperator;
-            if (column == null)
-            {
-                throw new InvalidOperationException("The query contains a WHERE clause, however one side of the where condition must refer to an attribute name.");
-            }
-            Literal lit = null;
-            if (isColumnLeft)
-            {
-                lit = greaterThan.RightHand as Literal;
-            }
-            else
-            {
-                lit = greaterThan.LeftHand as Literal;
-            }
-
-            if (lit != null)
-            {
-                object litVal = GitLiteralValue(lit);
-                AppendColumnCondition(condition, conditionOperator, greaterThan, column, litVal);
-                return;
-            }
-
-            throw new NotSupportedException();
-        }
-
-        private static void AppendColumnCondition(ConditionExpression condition, ConditionOperator conditionOperator, Filter filter, Column column, params object[] values)
-        {
-            condition.Operator = conditionOperator;
-            if (values != null)
-            {
-                // is the literal a 
-                foreach (var value in values)
-                {
-                    if (value is Array)
-                    {
-                        foreach (var o in value as Array)
-                        {
-                            condition.Values.Add(o);
-                        }
-                    }
-                    else
-                    {
-                        condition.Values.Add(value);
-                    }
-                }
-                return;
-            }
-        }
         #endregion
 
         #region From and Joins
@@ -715,6 +666,80 @@ namespace DynamicsCrmDataProvider
 
         }
 
+        private static void AddConditionExpressionToQuery(AliasedSource source, QueryExpression query, ConditionExpression condition)
+        {
+            if (source != null)
+            {
+                bool isAliasedSource = !string.IsNullOrEmpty(source.Alias);
+                var sourceName = string.IsNullOrEmpty(source.Alias) ? GetTableLogicalEntityName(source.Source as Table) : source.Alias;
+                var linkItem = query.FindLinkEntity(sourceName, isAliasedSource);
+                if (linkItem == null)
+                {
+                    // Assume criteria is not for link entity but for main entity.
+                    query.Criteria.Conditions.Add(condition);
+                }
+                else
+                {
+                    linkItem.LinkCriteria.Conditions.Add(condition);
+                }
+            }
+            else
+            {
+                throw new NotSupportedException("A condition in the WHERE clause contains refers to an unknown table / entity.");
+            }
+        }
+
+        private static void SetColumnCondition(ConditionExpression condition, ConditionOperator conditionOperator, OrderFilter greaterThan, Column column, bool isColumnLeft)
+        {
+
+            //  condition.Operator = conditionOperator;
+            if (column == null)
+            {
+                throw new InvalidOperationException("The query contains a WHERE clause, however one side of the where condition must refer to an attribute name.");
+            }
+            Literal lit = null;
+            if (isColumnLeft)
+            {
+                lit = greaterThan.RightHand as Literal;
+            }
+            else
+            {
+                lit = greaterThan.LeftHand as Literal;
+            }
+
+            if (lit != null)
+            {
+                object litVal = GitLiteralValue(lit);
+                SetConditionExpressionValue(condition, conditionOperator, litVal);
+                return;
+            }
+
+            throw new NotSupportedException();
+        }
+
+        private static void SetConditionExpressionValue(ConditionExpression condition, ConditionOperator conditionOperator, params object[] values)
+        {
+            condition.Operator = conditionOperator;
+            if (values != null)
+            {
+                // is the literal a 
+                foreach (var value in values)
+                {
+                    if (value is Array)
+                    {
+                        foreach (var o in value as Array)
+                        {
+                            condition.Values.Add(o);
+                        }
+                    }
+                    else
+                    {
+                        condition.Values.Add(value);
+                    }
+                }
+            }
+        }
+        
         #endregion
 
     }
