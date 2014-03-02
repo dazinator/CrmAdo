@@ -205,6 +205,55 @@ namespace DynamicsCrmDataProvider.IntegrationTests
 
         }
 
+        [Test]
+        [TestCase(TestName = "Experiment for filter groups")]
+        public void Experiment_For_Filter_Groups()
+        {
+           // var sql = string.Format("Select C.firstname, C.lastname From contact Where firstname Like '%ax%' ");
+
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
+                                                       new CrmClientCredentialsProvider());
+
+            var orgService = serviceProvider.GetOrganisationService();
+            using (orgService as IDisposable)
+            {
+
+               // var request = new RetrieveMultipleRequest();
+                var query = new QueryExpression("contact");
+               // request.Query = query;
+                query.ColumnSet.AddColumn("firstname");
+                query.ColumnSet.AddColumn("lastname");
+                var condition1 = new ConditionExpression("firstname", ConditionOperator.Equal, "Max");
+                var condition2 = new ConditionExpression("lastname", ConditionOperator.Equal, "Planck");
+                var filter1 = new FilterExpression(LogicalOperator.And);
+                filter1.AddCondition(condition1);
+                filter1.AddCondition(condition2);
+
+                var condition3 = new ConditionExpression("firstname", ConditionOperator.Equal, "Albert");
+                var filter2 = new FilterExpression(LogicalOperator.Or);
+                filter2.AddCondition(condition3);
+                filter2.AddFilter(filter1);
+
+                query.Criteria.Filters.Clear();
+                query.Criteria.AddFilter(filter2);
+
+                var results = orgService.RetrieveMultiple(query);
+                int resultCount = 0;
+                foreach (var r in results.Entities)
+                {
+                    resultCount++;
+                    Console.WriteLine(string.Format("{0} {1}", (string)r["firstname"], (string)r["lastname"]));
+                }
+                Console.WriteLine("There were " + resultCount + " results..");
+
+              
+            }
+
+
+        }
+
 
     }
 }

@@ -35,6 +35,7 @@ namespace DynamicsCrmDataProvider
                 var selCommand = command as SelectBuilder;
                 AddFrom(selCommand.From, query);
                 AddColumns(selCommand.Projection, query);
+               // selCommand.WhereFilterGroup;
                 AddWhere(selCommand.Where, query);
             }
             return query;
@@ -51,6 +52,13 @@ namespace DynamicsCrmDataProvider
                 foreach (var where in whereFilter)
                 {
                     var condition = new ConditionExpression();
+                    var filterGroup = where as FilterGroup;
+                    if (filterGroup != null)
+                    {
+                        ProcessFilterGroup(query, filterGroup);
+                        continue;
+                    }
+
                     var orderFilter = where as OrderFilter;
                     if (orderFilter != null)
                     {
@@ -82,6 +90,16 @@ namespace DynamicsCrmDataProvider
                     throw new NotSupportedException();
                 }
             }
+        }
+
+        private static void ProcessFilterGroup(QueryExpression query, FilterGroup filterGroup)
+        {
+            throw new NotSupportedException("Not supported, issue raised jehugaleahsa/SQLGeneration#4");
+            foreach (var f in filterGroup.Filters)
+            {
+                AddWhere(filterGroup.Filters, query);
+            }
+          
         }
 
         private static void ProcessInFilter(QueryExpression query, ConditionExpression condition, InFilter filter)

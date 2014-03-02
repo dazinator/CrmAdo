@@ -1,13 +1,5 @@
- For this ADO.NET Provider to be shown in tools such as visual studio, excel etc,
 
- the following config entry must be added to the machine.config file.
- 
- <runtime> 
-      <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
-         <probing privatePath="C:\Program Files\DynamicsCrmAdoNetProvider\bin"/>
-      </assemblyBinding>
- </runtime>
-
+ the following config entry must be added to the config file. 
 
   <system.data>
     <DbProviderFactories>
@@ -15,4 +7,13 @@
     </DbProviderFactories>
   </system.data>
 
- The private path should point to the directory with the DynamicsCrmDataProvider.dll in.
+
+To add to GAC:-
+
+"G:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil" -i "$(TargetDir)$(TargetName).dll"
+"G:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil" -i "$(TargetDir)Microsoft.IdentityModel.dll"
+"G:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil" -i "$(TargetDir)Microsoft.Crm.Sdk.Proxy.dll"
+"G:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil" -i "$(TargetDir)Microsoft.Xrm.Client.dll"
+"G:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil" -i "$(TargetDir)Microsoft.Xrm.Sdk.Deployment.dll"
+"G:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil" -i "$(TargetDir)Microsoft.Xrm.Sdk.dll"
+"G:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil" -i "$(TargetDir)SQLGeneration.dll"

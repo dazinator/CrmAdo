@@ -336,6 +336,54 @@ namespace DynamicsCrmDataProvider.Tests
 
         }
 
+
+        [Category("Filter Operators")]
+        [Test]
+        [TestCase(TestName = "Should support filter groups.")]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void Should_Support_Filter_Groups()
+        {
+            // Arrange
+            var sql = "SELECT c.firstname, c.lastname FROM contact c WHERE (c.firstname = 'Albert' AND c.lastname = 'Einstein') OR (c.firstname = 'Max' AND c.lastname = 'Planck')";
+            var cmd = new CrmDbCommand(null);
+            cmd.CommandText = sql;
+
+            var subject = CreateTestSubject();
+            // Act
+            var queryExpression = subject.CreateQueryExpression(cmd);
+
+            Assert.That(queryExpression.ColumnSet.Columns.Count, Is.EqualTo(2));
+            Assert.That(queryExpression.Criteria.Filters, Is.Not.Null);
+            Assert.That(queryExpression.Criteria.Filters.Count, Is.EqualTo(1));
+
+            var topFilter = queryExpression.Criteria.Filters[0];
+            Assert.That(topFilter.FilterOperator == LogicalOperator.Or);
+
+            Assert.That(topFilter.Conditions[0], Is.Not.Null);
+            Assert.That(topFilter.Conditions, Is.EqualTo(2));
+
+            Assert.That(topFilter.Conditions[0].Values, Contains.Item("Albert"));
+            Assert.That(topFilter.Conditions[0].Operator, Is.EqualTo(ConditionOperator.Equal));
+            Assert.That(topFilter.Conditions[1].Values, Contains.Item("Einstein"));
+            Assert.That(topFilter.Conditions[1].Operator, Is.EqualTo(ConditionOperator.Equal));
+
+            Assert.That(topFilter.Filters, Is.Not.Null);
+            Assert.That(topFilter.Filters.Count, Is.EqualTo(1));
+
+            var subFilter = topFilter.Filters[0];
+
+            Assert.That(subFilter.FilterOperator == LogicalOperator.And);
+            Assert.That(subFilter.Conditions[0], Is.Not.Null);
+            Assert.That(subFilter.Conditions, Is.EqualTo(2));
+
+            Assert.That(subFilter.Conditions[0].Values, Contains.Item("Max"));
+            Assert.That(subFilter.Conditions[0].Operator, Is.EqualTo(ConditionOperator.Equal));
+            Assert.That(subFilter.Conditions[1].Values, Contains.Item("Planck"));
+            Assert.That(subFilter.Conditions[1].Operator, Is.EqualTo(ConditionOperator.Equal));
+
+
+        }
+
         #region Helper Methods
         
         private static void AssertFilterExpressionContion(string filterOperator, object value, ConditionExpression condition)
