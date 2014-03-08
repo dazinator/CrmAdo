@@ -344,7 +344,7 @@ namespace DynamicsCrmDataProvider.Tests
         public void Should_Support_Filter_Groups()
         {
             // Arrange
-            var sql = "SELECT c.firstname, c.lastname FROM contact c WHERE (c.firstname = 'Albert' AND c.lastname = 'Einstein') OR (c.firstname = 'Max' AND c.lastname = 'Planck')";
+            var sql = "SELECT c.firstname, c.lastname FROM contact c INNER JOIN a on  WHERE (c.firstname = 'Albert' AND c.lastname = 'Einstein') OR (c.firstname = 'Max' AND c.lastname = 'Planck')";
             var cmd = new CrmDbCommand(null);
             cmd.CommandText = sql;
 
@@ -352,6 +352,8 @@ namespace DynamicsCrmDataProvider.Tests
             // Act
             var queryExpression = subject.CreateQueryExpression(cmd);
 
+
+            //Assert
             Assert.That(queryExpression.ColumnSet.Columns.Count, Is.EqualTo(2));
             Assert.That(queryExpression.Criteria.Filters, Is.Not.Null);
             Assert.That(queryExpression.Criteria.Filters.Count, Is.EqualTo(1));

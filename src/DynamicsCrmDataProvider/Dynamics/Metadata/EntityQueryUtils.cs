@@ -59,17 +59,27 @@ namespace DynamicsCrmDataProvider.Dynamics
             }
             return null;
         }
-        
-        public static void IncludeAllColumns(this LinkEntity linkEntity)
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="linkEntity"></param>
+        /// <param name="recursive">If true, will also include all columns of any Link Entities linked to this entity.</param>
+        public static void IncludeAllColumns(this LinkEntity linkEntity, bool recursive = false)
         {
-            if (linkEntity.LinkEntities != null && linkEntity.LinkEntities.Any())
+            linkEntity.Columns.Columns.Clear();
+            linkEntity.Columns.AllColumns = true;
+            if (recursive)
             {
+                if (linkEntity.LinkEntities != null && linkEntity.LinkEntities.Any())
+                {
                     foreach (var l in linkEntity.LinkEntities)
                     {
                         l.Columns.Columns.Clear();
                         l.Columns.AllColumns = true;
-                        IncludeAllColumns(linkEntity);
+                        IncludeAllColumns(linkEntity, true);
                     }
+                }
             }
         }
 
@@ -86,17 +96,21 @@ namespace DynamicsCrmDataProvider.Dynamics
             return null;
         }
 
+        /// <summary>
+        /// Includes all columns for this and optionally all link entities recursviely.
+        /// </summary>
+        /// <param name="query"></param>
         public static void IncludeAllColumns(this QueryExpression query)
         {
             query.ColumnSet.Columns.Clear();
             query.ColumnSet.AllColumns = true;
             foreach (var l in query.LinkEntities)
             {
-                IncludeAllColumns(l);
+                IncludeAllColumns(l, true);
             }
         }
 
-       
+
 
     }
 }

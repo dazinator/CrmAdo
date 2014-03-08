@@ -43,7 +43,7 @@ namespace DynamicsCrmDataProvider
 
         #region Where and Filters
 
-        private static void AddWhere(IEnumerable<IFilter> whereFilter, QueryExpression query)
+        private static void AddWhere(IEnumerable<IFilter> whereFilter, QueryExpression query, FilterExpression filterExpression = null)
         {
             // do where clause..
             if (whereFilter != null && whereFilter.Any())
@@ -55,14 +55,14 @@ namespace DynamicsCrmDataProvider
                     var filterGroup = where as FilterGroup;
                     if (filterGroup != null)
                     {
-                        ProcessFilterGroup(query, filterGroup);
+                        ProcessFilterGroup(query, filterGroup, filterExpression);
                         continue;
                     }
 
                     var orderFilter = where as OrderFilter;
                     if (orderFilter != null)
                     {
-                        ProcessOrderFilter(query, condition, orderFilter);
+                        ProcessOrderFilter(query, condition, orderFilter, filterExpression);
                         continue;
                     }
 
@@ -92,16 +92,34 @@ namespace DynamicsCrmDataProvider
             }
         }
 
-        private static void ProcessFilterGroup(QueryExpression query, FilterGroup filterGroup)
+        private static void ProcessFilterGroup(QueryExpression query, FilterGroup filterGroup, FilterExpression filterExpression)
         {
-            throw new NotSupportedException("Not supported, issue raised jehugaleahsa/SQLGeneration#4");
-            foreach (var f in filterGroup.Filters)
+           // throw new NotSupportedException("Not supported, issue raised jehugaleahsa/SQLGeneration#4");
+
+            if (filterGroup.HasFilters)
             {
-                AddWhere(filterGroup.Filters, query);
+                var filter = new FilterExpression();
+                int index = 0;
+                foreach (var f in filterGroup.Filters)
+                {
+                    var filerWithConjunction = filterGroup[index];
+                    index++;
+
+                    if (filerWithConjunction.Item2 == Conjunction.Or)
+                    {
+                        filter.FilterOperator = LogicalOperator.Or;
+                    }
+                    else
+                    {
+                        filter.FilterOperator = LogicalOperator.And;  
+                    }
+                    AddWhere(filterGroup.Filters, query, filter);
+                }
             }
+           
           
         }
-
+        
         private static void ProcessInFilter(QueryExpression query, ConditionExpression condition, InFilter filter)
         {
             // Support Like
@@ -178,7 +196,7 @@ namespace DynamicsCrmDataProvider
             AddConditionExpressionToQuery(leftcolumn.Source, query, condition);
         }
 
-        private static void ProcessOrderFilter(QueryExpression query, ConditionExpression condition, OrderFilter filter)
+        private static void ProcessOrderFilter(QueryExpression query, ConditionExpression condition, OrderFilter filter, FilterExpression filterExpression)
         {
             bool isColumnLeft = false;
 
