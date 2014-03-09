@@ -180,11 +180,14 @@ namespace DynamicsCrmDataProvider.Tests
             Assert.That(queryExpression.ColumnSet.Columns[0] == "contactid");
             Assert.That(queryExpression.ColumnSet.Columns[1] == "firstname");
             Assert.That(queryExpression.EntityName == "contact");
-            Assert.That(queryExpression.Criteria.Conditions.Count, Is.EqualTo(1));
-            Assert.That(queryExpression.Criteria.FilterOperator, Is.EqualTo(LogicalOperator.And));
-            Assert.That(queryExpression.Criteria.Conditions[0].AttributeName == "firstname");
 
-            var condition = queryExpression.Criteria.Conditions[0];
+            var defaultFilterGroup = queryExpression.Criteria.Filters[0];
+
+            Assert.That(defaultFilterGroup.Conditions.Count, Is.EqualTo(1));
+            Assert.That(defaultFilterGroup.FilterOperator, Is.EqualTo(LogicalOperator.And));
+            Assert.That(defaultFilterGroup.Conditions[0].AttributeName == "firstname");
+
+            var condition = defaultFilterGroup.Conditions[0];
             AssertFilterExpressionContion(filterOperator, value, condition);
 
             //TODO: Haven't yet implemented support for the following dynamics crm condition operators..
@@ -279,16 +282,14 @@ namespace DynamicsCrmDataProvider.Tests
             var queryExpression = subject.CreateQueryExpression(cmd);
 
             // There should be filter criteria on the main entity and also on the link entity.
-            Assert.That(queryExpression.Criteria.Conditions.Count, Is.EqualTo(1), "There should only be one condition for the main entity.");
 
-            var condition = queryExpression.Criteria.Conditions[0];
+            var defaultFilterGroup = queryExpression.Criteria.Filters[0];
+            Assert.That(defaultFilterGroup.Conditions.Count, Is.EqualTo(2), "There should only be one condition for the main entity.");
+
+            var condition = defaultFilterGroup.Conditions[0];
             AssertFilterExpressionContion(filterOperator, filterValue, condition);
 
-            Assert.That(queryExpression.LinkEntities, Is.Not.Null);
-            Assert.That(queryExpression.LinkEntities[0].LinkCriteria, Is.Not.Null);
-            Assert.That(queryExpression.LinkEntities[0].LinkCriteria.Conditions, Is.Not.Null);
-            Assert.That(queryExpression.LinkEntities[0].LinkCriteria.Conditions.Count, Is.GreaterThan(0), "No conditions were added to the linked entity.");
-            var joinCondition = queryExpression.LinkEntities[0].LinkCriteria.Conditions[0];
+            var joinCondition = defaultFilterGroup.Conditions[1];
             AssertFilterExpressionContion(filterOperator, filterValue, joinCondition);
 
         }
@@ -307,44 +308,36 @@ namespace DynamicsCrmDataProvider.Tests
             // Create test subject.
             var subject = CreateTestSubject();
             // Act
-            // Ask our test subject to Convert the SelectBuilder to a Query Expression.
             var queryExpression = subject.CreateQueryExpression(cmd);
 
-            // There should be filter criteria on the main entity and also on the link entities.
-            Assert.That(queryExpression.Criteria.Conditions.Count, Is.EqualTo(1), "There should only be one condition for the main entity.");
+            // Assert
+            // the filter should have 3 conditions, one for main entity attribue, and others for the linked entities..
+            var defaultFilter = queryExpression.Criteria.Filters[0];
+            var defaultFilterConditions = defaultFilter.Conditions;
 
-            var condition = queryExpression.Criteria.Conditions[0];
+            Assert.That(defaultFilterConditions.Count, Is.EqualTo(3), "Wrong number of conditions.");
+
+            var condition = defaultFilterConditions[0];
+            Assert.That(condition.EntityName, Is.EqualTo("C"));
             AssertFilterExpressionContion(filterOperator, filterValue, condition);
 
-            Assert.That(queryExpression.LinkEntities, Is.Not.Null);
-            Assert.That(queryExpression.LinkEntities[0].LinkCriteria, Is.Not.Null);
-            Assert.That(queryExpression.LinkEntities[0].LinkCriteria.Conditions, Is.Not.Null);
-            Assert.That(queryExpression.LinkEntities[0].LinkCriteria.Conditions.Count, Is.GreaterThan(0), "No conditions were added to the linked entity.");
-            var joinCondition = queryExpression.LinkEntities[0].LinkCriteria.Conditions[0];
+            var joinCondition = defaultFilterConditions[1];
+            Assert.That(joinCondition.EntityName, Is.EqualTo("A"));
             AssertFilterExpressionContion(filterOperator, filterValue, joinCondition);
-
-            // now verify the jointed entity also has criteria conditions.
-            Assert.That(queryExpression.LinkEntities[0].LinkEntities, Is.Not.Null);
-            Assert.That(queryExpression.LinkEntities[0].LinkEntities.Count, Is.EqualTo(1));
-            Assert.That(queryExpression.LinkEntities[0].LinkEntities[0], Is.Not.Null);
-            Assert.That(queryExpression.LinkEntities[0].LinkEntities[0].LinkCriteria.Conditions, Is.Not.Null);
-            Assert.That(queryExpression.LinkEntities[0].LinkEntities[0].LinkCriteria.Conditions.Count, Is.GreaterThan(0), "No conditions were added to the nested linked entity.");
-
-            // now verify the nested join entity also has criteria conditions.
-            var nestedjoinCondition = queryExpression.LinkEntities[0].LinkEntities[0].LinkCriteria.Conditions[0];
+          
+            var nestedjoinCondition = defaultFilterConditions[2];
+            Assert.That(nestedjoinCondition.EntityName, Is.EqualTo("AC"));
             AssertFilterExpressionContion(filterOperator, filterValue, nestedjoinCondition);
 
         }
 
-
         [Category("Filter Operators")]
         [Test]
         [TestCase(TestName = "Should support filter groups.")]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void Should_Support_Filter_Groups()
         {
             // Arrange
-            var sql = "SELECT c.firstname, c.lastname FROM contact c INNER JOIN a on  WHERE (c.firstname = 'Albert' AND c.lastname = 'Einstein') OR (c.firstname = 'Max' AND c.lastname = 'Planck')";
+            var sql = "SELECT c.firstname, c.lastname FROM contact c WHERE (c.firstname = 'Albert' AND c.lastname = 'Einstein') OR (c.firstname = 'Max' AND c.lastname = 'Planck')";
             var cmd = new CrmDbCommand(null);
             cmd.CommandText = sql;
 
@@ -355,33 +348,33 @@ namespace DynamicsCrmDataProvider.Tests
 
             //Assert
             Assert.That(queryExpression.ColumnSet.Columns.Count, Is.EqualTo(2));
+            
             Assert.That(queryExpression.Criteria.Filters, Is.Not.Null);
             Assert.That(queryExpression.Criteria.Filters.Count, Is.EqualTo(1));
+            Assert.That(queryExpression.Criteria.FilterOperator, Is.EqualTo(LogicalOperator.And));
 
-            var topFilter = queryExpression.Criteria.Filters[0];
-            Assert.That(topFilter.FilterOperator == LogicalOperator.Or);
+            var topLevelFilterGroup = queryExpression.Criteria.Filters[0];
+            Assert.That(topLevelFilterGroup.FilterOperator == LogicalOperator.Or);
 
-            Assert.That(topFilter.Conditions[0], Is.Not.Null);
-            Assert.That(topFilter.Conditions, Is.EqualTo(2));
 
-            Assert.That(topFilter.Conditions[0].Values, Contains.Item("Albert"));
-            Assert.That(topFilter.Conditions[0].Operator, Is.EqualTo(ConditionOperator.Equal));
-            Assert.That(topFilter.Conditions[1].Values, Contains.Item("Einstein"));
-            Assert.That(topFilter.Conditions[1].Operator, Is.EqualTo(ConditionOperator.Equal));
 
-            Assert.That(topFilter.Filters, Is.Not.Null);
-            Assert.That(topFilter.Filters.Count, Is.EqualTo(1));
+            var albertEinstenFilter = topLevelFilterGroup.Filters[0];
+            Assert.That(albertEinstenFilter.FilterOperator == LogicalOperator.And);
+            Assert.That(albertEinstenFilter.Conditions, Is.Not.Null);
+            Assert.That(albertEinstenFilter.Conditions.Count, Is.EqualTo(2));
+            Assert.That(albertEinstenFilter.Conditions[0].Values, Contains.Item("Albert"));
+            Assert.That(albertEinstenFilter.Conditions[0].Operator, Is.EqualTo(ConditionOperator.Equal));
+            Assert.That(albertEinstenFilter.Conditions[1].Values, Contains.Item("Einstein"));
+            Assert.That(albertEinstenFilter.Conditions[1].Operator, Is.EqualTo(ConditionOperator.Equal));
 
-            var subFilter = topFilter.Filters[0];
-
-            Assert.That(subFilter.FilterOperator == LogicalOperator.And);
-            Assert.That(subFilter.Conditions[0], Is.Not.Null);
-            Assert.That(subFilter.Conditions, Is.EqualTo(2));
-
-            Assert.That(subFilter.Conditions[0].Values, Contains.Item("Max"));
-            Assert.That(subFilter.Conditions[0].Operator, Is.EqualTo(ConditionOperator.Equal));
-            Assert.That(subFilter.Conditions[1].Values, Contains.Item("Planck"));
-            Assert.That(subFilter.Conditions[1].Operator, Is.EqualTo(ConditionOperator.Equal));
+            var maxPlanckFilter = topLevelFilterGroup.Filters[1];
+            Assert.That(maxPlanckFilter.FilterOperator == LogicalOperator.And);
+            Assert.That(maxPlanckFilter.Conditions, Is.Not.Null);
+            Assert.That(maxPlanckFilter.Conditions.Count, Is.EqualTo(2));
+            Assert.That(maxPlanckFilter.Conditions[0].Values, Contains.Item("Max"));
+            Assert.That(maxPlanckFilter.Conditions[0].Operator, Is.EqualTo(ConditionOperator.Equal));
+            Assert.That(maxPlanckFilter.Conditions[1].Values, Contains.Item("Planck"));
+            Assert.That(maxPlanckFilter.Conditions[1].Operator, Is.EqualTo(ConditionOperator.Equal));
 
 
         }

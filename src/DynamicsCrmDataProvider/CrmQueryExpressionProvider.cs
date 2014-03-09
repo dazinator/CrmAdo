@@ -35,8 +35,16 @@ namespace DynamicsCrmDataProvider
                 var selCommand = command as SelectBuilder;
                 AddFrom(selCommand.From, query);
                 AddColumns(selCommand.Projection, query);
-               // selCommand.WhereFilterGroup;
-                AddWhere(selCommand.Where, query);
+                // selCommand.WhereFilterGroup;
+                if (selCommand.WhereFilterGroup != null)
+                {
+                    ProcessFilterGroup(query, selCommand.WhereFilterGroup, null);
+                }
+                else
+                {
+                    AddWhere(selCommand.Where, query);
+                }
+
             }
             return query;
         }
@@ -51,317 +59,135 @@ namespace DynamicsCrmDataProvider
                 //TODO: Should only be one where clause?
                 foreach (var where in whereFilter)
                 {
-                    var condition = new ConditionExpression();
-                    var filterGroup = where as FilterGroup;
-                    if (filterGroup != null)
-                    {
-                        ProcessFilterGroup(query, filterGroup, filterExpression);
-                        continue;
-                    }
-
-                    var orderFilter = where as OrderFilter;
-                    if (orderFilter != null)
-                    {
-                        ProcessOrderFilter(query, condition, orderFilter, filterExpression);
-                        continue;
-                    }
-
-                    var nullFilter = where as NullFilter;
-                    if (nullFilter != null)
-                    {
-                        ProcessNullFilter(query, condition, nullFilter);
-                        continue;
-                    }
-
-                    var likeFilter = where as LikeFilter;
-                    if (likeFilter != null)
-                    {
-                        ProcessLikeFilter(query, condition, likeFilter);
-                        continue;
-                    }
-
-                    var inFilter = where as InFilter;
-                    if (inFilter != null)
-                    {
-                        ProcessInFilter(query, condition, inFilter);
-                        continue;
-                    }
-
-                    throw new NotSupportedException();
+                    ProcessFilter(where, query, filterExpression);
                 }
             }
         }
 
         private static void ProcessFilterGroup(QueryExpression query, FilterGroup filterGroup, FilterExpression filterExpression)
         {
-           // throw new NotSupportedException("Not supported, issue raised jehugaleahsa/SQLGeneration#4");
-
             if (filterGroup.HasFilters)
             {
                 var filter = new FilterExpression();
+
+                // add each filter in this as a condition to the filter..
+                AddWhere(filterGroup.Filters, query, filter);
+
+                // if there is a filter expression, add this filter expression to that one..
+                if (filterExpression != null)
+                {
+                    filterExpression.AddFilter(filter);
+                }
+                else
+                {
+                    // this is top level filter expression, add it directly to query.
+                    query.Criteria.AddFilter(filter);
+                }
+
                 int index = 0;
                 foreach (var f in filterGroup.Filters)
                 {
-                    var filerWithConjunction = filterGroup[index];
+                    var filterWithConjunction = filterGroup[index];
                     index++;
 
-                    if (filerWithConjunction.Item2 == Conjunction.Or)
+                    // ignore first conjunction of filter in group
+                    if (index == 1)
                     {
-                        filter.FilterOperator = LogicalOperator.Or;
+                        // conjunction doesn't mean anything on first filter in group..
+
                     }
                     else
                     {
-                        filter.FilterOperator = LogicalOperator.And;  
-                    }
-                    AddWhere(filterGroup.Filters, query, filter);
-                }
-            }
-           
-          
-        }
-        
-        private static void ProcessInFilter(QueryExpression query, ConditionExpression condition, InFilter filter)
-        {
-            // Support Like
-            var left = filter.LeftHand;
-            var leftcolumn = left as Column;
-
-            // defaullt attribute name for the filter condition.
-            if (leftcolumn != null)
-            {
-                condition.AttributeName = leftcolumn.Name.ToLower();
-            }
-            else
-            {
-                throw new NotSupportedException("IN operator only works agains a column value.");
-            }
-
-            var conditionOperator = ConditionOperator.In;
-            if (filter.Not)
-            {
-                conditionOperator = ConditionOperator.NotIn;
-            }
-            var values = filter.Values;
-
-            if (values.IsValueList)
-            {
-                var valuesList = values as ValueList;
-
-                if (valuesList != null)
-                {
-                    var inValues = new object[valuesList.Values.Count()];
-                    int index = 0;
-                    foreach (var item in valuesList.Values)
-                    {
-                        var literal = item as Literal;
-                        if (literal == null)
+                        if (filterWithConjunction.Item2 == Conjunction.Or)
                         {
-                            throw new ArgumentException("The values list must contain literals.");
+                            filter.FilterOperator = LogicalOperator.Or;
                         }
-                        inValues[index] = GitLiteralValue(literal);
-                        index++;
+                        else
+                        {
+                            filter.FilterOperator = LogicalOperator.And;
+                        }
                     }
-                    SetConditionExpressionValue(condition, conditionOperator, inValues);
-                    AddConditionExpressionToQuery(leftcolumn.Source, query, condition);
-                    return;
                 }
-                throw new ArgumentException("The values list for the IN expression is null");
             }
+        }
+
+        private static void ProcessFilter(IFilter filter, QueryExpression query, FilterExpression filterExpression = null)
+        {
+
+            var filterGroup = filter as FilterGroup;
+            if (filterGroup != null)
+            {
+                ProcessFilterGroup(query, filterGroup, filterExpression);
+                return;
+            }
+
+            var orderFilter = filter as OrderFilter;
+            if (orderFilter != null)
+            {
+                bool isLeft;
+                Column attColumn;
+                var condition = GetCondition(orderFilter, out attColumn, out isLeft);
+                AddFilterCondition(query, filterExpression, condition, attColumn);
+                return;
+            }
+
+            var nullFilter = filter as NullFilter;
+            if (nullFilter != null)
+            {
+                Column attColumn;
+                var condition = GetCondition(nullFilter, out attColumn);
+                AddFilterCondition(query, filterExpression, condition, attColumn);
+                return;
+            }
+
+            var likeFilter = filter as LikeFilter;
+            if (likeFilter != null)
+            {
+                Column attColumn;
+                var condition = GetCondition(likeFilter, out attColumn);
+                AddFilterCondition(query, filterExpression, condition, attColumn);
+                return;
+            }
+
+            var inFilter = filter as InFilter;
+            if (inFilter != null)
+            {
+                Column attColumn;
+                var condition = GetCondition(inFilter, out attColumn);
+                AddFilterCondition(query, filterExpression, condition, attColumn);
+                return;
+            }
+
             throw new NotSupportedException();
+
         }
 
-        private static void ProcessNullFilter(QueryExpression query, ConditionExpression condition, NullFilter nullFilter)
+        private static void AddFilterCondition(QueryExpression query, FilterExpression filterExpression, ConditionExpression condition, Column attColumn)
         {
 
-            var left = nullFilter.LeftHand;
-            var leftcolumn = left as Column;
+            bool isAlias;
+            LinkEntity link = null;
+            var sourceEntityName = GetEntityNameOrAliasForSource(query, attColumn.Source, out isAlias, out link);
+            condition.EntityName = sourceEntityName;
 
-            // defaullt attribute name for the filter condition.
-            if (leftcolumn != null)
+            // if filter expression present, add it to that.
+            if (filterExpression != null)
             {
-                condition.AttributeName = leftcolumn.Name.ToLower();
+                filterExpression.AddCondition(condition);
             }
             else
             {
-                throw new NotSupportedException("Null operator only works agains a column value.");
-            }
-
-            var conditionOperator = ConditionOperator.Null;
-            if (nullFilter.Not)
-            {
-                conditionOperator = ConditionOperator.NotNull;
-            }
-
-            SetConditionExpressionValue(condition, conditionOperator);
-            AddConditionExpressionToQuery(leftcolumn.Source, query, condition);
-        }
-
-        private static void ProcessOrderFilter(QueryExpression query, ConditionExpression condition, OrderFilter filter, FilterExpression filterExpression)
-        {
-            bool isColumnLeft = false;
-
-            var left = filter.LeftHand;
-            var right = filter.RightHand;
-            var leftcolumn = left as Column;
-            var rightcolumn = right as Column;
-
-            if (leftcolumn != null)
-            {
-                isColumnLeft = true;
-            }
-
-            Column firstColumn = leftcolumn ?? rightcolumn;
-
-            // defaullt attribute name for the filter condition.
-            if (firstColumn != null)
-            {
-                condition.AttributeName = firstColumn.Name.ToLower();
-            }
-
-            // Support Equals
-            var equalTo = filter as EqualToFilter;
-            if (equalTo != null)
-            {
-                SetColumnCondition(condition, ConditionOperator.Equal, filter, firstColumn, isColumnLeft);
-                AddConditionExpressionToQuery(firstColumn.Source, query, condition);
-                return;
-            }
-
-            // Support Not Equals
-            var notEqualTo = filter as NotEqualToFilter;
-            if (notEqualTo != null)
-            {
-                SetColumnCondition(condition, ConditionOperator.NotEqual, filter, firstColumn, isColumnLeft);
-                AddConditionExpressionToQuery(firstColumn.Source, query, condition);
-                return;
-            }
-
-            // Support Greater Than
-            var greaterThan = filter as GreaterThanFilter;
-            if (greaterThan != null)
-            {
-                SetColumnCondition(condition, ConditionOperator.GreaterThan, filter, firstColumn, isColumnLeft);
-                AddConditionExpressionToQuery(firstColumn.Source, query, condition);
-                return;
-            }
-
-            // Support Greater Than Equal
-            var greaterEqual = filter as GreaterThanEqualToFilter;
-            if (greaterEqual != null)
-            {
-                SetColumnCondition(condition, ConditionOperator.GreaterEqual, filter, firstColumn, isColumnLeft);
-                AddConditionExpressionToQuery(firstColumn.Source, query, condition);
-                return;
-            }
-
-            // Support Less Than
-            var lessThan = filter as LessThanFilter;
-            if (lessThan != null)
-            {
-                SetColumnCondition(condition, ConditionOperator.LessThan, filter, firstColumn, isColumnLeft);
-                AddConditionExpressionToQuery(firstColumn.Source, query, condition);
-                return;
-            }
-
-            // Support Less Than Equal
-            var lessThanEqual = filter as LessThanEqualToFilter;
-            if (lessThanEqual != null)
-            {
-                SetColumnCondition(condition, ConditionOperator.LessEqual, filter, firstColumn, isColumnLeft);
-                AddConditionExpressionToQuery(firstColumn.Source, query, condition);
-                return;
-            }
-
-        }
-
-        private static void ProcessLikeFilter(QueryExpression query, ConditionExpression condition, LikeFilter filter)
-        {
-
-            // Support Like
-            var left = filter.LeftHand;
-            var leftcolumn = left as Column;
-
-            // defaullt attribute name for the filter condition.
-            if (leftcolumn != null)
-            {
-                condition.AttributeName = leftcolumn.Name.ToLower();
-            }
-            else
-            {
-                throw new NotSupportedException("Null operator only works agains a column value.");
-            }
-
-            // detect like expressions for begins with, ends with and contains..
-
-            var val = filter.RightHand.Value;
-            bool startsWith = val.EndsWith("%");
-            bool endsWith = val.StartsWith("%");
-
-            ConditionOperator conditionoperator;
-
-            if (startsWith)
-            {
-                if (endsWith)
+                if (link == null)
                 {
-                    // contains
-                    if (filter.Not)
-                    {
-                        // Does Not contain operator not recognised by Xrm sdk??? 
-                       // conditionoperator = ConditionOperator.DoesNotContain;
-                        conditionoperator = ConditionOperator.NotLike;
-                    }
-                    else
-                    {
-                       //  Contains operator causes Xrm organisation servuce to throw "Generic SQL error"??? 
-                        conditionoperator = ConditionOperator.Like;
-                    }
-                   // val = filter.RightHand.Value.Trim('%');
+                    query.Criteria.Conditions.Add(condition);
                 }
                 else
                 {
-                    // starts with
-                    val = filter.RightHand.Value.TrimEnd('%');
-                    if (filter.Not)
-                    {
-                        conditionoperator = ConditionOperator.DoesNotBeginWith;
-                    }
-                    else
-                    {
-                        conditionoperator = ConditionOperator.BeginsWith;
-                    }
+                    link.LinkCriteria.Conditions.Add(condition);
                 }
             }
-            else if (endsWith)
-            {
-                // ends with;
-                // contains
-                val = filter.RightHand.Value.TrimStart('%');
-                if (filter.Not)
-                {
-                    conditionoperator = ConditionOperator.DoesNotEndWith;
-                }
-                else
-                {
-                    conditionoperator = ConditionOperator.EndsWith;
-                }
-            }
-            else
-            {
-                if (filter.Not)
-                {
-                    conditionoperator = ConditionOperator.NotLike;
-                }
-                else
-                {
-                    conditionoperator = ConditionOperator.Like;
-                }
-
-            }
-            SetConditionExpressionValue(condition, conditionoperator, val);
-            AddConditionExpressionToQuery(leftcolumn.Source, query, condition);
         }
-
-
+       
         #endregion
 
         #region From and Joins
@@ -628,12 +454,7 @@ namespace DynamicsCrmDataProvider
         {
             return column.Name.ToLower();
         }
-
-        private static string GetTableLogicalEntityName(Table table)
-        {
-            return table.Name.ToLower();
-        }
-
+        
         // ReSharper disable UnusedParameter.Local
         // This method is solely for pre condition checking.
         private static void GuardSelectBuilder(SelectBuilder builder)
@@ -702,45 +523,293 @@ namespace DynamicsCrmDataProvider
 
         }
 
-        private static void AddConditionExpressionToQuery(AliasedSource source, QueryExpression query, ConditionExpression condition)
+        private static ConditionExpression GetCondition(InFilter filter, out Column attColumn)
         {
-            if (source != null)
+            var condition = new ConditionExpression();
+
+            var left = filter.LeftHand;
+            attColumn = left as Column;
+
+            // defaullt attribute name for the filter condition.
+            if (attColumn != null)
             {
-                bool isAliasedSource = !string.IsNullOrEmpty(source.Alias);
-                var sourceName = string.IsNullOrEmpty(source.Alias) ? GetTableLogicalEntityName(source.Source as Table) : source.Alias;
-                var linkItem = query.FindLinkEntity(sourceName, isAliasedSource);
-                if (linkItem == null)
+                condition.AttributeName = attColumn.Name.ToLower();
+            }
+            else
+            {
+                throw new NotSupportedException("IN operator only works agains a column value.");
+            }
+
+            var conditionOperator = ConditionOperator.In;
+            if (filter.Not)
+            {
+                conditionOperator = ConditionOperator.NotIn;
+            }
+            var values = filter.Values;
+
+            if (values.IsValueList)
+            {
+                var valuesList = values as ValueList;
+
+                if (valuesList != null)
                 {
-                    // Assume criteria is not for link entity but for main entity.
-                    query.Criteria.Conditions.Add(condition);
+                    var inValues = new object[valuesList.Values.Count()];
+                    int index = 0;
+                    foreach (var item in valuesList.Values)
+                    {
+                        var literal = item as Literal;
+                        if (literal == null)
+                        {
+                            throw new ArgumentException("The values list must contain literals.");
+                        }
+                        inValues[index] = GitLiteralValue(literal);
+                        index++;
+                    }
+                    SetConditionExpressionValue(condition, conditionOperator, inValues);
+                    return condition;
+                }
+                throw new ArgumentException("The values list for the IN expression is null");
+            }
+            throw new NotSupportedException();
+        }
+
+        private static ConditionExpression GetCondition(LikeFilter filter, out Column attColumn)
+        {
+            var condition = new ConditionExpression();
+
+            // Support Like
+            var left = filter.LeftHand;
+            attColumn = left as Column;
+
+            // default attribute name for the filter condition.
+            if (attColumn != null)
+            {
+                condition.AttributeName = attColumn.Name.ToLower();
+            }
+            else
+            {
+                throw new NotSupportedException("Null operator only works agains a column value.");
+            }
+
+            // detect like expressions for begins with, ends with and contains..
+
+            var val = filter.RightHand.Value;
+            bool startsWith = val.EndsWith("%");
+            bool endsWith = val.StartsWith("%");
+
+            ConditionOperator conditionoperator;
+
+            if (startsWith)
+            {
+                if (endsWith)
+                {
+                    // contains
+                    if (filter.Not)
+                    {
+                        // Does Not contain operator not recognised by Xrm sdk??? 
+                        // conditionoperator = ConditionOperator.DoesNotContain;
+                        conditionoperator = ConditionOperator.NotLike;
+                    }
+                    else
+                    {
+                        //  Contains operator causes Xrm organisation servuce to throw "Generic SQL error"??? 
+                        conditionoperator = ConditionOperator.Like;
+                    }
+                    // val = filter.RightHand.Value.Trim('%');
                 }
                 else
                 {
-                    linkItem.LinkCriteria.Conditions.Add(condition);
+                    // starts with
+                    val = filter.RightHand.Value.TrimEnd('%');
+                    if (filter.Not)
+                    {
+                        conditionoperator = ConditionOperator.DoesNotBeginWith;
+                    }
+                    else
+                    {
+                        conditionoperator = ConditionOperator.BeginsWith;
+                    }
+                }
+            }
+            else if (endsWith)
+            {
+                // ends with;
+                // contains
+                val = filter.RightHand.Value.TrimStart('%');
+                if (filter.Not)
+                {
+                    conditionoperator = ConditionOperator.DoesNotEndWith;
+                }
+                else
+                {
+                    conditionoperator = ConditionOperator.EndsWith;
                 }
             }
             else
             {
-                throw new NotSupportedException("A condition in the WHERE clause contains refers to an unknown table / entity.");
+                if (filter.Not)
+                {
+                    conditionoperator = ConditionOperator.NotLike;
+                }
+                else
+                {
+                    conditionoperator = ConditionOperator.Like;
+                }
+
             }
+
+            SetConditionExpressionValue(condition, conditionoperator, val);
+            return condition;
         }
 
-        private static void SetColumnCondition(ConditionExpression condition, ConditionOperator conditionOperator, OrderFilter greaterThan, Column column, bool isColumnLeft)
+        private static ConditionExpression GetCondition(NullFilter filter, out Column attColumn)
         {
+            var condition = new ConditionExpression();
 
-            //  condition.Operator = conditionOperator;
-            if (column == null)
+            var left = filter.LeftHand;
+            attColumn = left as Column;
+
+            // default attribute name for the filter condition.
+            if (attColumn != null)
             {
-                throw new InvalidOperationException("The query contains a WHERE clause, however one side of the where condition must refer to an attribute name.");
-            }
-            Literal lit = null;
-            if (isColumnLeft)
-            {
-                lit = greaterThan.RightHand as Literal;
+                condition.AttributeName = attColumn.Name.ToLower();
             }
             else
             {
-                lit = greaterThan.LeftHand as Literal;
+                throw new NotSupportedException("Null operator only works agains a column value.");
+            }
+
+            condition.Operator = ConditionOperator.Null;
+            if (filter.Not)
+            {
+                condition.Operator = ConditionOperator.NotNull;
+            }
+            return condition;
+        }
+
+        private static ConditionExpression GetCondition(OrderFilter filter, out Column attColumn, out bool isLeft)
+        {
+            var condition = new ConditionExpression();
+            attColumn = GetAttributeColumn(filter, out isLeft);
+            if (attColumn != null)
+            {
+                condition.AttributeName = attColumn.Name.ToLower();
+            }
+
+            ConditionOperator con;
+            var equalTo = filter as EqualToFilter;
+            if (equalTo != null)
+            {
+                con = ConditionOperator.Equal;
+                SetColumnCondition(condition, con, filter, isLeft);
+                return condition;
+            }
+
+            // Support Not Equals
+            var notEqualTo = filter as NotEqualToFilter;
+            if (notEqualTo != null)
+            {
+                con = ConditionOperator.NotEqual;
+                SetColumnCondition(condition, con, filter, isLeft);
+                return condition;
+            }
+
+            // Support Greater Than
+            var greaterThan = filter as GreaterThanFilter;
+            if (greaterThan != null)
+            {
+                con = ConditionOperator.GreaterThan;
+                SetColumnCondition(condition, con, filter, isLeft);
+                return condition;
+            }
+
+            // Support Greater Than Equal
+            var greaterEqual = filter as GreaterThanEqualToFilter;
+            if (greaterEqual != null)
+            {
+                con = ConditionOperator.GreaterEqual;
+                SetColumnCondition(condition, con, filter, isLeft);
+                return condition;
+            }
+
+            // Support Less Than
+            var lessThan = filter as LessThanFilter;
+            if (lessThan != null)
+            {
+                con = ConditionOperator.LessThan;
+                SetColumnCondition(condition, con, filter, isLeft);
+                return condition;
+            }
+
+            // Support Less Than Equal
+            var lessThanEqual = filter as LessThanEqualToFilter;
+            if (lessThanEqual != null)
+            {
+                con = ConditionOperator.LessEqual;
+                SetColumnCondition(condition, con, filter, isLeft);
+                return condition;
+            }
+
+            throw new NotSupportedException();
+
+        }
+
+        private static Column GetAttributeColumn(OrderFilter filter, out bool isColumnLeftSide)
+        {
+            var left = filter.LeftHand;
+            var right = filter.RightHand;
+            var leftcolumn = left as Column;
+            var rightcolumn = right as Column;
+            if (leftcolumn != null)
+            {
+                isColumnLeftSide = true;
+            }
+            else
+            {
+                isColumnLeftSide = false;
+            }
+            Column firstColumn = leftcolumn ?? rightcolumn;
+            if (firstColumn == null)
+            {
+                throw new InvalidOperationException("The query contains a WHERE clause, however one side of the where condition must refer to an attribute name.");
+            }
+            return firstColumn;
+        }
+
+        private static string GetEntityNameOrAliasForSource(QueryExpression query, AliasedSource source, out bool isAlias, out LinkEntity linkEntity)
+        {
+            if (source != null)
+            {
+                isAlias = !string.IsNullOrEmpty(source.Alias);
+                var sourceName = string.IsNullOrEmpty(source.Alias) ? GetTableLogicalEntityName(source.Source as Table) : source.Alias;
+                linkEntity = query.FindLinkEntity(sourceName, isAlias);
+                if (linkEntity == null)
+                {
+                    // If this is for the main entity - it doesn;t support alias name..
+                    isAlias = false;
+                    return query.EntityName;
+                }
+                return sourceName;
+            }
+            throw new NotSupportedException("A condition in the WHERE clause contains refers to an unknown table / entity.");
+        }
+
+        private static string GetTableLogicalEntityName(Table table)
+        {
+            return table.Name.ToLower();
+        }
+
+        private static void SetColumnCondition(ConditionExpression condition, ConditionOperator conditionOperator, OrderFilter filter, bool isLeft)
+        {
+
+            Literal lit = null;
+            if (isLeft)
+            {
+                lit = filter.RightHand as Literal;
+            }
+            else
+            {
+                lit = filter.LeftHand as Literal;
             }
 
             if (lit != null)
@@ -775,7 +844,7 @@ namespace DynamicsCrmDataProvider
                 }
             }
         }
-        
+
         #endregion
 
     }
