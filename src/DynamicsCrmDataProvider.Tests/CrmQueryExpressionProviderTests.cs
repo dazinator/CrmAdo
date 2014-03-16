@@ -137,10 +137,12 @@ namespace DynamicsCrmDataProvider.Tests
         [TestCase("NOT IN", new string[] { "097e0140-c269-430c-9caf-d2cffe261d8b", "897e0140-c269-430c-9caf-d2cffe261d8c" }, "{0} {1} ('{2}', '{3}')", TestName = "Should support Not In a Guid array")]
         [TestCase("LIKE", "SomeValue%", "{0} {1} '{2}'", TestName = "Should support Starts With")]
         [TestCase("LIKE", "%SomeValue", "{0} {1} '{2}'", TestName = "Should support Ends With")]
-        [TestCase("LIKE", "%SomeValue%", "{0} {1} '{2}'", TestName = "Should support Contains")]
+        [TestCase("LIKE", "%SomeValue%", "{0} {1} '{2}'", TestName = "Should support Like with wildcards")]
         [TestCase("NOT LIKE", "SomeValue%", "{0} {1} '{2}'", TestName = "Should support Does Not Start With")]
         [TestCase("NOT LIKE", "%SomeValue", "{0} {1} '{2}'", TestName = "Should support Does Not End With")]
-        [TestCase("NOT LIKE", "%SomeValue%", "{0} {1} '{2}'", TestName = "Should support Does Not Contain")]
+        [TestCase("NOT LIKE", "%SomeValue%", "{0} {1} '{2}'", TestName = "Should support Not Like with wildcards")]
+        //[TestCase("CONTAINS", "albert", "{1}({0},  '{2}')", TestName = "Does not support Contains.. yet",ExpectedException = typeof(NotSupportedException))]
+        //[TestCase("CONTAINS", "albert", "{1}({0},  '{2}')", TestName = "Does not support Not Contains.. yet", ExpectedException = typeof(NotSupportedException))]
         public void Should_Convert_Filter_Condition_To_Correct_Query_Expression_Condition(string filterOperator, object value, string filterFormatString)
         {
             // Arrange
@@ -167,8 +169,11 @@ namespace DynamicsCrmDataProvider.Tests
             var cmd = new CrmDbCommand(null);
             cmd.CommandText = sql;
 
+
             // Create test subject.
             var subject = CreateTestSubject();
+
+
 
             // Act
             // Ask our test subject to Convert the SelectBuilder to a Query Expression.
@@ -318,13 +323,13 @@ namespace DynamicsCrmDataProvider.Tests
             Assert.That(defaultFilterConditions.Count, Is.EqualTo(3), "Wrong number of conditions.");
 
             var condition = defaultFilterConditions[0];
-            Assert.That(condition.EntityName, Is.EqualTo("C"));
+            Assert.That(condition.EntityName, Is.EqualTo("contact"));
             AssertFilterExpressionContion(filterOperator, filterValue, condition);
 
             var joinCondition = defaultFilterConditions[1];
             Assert.That(joinCondition.EntityName, Is.EqualTo("A"));
             AssertFilterExpressionContion(filterOperator, filterValue, joinCondition);
-          
+
             var nestedjoinCondition = defaultFilterConditions[2];
             Assert.That(nestedjoinCondition.EntityName, Is.EqualTo("AC"));
             AssertFilterExpressionContion(filterOperator, filterValue, nestedjoinCondition);
@@ -348,7 +353,7 @@ namespace DynamicsCrmDataProvider.Tests
 
             //Assert
             Assert.That(queryExpression.ColumnSet.Columns.Count, Is.EqualTo(2));
-            
+
             Assert.That(queryExpression.Criteria.Filters, Is.Not.Null);
             Assert.That(queryExpression.Criteria.Filters.Count, Is.EqualTo(1));
             Assert.That(queryExpression.Criteria.FilterOperator, Is.EqualTo(LogicalOperator.And));
@@ -379,8 +384,85 @@ namespace DynamicsCrmDataProvider.Tests
 
         }
 
+
+        [Category("Filter Operators")]
+        [Test]
+        [TestCase("=", "SomeValue", "{0} {1} @param1", TestName = "Should support Equals a String paramater")]
+        [TestCase("=", 1, "{0} {1}  @param1", TestName = "Should support Equals a Numeric paramater")]
+        [TestCase("<>", "SomeValue", "{0} {1} @param1", TestName = "Should support Not Equals a String paramater")]
+        [TestCase("<>", 1, "{0} {1} @param1", TestName = "Should support Not Equals a Numeric paramater")]
+        [TestCase(">=", "SomeValue", "{0} {1} @param1", TestName = "Should support Greater Than Or Equals a String paramater")]
+        [TestCase(">=", 1, "{0} {1} @param1", TestName = "Should support Greater Than Or Equals a Numeric paramater")]
+        [TestCase("<=", "SomeValue", "{0} {1} @param1", TestName = "Should support Less Than Or Equals a String paramater")]
+        [TestCase("<=", 1, "{0} {1} @param1", TestName = "Should support Less Than Or Equals a Numeric paramater")]
+        [TestCase(">", "SomeValue", "{0} {1} @param1", TestName = "Should support Greater Than a String paramater")]
+        [TestCase(">", 1, "{0} {1} @param1", TestName = "Should support Greater Than a Numeric paramater")]
+        [TestCase("<", "SomeValue", "{0} {1} @param1", TestName = "Should support Less Than a String paramater")]
+        [TestCase("<", 1, "{0} {1} @param1", TestName = "Should support Less Than a Numeric paramater")]
+        [TestCase("LIKE", "SomeValue", "{0} {1} @param1", TestName = "Should support Like a paramater")]
+        [TestCase("NOT LIKE", "SomeValue", "{0} {1} @param1", TestName = "Should support Not Like a paramater")]
+        [TestCase("LIKE", "SomeValue%", "{0} {1} @param1", TestName = "Should support Starts With a paramater")]
+        [TestCase("LIKE", "%SomeValue", "{0} {1} @param1", TestName = "Should support Ends With a paramater")]
+        [TestCase("LIKE", "%SomeValue%", "{0} {1} @param1", TestName = "Should support Like with wildcards paramater")]
+        [TestCase("NOT LIKE", "SomeValue%", "{0} {1} @param1", TestName = "Should support Does Not Start With a paramater")]
+        [TestCase("NOT LIKE", "%SomeValue", "{0} {1} @param1", TestName = "Should support Does Not End With a paramater")]
+        [TestCase("NOT LIKE", "%SomeValue%", "{0} {1} @param1", TestName = "Should support Not Like with wildcards paramater")]
+        public void Should_Support_Parameters(string filterOperator, object value, string filterFormatString)
+        {
+            // Arrange
+            // Formulate DML (SQL) statement from test case data.
+            var columnName = "firstname";
+            if (value == null || !value.GetType().IsArray)
+            {
+                filterFormatString = string.Format(filterFormatString, columnName, filterOperator);
+            }
+            else
+            {
+                throw new NotImplementedException();
+                //var formatArgs = new List<object>();
+                //formatArgs.Add(columnName);
+                //formatArgs.Add(filterOperator);
+                //var args = value as IEnumerable;
+                //foreach (var arg in args)
+                //{
+                //    formatArgs.Add(arg);
+                //}
+                //filterFormatString = string.Format(filterFormatString, formatArgs.ToArray());
+            }
+            var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} ", filterFormatString);
+            // Convery the DML (SQL) statement to a SelectBuilder object which an object representation of the DML.
+            var cmd = new CrmDbCommand(null);
+            cmd.CommandText = sql;
+            var param = cmd.CreateParameter();
+            param.ParameterName = "@param1";
+            param.Value = value;
+            cmd.Parameters.Add(param);
+            // Create test subject.
+            var subject = CreateTestSubject();
+
+            // Act
+            // Ask our test subject to Convert the SelectBuilder to a Query Expression.
+            var queryExpression = subject.CreateQueryExpression(cmd);
+
+            // Assert
+            // Verify that the Query Expression looks as expected in order to work agaisnt the Dynamics SDK.
+            Assert.That(queryExpression.ColumnSet.AllColumns == false);
+            Assert.That(queryExpression.ColumnSet.Columns[0] == "contactid");
+            Assert.That(queryExpression.ColumnSet.Columns[1] == "firstname");
+            Assert.That(queryExpression.EntityName == "contact");
+
+            var defaultFilterGroup = queryExpression.Criteria.Filters[0];
+
+            Assert.That(defaultFilterGroup.Conditions.Count, Is.EqualTo(1));
+            Assert.That(defaultFilterGroup.FilterOperator, Is.EqualTo(LogicalOperator.And));
+            Assert.That(defaultFilterGroup.Conditions[0].AttributeName == "firstname");
+
+            var condition = defaultFilterGroup.Conditions[0];
+            AssertFilterExpressionContion(filterOperator, value, condition);
+        }
+
         #region Helper Methods
-        
+
         private static void AssertFilterExpressionContion(string filterOperator, object value, ConditionExpression condition)
         {
 
@@ -565,6 +647,19 @@ namespace DynamicsCrmDataProvider.Tests
                         Assert.Fail("Unhandled test case for IN expression.");
                     }
 
+                    break;
+
+                case "CONTAINS":
+
+                    Assert.That(condition.Operator, Is.EqualTo(ConditionOperator.Contains));
+                    Assert.That(condition.Values, Contains.Item(value));
+
+                    break;
+
+
+                case "NOT CONTAINS":
+                    Assert.That(condition.Operator, Is.EqualTo(ConditionOperator.DoesNotContain));
+                    Assert.That(condition.Values, Contains.Item(value));
                     break;
                 default:
                     Assert.Fail("Unhandled test case.");

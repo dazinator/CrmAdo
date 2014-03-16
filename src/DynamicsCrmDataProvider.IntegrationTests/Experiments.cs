@@ -30,6 +30,7 @@ namespace DynamicsCrmDataProvider.IntegrationTests
                 command.CommandText = sql;
                 //   command.CommandType = CommandType.Text;
 
+             
                 using (var reader = command.ExecuteReader())
                 {
                     int resultCount = 0;

@@ -21,7 +21,7 @@ namespace DynamicsCrmDataProvider
         {
             get { return false; }
         }
-        
+
         public override DbConnection CreateConnection()
         {
             return new CrmDbConnection();
@@ -30,6 +30,11 @@ namespace DynamicsCrmDataProvider
         public override DbCommand CreateCommand()
         {
             return new CrmDbCommand();
+        }
+
+        public override DbParameter CreateParameter()
+        {
+            return new CrmParameter();
         }
 
         #region Not Implemented Yet
@@ -50,11 +55,6 @@ namespace DynamicsCrmDataProvider
         }
 
         public override DbDataSourceEnumerator CreateDataSourceEnumerator()
-        {
-            throw new NotSupportedException();
-        }
-
-        public override DbParameter CreateParameter()
         {
             throw new NotSupportedException();
         }

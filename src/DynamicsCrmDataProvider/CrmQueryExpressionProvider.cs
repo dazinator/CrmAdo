@@ -12,6 +12,9 @@ namespace DynamicsCrmDataProvider
 {
     public class CrmQueryExpressionProvider : ICrmQueryExpressionProvider
     {
+
+        public const string ParameterToken = "@";
+
         /// <summary>
         /// Creates a QueryExpression from the given Select command.
         /// </summary>
@@ -22,11 +25,11 @@ namespace DynamicsCrmDataProvider
             var commandBuilder = new CommandBuilder();
             var builder = commandBuilder.GetCommand(commandText) as SelectBuilder;
             GuardSelectBuilder(builder);
-            var query = FromCommand(builder);
+            var query = FromCommand(builder, command.Parameters);
             return query;
         }
 
-        public static QueryExpression FromCommand(ICommand command)
+        public static QueryExpression FromCommand(ICommand command, DbParameterCollection paramaters)
         {
             var query = new QueryExpression();
             //  query.EntityName
@@ -38,20 +41,23 @@ namespace DynamicsCrmDataProvider
                 // selCommand.WhereFilterGroup;
                 if (selCommand.WhereFilterGroup != null)
                 {
-                    ProcessFilterGroup(query, selCommand.WhereFilterGroup, null);
+                    ProcessFilterGroup(query, selCommand.WhereFilterGroup, null, paramaters);
                 }
                 else
                 {
-                    AddWhere(selCommand.Where, query);
+                    AddWhere(selCommand.Where, query, paramaters);
                 }
 
             }
+
+
+
             return query;
         }
 
         #region Where and Filters
 
-        private static void AddWhere(IEnumerable<IFilter> whereFilter, QueryExpression query, FilterExpression filterExpression = null)
+        private static void AddWhere(IEnumerable<IFilter> whereFilter, QueryExpression query, DbParameterCollection paramaters, FilterExpression filterExpression = null)
         {
             // do where clause..
             if (whereFilter != null && whereFilter.Any())
@@ -59,19 +65,19 @@ namespace DynamicsCrmDataProvider
                 //TODO: Should only be one where clause?
                 foreach (var where in whereFilter)
                 {
-                    ProcessFilter(where, query, filterExpression);
+                    ProcessFilter(where, query, paramaters, filterExpression);
                 }
             }
         }
 
-        private static void ProcessFilterGroup(QueryExpression query, FilterGroup filterGroup, FilterExpression filterExpression)
+        private static void ProcessFilterGroup(QueryExpression query, FilterGroup filterGroup, FilterExpression filterExpression, DbParameterCollection paramaters)
         {
             if (filterGroup.HasFilters)
             {
                 var filter = new FilterExpression();
 
                 // add each filter in this as a condition to the filter..
-                AddWhere(filterGroup.Filters, query, filter);
+                AddWhere(filterGroup.Filters, query, paramaters, filter);
 
                 // if there is a filter expression, add this filter expression to that one..
                 if (filterExpression != null)
@@ -111,13 +117,13 @@ namespace DynamicsCrmDataProvider
             }
         }
 
-        private static void ProcessFilter(IFilter filter, QueryExpression query, FilterExpression filterExpression = null)
+        private static void ProcessFilter(IFilter filter, QueryExpression query, DbParameterCollection paramaters, FilterExpression filterExpression = null)
         {
 
             var filterGroup = filter as FilterGroup;
             if (filterGroup != null)
             {
-                ProcessFilterGroup(query, filterGroup, filterExpression);
+                ProcessFilterGroup(query, filterGroup, filterExpression, paramaters);
                 return;
             }
 
@@ -126,7 +132,7 @@ namespace DynamicsCrmDataProvider
             {
                 bool isLeft;
                 Column attColumn;
-                var condition = GetCondition(orderFilter, out attColumn, out isLeft);
+                var condition = GetCondition(orderFilter, paramaters, out attColumn, out isLeft);
                 AddFilterCondition(query, filterExpression, condition, attColumn);
                 return;
             }
@@ -144,7 +150,7 @@ namespace DynamicsCrmDataProvider
             if (likeFilter != null)
             {
                 Column attColumn;
-                var condition = GetCondition(likeFilter, out attColumn);
+                var condition = GetCondition(likeFilter, paramaters, out attColumn);
                 AddFilterCondition(query, filterExpression, condition, attColumn);
                 return;
             }
@@ -153,7 +159,7 @@ namespace DynamicsCrmDataProvider
             if (inFilter != null)
             {
                 Column attColumn;
-                var condition = GetCondition(inFilter, out attColumn);
+                var condition = GetCondition(inFilter, paramaters, out attColumn);
                 AddFilterCondition(query, filterExpression, condition, attColumn);
                 return;
             }
@@ -187,7 +193,7 @@ namespace DynamicsCrmDataProvider
                 }
             }
         }
-       
+
         #endregion
 
         #region From and Joins
@@ -454,7 +460,7 @@ namespace DynamicsCrmDataProvider
         {
             return column.Name.ToLower();
         }
-        
+
         // ReSharper disable UnusedParameter.Local
         // This method is solely for pre condition checking.
         private static void GuardSelectBuilder(SelectBuilder builder)
@@ -523,7 +529,7 @@ namespace DynamicsCrmDataProvider
 
         }
 
-        private static ConditionExpression GetCondition(InFilter filter, out Column attColumn)
+        private static ConditionExpression GetCondition(InFilter filter, DbParameterCollection paramaters, out Column attColumn)
         {
             var condition = new ConditionExpression();
 
@@ -573,7 +579,7 @@ namespace DynamicsCrmDataProvider
             throw new NotSupportedException();
         }
 
-        private static ConditionExpression GetCondition(LikeFilter filter, out Column attColumn)
+        private static ConditionExpression GetCondition(LikeFilter filter, DbParameterCollection paramaters, out Column attColumn)
         {
             var condition = new ConditionExpression();
 
@@ -594,6 +600,8 @@ namespace DynamicsCrmDataProvider
             // detect like expressions for begins with, ends with and contains..
 
             var val = filter.RightHand.Value;
+            // detect paramater
+
             bool startsWith = val.EndsWith("%");
             bool endsWith = val.StartsWith("%");
 
@@ -687,7 +695,7 @@ namespace DynamicsCrmDataProvider
             return condition;
         }
 
-        private static ConditionExpression GetCondition(OrderFilter filter, out Column attColumn, out bool isLeft)
+        private static ConditionExpression GetCondition(OrderFilter filter, DbParameterCollection paramaters, out Column attColumn, out bool isLeft)
         {
             var condition = new ConditionExpression();
             attColumn = GetAttributeColumn(filter, out isLeft);
@@ -701,7 +709,7 @@ namespace DynamicsCrmDataProvider
             if (equalTo != null)
             {
                 con = ConditionOperator.Equal;
-                SetColumnCondition(condition, con, filter, isLeft);
+                SetColumnCondition(condition, con, filter, isLeft, paramaters);
                 return condition;
             }
 
@@ -710,7 +718,7 @@ namespace DynamicsCrmDataProvider
             if (notEqualTo != null)
             {
                 con = ConditionOperator.NotEqual;
-                SetColumnCondition(condition, con, filter, isLeft);
+                SetColumnCondition(condition, con, filter, isLeft, paramaters);
                 return condition;
             }
 
@@ -719,7 +727,7 @@ namespace DynamicsCrmDataProvider
             if (greaterThan != null)
             {
                 con = ConditionOperator.GreaterThan;
-                SetColumnCondition(condition, con, filter, isLeft);
+                SetColumnCondition(condition, con, filter, isLeft, paramaters);
                 return condition;
             }
 
@@ -728,7 +736,7 @@ namespace DynamicsCrmDataProvider
             if (greaterEqual != null)
             {
                 con = ConditionOperator.GreaterEqual;
-                SetColumnCondition(condition, con, filter, isLeft);
+                SetColumnCondition(condition, con, filter, isLeft, paramaters);
                 return condition;
             }
 
@@ -737,7 +745,7 @@ namespace DynamicsCrmDataProvider
             if (lessThan != null)
             {
                 con = ConditionOperator.LessThan;
-                SetColumnCondition(condition, con, filter, isLeft);
+                SetColumnCondition(condition, con, filter, isLeft, paramaters);
                 return condition;
             }
 
@@ -746,12 +754,19 @@ namespace DynamicsCrmDataProvider
             if (lessThanEqual != null)
             {
                 con = ConditionOperator.LessEqual;
-                SetColumnCondition(condition, con, filter, isLeft);
+                SetColumnCondition(condition, con, filter, isLeft, paramaters);
                 return condition;
             }
 
             throw new NotSupportedException();
 
+        }
+
+        private static bool IsParameter(Column column)
+        {
+            // Due to bug in SQL Generation parsing logic, paramaters are not parsed as placeholders, they are parsed as columns.
+            // therefore we have to check the columns to see if they are actually meant to be paramater placeholders.
+            return column.Name.StartsWith(ParameterToken);
         }
 
         private static Column GetAttributeColumn(OrderFilter filter, out bool isColumnLeftSide)
@@ -760,20 +775,41 @@ namespace DynamicsCrmDataProvider
             var right = filter.RightHand;
             var leftcolumn = left as Column;
             var rightcolumn = right as Column;
+            Column attributeColumn = null;
+            isColumnLeftSide = false;
             if (leftcolumn != null)
             {
-                isColumnLeftSide = true;
+                // issue with sql generation library, where it doesn't parse @param from sql string as a placeholder, instead it parses it as a column.
+                if (IsParameter(leftcolumn))
+                {
+
+                }
+                else
+                {
+                    attributeColumn = leftcolumn;
+                    isColumnLeftSide = true;
+                }
+
             }
-            else
+
+            if (!isColumnLeftSide && rightcolumn != null)
             {
-                isColumnLeftSide = false;
+                // issue with sql generation library, where it doesn't parse @param from sql string as a placeholder, instead it parses it as a column.
+                if (IsParameter(rightcolumn))
+                {
+                    // filter.LeftHand = new Placeholder(leftcolumn.Name);
+                }
+                else
+                {
+                    attributeColumn = rightcolumn;
+                }
             }
-            Column firstColumn = leftcolumn ?? rightcolumn;
-            if (firstColumn == null)
+
+            if (attributeColumn == null)
             {
                 throw new InvalidOperationException("The query contains a WHERE clause, however one side of the where condition must refer to an attribute name.");
             }
-            return firstColumn;
+            return attributeColumn;
         }
 
         private static string GetEntityNameOrAliasForSource(QueryExpression query, AliasedSource source, out bool isAlias, out LinkEntity linkEntity)
@@ -799,9 +835,9 @@ namespace DynamicsCrmDataProvider
             return table.Name.ToLower();
         }
 
-        private static void SetColumnCondition(ConditionExpression condition, ConditionOperator conditionOperator, OrderFilter filter, bool isLeft)
+        private static void SetColumnCondition(ConditionExpression condition, ConditionOperator conditionOperator, OrderFilter filter, bool isLeft, DbParameterCollection paramaters)
         {
-
+            // check for literals..
             Literal lit = null;
             if (isLeft)
             {
@@ -819,9 +855,57 @@ namespace DynamicsCrmDataProvider
                 return;
             }
 
+            // check for paramaters - these should be placeholders but sqlgeneration doesn't parse them correctly so they are columns.
+            Column paramater = null;
+            if (isLeft)
+            {
+                paramater = filter.RightHand as Column;
+            }
+            else
+            {
+                paramater = filter.LeftHand as Column;
+            }
+
+            if (paramater != null)
+            {
+                if (IsParameter(paramater))
+                {
+                    var param = paramaters[paramater.Name];
+                    SetConditionExpressionValue(condition, conditionOperator, param);
+                    return;
+                }
+            }
+           
             throw new NotSupportedException();
         }
-
+        
+        private static void SetConditionExpressionValue(ConditionExpression condition, ConditionOperator conditionOperator, params DbParameter[] paramaters)
+        {
+            condition.Operator = conditionOperator;
+            if (paramaters != null)
+            {
+               // var val = paramater.Value;
+               // condition.Values.Add(val);
+                // is the literal a 
+                foreach (var param in paramaters)
+                {
+                    var paramValue = param.Value;
+                    condition.Values.Add(paramValue);
+                    //if (value is Array)
+                    //{
+                    //    foreach (var o in value as Array)
+                    //    {
+                    //        condition.Values.Add(o);
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    condition.Values.Add(value);
+                    //}
+                }
+            }
+        }
+        
         private static void SetConditionExpressionValue(ConditionExpression condition, ConditionOperator conditionOperator, params object[] values)
         {
             condition.Operator = conditionOperator;

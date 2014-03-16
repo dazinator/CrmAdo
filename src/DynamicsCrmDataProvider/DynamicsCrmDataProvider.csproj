@@ -42,11 +42,11 @@
     <AssemblyOriginatorKeyFile>Key.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AntiXSSLibrary">
-      <HintPath>..\..\lib\Microsoft.CrmSdk.Extensions.6.0.2\lib\net40\AntiXSSLibrary.dll</HintPath>
+    <Reference Include="AntiXSSLibrary, Version=4.0.0.0, Culture=neutral, PublicKeyToken=d127efab8a9c114f, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\Microsoft.CrmSdk.Extensions.6.0.4\lib\net40\AntiXSSLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Crm.Sdk.Proxy">
-      <HintPath>..\..\lib\Microsoft.CrmSdk.CoreAssemblies.6.0.2\lib\net40\Microsoft.Crm.Sdk.Proxy.dll</HintPath>
+    <Reference Include="Microsoft.Crm.Sdk.Proxy, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\Microsoft.CrmSdk.CoreAssemblies.6.0.4\lib\net40\Microsoft.Crm.Sdk.Proxy.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.IdentityModel">
       <HintPath>..\..\lib\Microsoft.IdentityModel.6.1.7600.16394\lib\net35\Microsoft.IdentityModel.dll</HintPath>
@@ -59,22 +59,22 @@
       <HintPath>..\..\lib\Microsoft.WindowsAzure.ConfigurationManager.2.0.3\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xrm.Client, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\Microsoft.CrmSdk.Extensions.6.0.2\lib\net40\Microsoft.Xrm.Client.dll</HintPath>
+      <HintPath>..\..\lib\Microsoft.CrmSdk.Extensions.6.0.4\lib\net40\Microsoft.Xrm.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Xrm.Client.CodeGeneration">
-      <HintPath>..\..\lib\Microsoft.CrmSdk.Extensions.6.0.2\lib\net40\Microsoft.Xrm.Client.CodeGeneration.dll</HintPath>
+    <Reference Include="Microsoft.Xrm.Client.CodeGeneration, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\Microsoft.CrmSdk.Extensions.6.0.4\lib\net40\Microsoft.Xrm.Client.CodeGeneration.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Xrm.Portal">
-      <HintPath>..\..\lib\Microsoft.CrmSdk.Extensions.6.0.2\lib\net40\Microsoft.Xrm.Portal.dll</HintPath>
+    <Reference Include="Microsoft.Xrm.Portal, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\Microsoft.CrmSdk.Extensions.6.0.4\lib\net40\Microsoft.Xrm.Portal.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Xrm.Portal.Files">
-      <HintPath>..\..\lib\Microsoft.CrmSdk.Extensions.6.0.2\lib\net40\Microsoft.Xrm.Portal.Files.dll</HintPath>
+    <Reference Include="Microsoft.Xrm.Portal.Files, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\Microsoft.CrmSdk.Extensions.6.0.4\lib\net40\Microsoft.Xrm.Portal.Files.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xrm.Sdk, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\Microsoft.CrmSdk.CoreAssemblies.6.0.2\lib\net40\Microsoft.Xrm.Sdk.dll</HintPath>
+      <HintPath>..\..\lib\Microsoft.CrmSdk.CoreAssemblies.6.0.4\lib\net40\Microsoft.Xrm.Sdk.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Xrm.Sdk.Deployment">
-      <HintPath>..\..\lib\Microsoft.CrmSdk.Deployment.6.0.2\lib\net40\Microsoft.Xrm.Sdk.Deployment.dll</HintPath>
+    <Reference Include="Microsoft.Xrm.Sdk.Deployment, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\Microsoft.CrmSdk.Deployment.6.0.4\lib\net40\Microsoft.Xrm.Sdk.Deployment.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -120,8 +120,10 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="CrmDbDataReader.cs" />
+    <Compile Include="CrmParameter.cs" />
     <Compile Include="CrmDbProviderFactory.cs" />
     <Compile Include="CrmDbTypeConverter.cs" />
+    <Compile Include="CrmParameterCollection.cs" />
     <Compile Include="CrmQueryExpressionProvider.cs" />
     <Compile Include="DataReaderExtensions.cs" />
     <Compile Include="Dynamics\CrmClientCredentialsProvider.cs" />
@@ -153,8 +155,66 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="bin\Debug\DynamicsCrmDataProvider.dll.config" />
+    <None Include="bin\IntergationTesting\DynamicsCrmDataProvider.dll.config" />
     <None Include="Key.pfx" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\AntiXSSLibrary.dll" />
+    <Content Include="bin\Debug\DynamicsCrmDataProvider.dll" />
+    <Content Include="bin\Debug\DynamicsCrmDataProvider.pdb" />
+    <Content Include="bin\Debug\Microsoft.Crm.Sdk.Proxy.dll" />
+    <Content Include="bin\Debug\Microsoft.Crm.Sdk.Proxy.xml" />
+    <Content Include="bin\Debug\Microsoft.ServiceBus.dll" />
+    <Content Include="bin\Debug\Microsoft.ServiceBus.xml" />
+    <Content Include="bin\Debug\Microsoft.WindowsAzure.Configuration.dll" />
+    <Content Include="bin\Debug\Microsoft.WindowsAzure.Configuration.xml" />
+    <Content Include="bin\Debug\Microsoft.Xrm.Client.CodeGeneration.dll" />
+    <Content Include="bin\Debug\Microsoft.Xrm.Client.dll" />
+    <Content Include="bin\Debug\Microsoft.Xrm.Client.xml" />
+    <Content Include="bin\Debug\Microsoft.Xrm.Portal.dll" />
+    <Content Include="bin\Debug\Microsoft.Xrm.Portal.Files.dll" />
+    <Content Include="bin\Debug\Microsoft.Xrm.Portal.xml" />
+    <Content Include="bin\Debug\Microsoft.Xrm.Sdk.Deployment.dll" />
+    <Content Include="bin\Debug\Microsoft.Xrm.Sdk.Deployment.xml" />
+    <Content Include="bin\Debug\Microsoft.Xrm.Sdk.dll" />
+    <Content Include="bin\Debug\Microsoft.Xrm.Sdk.xml" />
+    <Content Include="bin\Debug\SQLGeneration.dll" />
+    <Content Include="bin\Debug\SQLGeneration.pdb" />
+    <Content Include="bin\Debug\SQLGeneration.xml" />
+    <Content Include="bin\IntergationTesting\AntiXSSLibrary.dll" />
+    <Content Include="bin\IntergationTesting\DynamicsCrmDataProvider.dll" />
+    <Content Include="bin\IntergationTesting\DynamicsCrmDataProvider.pdb" />
+    <Content Include="bin\IntergationTesting\Microsoft.Crm.Sdk.Proxy.dll" />
+    <Content Include="bin\IntergationTesting\Microsoft.Crm.Sdk.Proxy.xml" />
+    <Content Include="bin\IntergationTesting\Microsoft.ServiceBus.dll" />
+    <Content Include="bin\IntergationTesting\Microsoft.ServiceBus.xml" />
+    <Content Include="bin\IntergationTesting\Microsoft.WindowsAzure.Configuration.dll" />
+    <Content Include="bin\IntergationTesting\Microsoft.WindowsAzure.Configuration.xml" />
+    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Client.CodeGeneration.dll" />
+    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Client.dll" />
+    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Client.xml" />
+    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Portal.dll" />
+    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Portal.Files.dll" />
+    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Portal.xml" />
+    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Sdk.Deployment.dll" />
+    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Sdk.Deployment.xml" />
+    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Sdk.dll" />
+    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Sdk.xml" />
+    <Content Include="bin\IntergationTesting\SQLGeneration.dll" />
+    <Content Include="bin\IntergationTesting\SQLGeneration.pdb" />
+    <Content Include="bin\IntergationTesting\SQLGeneration.xml" />
+    <Content Include="bin\tools\CrmSvcUtil.exe" />
+    <Content Include="bin\tools\CrmSvcUtil.xml" />
+    <Content Include="bin\tools\Microsoft.Crm.Sdk.Proxy.dll" />
+    <Content Include="bin\tools\Microsoft.Xrm.Client.dll" />
+    <Content Include="bin\tools\Microsoft.Xrm.Sdk.dll" />
+    <Content Include="bin\tools\SolutionPackager.exe" />
+    <Content Include="bin\tools\WebsiteCopy.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\Release\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

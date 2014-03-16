@@ -15,12 +15,12 @@ namespace DynamicsCrmDataProvider
         private string _CommandText = string.Empty;
         private ICrmCommandExecutor _CrmCommandExecutor;
         private CommandType _CommandType;
+        private CrmParameterCollection _ParameterCollection;
 
         #region Constructor
         public CrmDbCommand()
             : this(null)
         {
-
         }
         public CrmDbCommand(CrmDbConnection connection)
             : this(connection, string.Empty)
@@ -36,6 +36,7 @@ namespace DynamicsCrmDataProvider
             _CommandText = commandText;
             _CrmCommandExecutor = crmCommandExecutor;
             _CommandType = CommandType.Text;
+            _ParameterCollection = new CrmParameterCollection();
         }
         #endregion
 
@@ -71,6 +72,11 @@ namespace DynamicsCrmDataProvider
         protected override DbTransaction DbTransaction { get; set; }
 
         public override bool DesignTimeVisible { get; set; }
+
+        protected override DbParameterCollection DbParameterCollection
+        {
+            get { return _ParameterCollection; }
+        }
 
         #endregion
 
@@ -135,19 +141,14 @@ namespace DynamicsCrmDataProvider
                 throw new InvalidOperationException("Connection must be valid and open");
         }
 
+        protected override DbParameter CreateDbParameter()
+        {
+           return new CrmParameter();
+        }
+
         #region Not Implemented
 
-        protected override DbParameterCollection DbParameterCollection
-        {
-            get { throw new NotImplementedException(); }
-        }
-
         public override void Prepare()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override DbParameter CreateDbParameter()
         {
             throw new NotImplementedException();
         }
