@@ -141,8 +141,8 @@ namespace DynamicsCrmDataProvider.Tests
         [TestCase("NOT LIKE", "SomeValue%", "{0} {1} '{2}'", TestName = "Should support Does Not Start With")]
         [TestCase("NOT LIKE", "%SomeValue", "{0} {1} '{2}'", TestName = "Should support Does Not End With")]
         [TestCase("NOT LIKE", "%SomeValue%", "{0} {1} '{2}'", TestName = "Should support Not Like with wildcards")]
-        //[TestCase("CONTAINS", "albert", "{1}({0},  '{2}')", TestName = "Does not support Contains.. yet",ExpectedException = typeof(NotSupportedException))]
-        //[TestCase("CONTAINS", "albert", "{1}({0},  '{2}')", TestName = "Does not support Not Contains.. yet", ExpectedException = typeof(NotSupportedException))]
+        [TestCase("CONTAINS", "albert", "{1}({0},  '{2}')", TestName = "Should support Contains.")]
+        [TestCase("NOT CONTAINS", "albert", "{1}({0},  '{2}')", TestName = "Should support Not Contains")]
         public void Should_Convert_Filter_Condition_To_Correct_Query_Expression_Condition(string filterOperator, object value, string filterFormatString)
         {
             // Arrange
@@ -164,7 +164,7 @@ namespace DynamicsCrmDataProvider.Tests
                 }
                 filterFormatString = string.Format(filterFormatString, formatArgs.ToArray());
             }
-            var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} ", filterFormatString);
+            var sql = string.Format("Select contactid, firstname, lastname From contact Where {0}", filterFormatString);
             // Convery the DML (SQL) statement to a SelectBuilder object which an object representation of the DML.
             var cmd = new CrmDbCommand(null);
             cmd.CommandText = sql;
@@ -721,6 +721,24 @@ namespace DynamicsCrmDataProvider.Tests
             sqlFilterString = string.Format(filterFormatString, formatArgs.ToArray());
             return sqlFilterString;
         }
+         [Test]
+        public void TestRepro()
+        {
+            string commandText = "SELECT contactid, firstname, lastname FROM contact WHERE CONTAINS(firstname, 'albert')";
+            assertCanReproduce(commandText);
+
+
+        }
+
+        private void assertCanReproduce(string commandText)
+        {
+            CommandBuilder builder = new CommandBuilder();
+            ICommand command = builder.GetCommand(commandText);
+            Formatter formatter = new Formatter();
+            string actual = formatter.GetCommandText(command);
+            Assert.AreEqual(commandText, actual, "The command builder did not generate the original command text.");
+        }
+
 
         #endregion
     }

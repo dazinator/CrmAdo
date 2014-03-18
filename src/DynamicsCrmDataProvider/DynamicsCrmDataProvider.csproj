@@ -78,9 +78,9 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="SQLGeneration, Version=2.3.1.1, Culture=neutral, PublicKeyToken=afc02b0a5b22e21e, processorArchitecture=MSIL">
+    <Reference Include="SQLGeneration, Version=2.3.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\LocalTempSqlGenerationBuild\SQLGeneration.dll</HintPath>
+      <HintPath>..\..\lib\SQLGeneration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -155,67 +155,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="bin\Debug\DynamicsCrmDataProvider.dll.config" />
-    <None Include="bin\IntergationTesting\DynamicsCrmDataProvider.dll.config" />
     <None Include="Key.pfx" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="bin\Debug\AntiXSSLibrary.dll" />
-    <Content Include="bin\Debug\DynamicsCrmDataProvider.dll" />
-    <Content Include="bin\Debug\DynamicsCrmDataProvider.pdb" />
-    <Content Include="bin\Debug\Microsoft.Crm.Sdk.Proxy.dll" />
-    <Content Include="bin\Debug\Microsoft.Crm.Sdk.Proxy.xml" />
-    <Content Include="bin\Debug\Microsoft.ServiceBus.dll" />
-    <Content Include="bin\Debug\Microsoft.ServiceBus.xml" />
-    <Content Include="bin\Debug\Microsoft.WindowsAzure.Configuration.dll" />
-    <Content Include="bin\Debug\Microsoft.WindowsAzure.Configuration.xml" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Client.CodeGeneration.dll" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Client.dll" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Client.xml" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Portal.dll" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Portal.Files.dll" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Portal.xml" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Sdk.Deployment.dll" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Sdk.Deployment.xml" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Sdk.dll" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Sdk.xml" />
-    <Content Include="bin\Debug\SQLGeneration.dll" />
-    <Content Include="bin\Debug\SQLGeneration.pdb" />
-    <Content Include="bin\Debug\SQLGeneration.xml" />
-    <Content Include="bin\IntergationTesting\AntiXSSLibrary.dll" />
-    <Content Include="bin\IntergationTesting\DynamicsCrmDataProvider.dll" />
-    <Content Include="bin\IntergationTesting\DynamicsCrmDataProvider.pdb" />
-    <Content Include="bin\IntergationTesting\Microsoft.Crm.Sdk.Proxy.dll" />
-    <Content Include="bin\IntergationTesting\Microsoft.Crm.Sdk.Proxy.xml" />
-    <Content Include="bin\IntergationTesting\Microsoft.ServiceBus.dll" />
-    <Content Include="bin\IntergationTesting\Microsoft.ServiceBus.xml" />
-    <Content Include="bin\IntergationTesting\Microsoft.WindowsAzure.Configuration.dll" />
-    <Content Include="bin\IntergationTesting\Microsoft.WindowsAzure.Configuration.xml" />
-    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Client.CodeGeneration.dll" />
-    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Client.dll" />
-    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Client.xml" />
-    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Portal.dll" />
-    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Portal.Files.dll" />
-    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Portal.xml" />
-    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Sdk.Deployment.dll" />
-    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Sdk.Deployment.xml" />
-    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Sdk.dll" />
-    <Content Include="bin\IntergationTesting\Microsoft.Xrm.Sdk.xml" />
-    <Content Include="bin\IntergationTesting\SQLGeneration.dll" />
-    <Content Include="bin\IntergationTesting\SQLGeneration.pdb" />
-    <Content Include="bin\IntergationTesting\SQLGeneration.xml" />
-    <Content Include="bin\tools\CrmSvcUtil.exe" />
-    <Content Include="bin\tools\CrmSvcUtil.xml" />
-    <Content Include="bin\tools\Microsoft.Crm.Sdk.Proxy.dll" />
-    <Content Include="bin\tools\Microsoft.Xrm.Client.dll" />
-    <Content Include="bin\tools\Microsoft.Xrm.Sdk.dll" />
-    <Content Include="bin\tools\SolutionPackager.exe" />
-    <Content Include="bin\tools\WebsiteCopy.exe" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="bin\Release\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /Q /Y "$(TargetDir)$(TargetName).*" "C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\bin\"

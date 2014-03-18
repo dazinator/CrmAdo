@@ -101,7 +101,7 @@
     </Reference>
     <Reference Include="SQLGeneration, Version=2.3.1.1, Culture=neutral, PublicKeyToken=afc02b0a5b22e21e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\LocalTempSqlGenerationBuild\SQLGeneration.dll</HintPath>
+      <HintPath>..\..\lib\SQLGeneration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -149,19 +149,7 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="bin\tools\CrmSvcUtil.exe" />
-    <Content Include="bin\tools\CrmSvcUtil.xml" />
-    <Content Include="bin\tools\Microsoft.Crm.Sdk.Proxy.dll" />
-    <Content Include="bin\tools\Microsoft.Xrm.Client.dll" />
-    <Content Include="bin\tools\Microsoft.Xrm.Sdk.dll" />
-    <Content Include="bin\tools\SolutionPackager.exe" />
-    <Content Include="bin\tools\WebsiteCopy.exe" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="bin\Debug\" />
-    <Folder Include="bin\Release\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\DynamicsCrmDataProvider\DynamicsCrmDataProvider.csproj">
       <Project>{61d9051d-4c85-419f-97dc-d56d4a72c5e3}</Project>

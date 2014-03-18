@@ -117,7 +117,7 @@ namespace DynamicsCrmDataProvider
             }
         }
 
-        private static void ProcessFilter(IFilter filter, QueryExpression query, DbParameterCollection paramaters, FilterExpression filterExpression = null)
+        private static void ProcessFilter(IFilter filter, QueryExpression query, DbParameterCollection paramaters,  FilterExpression filterExpression = null, bool negateOperator = false)
         {
 
             var filterGroup = filter as FilterGroup;
@@ -133,6 +133,10 @@ namespace DynamicsCrmDataProvider
                 bool isLeft;
                 Column attColumn;
                 var condition = GetCondition(orderFilter, paramaters, out attColumn, out isLeft);
+                if (negateOperator)
+                {
+                    condition.NegateOperator();
+                }
                 AddFilterCondition(query, filterExpression, condition, attColumn);
                 return;
             }
@@ -142,6 +146,10 @@ namespace DynamicsCrmDataProvider
             {
                 Column attColumn;
                 var condition = GetCondition(nullFilter, out attColumn);
+                if (negateOperator)
+                {
+                    condition.NegateOperator();
+                }
                 AddFilterCondition(query, filterExpression, condition, attColumn);
                 return;
             }
@@ -151,6 +159,10 @@ namespace DynamicsCrmDataProvider
             {
                 Column attColumn;
                 var condition = GetCondition(likeFilter, paramaters, out attColumn);
+                if (negateOperator)
+                {
+                    condition.NegateOperator();
+                }
                 AddFilterCondition(query, filterExpression, condition, attColumn);
                 return;
             }
@@ -160,13 +172,47 @@ namespace DynamicsCrmDataProvider
             {
                 Column attColumn;
                 var condition = GetCondition(inFilter, paramaters, out attColumn);
+                if (negateOperator)
+                {
+                    condition.NegateOperator();
+                }
                 AddFilterCondition(query, filterExpression, condition, attColumn);
+                return;
+            }
+
+            var functionFilter = filter as Function;
+            if (functionFilter != null)
+            {
+                Column attColumn;
+                var condition = GetCondition(functionFilter, paramaters, out attColumn);
+                if (negateOperator)
+                {
+                    condition.NegateOperator();
+                }
+                AddFilterCondition(query, filterExpression, condition, attColumn);
+                return;
+            }
+
+            var notFilter = filter as NotFilter;
+            if (notFilter != null)
+            {
+                var negatedFilter = notFilter.Filter;
+                ProcessFilter(negatedFilter, query, paramaters, filterExpression, true);
                 return;
             }
 
             throw new NotSupportedException();
 
         }
+
+       
+
+        private static ConditionExpression GetCondition(NotFilter functionFilter, DbParameterCollection attColumn, out Column column)
+        {
+            column = null;
+            return null;
+        }
+
 
         private static void AddFilterCondition(QueryExpression query, FilterExpression filterExpression, ConditionExpression condition, Column attColumn)
         {
@@ -193,6 +239,7 @@ namespace DynamicsCrmDataProvider
                 }
             }
         }
+
 
         #endregion
 
@@ -762,6 +809,65 @@ namespace DynamicsCrmDataProvider
 
         }
 
+        private static ConditionExpression GetCondition(Function functionFilter, DbParameterCollection paramaters, out Column attColumn)
+        {
+            switch (functionFilter.Name.ToLower())
+            {
+                case "contains":
+
+                    var condition = new ConditionExpression();
+                    var argCount = functionFilter.Arguments.Count();
+                    if (argCount != 2)
+                    {
+                        throw new NotSupportedException("contains function should have exactly 2 arguments.");
+                    }
+
+                    //the first argument should be the column name.
+                    var args = functionFilter.Arguments.ToArray();
+
+                    attColumn = args[0] as Column;
+                    // default attribute name for the filter condition.
+                    if (attColumn != null)
+                    {
+                        condition.AttributeName = attColumn.Name.ToLower();
+                    }
+                    else
+                    {
+                        throw new NotSupportedException("the contains function should have a column name as its first argument.");
+                    }
+                    condition.Operator = ConditionOperator.Contains;
+
+                    var searchArg = args[1];
+                    var stringLiteral = searchArg as StringLiteral;
+                    if (stringLiteral != null)
+                    {
+                        condition.Values.Add(stringLiteral.Value);
+                        return condition;
+                    }
+
+                    // perhaps its a placeholder?
+                    var placeholder = searchArg as Placeholder;
+                    if (placeholder != null)
+                    {
+                        var paramVal = paramaters[placeholder.Value];
+                        condition.Values.Add(paramVal);
+                        return condition;
+                    }
+
+
+                    throw new NotSupportedException("The second argument of the contains function should be either a string literal value, or a parameter");
+                //if (functionFilter.Name)
+                //{
+                //    condition.Operator = ConditionOperator.NotNull;
+                //}
+
+
+                default:
+
+                    throw new NotSupportedException("Unsupported function: '" + functionFilter.Name + "'");
+            }
+        }
+
         private static bool IsParameter(Column column)
         {
             // Due to bug in SQL Generation parsing logic, paramaters are not parsed as placeholders, they are parsed as columns.
@@ -875,17 +981,17 @@ namespace DynamicsCrmDataProvider
                     return;
                 }
             }
-           
+
             throw new NotSupportedException();
         }
-        
+
         private static void SetConditionExpressionValue(ConditionExpression condition, ConditionOperator conditionOperator, params DbParameter[] paramaters)
         {
             condition.Operator = conditionOperator;
             if (paramaters != null)
             {
-               // var val = paramater.Value;
-               // condition.Values.Add(val);
+                // var val = paramater.Value;
+                // condition.Values.Add(val);
                 // is the literal a 
                 foreach (var param in paramaters)
                 {
@@ -905,7 +1011,7 @@ namespace DynamicsCrmDataProvider
                 }
             }
         }
-        
+
         private static void SetConditionExpressionValue(ConditionExpression condition, ConditionOperator conditionOperator, params object[] values)
         {
             condition.Operator = conditionOperator;
