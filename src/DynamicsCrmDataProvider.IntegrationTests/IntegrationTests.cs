@@ -19,7 +19,7 @@ namespace DynamicsCrmDataProvider.IntegrationTests
         // ============================================================================================================
         [Category("Integration")]
         [Test(Description = "Integration tests that perform a variety of select queries against CRM.")]
-        [TestCase("=", "Donald", "{0} {1} '{2}'", TestName = "Should Support Equals a String Constant")]
+        [TestCase("=", "Some Guy", "{0} {1} '{2}'", TestName = "Should Support Equals a String Constant")]
         [TestCase("<>", "Donald", "{0} {1} '{2}'", TestName = "Should Support Not Equals a String Constant")]
         [TestCase(">=", "Donald", "{0} {1} '{2}'", TestName = "Should Support Greater Than Or Equals a String Constant")]
         [TestCase("<=", "Donald", "{0} {1} '{2}'", TestName = "Should Support Less Than Or Equals Filter a String Constant")]
@@ -167,13 +167,13 @@ namespace DynamicsCrmDataProvider.IntegrationTests
         }
 
 
-        [TestCase("INNER", "((C.firstname = 'Albert' AND C.lastname = 'Einstein') OR (C.lastname = 'Planck' AND C.firstname = 'Max')) AND (C.contactid = 'd234eb3f-2797-e311-a941-d89d67639cdc')", 2, TestName = "Should be able to chain filter groups in parenthesis using AND as well as OR conjunctions")]
-        [TestCase("INNER", "(C.firstname = 'Albert' AND C.lastname = 'Einstein') OR (C.lastname = 'Planck' AND C.firstname = 'Max') OR (C.contactid = 'd234eb3f-2797-e311-a941-d89d67639cdc')", 4, TestName = "Should be able to chain mutiple filter groups in parenthesis using an OR conjunction")]
-        [TestCase("INNER", "C.firstname = 'Albert' AND (C.lastname = 'Einstein' AND C.contactid = 'd234eb3f-2797-e311-a941-d89d67639cdc')", 2, TestName = "Should be able to chain an AND conjunction with a nested filter group containing an AND conjunction")]
+        [TestCase("INNER", "((C.firstname = 'Albert' AND C.lastname = 'Einstein') OR (C.lastname = 'Planck' AND C.firstname = 'Max')) AND (C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", 2, TestName = "Should be able to chain filter groups in parenthesis using AND as well as OR conjunctions")]
+        [TestCase("INNER", "(C.firstname = 'Albert' AND C.lastname = 'Einstein') OR (C.lastname = 'Planck' AND C.firstname = 'Max') OR (C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", 4, TestName = "Should be able to chain mutiple filter groups in parenthesis using an OR conjunction")]
+        [TestCase("INNER", "C.firstname = 'Albert' AND (C.lastname = 'Einstein' AND C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", 2, TestName = "Should be able to chain an AND conjunction with a nested filter group containing an AND conjunction")]
         [TestCase("INNER", "C.firstname = 'Albert' OR (C.lastname = 'Planck' AND C.firstname = 'Max')", 4, TestName = "Should be able to chain an OR conjunction with a nested filter group containing an AND conunction")]
-        [TestCase("INNER", "C.firstname = 'Albert' AND C.lastname = 'Einstein' OR C.contactid = '697bbb60-2797-e311-a941-d89d67639cdc'", 4, TestName = "Should be able to chain multiple AND conjunctions then a single OR conjunction")]
+        [TestCase("INNER", "(C.firstname = 'Albert' AND C.lastname = 'Einstein') OR C.contactid = '5f90afbb-41b1-e311-9351-6c3be5be9f98'", 4, TestName = "Should be able to chain multiple AND conjunctions then a single OR conjunction")]
         [TestCase("INNER", "C.firstname = 'Albert' OR C.lastname = 'Planck' OR C.lastname = 'Galilei'", 6, TestName = "Should be able to chain OR conjunctions")]
-        [TestCase("INNER", "C.firstname = 'Albert' AND C.lastname = 'Einstein' AND C.contactid = 'd234eb3f-2797-e311-a941-d89d67639cdc'", 2, TestName = "Should be able to chain AND conjunctions")]
+        [TestCase("INNER", "C.firstname = 'Albert' AND C.lastname = 'Einstein' AND C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98'", 2, TestName = "Should be able to chain AND conjunctions")]
         [TestCase("INNER", "C.firstname = 'Albert' AND C.lastname = 'Einstein'", 2, TestName = "Should be able to use a single AND conjunction")]
         [TestCase("INNER", "C.firstname = 'Albert' OR C.firstname = 'Max'", 4, TestName = "Should be able to use a single OR conjunction")]
         [Test]

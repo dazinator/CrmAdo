@@ -92,7 +92,7 @@
     <Reference Include="Rhino.Mocks">
       <HintPath>..\..\lib\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
     </Reference>
-    <Reference Include="SQLGeneration, Version=2.3.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SQLGeneration, Version=2.3.1.1, Culture=neutral, PublicKeyToken=afc02b0a5b22e21e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\SQLGeneration.dll</HintPath>
     </Reference>

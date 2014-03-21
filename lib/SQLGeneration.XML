@@ -976,12 +976,23 @@
             </summary>
             <param name="grammar">The grammar to use.</param>
         </member>
-        <member name="M:SQLGeneration.Generators.CommandBuilder.GetCommand(System.String)">
+        <member name="M:SQLGeneration.Generators.CommandBuilder.GetCommand(System.String,SQLGeneration.Generators.CommandBuilderOptions)">
             <summary>
             Parses the given command text to build a command builder.
             </summary>
             <param name="commandText">The command text to parse.</param>
+            <param name="options">Configures the behavior of the command builder.</param>
             <returns>The command that was parsed.</returns>
+        </member>
+        <member name="T:SQLGeneration.Generators.CommandBuilderOptions">
+            <summary>
+            Provides options for customizing the behavior of the command builder.
+            </summary>
+        </member>
+        <member name="P:SQLGeneration.Generators.CommandBuilderOptions.PlaceholderPrefix">
+            <summary>
+            Specifies a prefix that indicates an identifier is a placeholder.
+            </summary>
         </member>
         <member name="T:SQLGeneration.Generators.Formatter">
             <summary>
@@ -1489,12 +1500,11 @@
             Represents a command that can be filtered.
             </summary>
         </member>
-        <member name="M:SQLGeneration.Builders.IFilteredCommand.AddWhere(SQLGeneration.Builders.IFilter,SQLGeneration.Builders.Conjunction)">
+        <member name="M:SQLGeneration.Builders.IFilteredCommand.AddWhere(SQLGeneration.Builders.IFilter)">
             <summary>
             Adds the filter to the where clause.
             </summary>
             <param name="filter">The filter to add.</param>
-            <param name="conjunction">Specifies whether to use AND or OR when testing the filter.</param>
         </member>
         <member name="M:SQLGeneration.Builders.IFilteredCommand.RemoveWhere(SQLGeneration.Builders.IFilter)">
             <summary>
@@ -1515,12 +1525,11 @@
             <param name="table">The table being deleted from.</param>
             <param name="alias">The alias to use to refer to the table.</param>
         </member>
-        <member name="M:SQLGeneration.Builders.DeleteBuilder.AddWhere(SQLGeneration.Builders.IFilter,SQLGeneration.Builders.Conjunction)">
+        <member name="M:SQLGeneration.Builders.DeleteBuilder.AddWhere(SQLGeneration.Builders.IFilter)">
             <summary>
             Adds the filter to the where clause.
             </summary>
             <param name="filter">The filter to add.</param>
-            <param name="conjunction">Specifies whether to AND or OR the filter with the other filters in the group.</param>
         </member>
         <member name="M:SQLGeneration.Builders.DeleteBuilder.RemoveWhere(SQLGeneration.Builders.IFilter)">
             <summary>
@@ -1589,12 +1598,11 @@
             <param name="filterGenerator">A function that creates the join.</param>
             <returns>The current join.</returns>
         </member>
-        <member name="M:SQLGeneration.Builders.FilteredJoin.AddOnFilter(SQLGeneration.Builders.IFilter,SQLGeneration.Builders.Conjunction)">
+        <member name="M:SQLGeneration.Builders.FilteredJoin.AddOnFilter(SQLGeneration.Builders.IFilter)">
             <summary>
             Adds the filter to the group.
             </summary>
             <param name="filter">The filter to add.</param>
-            <param name="conjunction">Specifies whether to AND or OR the filter with the other filters in the group.</param>
         </member>
         <member name="M:SQLGeneration.Builders.FilteredJoin.RemoveOnFilter(SQLGeneration.Builders.IFilter)">
             <summary>
@@ -1663,7 +1671,7 @@
         </member>
         <member name="P:SQLGeneration.Builders.NotFilter.Filter">
             <summary>
-            The filter that is negated.
+            Gets the filter that will be negated.
             </summary>
         </member>
         <member name="T:SQLGeneration.Parsing.ExpressionDefinition">
@@ -3448,7 +3456,7 @@
             Gets the identifier indicating whether the filter is doing a string comparison.
             </summary>
         </member>
-        <member name="F:SQLGeneration.Parsing.SqlGrammar.Filter.Like.Expression">
+        <member name="F:SQLGeneration.Parsing.SqlGrammar.Filter.Like.Left">
             <summary>
             Gets the identifier for the expression being compared.
             </summary>
@@ -3463,7 +3471,7 @@
             Gets the identifier for the LIKE keyword.
             </summary>
         </member>
-        <member name="F:SQLGeneration.Parsing.SqlGrammar.Filter.Like.Value">
+        <member name="F:SQLGeneration.Parsing.SqlGrammar.Filter.Like.Right">
             <summary>
             Gets the identifier for string literal being compared to.
             </summary>
@@ -5453,12 +5461,11 @@
             Initializes a new instance of a FilterGroup.
             </summary>
         </member>
-        <member name="M:SQLGeneration.Builders.FilterGroup.AddFilter(SQLGeneration.Builders.IFilter,SQLGeneration.Builders.Conjunction)">
+        <member name="M:SQLGeneration.Builders.FilterGroup.AddFilter(SQLGeneration.Builders.IFilter)">
             <summary>
             Adds the filter to the group.
             </summary>
             <param name="filter">The filter to add.</param>
-            <param name="conjunction">Specifies whether to AND or OR the filter with the other filters in the group.</param>
         </member>
         <member name="M:SQLGeneration.Builders.FilterGroup.RemoveFilter(SQLGeneration.Builders.IFilter)">
             <summary>
@@ -5481,17 +5488,26 @@
             <param name="options">The configuration to use when building the command.</param>
             <returns>True if the filter should be surround by parentheses; otherwise, false.</returns>
         </member>
+        <member name="M:SQLGeneration.Builders.FilterGroup.Optimize">
+            <summary>
+            Compacts the filter group by combining it with child filter
+            groups where doing so won't alter the semantics of the overall
+            expression.
+            </summary>
+            <remarks>
+            This is meant to be used by the command
+            builders to reduce the overhead of deeply nested filters.
+            </remarks>
+        </member>
+        <member name="P:SQLGeneration.Builders.FilterGroup.Conjunction">
+            <summary>
+            Gets the conjunction used to combine the filters within the group.
+            </summary>
+        </member>
         <member name="P:SQLGeneration.Builders.FilterGroup.Filters">
             <summary>
             Gets the filters in the filter group.
             </summary>
-        </member>
-        <member name="P:SQLGeneration.Builders.FilterGroup.Item(System.Int32)">
-            <summary>
-            Gets the filter with it's conjunction by a particular index.
-            </summary>
-            <param name="index"></param>
-            <returns></returns>
         </member>
         <member name="P:SQLGeneration.Builders.FilterGroup.HasFilters">
             <summary>
@@ -5848,29 +5864,19 @@
             Represents a comparison where the left hand item is greater than or equal to the right hand item.
             </summary>
         </member>
-        <member name="M:SQLGeneration.Builders.LikeFilter.#ctor(SQLGeneration.Builders.IFilterItem,SQLGeneration.Builders.StringLiteral)">
+        <member name="M:SQLGeneration.Builders.LikeFilter.#ctor(SQLGeneration.Builders.IFilterItem,SQLGeneration.Builders.IFilterItem)">
             <summary>
             Initializes a new instance of a LikeFilter.
             </summary>
             <param name="leftHand">The left hand item.</param>
             <param name="rightHand">The right hand item.</param>
         </member>
-        <member name="M:SQLGeneration.Builders.LikeFilter.GetInnerFilterTokens(SQLGeneration.Builders.CommandOptions)">
+        <member name="M:SQLGeneration.Builders.LikeFilter.GetComparisonOperator(SQLGeneration.Builders.CommandOptions)">
             <summary>
-            Gets the tokens making up the comparison.
+            Gets the operator that will compare the left and right hand values.
             </summary>
-            <param name="options">The configuration settings to use when building the filter.</param>
-            <returns>The tokens making up the comparison.</returns>
-        </member>
-        <member name="P:SQLGeneration.Builders.LikeFilter.LeftHand">
-            <summary>
-            Gets the object on the left of the operation.
-            </summary>
-        </member>
-        <member name="P:SQLGeneration.Builders.LikeFilter.RightHand">
-            <summary>
-            Gets the object to the right of the operation.
-            </summary>
+            <param name="options">The configuration to use when building the command.</param>
+            <returns>A string containing the name of the operation that compares the left and right hand sides.</returns>
         </member>
         <member name="P:SQLGeneration.Builders.LikeFilter.Not">
             <summary>
@@ -6443,12 +6449,11 @@
             <param name="item">The item to remove.</param>
             <returns>True if the item was removed; otherwise, false.</returns>
         </member>
-        <member name="M:SQLGeneration.Builders.SelectBuilder.AddWhere(SQLGeneration.Builders.IFilter,SQLGeneration.Builders.Conjunction)">
+        <member name="M:SQLGeneration.Builders.SelectBuilder.AddWhere(SQLGeneration.Builders.IFilter)">
             <summary>
             Adds the filter to the where clause.
             </summary>
             <param name="filter">The filter to add.</param>
-            <param name="conjunction">Specifies whether to AND or OR that </param>
         </member>
         <member name="M:SQLGeneration.Builders.SelectBuilder.RemoveWhere(SQLGeneration.Builders.IFilter)">
             <summary>
@@ -6457,12 +6462,11 @@
             <param name="filter">The filter to remove.</param>
             <returns>True if the filter was removed; otherwise, false.</returns>
         </member>
-        <member name="M:SQLGeneration.Builders.SelectBuilder.AddHaving(SQLGeneration.Builders.IFilter,SQLGeneration.Builders.Conjunction)">
+        <member name="M:SQLGeneration.Builders.SelectBuilder.AddHaving(SQLGeneration.Builders.IFilter)">
             <summary>
             Adds the filter to the having clause.
             </summary>
             <param name="filter">The filter to add.</param>
-            <param name="conjunction">Specifies whether to use AND or OR when testing the filter.</param>
         </member>
         <member name="M:SQLGeneration.Builders.SelectBuilder.RemoveHaving(SQLGeneration.Builders.IFilter)">
             <summary>
@@ -6761,12 +6765,11 @@
             <param name="setter">The setter to remove.</param>
             <returns>True if the setter is removed; otherwise, false.</returns>
         </member>
-        <member name="M:SQLGeneration.Builders.UpdateBuilder.AddWhere(SQLGeneration.Builders.IFilter,SQLGeneration.Builders.Conjunction)">
+        <member name="M:SQLGeneration.Builders.UpdateBuilder.AddWhere(SQLGeneration.Builders.IFilter)">
             <summary>
             Adds the filter to the where clause.
             </summary>
             <param name="filter">The filter to add.</param>
-            <param name="conjunction">Specifies whether to use AND or OR when testing the filter.</param>
         </member>
         <member name="M:SQLGeneration.Builders.UpdateBuilder.RemoveWhere(SQLGeneration.Builders.IFilter)">
             <summary>

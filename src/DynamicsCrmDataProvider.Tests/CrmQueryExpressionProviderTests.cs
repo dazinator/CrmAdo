@@ -186,13 +186,15 @@ namespace DynamicsCrmDataProvider.Tests
             Assert.That(queryExpression.ColumnSet.Columns[1] == "firstname");
             Assert.That(queryExpression.EntityName == "contact");
 
-            var defaultFilterGroup = queryExpression.Criteria.Filters[0];
+            var defaultConditons = queryExpression.Criteria.Filters[0].Conditions;
+            //var defaultConditons = queryExpression.Criteria.Conditions;
+                //queryExpression.Criteria.Filters[0];
 
-            Assert.That(defaultFilterGroup.Conditions.Count, Is.EqualTo(1));
-            Assert.That(defaultFilterGroup.FilterOperator, Is.EqualTo(LogicalOperator.And));
-            Assert.That(defaultFilterGroup.Conditions[0].AttributeName == "firstname");
+            Assert.That(defaultConditons.Count, Is.EqualTo(1));
+          //  Assert.That(defaultFilterGroup.FilterOperator, Is.EqualTo(LogicalOperator.And));
+            Assert.That(defaultConditons[0].AttributeName == "firstname");
 
-            var condition = defaultFilterGroup.Conditions[0];
+            var condition = defaultConditons[0];
             AssertFilterExpressionContion(filterOperator, value, condition);
 
             //TODO: Haven't yet implemented support for the following dynamics crm condition operators..
@@ -287,14 +289,14 @@ namespace DynamicsCrmDataProvider.Tests
             var queryExpression = subject.CreateQueryExpression(cmd);
 
             // There should be filter criteria on the main entity and also on the link entity.
+            //var defaultConditons = queryExpression.Criteria.Conditions;
+           var defaultConditons = queryExpression.Criteria.Filters[0].Conditions;
+            Assert.That(defaultConditons.Count, Is.EqualTo(2), "There should be two conditions.");
 
-            var defaultFilterGroup = queryExpression.Criteria.Filters[0];
-            Assert.That(defaultFilterGroup.Conditions.Count, Is.EqualTo(2), "There should only be one condition for the main entity.");
-
-            var condition = defaultFilterGroup.Conditions[0];
+            var condition = defaultConditons[0];
             AssertFilterExpressionContion(filterOperator, filterValue, condition);
 
-            var joinCondition = defaultFilterGroup.Conditions[1];
+            var joinCondition = defaultConditons[1];
             AssertFilterExpressionContion(filterOperator, filterValue, joinCondition);
 
         }
@@ -317,6 +319,7 @@ namespace DynamicsCrmDataProvider.Tests
 
             // Assert
             // the filter should have 3 conditions, one for main entity attribue, and others for the linked entities..
+           // var defaultFilter = queryExpression.Criteria; //.Filters[0];
             var defaultFilter = queryExpression.Criteria.Filters[0];
             var defaultFilterConditions = defaultFilter.Conditions;
 
@@ -451,13 +454,14 @@ namespace DynamicsCrmDataProvider.Tests
             Assert.That(queryExpression.ColumnSet.Columns[1] == "firstname");
             Assert.That(queryExpression.EntityName == "contact");
 
-            var defaultFilterGroup = queryExpression.Criteria.Filters[0];
+            //var defaultConditons = queryExpression.Criteria.Conditions;
+            var defaultConditons = queryExpression.Criteria.Filters[0].Conditions;
 
-            Assert.That(defaultFilterGroup.Conditions.Count, Is.EqualTo(1));
-            Assert.That(defaultFilterGroup.FilterOperator, Is.EqualTo(LogicalOperator.And));
-            Assert.That(defaultFilterGroup.Conditions[0].AttributeName == "firstname");
+            Assert.That(defaultConditons.Count, Is.EqualTo(1));
+            //Assert.That(defaultFilterGroup.FilterOperator, Is.EqualTo(LogicalOperator.And));
+            Assert.That(defaultConditons[0].AttributeName == "firstname");
 
-            var condition = defaultFilterGroup.Conditions[0];
+            var condition = defaultConditons[0];
             AssertFilterExpressionContion(filterOperator, value, condition);
         }
 

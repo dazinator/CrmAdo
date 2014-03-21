@@ -23,7 +23,9 @@ namespace DynamicsCrmDataProvider
         {
             var commandText = command.CommandText;
             var commandBuilder = new CommandBuilder();
-            var builder = commandBuilder.GetCommand(commandText) as SelectBuilder;
+            var options = new CommandBuilderOptions();
+            options.PlaceholderPrefix = ParameterToken;
+            var builder = commandBuilder.GetCommand(commandText, options) as SelectBuilder;
             GuardSelectBuilder(builder);
             var query = FromCommand(builder, command.Parameters);
             return query;
@@ -38,7 +40,10 @@ namespace DynamicsCrmDataProvider
                 var selCommand = command as SelectBuilder;
                 AddFrom(selCommand.From, query);
                 AddColumns(selCommand.Projection, query);
-                // selCommand.WhereFilterGroup;
+                //   var filter = new FilterExpression();
+              //  ProcessFilterGroup(query, selCommand.WhereFilterGroup, null, paramaters);
+                //  query.Criteria.AddFilter(filter);
+                //var where = selCommand.Where as 
                 if (selCommand.WhereFilterGroup != null)
                 {
                     ProcessFilterGroup(query, selCommand.WhereFilterGroup, null, paramaters);
@@ -49,8 +54,6 @@ namespace DynamicsCrmDataProvider
                 }
 
             }
-
-
 
             return query;
         }
@@ -79,7 +82,7 @@ namespace DynamicsCrmDataProvider
                 // add each filter in this as a condition to the filter..
                 AddWhere(filterGroup.Filters, query, paramaters, filter);
 
-                // if there is a filter expression, add this filter expression to that one..
+                // if there is a filter expression, chain this filter to that one..
                 if (filterExpression != null)
                 {
                     filterExpression.AddFilter(filter);
@@ -90,34 +93,19 @@ namespace DynamicsCrmDataProvider
                     query.Criteria.AddFilter(filter);
                 }
 
-                int index = 0;
-                foreach (var f in filterGroup.Filters)
+                var conjunction = filterGroup.Conjunction;
+                if (conjunction == Conjunction.Or)
                 {
-                    var filterWithConjunction = filterGroup[index];
-                    index++;
-
-                    // ignore first conjunction of filter in group
-                    if (index == 1)
-                    {
-                        // conjunction doesn't mean anything on first filter in group..
-
-                    }
-                    else
-                    {
-                        if (filterWithConjunction.Item2 == Conjunction.Or)
-                        {
-                            filter.FilterOperator = LogicalOperator.Or;
-                        }
-                        else
-                        {
-                            filter.FilterOperator = LogicalOperator.And;
-                        }
-                    }
+                    filter.FilterOperator = LogicalOperator.Or;
+                }
+                else
+                {
+                    filter.FilterOperator = LogicalOperator.And;
                 }
             }
         }
 
-        private static void ProcessFilter(IFilter filter, QueryExpression query, DbParameterCollection paramaters,  FilterExpression filterExpression = null, bool negateOperator = false)
+        private static void ProcessFilter(IFilter filter, QueryExpression query, DbParameterCollection paramaters, FilterExpression filterExpression = null, bool negateOperator = false)
         {
 
             var filterGroup = filter as FilterGroup;
@@ -146,19 +134,6 @@ namespace DynamicsCrmDataProvider
             {
                 Column attColumn;
                 var condition = GetCondition(nullFilter, out attColumn);
-                if (negateOperator)
-                {
-                    condition.NegateOperator();
-                }
-                AddFilterCondition(query, filterExpression, condition, attColumn);
-                return;
-            }
-
-            var likeFilter = filter as LikeFilter;
-            if (likeFilter != null)
-            {
-                Column attColumn;
-                var condition = GetCondition(likeFilter, paramaters, out attColumn);
                 if (negateOperator)
                 {
                     condition.NegateOperator();
@@ -204,15 +179,6 @@ namespace DynamicsCrmDataProvider
             throw new NotSupportedException();
 
         }
-
-       
-
-        private static ConditionExpression GetCondition(NotFilter functionFilter, DbParameterCollection attColumn, out Column column)
-        {
-            column = null;
-            return null;
-        }
-
 
         private static void AddFilterCondition(QueryExpression query, FilterExpression filterExpression, ConditionExpression condition, Column attColumn)
         {
@@ -626,63 +592,155 @@ namespace DynamicsCrmDataProvider
             throw new NotSupportedException();
         }
 
-        private static ConditionExpression GetCondition(LikeFilter filter, DbParameterCollection paramaters, out Column attColumn)
+        //private static ConditionExpression GetCondition(LikeFilter filter, DbParameterCollection paramaters, out Column attColumn)
+        //{
+        //    var condition = new ConditionExpression();
+
+        //    // Support Like
+        //    var left = filter.LeftHand;
+        //    attColumn = left as Column;
+
+        //    // default attribute name for the filter condition.
+        //    if (attColumn != null)
+        //    {
+        //        condition.AttributeName = attColumn.Name.ToLower();
+        //    }
+        //    else
+        //    {
+        //        throw new NotSupportedException("Like filter only works agains a column value.");
+        //    }
+
+        //    // detect like expressions for begins with, ends with and contains..
+        //    // we only support literal or placeholder.
+        //    var lit = filter.RightHand as StringLiteral;
+        //    string likeValue = null;
+        //    if (lit != null)
+        //    {
+        //        likeValue = lit.Value;
+        //    }
+        //    else
+        //    {
+        //        // perhaps its a placeholder?
+        //        var placeholder = filter.RightHand as Placeholder;
+        //        if (placeholder != null)
+        //        {
+        //            likeValue = GetParamaterValue<string>(paramaters, placeholder.Value);
+        //        }
+        //        else
+        //        {
+        //            throw new NotSupportedException("The right hand side of the Like Expression must be a paramater or a string literal.");
+        //        }
+        //    }
+
+        //    // detect paramater
+        //    bool startsWith = likeValue.EndsWith("%");
+        //    bool endsWith = likeValue.StartsWith("%");
+
+        //    ConditionOperator conditionoperator;
+
+        //    if (startsWith)
+        //    {
+        //        if (endsWith)
+        //        {
+        //            // contains
+        //            if (filter.Not)
+        //            {
+        //                // Does Not contain operator not recognised by Xrm sdk??? 
+        //                // conditionoperator = ConditionOperator.DoesNotContain;
+        //                conditionoperator = ConditionOperator.NotLike;
+        //            }
+        //            else
+        //            {
+        //                //  Contains operator causes Xrm organisation servuce to throw "Generic SQL error"??? 
+        //                conditionoperator = ConditionOperator.Like;
+        //            }
+        //            // val = filter.RightHand.Value.Trim('%');
+        //        }
+        //        else
+        //        {
+        //            // starts with
+        //            likeValue = likeValue.TrimEnd('%');
+        //            if (filter.Not)
+        //            {
+        //                conditionoperator = ConditionOperator.DoesNotBeginWith;
+        //            }
+        //            else
+        //            {
+        //                conditionoperator = ConditionOperator.BeginsWith;
+        //            }
+        //        }
+        //    }
+        //    else if (endsWith)
+        //    {
+        //        // ends with;
+        //        // contains
+        //        likeValue = likeValue.TrimStart('%');
+        //        if (filter.Not)
+        //        {
+        //            conditionoperator = ConditionOperator.DoesNotEndWith;
+        //        }
+        //        else
+        //        {
+        //            conditionoperator = ConditionOperator.EndsWith;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (filter.Not)
+        //        {
+        //            conditionoperator = ConditionOperator.NotLike;
+        //        }
+        //        else
+        //        {
+        //            conditionoperator = ConditionOperator.Like;
+        //        }
+
+        //    }
+
+        //    SetConditionExpressionValue(condition, conditionoperator, likeValue);
+        //    return condition;
+        //}
+
+        private static string GetLikeString(string likeString, bool not, out ConditionOperator conditionOperator)
         {
-            var condition = new ConditionExpression();
-
-            // Support Like
-            var left = filter.LeftHand;
-            attColumn = left as Column;
-
-            // default attribute name for the filter condition.
-            if (attColumn != null)
-            {
-                condition.AttributeName = attColumn.Name.ToLower();
-            }
-            else
-            {
-                throw new NotSupportedException("Null operator only works agains a column value.");
-            }
-
-            // detect like expressions for begins with, ends with and contains..
-
-            var val = filter.RightHand.Value;
             // detect paramater
+            if (string.IsNullOrEmpty(likeString))
+            {
+                throw new ArgumentException("likestring cannot be null or empty");
+            }
 
-            bool startsWith = val.EndsWith("%");
-            bool endsWith = val.StartsWith("%");
-
-            ConditionOperator conditionoperator;
+            bool startsWith = likeString.EndsWith("%");
+            bool endsWith = likeString.StartsWith("%");
 
             if (startsWith)
             {
                 if (endsWith)
                 {
                     // contains
-                    if (filter.Not)
+                    if (not)
                     {
                         // Does Not contain operator not recognised by Xrm sdk??? 
                         // conditionoperator = ConditionOperator.DoesNotContain;
-                        conditionoperator = ConditionOperator.NotLike;
+                        conditionOperator = ConditionOperator.NotLike;
                     }
                     else
                     {
                         //  Contains operator causes Xrm organisation servuce to throw "Generic SQL error"??? 
-                        conditionoperator = ConditionOperator.Like;
+                        conditionOperator = ConditionOperator.Like;
                     }
                     // val = filter.RightHand.Value.Trim('%');
                 }
                 else
                 {
                     // starts with
-                    val = filter.RightHand.Value.TrimEnd('%');
-                    if (filter.Not)
+                    likeString = likeString.TrimEnd('%');
+                    if (not)
                     {
-                        conditionoperator = ConditionOperator.DoesNotBeginWith;
+                        conditionOperator = ConditionOperator.DoesNotBeginWith;
                     }
                     else
                     {
-                        conditionoperator = ConditionOperator.BeginsWith;
+                        conditionOperator = ConditionOperator.BeginsWith;
                     }
                 }
             }
@@ -690,31 +748,29 @@ namespace DynamicsCrmDataProvider
             {
                 // ends with;
                 // contains
-                val = filter.RightHand.Value.TrimStart('%');
-                if (filter.Not)
+                likeString = likeString.TrimStart('%');
+                if (not)
                 {
-                    conditionoperator = ConditionOperator.DoesNotEndWith;
+                    conditionOperator = ConditionOperator.DoesNotEndWith;
                 }
                 else
                 {
-                    conditionoperator = ConditionOperator.EndsWith;
+                    conditionOperator = ConditionOperator.EndsWith;
                 }
             }
             else
             {
-                if (filter.Not)
+                if (not)
                 {
-                    conditionoperator = ConditionOperator.NotLike;
+                    conditionOperator = ConditionOperator.NotLike;
                 }
                 else
                 {
-                    conditionoperator = ConditionOperator.Like;
+                    conditionOperator = ConditionOperator.Like;
                 }
-
             }
 
-            SetConditionExpressionValue(condition, conditionoperator, val);
-            return condition;
+            return likeString;
         }
 
         private static ConditionExpression GetCondition(NullFilter filter, out Column attColumn)
@@ -805,6 +861,17 @@ namespace DynamicsCrmDataProvider
                 return condition;
             }
 
+            // Support Like
+            var likeFilter = filter as LikeFilter;
+            if (likeFilter != null)
+            {
+                var conditionValue = GetConditionValue<string>(likeFilter, isLeft, paramaters);
+                ConditionOperator likeOperator;
+                var newLike = GetLikeString(conditionValue, likeFilter.Not, out likeOperator);
+                SetConditionExpressionValue(condition, likeOperator, newLike);
+                return condition;
+            }
+
             throw new NotSupportedException();
 
         }
@@ -849,7 +916,7 @@ namespace DynamicsCrmDataProvider
                     var placeholder = searchArg as Placeholder;
                     if (placeholder != null)
                     {
-                        var paramVal = paramaters[placeholder.Value];
+                        var paramVal = GetParamaterValue<object>(paramaters, placeholder.Value);
                         condition.Values.Add(paramVal);
                         return condition;
                     }
@@ -868,12 +935,12 @@ namespace DynamicsCrmDataProvider
             }
         }
 
-        private static bool IsParameter(Column column)
-        {
-            // Due to bug in SQL Generation parsing logic, paramaters are not parsed as placeholders, they are parsed as columns.
-            // therefore we have to check the columns to see if they are actually meant to be paramater placeholders.
-            return column.Name.StartsWith(ParameterToken);
-        }
+        //private static bool IsParameter(Column column)
+        //{
+        //    // Due to bug in SQL Generation parsing logic, paramaters are not parsed as placeholders, they are parsed as columns.
+        //    // therefore we have to check the columns to see if they are actually meant to be paramater placeholders.
+        //    return column.Name.StartsWith(ParameterToken);
+        //}
 
         private static Column GetAttributeColumn(OrderFilter filter, out bool isColumnLeftSide)
         {
@@ -885,30 +952,34 @@ namespace DynamicsCrmDataProvider
             isColumnLeftSide = false;
             if (leftcolumn != null)
             {
-                // issue with sql generation library, where it doesn't parse @param from sql string as a placeholder, instead it parses it as a column.
-                if (IsParameter(leftcolumn))
-                {
 
-                }
-                else
-                {
-                    attributeColumn = leftcolumn;
-                    isColumnLeftSide = true;
-                }
+                attributeColumn = leftcolumn;
+                isColumnLeftSide = true;
+
+                //// issue with sql generation library, where it doesn't parse @param from sql string as a placeholder, instead it parses it as a column.
+                //if (IsParameter(leftcolumn))
+                //{
+
+                //}
+                //else
+                //{
+                //    attributeColumn = leftcolumn;
+                //    isColumnLeftSide = true;
+                //}
 
             }
-
-            if (!isColumnLeftSide && rightcolumn != null)
+            else if (rightcolumn != null)
             {
+                attributeColumn = rightcolumn;
                 // issue with sql generation library, where it doesn't parse @param from sql string as a placeholder, instead it parses it as a column.
-                if (IsParameter(rightcolumn))
-                {
-                    // filter.LeftHand = new Placeholder(leftcolumn.Name);
-                }
-                else
-                {
-                    attributeColumn = rightcolumn;
-                }
+                //if (IsParameter(rightcolumn))
+                //{
+                //    // filter.LeftHand = new Placeholder(leftcolumn.Name);
+                //}
+                //else
+                //{
+                //    attributeColumn = rightcolumn;
+                //}
             }
 
             if (attributeColumn == null)
@@ -941,6 +1012,46 @@ namespace DynamicsCrmDataProvider
             return table.Name.ToLower();
         }
 
+        private static T GetConditionValue<T>(OrderFilter filter, bool isLeft, DbParameterCollection paramaters)
+        {
+            // check for literals..
+            Literal lit = null;
+            if (isLeft)
+            {
+                lit = filter.RightHand as Literal;
+            }
+            else
+            {
+                lit = filter.LeftHand as Literal;
+            }
+
+            if (lit != null)
+            {
+                object litVal = GitLiteralValue(lit);
+                return (T)litVal;
+            }
+
+            // check for placeholders..
+            Placeholder placeholder = null;
+            if (isLeft)
+            {
+                placeholder = filter.RightHand as Placeholder;
+            }
+            else
+            {
+                placeholder = filter.LeftHand as Placeholder;
+            }
+
+            if (placeholder != null)
+            {
+                return GetParamaterValue<T>(paramaters, placeholder.Value);
+            }
+
+            throw new NotSupportedException("Could not get value of type: " + typeof(T).FullName);
+
+
+        }
+
         private static void SetColumnCondition(ConditionExpression condition, ConditionOperator conditionOperator, OrderFilter filter, bool isLeft, DbParameterCollection paramaters)
         {
             // check for literals..
@@ -962,55 +1073,72 @@ namespace DynamicsCrmDataProvider
             }
 
             // check for paramaters - these should be placeholders but sqlgeneration doesn't parse them correctly so they are columns.
-            Column paramater = null;
+            Placeholder placeholder = null;
             if (isLeft)
             {
-                paramater = filter.RightHand as Column;
+                placeholder = filter.RightHand as Placeholder;
             }
             else
             {
-                paramater = filter.LeftHand as Column;
+                placeholder = filter.LeftHand as Placeholder;
             }
 
-            if (paramater != null)
+            if (placeholder != null)
             {
-                if (IsParameter(paramater))
-                {
-                    var param = paramaters[paramater.Name];
-                    SetConditionExpressionValue(condition, conditionOperator, param);
-                    return;
-                }
+                var param = GetParamaterValue<object>(paramaters, placeholder.Value);
+                SetConditionExpressionValue(condition, conditionOperator, param);
+                return;
             }
+
+            //Column paramater = null;
+            //if (isLeft)
+            //{
+            //    paramater = filter.RightHand as Column;
+            //}
+            //else
+            //{
+            //    paramater = filter.LeftHand as Column;
+            //}
+
+            //if (paramater != null)
+            //{
+            //    if (IsParameter(paramater))
+            //    {
+            //        var param = paramaters[paramater.Name];
+            //        SetConditionExpressionValue(condition, conditionOperator, param);
+            //        return;
+            //    }
+            //}
 
             throw new NotSupportedException();
         }
 
-        private static void SetConditionExpressionValue(ConditionExpression condition, ConditionOperator conditionOperator, params DbParameter[] paramaters)
-        {
-            condition.Operator = conditionOperator;
-            if (paramaters != null)
-            {
-                // var val = paramater.Value;
-                // condition.Values.Add(val);
-                // is the literal a 
-                foreach (var param in paramaters)
-                {
-                    var paramValue = param.Value;
-                    condition.Values.Add(paramValue);
-                    //if (value is Array)
-                    //{
-                    //    foreach (var o in value as Array)
-                    //    {
-                    //        condition.Values.Add(o);
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    condition.Values.Add(value);
-                    //}
-                }
-            }
-        }
+        //private static void SetConditionExpressionValue(ConditionExpression condition, ConditionOperator conditionOperator, params DbParameter[] paramaters)
+        //{
+        //    condition.Operator = conditionOperator;
+        //    if (paramaters != null)
+        //    {
+        //        // var val = paramater.Value;
+        //        // condition.Values.Add(val);
+        //        // is the literal a 
+        //        foreach (var param in paramaters)
+        //        {
+        //            var paramValue = param.Value;
+        //            condition.Values.Add(paramValue);
+        //            //if (value is Array)
+        //            //{
+        //            //    foreach (var o in value as Array)
+        //            //    {
+        //            //        condition.Values.Add(o);
+        //            //    }
+        //            //}
+        //            //else
+        //            //{
+        //            //    condition.Values.Add(value);
+        //            //}
+        //        }
+        //    }
+        //}
 
         private static void SetConditionExpressionValue(ConditionExpression condition, ConditionOperator conditionOperator, params object[] values)
         {
@@ -1033,6 +1161,16 @@ namespace DynamicsCrmDataProvider
                     }
                 }
             }
+        }
+
+        private static T GetParamaterValue<T>(DbParameterCollection parameters, string paramName)
+        {
+            if (!parameters.Contains(paramName))
+            {
+                throw new InvalidOperationException("Missing parameter value for parameter named: " + paramName);
+            }
+            var param = parameters[paramName];
+            return (T)param.Value;
         }
 
         #endregion
