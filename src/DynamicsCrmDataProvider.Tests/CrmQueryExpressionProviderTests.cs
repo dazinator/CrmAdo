@@ -27,8 +27,6 @@ namespace DynamicsCrmDataProvider.Tests
             var sql = "Select * From contact";
             var cmd = new CrmDbCommand(null);
             cmd.CommandText = sql;
-            //  var cmd = commandBuilder.GetCommand(sql);
-
             var subject = CreateTestSubject();
             // Act
             var queryExpression = subject.CreateQueryExpression(cmd);
@@ -44,7 +42,6 @@ namespace DynamicsCrmDataProvider.Tests
         {
             // Arrange
             var sql = "Select contactid, firstname, lastname From contact";
-
             var cmd = new CrmDbCommand(null);
             cmd.CommandText = sql;
             var subject = CreateTestSubject();
@@ -56,7 +53,6 @@ namespace DynamicsCrmDataProvider.Tests
             Assert.That(queryExpression.ColumnSet.Columns[1] == "firstname");
             Assert.That(queryExpression.ColumnSet.Columns[2] == "lastname");
             Assert.That(queryExpression.EntityName == "contact");
-
         }
 
         [Category("Projections")]
@@ -69,7 +65,6 @@ namespace DynamicsCrmDataProvider.Tests
             var sql = "Select From contact";
             var cmd = new CrmDbCommand(null);
             cmd.CommandText = sql;
-
             var subject = CreateTestSubject();
             // Act
             var queryExpression = subject.CreateQueryExpression(cmd);
@@ -165,22 +160,16 @@ namespace DynamicsCrmDataProvider.Tests
                 filterFormatString = string.Format(filterFormatString, formatArgs.ToArray());
             }
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0}", filterFormatString);
-            // Convery the DML (SQL) statement to a SelectBuilder object which an object representation of the DML.
             var cmd = new CrmDbCommand(null);
             cmd.CommandText = sql;
-
-
+            
             // Create test subject.
             var subject = CreateTestSubject();
 
-
-
             // Act
-            // Ask our test subject to Convert the SelectBuilder to a Query Expression.
             var queryExpression = subject.CreateQueryExpression(cmd);
 
             // Assert
-            // Verify that the Query Expression looks as expected in order to work agaisnt the Dynamics SDK.
             Assert.That(queryExpression.ColumnSet.AllColumns == false);
             Assert.That(queryExpression.ColumnSet.Columns[0] == "contactid");
             Assert.That(queryExpression.ColumnSet.Columns[1] == "firstname");
@@ -193,16 +182,8 @@ namespace DynamicsCrmDataProvider.Tests
             Assert.That(defaultConditons.Count, Is.EqualTo(1));
           //  Assert.That(defaultFilterGroup.FilterOperator, Is.EqualTo(LogicalOperator.And));
             Assert.That(defaultConditons[0].AttributeName == "firstname");
-
             var condition = defaultConditons[0];
             AssertFilterExpressionContion(filterOperator, value, condition);
-
-            //TODO: Haven't yet implemented support for the following dynamics crm condition operators..
-
-            //ConditionOperator.Between // >= x and <= y
-            //ConditionOperator.NotBetween // <= x and >= y
-            //ConditionOperator.NotOn //  -The value is not on the specified date.
-            //ConditionOperator.On // = The value is on the specified date.
 
         }
 
@@ -252,7 +233,6 @@ namespace DynamicsCrmDataProvider.Tests
             var subject = CreateTestSubject();
 
             // Act
-            // Ask our test subject to Convert the SelectBuilder to a Query Expression.
             var queryExpression = subject.CreateQueryExpression(cmd);
 
             //Assert
@@ -267,8 +247,6 @@ namespace DynamicsCrmDataProvider.Tests
             Assert.That(queryExpression.LinkEntities[0].JoinOperator, Is.EqualTo(join));
             Assert.That(queryExpression.LinkEntities[0].Columns, Is.Not.Null);
             Assert.That(queryExpression.LinkEntities[0].Columns.Columns, Contains.Item("addressline1"));
-
-
         }
 
         [Category("Joins")]
@@ -364,8 +342,6 @@ namespace DynamicsCrmDataProvider.Tests
             var topLevelFilterGroup = queryExpression.Criteria.Filters[0];
             Assert.That(topLevelFilterGroup.FilterOperator == LogicalOperator.Or);
 
-
-
             var albertEinstenFilter = topLevelFilterGroup.Filters[0];
             Assert.That(albertEinstenFilter.FilterOperator == LogicalOperator.And);
             Assert.That(albertEinstenFilter.Conditions, Is.Not.Null);
@@ -422,15 +398,6 @@ namespace DynamicsCrmDataProvider.Tests
             else
             {
                 throw new NotImplementedException();
-                //var formatArgs = new List<object>();
-                //formatArgs.Add(columnName);
-                //formatArgs.Add(filterOperator);
-                //var args = value as IEnumerable;
-                //foreach (var arg in args)
-                //{
-                //    formatArgs.Add(arg);
-                //}
-                //filterFormatString = string.Format(filterFormatString, formatArgs.ToArray());
             }
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} ", filterFormatString);
             // Convery the DML (SQL) statement to a SelectBuilder object which an object representation of the DML.
@@ -471,7 +438,6 @@ namespace DynamicsCrmDataProvider.Tests
         {
 
             // var condition = filterExpression.Conditions[position];
-
             switch (filterOperator)
             {
                 case "=":
@@ -507,7 +473,6 @@ namespace DynamicsCrmDataProvider.Tests
                     Assert.That(condition.Values, Is.Empty);
                     break;
                 case "LIKE":
-
                     if (value != null)
                     {
                         bool startsWith = false;
@@ -515,17 +480,6 @@ namespace DynamicsCrmDataProvider.Tests
                         var stringVal = value.ToString();
                         startsWith = stringVal.EndsWith("%");
                         endsWith = stringVal.StartsWith("%");
-                        //if (startsWith && endsWith)
-                        //{
-                        //    // contains..
-                        //    var actualValue = stringVal.Remove(0, 1);
-                        //    if (actualValue.Length > 0 && actualValue.EndsWith("%"))
-                        //    {
-                        //        actualValue = actualValue.Remove(actualValue.Length - 1, 1);
-                        //    }
-                        //    Assert.That(condition.Operator, Is.EqualTo(ConditionOperator.Contains));
-                        //    Assert.That(condition.Values, Contains.Item(actualValue));
-                        //} 
                         if (startsWith && !endsWith)
                         {
                             // starts with..
@@ -562,18 +516,6 @@ namespace DynamicsCrmDataProvider.Tests
                         var stringVal = value.ToString();
                         startsWith = stringVal.EndsWith("%");
                         endsWith = stringVal.StartsWith("%");
-                        //if (startsWith && endsWith)
-                        //{
-                        //    // contains..
-                        //    var actualValue = stringVal.Remove(0, 1);
-                        //    if (actualValue.Length > 0 && actualValue.EndsWith("%"))
-                        //    {
-                        //        actualValue = actualValue.Remove(actualValue.Length - 1, 1);
-                        //    }
-                        //    Assert.That(condition.Operator,
-                        //                Is.EqualTo(ConditionOperator.DoesNotContain));
-                        //    Assert.That(condition.Values, Contains.Item(actualValue));
-                        //}
                         if (startsWith && !endsWith)
                         {
                             // starts with..
@@ -654,13 +596,9 @@ namespace DynamicsCrmDataProvider.Tests
                     break;
 
                 case "CONTAINS":
-
                     Assert.That(condition.Operator, Is.EqualTo(ConditionOperator.Contains));
                     Assert.That(condition.Values, Contains.Item(value));
-
                     break;
-
-
                 case "NOT CONTAINS":
                     Assert.That(condition.Operator, Is.EqualTo(ConditionOperator.DoesNotContain));
                     Assert.That(condition.Values, Contains.Item(value));
@@ -725,25 +663,7 @@ namespace DynamicsCrmDataProvider.Tests
             sqlFilterString = string.Format(filterFormatString, formatArgs.ToArray());
             return sqlFilterString;
         }
-         [Test]
-        public void TestRepro()
-        {
-            string commandText = "SELECT contactid, firstname, lastname FROM contact WHERE CONTAINS(firstname, 'albert')";
-            assertCanReproduce(commandText);
-
-
-        }
-
-        private void assertCanReproduce(string commandText)
-        {
-            CommandBuilder builder = new CommandBuilder();
-            ICommand command = builder.GetCommand(commandText);
-            Formatter formatter = new Formatter();
-            string actual = formatter.GetCommandText(command);
-            Assert.AreEqual(commandText, actual, "The command builder did not generate the original command text.");
-        }
-
-
+  
         #endregion
     }
 }
