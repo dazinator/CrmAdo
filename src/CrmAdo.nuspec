@@ -12,12 +12,14 @@
     <projectUrl>http://dazinator.github.io/CrmAdo/</projectUrl>
     <copyright>Copyright � Darrell Tunnell 2014</copyright>
     <releaseNotes>
-      ## 1.0.0-alpha
+      # 1.0.0-alpha
       - Intial Alpha release, all unit tests passing, currently only supports "Read" access to Dynamics CRM. Insert / Update and Delete will come in a future version.
-      ## 1.0.1-alpha
+      # 1.0.1-alpha
       - Changed the invariant name for the provider to be System.Data.DynamicsCrm.CrmAdo
       - Added web and app config transform to NuGet package so that the DbProviderFactory configuration is done for you automatically.
       - Corrected and tidied release notes.
+      # 1.0.1
+      - Stable release.
     </releaseNotes>
     <tags>Dynamics Crm ADO ADO.Net Data Provider SQL T-SQL</tags>
     <dependencies>
