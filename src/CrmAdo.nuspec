@@ -33,7 +33,7 @@
     <file src="CrmAdo\bin\Release\net40\CrmAdo.pdb" target="lib\net40\CrmAdo.pdb" />
     <file src="CrmAdo\bin\Release\net45\CrmAdo.dll" target="lib\net45\CrmAdo.dll" />
     <file src="CrmAdo\bin\Release\net45\CrmAdo.pdb" target="lib\net45\CrmAdo.pdb" />
-    <file src="CrmAdo\web.config.transform" target="content\web.config.transform" />
-    <file src="CrmAdo\app.config.transform" target="content\app.config.transform" />
+    <file src="web.config.transform" target="content\web.config.transform" />
+    <file src="app.config.transform" target="content\app.config.transform" />
   </files>  
 </package>
