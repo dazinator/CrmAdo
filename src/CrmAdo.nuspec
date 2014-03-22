@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>CrmAdo</id>
+    <version>0.0.0</version>
+    <title>CrmAdo</title>
+    <description>CrmAdo is an ADO.Net data provider for Dynamics Crm. It hides from you the complexities of using the IOrganisation web service, and instead exposes Dynamics Crm to you as if it was an ordinary SQL database / data source. It allows you to use the familiar ADO.Net model to connect to, and perform queries against Dynamics CRM, and you can use the familiar T-SQL language to write your queries. CrmAdo handles all the conversion between your T-SQL queries / commands into the appropriate IOrganisation web service interactions behind the scenes, so to all intense and purposes it will appear to you as if Dynamics CRM is just an ordinary Sql database.</description>
+    <authors>Darrell Tunnell</authors>
+    <owners>Darrell Tunnell</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>   
+    <language>en-gb</language>
+    <projectUrl>http://dazinator.github.io/CrmAdo/</projectUrl>
+    <copyright>Copyright � Darrell Tunnell 2014</copyright>
+    <releaseNotes>
+      ## 1.0.0-alpha
+      - Intial Alpha release, all unit tests passing, currently only supports "Read" access to Dynamics CRM. Insert / Update and Delete will come in a future version.
+      ## 1.0.1-alpha
+      - Changed the invariant name for the provider to be System.Data.DynamicsCrm.CrmAdo
+      - Added web and app config transform to NuGet package so that the DbProviderFactory configuration is done for you automatically.
+      - Corrected and tidied release notes.
+    </releaseNotes>
+    <tags>Dynamics Crm ADO ADO.Net Data Provider SQL T-SQL</tags>
+    <dependencies>
+      <dependency id="SQLGeneration" version="2.4.3.0" />
+      <dependency id="Microsoft.IdentityModel" version="6.1.7600.16394" />
+      <dependency id="Microsoft.CrmSdk.Extensions" version="6.0.4" />
+      <dependency id="Microsoft.CrmSdk.CoreAssemblies" version="6.0.4" />
+      <dependency id="Microsoft.CrmSdk.Deployment" version="6.0.4" />        
+    </dependencies>    
+  </metadata>
+  <files>
+    <file src="CrmAdo\bin\Release\net40\CrmAdo.dll" target="lib\net40\CrmAdo.dll" />
+    <file src="CrmAdo\bin\Release\net40\CrmAdo.pdb" target="lib\net40\CrmAdo.pdb" />
+    <file src="CrmAdo\bin\Release\net45\CrmAdo.dll" target="lib\net45\CrmAdo.dll" />
+    <file src="CrmAdo\bin\Release\net45\CrmAdo.pdb" target="lib\net45\CrmAdo.pdb" />
+    <file src="CrmAdo\web.config.transform" target="content\web.config.transform" />
+    <file src="CrmAdo\app.config.transform" target="content\app.config.transform" />
+  </files>  
+</package>
