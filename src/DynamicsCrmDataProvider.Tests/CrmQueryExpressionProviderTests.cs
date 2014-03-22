@@ -326,11 +326,17 @@ namespace DynamicsCrmDataProvider.Tests
             //Assert
             Assert.That(queryExpression.ColumnSet.Columns.Count, Is.EqualTo(2));
 
+          
             Assert.That(queryExpression.Criteria.Filters, Is.Not.Null);
             Assert.That(queryExpression.Criteria.Filters.Count, Is.EqualTo(1));
             Assert.That(queryExpression.Criteria.FilterOperator, Is.EqualTo(LogicalOperator.And));
 
-            var topLevelFilterGroup = queryExpression.Criteria.Filters[0];
+
+            var defaultFilterGroup = queryExpression.Criteria.Filters[0];
+            Assert.That(defaultFilterGroup.Filters.Count, Is.EqualTo(1));
+            Assert.That(defaultFilterGroup.FilterOperator, Is.EqualTo(LogicalOperator.And));
+
+            var topLevelFilterGroup = defaultFilterGroup.Filters[0];
             Assert.That(topLevelFilterGroup.FilterOperator == LogicalOperator.Or);
 
             var albertEinstenFilter = topLevelFilterGroup.Filters[0];
