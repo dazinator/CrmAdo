@@ -13,7 +13,7 @@
     <!--The build number, if present will be appended as fourth digit in nuget package version number.-->
     <BuildVersionNumber Condition="$(BuildVersionNumber) == ''"></BuildVersionNumber>
     <!--A pre-release label. If present, will be appended to nuget package version number.-->
-    <PreReleaseLabel Condition="$(PreReleaseLabel) == ''">Alpha</PreReleaseLabel>
+    <PreReleaseLabel Condition="$(PreReleaseLabel) == ''"></PreReleaseLabel>
     <!--The version number for the NuGet Package (This is a combination of assembly version number with appended build version number info or pre release label)-->
     <PackageVersionNumber Condition="$(PackageVersionNumber) == ''"></PackageVersionNumber>
     <!--Where the NuGet package will be output to.-->
