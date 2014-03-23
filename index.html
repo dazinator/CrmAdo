@@ -48,7 +48,7 @@
 
 <p>A connection string will automatically be added to your web / app config file when you install the NuGet package, you should set this connection string appropriately for the dynamics crm organisation that you want to connect to.</p>
 
-<p>You can now use ADO.net to connect to and query CRM:</p>
+<p>You can now use ADO.net to connect to and query CRM. Here is some quick sample code:</p>
 <pre><code>
 
             var dbprovider = DbProviderFactories.GetFactory(CrmDbProviderFactory.Invariant);
@@ -79,59 +79,57 @@
   
 </code></pre>
 
- <h3>Supported SQL - examples</h3>
- <p>CrmAdo is limited by the underlying Dynamics SDK as to the T-SQL that it can support. Therefore, the following is not an exhaustive list but aims to demonstrate the T-SQL that is supported.
+<p>Note: the above query doesn't use parameters, however parameters are fully supported.</p>
+ <h3>Supported SQL - some examples</h3>
+ <p>The Dynamics CRM SDK does impose some limitations as to the T-SQL that can be used. Therefore, the following aims to give a quick overview of the T-SQL that can be used - although it is not an exhaustive list.
   </p>
    <h4>Joins </h4>
-   <p>You can use Inner Joins, and Left Joins. Nesting is fully supported.</p>
+   <p>You can use Inner Joins, and Left Joins. Full outer joins are not supported. Nesting joins is fully supported.</p>
    <pre><code>
    Select C.contactid, C.firstname, C.lastname, A.line1 From contact C INNER JOIN customeraddress A on C.contactid = A.parentid
    </code></pre>
    <h4>Filter operators </h4>
    <p>You can use any of the following filter operators in your where clause:</p>
    <ul>
-     <li>=</li>
-      <li>&lt;&gt;</li>
-       <li>&gt;=</li>
-        <li>&lt;=</li>
-         <li>&gt;</li>
-          <li>&lt;</li>
-           <li>IS NULL</li>
-            <li>IS NOT NULL</li>
-             <li>LIKE</li>
-              <li>NOT LIKE</li>
-               <li>IN</li>
-                <li>NOT IN</li>
-                 <li>NOT IN</li>
-                  <li>NOT IN</li>
-     
-     
+    <li>=</li>
+    <li>&lt;&gt;</li>
+    <li>&gt;=</li>
+    <li>&lt;=</li>
+    <li>&gt;</li>
+    <li>&lt;</li>
+    <li>IS NULL</li>
+    <li>IS NOT NULL</li>
+    <li>LIKE</li>
+    <li>NOT LIKE</li>
+    <li>IN</li>
+    <li>NOT IN</li>
+    <li>CONTAINS</li>
+    <li>NOT CONTAINS</li>
    </ul>
-   =
-&lt;&gt;
-&gt;=
-&lt;=
-&gt;
-&lt;
-IS NULL
-IS NOT NULL
-LIKE
-NOT LIKE
-IN
-NOT IN
-CONTAINS
-NOT CONTAINS
-   
    <pre><code>
-   Select C.contactid, C.firstname, C.lastname, A.line1 From contact C INNER JOIN customeraddress A on C.contactid = A.parentid
+   Select C.contactid, C.firstname, C.lastname, A.line1 From contact C INNER JOIN customeraddress A on C.contactid = A.parentid WHERE A.line1 LIKE '%deathstar%'
    </code></pre>
    
- <ul>
-   <li>Inner Joins</li>
-   <li>Left Joins</li>
-   <li>Conjunctions - AND, OR</li>
- </ul>
- 
+  <h4>Filter operators with Conjunctions </h4>
+   <p>You can use conjunctions with filter operators to combine them together logically:</p>
+   <ul>
+    <li>AND</li>
+    <li>OR</li>
+   </ul>
+   <pre><code>
+   Select C.contactid, C.firstname, C.lastname, A.line1 From contact C INNER JOIN customeraddress A on C.contactid = A.parentid WHERE A.line1 LIKE '%deathstar%' AND C.firstname = 'Darth'
+   </code></pre>
+   <p>More complex:</p>
+   <h4>Filter operators with Conjunctions and Parenthesis </h4>
+   <p>You can use multiple filters, with AND and OR conjunctions as well as parenthesis.:</p>
+   <ul>
+    <li>AND</li>
+    <li>OR</li>
+   </ul>
+   <pre><code>
+   Select C.contactid, C.firstname, C.lastname, A.line1 From contact C INNER JOIN customeraddress A on C.contactid = A.parentid WHERE (((A.line1 LIKE '%deathstar%' AND C.firstname = 'Darth') OR (A.line1 LIKE '%away mission%')) AND C.lastname ='Vader')
+   </code></pre>
+   
  
 
         </section>
