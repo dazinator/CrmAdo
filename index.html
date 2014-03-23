@@ -20,7 +20,7 @@
     <header>
       <div class="inner">
         <h1>CrmAdo</h1>
-        <h2>Bringing the power of ADO.Net to Dynamics Crm. </h2>
+        <h2>Bringing ADO.Net to Dynamics Crm.</h2>
         <a href="https://github.com/dazinator/CrmAdo" class="button"><small>View project on</small>GitHub</a>
       </div>
     </header>
@@ -31,17 +31,109 @@
           <h3>
 <a name="huh" class="anchor" href="#huh"><span class="octicon octicon-link"></span></a>Huh?</h3>
 
-<p>So you want to write some code that interacts with some data / enitities in Dynamics CRM? You need to retrieve contacts, linked to addresses, linked to some custom entity you say? Where the firstname is "Joe" you say? </p>
+<p>So you want to write some code that interacts with some data / entities in Dynamics CRM? You need to retrieve contacts, linked to addresses, linked to some custom entity you say? Where the firstname is "Joe" you say? </p>
 
 <p>So you reference the Dynamics SDK libraries, and you read through the documentation, and you start delving into the world of writing "QueryExpressions" and "FetchXml", and using an "OrganisationService", and building "FilterExpressions" and adding "Conditions" and getting "AliasedValues". </p>
 
-<p>Take a step back. Your code is now completely coupled to the Dynamics CRM SDK. Not only that, you have had to learn all sorts of SDK specific stuff to perform a simple query against a datasource. What happened to that wonderfully expressive query language that we allready have i.e T-SQL?</p>
+<p>Take a step back. Your code is now completely coupled to the Dynamics CRM SDK. Not only that, you have had to learn all sorts of SDK specific stuff to perform a simple query against a datasource. What happened to that wonderfully expressive query language that we allready have i.e T-SQL? What happened to the .NET standard way to interact with datasources i.e ADO.Net?</p>
 
-<p>CrmAdo is an ADO.Net data provider for Dynamics Crm. It's goal is to hide completely the Dynamics SDK from you, and expose Dynamics Crm as if it were an ordinary SQL datasource, via the standard ADO.Net classes, that you can execute T-SQL against. </p>
+<p>CrmAdo is an ADO.Net data provider for Dynamics Crm that uses T-SQL as its query language. It's goal is to hide completely the Dynamics SDK from you, and to expose Dynamics Crm as if it were an ordinary SQL datasource, via the standard ADO.Net classes.</p>
 
-<p>It allows you to use the familiar T-SQL language to write your queries, just like you would against other data sources. CrmAdo will translate your T-SQL commands into the appropriate IOrganisation web service calls and interactions. </p>
+<p>It allows you to use the familiar T-SQL language to write your queries, just like you would against other ADO.Net data sources. CrmAdo will translate your T-SQL commands into the appropriate IOrganisation web service calls and interactions behind the scenes. </p>
 
-<p>When you use CrmAdo, your application won't be coupled to Dynamics CRM at all. It will be coupled with ADO.Net. This means you can easily change the undetlying datasource from Dynamics Crm, to be a SQL Server, Oracle, MySQL database, or any other data source that has an ADO.Net provider and your application won't really care.</p>
+ <h3>
+<a name="Getting Started" class="anchor" href="#Getting Started"><span class="octicon octicon-link"></span></a>Huh?</h3>
+
+<p>Add the <a href="https://www.nuget.org/packages/CrmAdo/" class="button">CrmAdo NuGet package</a> to your visual studio project. This will also install the Dynamics SDK libraries and all other dependencies. </p>
+
+<p>A connection string will automatically be added to your web / app config file when you install the NuGet package, you should set this connection string appropriately for the dynamics crm organisation that you want to connect to.</p>
+
+<p>You can now use ADO.net to connect to and query CRM:</p>
+<pre><code>
+
+            var dbprovider = DbProviderFactories.GetFactory(CrmDbProviderFactory.Invariant);
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = dbprovider.CreateConnection())
+            {
+                conn.ConnectionString = connectionString.ConnectionString;
+                conn.Open();
+                var command = conn.CreateCommand();
+                command.CommandText = "Select C.contactid, C.firstname, C.lastname, A.line1 From contact C LEFT JOIN customeraddress A on C.contactid = A.parentid";
+              
+                using (var reader = command.ExecuteReader())
+                {
+                    int resultCount = 0;
+                    foreach (var result in reader)
+                    {
+                        resultCount++;
+                        var contactId = (Guid)reader["contactid"];
+                        var firstName = (string)reader["firstname"];
+                        var lastName = reader.GetString(2);
+                        Console.WriteLine("{0} {1} {2}", contactId, firstName, lastName);
+                    }
+                    Console.WriteLine("There were " + resultCount + " results..");
+                }
+            }
+
+        }
+  
+</code></pre>
+
+ <h3>Supported SQL - examples</h3>
+ <p>CrmAdo is limited by the underlying Dynamics SDK as to the T-SQL that it can support. Therefore, the following is not an exhaustive list but aims to demonstrate the T-SQL that is supported.
+  </p>
+   <h4>Joins </h4>
+   <p>You can use Inner Joins, and Left Joins. Nesting is fully supported.</p>
+   <pre><code>
+   Select C.contactid, C.firstname, C.lastname, A.line1 From contact C INNER JOIN customeraddress A on C.contactid = A.parentid
+   </code></pre>
+   <h4>Filter operators </h4>
+   <p>You can use any of the following filter operators in your where clause:</p>
+   <ul>
+     <li>=</li>
+      <li>&lt;&gt;</li>
+       <li>&gt;=</li>
+        <li>&lt;=</li>
+         <li>&gt;</li>
+          <li>&lt;</li>
+           <li>IS NULL</li>
+            <li>IS NOT NULL</li>
+             <li>LIKE</li>
+              <li>NOT LIKE</li>
+               <li>IN</li>
+                <li>NOT IN</li>
+                 <li>NOT IN</li>
+                  <li>NOT IN</li>
+     
+     
+   </ul>
+   =
+&lt;&gt;
+&gt;=
+&lt;=
+&gt;
+&lt;
+IS NULL
+IS NOT NULL
+LIKE
+NOT LIKE
+IN
+NOT IN
+CONTAINS
+NOT CONTAINS
+   
+   <pre><code>
+   Select C.contactid, C.firstname, C.lastname, A.line1 From contact C INNER JOIN customeraddress A on C.contactid = A.parentid
+   </code></pre>
+   
+ <ul>
+   <li>Inner Joins</li>
+   <li>Left Joins</li>
+   <li>Conjunctions - AND, OR</li>
+ </ul>
+ 
+ 
+
         </section>
 
         <aside id="sidebar">
