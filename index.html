@@ -130,7 +130,7 @@
    Select C.contactid, C.firstname, C.lastname, A.line1 From contact C INNER JOIN customeraddress A on C.contactid = A.parentid WHERE (((A.line1 LIKE '%deathstar%' AND C.firstname = 'Darth') OR (A.line1 LIKE '%away mission%')) AND C.lastname ='Vader')
    </code></pre>
    
- <h3>Due Credit</h3>
+ <h4>Acknowledgements</h4>
  <p>
    Much thanks and appreciation goes to <a href="https://github.com/jehugaleahsa">Travis Parks (@jehugaleahsa)</a> for his work with the SQLGeneration library which is used under the hood by CrmAdo to carry out the complex task of parsing T-SQL. Travis has done a wonderful job with the SQLGeneration library, and this has saved me a tonne of work :D
  </p>
