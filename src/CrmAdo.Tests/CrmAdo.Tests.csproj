@@ -124,14 +124,22 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseTest.cs" />
+    <Compile Include="SelectStatementJoinTests.cs" />
+    <Compile Include="SelectStatementWhereFilterOperatorValidityTests.cs" />
+    <Compile Include="SelectStatementWhereFilterParameterTests.cs" />
+    <Compile Include="Support\AssertUtils.cs" />
+    <Compile Include="Support\BaseTest.cs" />
     <Compile Include="CrmDbProviderFactoryTests.cs" />
     <Compile Include="CrmDbDataReaderTests.cs" />
-    <Compile Include="CrmQueryExpressionProviderTests.cs" />
+    <Compile Include="SelectStatementProjectionTests.cs" />
+    <Compile Include="SelectStatementWhereFilterConjunctionTests.cs" />
     <Compile Include="CrmDbCommandTests.cs" />
     <Compile Include="CrmDbConnectionTests.cs" />
+    <Compile Include="Support\CrmQueryExpressionProviderTestsBase.cs" />
     <Compile Include="Experiments.cs" />
-    <Compile Include="LogUtils.cs" />
+    <Compile Include="SelectStatementValidityTests.cs" />
+    <Compile Include="SelectStatementWhereFilterOperatorTests.cs" />
+    <Compile Include="Support\LogUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
