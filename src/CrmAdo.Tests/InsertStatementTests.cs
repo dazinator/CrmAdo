@@ -29,7 +29,7 @@ namespace CrmAdo.Tests
 
         [Category("Insert")]
         [Category("Numeric Literal")]
-        [TestCase("integerfield", 1, typeof(int), Description = "Should support Insert into integer field from numeric literal")]
+        [Test(Description = "Should support Insert into integer field from numeric literal")]
         public void Should_Support_Insert_Of_Integer_From_Numeric_Literal()
         {
             // Arrange
@@ -102,7 +102,6 @@ namespace CrmAdo.Tests
             Test_That_Sql_Insert_Statement_With_A_Literal_Value_Has_The_Value_Translated_To<string>(stringValue, "stringfield", stringValue);
         }
 
-
         [Category("Insert")]
         [Category("String Literal")]
         [Test(Description = "Should support Insert into guid field from string literal")]
@@ -121,7 +120,6 @@ namespace CrmAdo.Tests
             EntityReference entRef = new EntityReference("testEntity", guidVal);
             Test_That_Sql_Insert_Statement_With_A_Literal_Value_Has_The_Value_Translated_To<EntityReference>(entRef, "entityreffield", guidVal.ToString());
         }
-
 
         #region Helper Methods
 
