@@ -17,14 +17,10 @@ namespace CrmAdo.Tests
         {
             // Arrange
             var sql = "SELECT c.firstname, c.lastname FROM contact c WHERE (c.firstname = 'Albert' AND c.lastname = 'Einstein') OR (c.firstname = 'Max' AND c.lastname = 'Planck')";
-            var cmd = new CrmDbCommand(null);
-            cmd.CommandText = sql;
-
-            var subject = CreateTestSubject();
+           
             // Act
-            var queryExpression = subject.CreateQueryExpression(cmd);
-
-
+            var queryExpression = base.GetQueryExpression(sql);
+            
             //Assert
             Assert.That(queryExpression.ColumnSet.Columns.Count, Is.EqualTo(2));
 

@@ -15,19 +15,9 @@ namespace CrmAdo.Tests
             // Arrange
             var sql = "Select * From";
             // Act
-            var queryExpression = CreateQueryExpression(sql);
+            var queryExpression = GetQueryExpression(sql);
         }
-
-        [Category("Validity")]
-        [Test(Description = "Should Throw if it's not a Select statement")]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void Should_Throw_When_Not_A_Select_Statement()
-        {
-            // Arrange
-            var sql = "Insert into MyTest (mycolumn) values('test')";
-            // Act
-            var queryExpression = CreateQueryExpression(sql);
-        }
+        
 
         [Category("Validity")]
         [Test(Description = "Should Throw when no Column Name or * present")]
@@ -37,7 +27,7 @@ namespace CrmAdo.Tests
             // Arrange
             var sql = "Select From contact";
             // Act
-            var queryExpression = CreateQueryExpression(sql);
+            var queryExpression = GetQueryExpression(sql);
         }
 
     }

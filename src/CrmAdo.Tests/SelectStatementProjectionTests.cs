@@ -13,7 +13,7 @@ namespace CrmAdo.Tests
             // Arrange
             var sql = "Select * From contact";
             // Act
-            var queryExpression = CreateQueryExpression(sql);
+            var queryExpression = GetQueryExpression(sql);
             // Assert
             Assert.That(queryExpression.ColumnSet.AllColumns == true);
             Assert.That(queryExpression.EntityName == "contact");
@@ -26,7 +26,7 @@ namespace CrmAdo.Tests
             // Arrange
             var sql = "Select contactid, firstname, lastname From contact";
             // Act
-            var queryExpression = CreateQueryExpression(sql);
+            var queryExpression = GetQueryExpression(sql);
             // Assert
             Assert.That(queryExpression.ColumnSet.AllColumns == false);
             Assert.That(queryExpression.ColumnSet.Columns[0] == "contactid");

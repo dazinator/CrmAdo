@@ -30,7 +30,7 @@ namespace CrmAdo.Tests
             var columnName = "firstname";
             var conditionValue = string.IsNullOrEmpty(literalValue) ? "Albert" : literalValue;
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} {1} '{2}'", columnName, sqlOperator, conditionValue);
-            var queryExpression = CreateQueryExpression(sql);
+            var queryExpression = GetQueryExpression(sql);
             AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, conditionValue);
         }
 
@@ -49,7 +49,7 @@ namespace CrmAdo.Tests
             args.Add(sqlOperator);
             args.AddRange(valuesArray);
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} {1} ('{2}', '{3}')", args.ToArray());
-            var queryExpression = CreateQueryExpression(sql);
+            var queryExpression = GetQueryExpression(sql);
             AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, valuesArray);
         }
 
@@ -63,7 +63,7 @@ namespace CrmAdo.Tests
             var columnName = "firstname";
             var conditionValue = "Albert"; //string.IsNullOrEmpty(literalValue) ? "Albert" : literalValue;
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {1}({0},  '{2}'))", columnName, sqlOperator, conditionValue);
-            var queryExpression = CreateQueryExpression(sql);
+            var queryExpression = GetQueryExpression(sql);
             AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, conditionValue);
         }
 
@@ -81,7 +81,7 @@ namespace CrmAdo.Tests
             var columnName = "firstname";
             var conditionValue = 1;
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} {1} {2}", columnName, sqlOperator, conditionValue);
-            var queryExpression = CreateQueryExpression(sql);
+            var queryExpression = GetQueryExpression(sql);
             AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, conditionValue);
         }
 
@@ -102,7 +102,7 @@ namespace CrmAdo.Tests
                 args.Add(i.ToString());
             }
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} {1} ({2}, {3})", args.ToArray());
-            var queryExpression = CreateQueryExpression(sql);
+            var queryExpression = GetQueryExpression(sql);
             AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, valuesArray);
         }
 
@@ -115,7 +115,7 @@ namespace CrmAdo.Tests
         {
             var columnName = "firstname";
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} {1}", columnName, sqlOperator);
-            var queryExpression = CreateQueryExpression(sql);
+            var queryExpression = GetQueryExpression(sql);
             AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, null);
         }
 

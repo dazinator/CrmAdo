@@ -55,7 +55,7 @@ namespace CrmAdo.Tests
 
             // Act
             // Ask our test subject to Convert the SelectBuilder to a Query Expression.
-            var queryExpression = subject.CreateQueryExpression(cmd);
+            var queryExpression = base.GetQueryExpression(cmd);
 
             // Assert
             // Verify that the Query Expression looks as expected in order to work agaisnt the Dynamics SDK.

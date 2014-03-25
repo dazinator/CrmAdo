@@ -3,24 +3,25 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using CrmAdo.Dynamics.Metadata;
+using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace CrmAdo
 {
     public class CrmCommandExecutor : ICrmCommandExecutor
     {
-        private ICrmQueryExpressionProvider _CrmQueryExpressionProvider;
+        private ICrmRequestProvider _CrmRequestProvider;
         private ICrmMetaDataProvider _MetadataProvider;
 
         #region Constructor
         public CrmCommandExecutor(CrmDbConnection connection)
-            : this(new CrmQueryExpressionProvider(), connection)
+            : this(new SqlGenerationRequestProvider(), connection)
         {
         }
 
-        public CrmCommandExecutor(ICrmQueryExpressionProvider queryExpressionProvider, CrmDbConnection connection)
+        public CrmCommandExecutor(ICrmRequestProvider requestProvider, CrmDbConnection connection)
         {
-            _CrmQueryExpressionProvider = queryExpressionProvider;
+            _CrmRequestProvider = requestProvider;
             if (connection != null)
             {
                 _MetadataProvider = connection.MetadataProvider;
@@ -74,12 +75,62 @@ namespace CrmAdo
         private EntityResultSet ProcessTextCommand(CrmDbCommand command)
         {
             //  string commandText = "SELECT CustomerId, FirstName, LastName, Created FROM Customer";
-            var queryExpression = _CrmQueryExpressionProvider.CreateQueryExpression(command);
+            var request = _CrmRequestProvider.GetOrganizationRequest(command);
+
+            var retrieveMultipleRequest = request as RetrieveMultipleRequest;
+            if (retrieveMultipleRequest != null)
+            {
+                return ProcessRetrieveMultiple(command, retrieveMultipleRequest);
+            }
+
+            var createRequest = request as CreateRequest;
+            if (createRequest != null)
+            {
+                return ProcessCreateRequest(command, createRequest);
+            }
+
+            var updateRequest = request as UpdateRequest;
+            if (updateRequest != null)
+            {
+                return ProcessUpdateRequest(command, updateRequest);
+            }
+
+            var deleteRequest = request as DeleteRequest;
+            if (deleteRequest != null)
+            {
+                return ProcessDeleteRequest(command, deleteRequest);
+            }
+
+            throw new NotSupportedException("Sorry, was not able to turn your command into the appropriate Dynamics SDK Organization Request message.");
+
+        }
+
+        private EntityResultSet ProcessDeleteRequest(CrmDbCommand command, DeleteRequest deleteRequest)
+        {
+            throw new NotImplementedException();
+        }
+
+        private EntityResultSet ProcessUpdateRequest(CrmDbCommand command, UpdateRequest updateRequest)
+        {
+            throw new NotImplementedException();
+        }
+
+        private EntityResultSet ProcessCreateRequest(CrmDbCommand command, CreateRequest createRequest)
+        {
+            throw new NotImplementedException();
+        }
+
+        private EntityResultSet ProcessRetrieveMultiple(CrmDbCommand command, RetrieveMultipleRequest retrieveMultipleRequest)
+        {
             var orgService = command.CrmDbConnection.OrganizationService;
-            var results = orgService.RetrieveMultiple(queryExpression);
+            var response = orgService.Execute(retrieveMultipleRequest);
             var resultSet = new EntityResultSet();
-            PopulateMetadata(resultSet, queryExpression);
-            resultSet.Results = results;
+            var retrieveMultipleResponse = response as RetrieveMultipleResponse;
+            if (retrieveMultipleResponse != null)
+            {
+                PopulateMetadata(resultSet, retrieveMultipleRequest.Query as QueryExpression);
+                resultSet.Results = retrieveMultipleResponse.EntityCollection;
+            }
             return resultSet;
         }
 

@@ -25,12 +25,9 @@ namespace CrmAdo.Tests
             // Arrange
             var sql = "Select contactid, firstname, lastname From contact Where 'Julius' {0} 'Julius' and lastname {0} 'Caeser'";
             sql = string.Format(sql, sqlOperator);
-            var cmd = new CrmDbCommand(null);
-            cmd.CommandText = sql;
-
-            var subject = CreateTestSubject();
+          
             // Act
-            var queryExpression = subject.CreateQueryExpression(cmd);
+            var queryExpression = base.GetQueryExpression(sql);
 
         }
 

@@ -128,7 +128,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BetterCrmQueryExpressionProvider.cs" />
     <Compile Include="ColumnMetadata.cs" />
     <Compile Include="CrmCommandExecutor.cs" />
     <Compile Include="CrmDbCommand.cs">
@@ -168,7 +167,7 @@
     <Compile Include="Dynamics\OrganisationDoesNotExistException.cs" />
     <Compile Include="EntityResultSet.cs" />
     <Compile Include="ICrmCommandExecutor.cs" />
-    <Compile Include="ICrmQueryExpressionProvider.cs" />
+    <Compile Include="ICrmRequestProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

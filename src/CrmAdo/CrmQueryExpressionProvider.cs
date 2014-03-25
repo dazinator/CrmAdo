@@ -4,13 +4,16 @@ using System.Data.Common;
 using System.Linq;
 using CrmAdo.Dynamics;
 using CrmAdo.Dynamics.Metadata;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using SQLGeneration.Builders;
 using SQLGeneration.Generators;
 
 namespace CrmAdo
 {
-    public class CrmQueryExpressionProvider : ICrmQueryExpressionProvider
+
+    public class SqlGenerationRequestProvider : ICrmRequestProvider
     {
 
         public const string ParameterToken = "@";
@@ -19,16 +22,44 @@ namespace CrmAdo
         /// Creates a QueryExpression from the given Select command.
         /// </summary>
         /// <returns></returns>
-        public QueryExpression CreateQueryExpression(CrmDbCommand command)
+        public OrganizationRequest GetOrganizationRequest(CrmDbCommand command)
         {
             var commandText = command.CommandText;
             var commandBuilder = new CommandBuilder();
             var options = new CommandBuilderOptions();
             options.PlaceholderPrefix = ParameterToken;
-            var builder = commandBuilder.GetCommand(commandText, options) as SelectBuilder;
-            GuardSelectBuilder(builder);
-            var query = FromCommand(builder, command.Parameters);
-            return query;
+            var sqlCommandBuilder = commandBuilder.GetCommand(commandText, options);
+
+            var selectCommandBuilder = sqlCommandBuilder as SelectBuilder;
+            if (selectCommandBuilder != null)
+            {
+                GuardSelectBuilder(selectCommandBuilder);
+                var query = FromCommand(selectCommandBuilder, command.Parameters);
+                var request = new RetrieveMultipleRequest();
+                request.Query = query;
+                return request;
+            }
+
+            var insertCommandBuilder = sqlCommandBuilder as InsertBuilder;
+            if (insertCommandBuilder != null)
+            {
+                throw new NotImplementedException();
+            }
+
+            var updateCommandBuilder = sqlCommandBuilder as UpdateBuilder;
+            if (updateCommandBuilder != null)
+            {
+                throw new NotImplementedException();
+            }
+
+            var deleteCommandBuilder = sqlCommandBuilder as DeleteBuilder;
+            if (deleteCommandBuilder != null)
+            {
+                throw new NotImplementedException();
+            }
+
+            throw new NotSupportedException("Could not translate the command into the appropriate Organization Service Request Message");
+            
         }
 
         public static QueryExpression FromCommand(ICommand command, DbParameterCollection paramaters)
@@ -40,10 +71,6 @@ namespace CrmAdo
                 var selCommand = command as SelectBuilder;
                 AddFrom(selCommand.From, query);
                 AddColumns(selCommand.Projection, query);
-                //   var filter = new FilterExpression();
-              //  ProcessFilterGroup(query, selCommand.WhereFilterGroup, null, paramaters);
-                //  query.Criteria.AddFilter(filter);
-                //var where = selCommand.Where as 
                 if (selCommand.WhereFilterGroup != null)
                 {
                     ProcessFilterGroup(query, selCommand.WhereFilterGroup, null, paramaters);
@@ -52,9 +79,7 @@ namespace CrmAdo
                 {
                     AddWhere(selCommand.Where, query, paramaters);
                 }
-
             }
-
             return query;
         }
 
@@ -205,7 +230,6 @@ namespace CrmAdo
                 }
             }
         }
-
 
         #endregion
 
@@ -592,115 +616,6 @@ namespace CrmAdo
             throw new NotSupportedException();
         }
 
-        //private static ConditionExpression GetCondition(LikeFilter filter, DbParameterCollection paramaters, out Column attColumn)
-        //{
-        //    var condition = new ConditionExpression();
-
-        //    // Support Like
-        //    var left = filter.LeftHand;
-        //    attColumn = left as Column;
-
-        //    // default attribute name for the filter condition.
-        //    if (attColumn != null)
-        //    {
-        //        condition.AttributeName = attColumn.Name.ToLower();
-        //    }
-        //    else
-        //    {
-        //        throw new NotSupportedException("Like filter only works agains a column value.");
-        //    }
-
-        //    // detect like expressions for begins with, ends with and contains..
-        //    // we only support literal or placeholder.
-        //    var lit = filter.RightHand as StringLiteral;
-        //    string likeValue = null;
-        //    if (lit != null)
-        //    {
-        //        likeValue = lit.Value;
-        //    }
-        //    else
-        //    {
-        //        // perhaps its a placeholder?
-        //        var placeholder = filter.RightHand as Placeholder;
-        //        if (placeholder != null)
-        //        {
-        //            likeValue = GetParamaterValue<string>(paramaters, placeholder.Value);
-        //        }
-        //        else
-        //        {
-        //            throw new NotSupportedException("The right hand side of the Like Expression must be a paramater or a string literal.");
-        //        }
-        //    }
-
-        //    // detect paramater
-        //    bool startsWith = likeValue.EndsWith("%");
-        //    bool endsWith = likeValue.StartsWith("%");
-
-        //    ConditionOperator conditionoperator;
-
-        //    if (startsWith)
-        //    {
-        //        if (endsWith)
-        //        {
-        //            // contains
-        //            if (filter.Not)
-        //            {
-        //                // Does Not contain operator not recognised by Xrm sdk??? 
-        //                // conditionoperator = ConditionOperator.DoesNotContain;
-        //                conditionoperator = ConditionOperator.NotLike;
-        //            }
-        //            else
-        //            {
-        //                //  Contains operator causes Xrm organisation servuce to throw "Generic SQL error"??? 
-        //                conditionoperator = ConditionOperator.Like;
-        //            }
-        //            // val = filter.RightHand.Value.Trim('%');
-        //        }
-        //        else
-        //        {
-        //            // starts with
-        //            likeValue = likeValue.TrimEnd('%');
-        //            if (filter.Not)
-        //            {
-        //                conditionoperator = ConditionOperator.DoesNotBeginWith;
-        //            }
-        //            else
-        //            {
-        //                conditionoperator = ConditionOperator.BeginsWith;
-        //            }
-        //        }
-        //    }
-        //    else if (endsWith)
-        //    {
-        //        // ends with;
-        //        // contains
-        //        likeValue = likeValue.TrimStart('%');
-        //        if (filter.Not)
-        //        {
-        //            conditionoperator = ConditionOperator.DoesNotEndWith;
-        //        }
-        //        else
-        //        {
-        //            conditionoperator = ConditionOperator.EndsWith;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (filter.Not)
-        //        {
-        //            conditionoperator = ConditionOperator.NotLike;
-        //        }
-        //        else
-        //        {
-        //            conditionoperator = ConditionOperator.Like;
-        //        }
-
-        //    }
-
-        //    SetConditionExpressionValue(condition, conditionoperator, likeValue);
-        //    return condition;
-        //}
-
         private static string GetLikeString(string likeString, bool not, out ConditionOperator conditionOperator)
         {
             // detect paramater
@@ -935,13 +850,6 @@ namespace CrmAdo
             }
         }
 
-        //private static bool IsParameter(Column column)
-        //{
-        //    // Due to bug in SQL Generation parsing logic, paramaters are not parsed as placeholders, they are parsed as columns.
-        //    // therefore we have to check the columns to see if they are actually meant to be paramater placeholders.
-        //    return column.Name.StartsWith(ParameterToken);
-        //}
-
         private static Column GetAttributeColumn(OrderFilter filter, out bool isColumnLeftSide)
         {
             var left = filter.LeftHand;
@@ -1112,33 +1020,6 @@ namespace CrmAdo
 
             throw new NotSupportedException();
         }
-
-        //private static void SetConditionExpressionValue(ConditionExpression condition, ConditionOperator conditionOperator, params DbParameter[] paramaters)
-        //{
-        //    condition.Operator = conditionOperator;
-        //    if (paramaters != null)
-        //    {
-        //        // var val = paramater.Value;
-        //        // condition.Values.Add(val);
-        //        // is the literal a 
-        //        foreach (var param in paramaters)
-        //        {
-        //            var paramValue = param.Value;
-        //            condition.Values.Add(paramValue);
-        //            //if (value is Array)
-        //            //{
-        //            //    foreach (var o in value as Array)
-        //            //    {
-        //            //        condition.Values.Add(o);
-        //            //    }
-        //            //}
-        //            //else
-        //            //{
-        //            //    condition.Values.Add(value);
-        //            //}
-        //        }
-        //    }
-        //}
 
         private static void SetConditionExpressionValue(ConditionExpression condition, ConditionOperator conditionOperator, params object[] values)
         {

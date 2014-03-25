@@ -30,14 +30,8 @@ namespace CrmAdo.Tests
 
             var sql = string.Format("Select C.contactid, C.firstname, C.lastname, A.addressline1 From contact C {0} JOIN address A on C.contactid = A.contactid", joinType);
 
-            var cmd = new CrmDbCommand(null);
-            cmd.CommandText = sql;
-
-            // Create test subject.
-            var subject = CreateTestSubject();
-
             // Act
-            var queryExpression = subject.CreateQueryExpression(cmd);
+            var queryExpression = base.GetQueryExpression(sql);
 
             //Assert
             Assert.That(queryExpression.ColumnSet.Columns.Count, Is.EqualTo(3));
@@ -74,14 +68,9 @@ namespace CrmAdo.Tests
                     join = JoinOperator.LeftOuter;
                     break;
             }
-
-            var cmd = new CrmDbCommand(null);
-            cmd.CommandText = sql;
-
-            // Create test subject.
-            var subject = CreateTestSubject();
+        
             // Act
-            var queryExpression = subject.CreateQueryExpression(cmd);
+            var queryExpression = base.GetQueryExpression(sql);
 
             Assert.That(queryExpression.ColumnSet.Columns.Count, Is.EqualTo(3));
             Assert.That(queryExpression.LinkEntities, Is.Not.Null);
@@ -116,14 +105,10 @@ namespace CrmAdo.Tests
         public void Should_Support_Joins_With_Filters_On_The_Joined_Table(string joinType, string filterOperator, object filterValue, string filterFormatString)
         {
             var sql = GetTestSqlWithJoinAndFilters(joinType, filterOperator, filterValue, filterFormatString);
-            var cmd = new CrmDbCommand(null);
-            cmd.CommandText = sql;
-
-            // Create test subject.
-            var subject = CreateTestSubject();
-            // Act
+          
             // Ask our test subject to Convert the SelectBuilder to a Query Expression.
-            var queryExpression = subject.CreateQueryExpression(cmd);
+            // Act
+            var queryExpression = base.GetQueryExpression(sql);
 
             // There should be filter criteria on the main entity and also on the link entity.
             //var defaultConditons = queryExpression.Criteria.Conditions;
@@ -145,13 +130,9 @@ namespace CrmAdo.Tests
         {
 
             var sql = GenerateTestSqlWithNestedJoinAndFilters(joinType, filterOperator, filterValue, filterFormatString);
-            var cmd = new CrmDbCommand(null);
-            cmd.CommandText = sql;
-
-            // Create test subject.
-            var subject = CreateTestSubject();
+         
             // Act
-            var queryExpression = subject.CreateQueryExpression(cmd);
+            var queryExpression = base.GetQueryExpression(sql);
 
             // Assert
             // the filter should have 3 conditions, one for main entity attribue, and others for the linked entities..
