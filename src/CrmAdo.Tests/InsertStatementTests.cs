@@ -99,7 +99,8 @@ namespace CrmAdo.Tests
         public void Should_Support_Insert_Of_datetime_From_String_Literal()
         {
             DateTime dateValue = DateTime.UtcNow;
-            Test_That_Sql_Insert_Statement_With_A_Literal_Value_Has_The_Value_Translated_To<DateTime>(dateValue, "datefield", dateValue.ToString(CultureInfo.InvariantCulture));
+            string sqlValue = string.Format("'{0}'", dateValue.ToString(CultureInfo.InvariantCulture));
+            Test_That_Sql_Insert_Statement_With_A_Literal_Value_Has_The_Value_Translated_To<DateTime>(dateValue, "datefield", sqlValue);
         }
 
         [Category("String Literal")]
@@ -107,7 +108,8 @@ namespace CrmAdo.Tests
         public void Should_Support_Insert_Of_string_From_String_Literal()
         {
             string stringValue = "bob";
-            Test_That_Sql_Insert_Statement_With_A_Literal_Value_Has_The_Value_Translated_To<string>(stringValue, "stringfield", stringValue);
+            string sqlValue = string.Format("'{0}'", stringValue);
+            Test_That_Sql_Insert_Statement_With_A_Literal_Value_Has_The_Value_Translated_To<string>(stringValue, "stringfield", sqlValue);
         }
 
         [Category("String Literal")]
@@ -115,16 +117,18 @@ namespace CrmAdo.Tests
         public void Should_Support_Insert_Of_guid_From_String_Literal()
         {
             Guid guidVal = Guid.Parse("9bf20a16-6034-48e2-80b4-8349bb80c3e2");
-            Test_That_Sql_Insert_Statement_With_A_Literal_Value_Has_The_Value_Translated_To<Guid>(guidVal, "guidfield", guidVal.ToString());
+            string sqlValue = string.Format("'{0}'", guidVal.ToString());
+            Test_That_Sql_Insert_Statement_With_A_Literal_Value_Has_The_Value_Translated_To<Guid>(guidVal, "guidfield", sqlValue);
         }
 
         [Category("String Literal")]
-        [Test(Description = "Should support Insert into guid field from string literal")]
-        public void Should_Support_Insert_Of_entityReference_From_String_Literal()
+        [Test(Description = "Should support Insert into entityreference field from guid string literal guid")]
+        public void Should_Support_Insert_Of_entityReference_From_String_Literal_Guid()
         {
             Guid guidVal = Guid.Parse("9bf20a16-6034-48e2-80b4-8349bb80c3e2");
             EntityReference entRef = new EntityReference("testEntity", guidVal);
-            Test_That_Sql_Insert_Statement_With_A_Literal_Value_Has_The_Value_Translated_To<EntityReference>(entRef, "entityreffield", guidVal.ToString());
+            string sqlValue = string.Format("'{0}'", guidVal);
+            Test_That_Sql_Insert_Statement_With_A_Literal_Value_Has_The_Value_Translated_To<EntityReference>(entRef, "entityreffield", sqlValue);
         }
 
         [Category("String Literal")]
