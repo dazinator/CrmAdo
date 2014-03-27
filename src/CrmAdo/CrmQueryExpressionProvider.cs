@@ -43,7 +43,11 @@ namespace CrmAdo
             var insertCommandBuilder = sqlCommandBuilder as InsertBuilder;
             if (insertCommandBuilder != null)
             {
-                throw new NotImplementedException();
+                GuardInsertBuilder(insertCommandBuilder);
+                var entity = BuildEntityFromInsert(insertCommandBuilder, command.Parameters);
+                var request = new CreateRequest();
+                request.Target = entity;
+                return request;
             }
 
             var updateCommandBuilder = sqlCommandBuilder as UpdateBuilder;
@@ -59,7 +63,78 @@ namespace CrmAdo
             }
 
             throw new NotSupportedException("Could not translate the command into the appropriate Organization Service Request Message");
-            
+
+        }
+
+        private Entity BuildEntityFromInsert(InsertBuilder insertCommandBuilder, DbParameterCollection parameters)
+        {
+            var source = insertCommandBuilder.Table.Source;
+            if (!source.IsTable)
+            {
+                throw new ArgumentException("Can only insert into a table");
+            }
+
+            var table = source as Table;
+            var entity = new Entity();
+            entity.LogicalName = GetTableLogicalEntityName(table);
+
+            ValueList valuesList = insertCommandBuilder.Values.IsValueList ? insertCommandBuilder.Values as ValueList : null;
+            if (valuesList != null)
+            {
+                var values = valuesList.Values.ToArray();
+                int columnOrdinal = 0;
+                foreach (var column in insertCommandBuilder.Columns)
+                {
+                    var sqlValue = values[columnOrdinal];
+                    var sdkValue = ConvertToSdkValue(sqlValue);
+                    entity[column.Name] = sdkValue;
+                    columnOrdinal++;
+                }
+            }
+
+            return entity;
+        }
+
+        private object ConvertToSdkValue(IProjectionItem sqlValue)
+        {
+            var literal = sqlValue as Literal;
+            if (literal != null)
+            {
+                var val = GitLiteralValue(literal);
+                // need metadata to convert it to the correct type of sdk value..
+                return val;
+            }
+
+            throw new NotSupportedException();
+
+        }
+
+        private void GuardInsertBuilder(InsertBuilder builder)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException("builder");
+            }
+            if (builder.Table == null)
+            {
+                throw new ArgumentException("The insert statement must specify a table name to insert to (this is the logical name of the entity).");
+            }
+            // if columns specified, then number of values should equate.
+            if (builder.Columns.Any())
+            {
+                if (builder.Values == null || !builder.Values.IsValueList || ((ValueList)builder.Values).Values.Count() != builder.Columns.Count())
+                {
+                    throw new ArgumentException("There is a mismatch between the number of columns and the number of values specified in the insert statement.");
+                }
+            }
+            //if (!builder.Values > 1)
+            //{
+            //    throw new NotSupportedException("The select statement must select from a single entity.");
+            //}
+            //if (!builder.Columns.Any())
+            //{
+            //    throw new InvalidOperationException("The select statement must select atleast 1 attribute.");
+            //}
         }
 
         public static QueryExpression FromCommand(ICommand command, DbParameterCollection paramaters)
@@ -536,10 +611,7 @@ namespace CrmAdo
                 {
                     return val;
                 }
-                else
-                {
-                    return stringLit.Value;
-                }
+                return stringLit.Value;
             }
 
             numberLiteral = lit as NumericLiteral;
@@ -560,6 +632,12 @@ namespace CrmAdo
                     }
                 }
 
+            }
+
+            var nullLiteral = lit as NullLiteral;
+            if (nullLiteral != null)
+            {
+                return null;
             }
 
             throw new NotSupportedException("Unknown Literal");
@@ -997,26 +1075,6 @@ namespace CrmAdo
                 SetConditionExpressionValue(condition, conditionOperator, param);
                 return;
             }
-
-            //Column paramater = null;
-            //if (isLeft)
-            //{
-            //    paramater = filter.RightHand as Column;
-            //}
-            //else
-            //{
-            //    paramater = filter.LeftHand as Column;
-            //}
-
-            //if (paramater != null)
-            //{
-            //    if (IsParameter(paramater))
-            //    {
-            //        var param = paramaters[paramater.Name];
-            //        SetConditionExpressionValue(condition, conditionOperator, param);
-            //        return;
-            //    }
-            //}
 
             throw new NotSupportedException();
         }

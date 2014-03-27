@@ -124,6 +124,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InsertStatementValidityTests.cs" />
     <Compile Include="InsertStatementTests.cs" />
     <Compile Include="SelectStatementJoinTests.cs" />
     <Compile Include="SelectStatementWhereFilterOperatorValidityTests.cs" />

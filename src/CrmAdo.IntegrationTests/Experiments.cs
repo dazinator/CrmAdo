@@ -14,7 +14,7 @@ namespace CrmAdo.IntegrationTests
     [TestFixture()]
     public class Experiments
     {
-
+        [Category("Experimentation")]
         [Test]
         [TestCase(TestName = "Experiment for contains and not contains")]
         public void Experiment_For_Contains_And_Not_Contains()
@@ -31,7 +31,7 @@ namespace CrmAdo.IntegrationTests
                 command.CommandText = sql;
                 //   command.CommandType = CommandType.Text;
 
-             
+
                 using (var reader = command.ExecuteReader())
                 {
                     int resultCount = 0;
@@ -54,6 +54,7 @@ namespace CrmAdo.IntegrationTests
 
         }
 
+        [Category("Experimentation")]
         [Test]
         public void Experiment_For_Filters_1()
         {
@@ -126,7 +127,8 @@ namespace CrmAdo.IntegrationTests
 
 
         }
-
+       
+        [Category("Experimentation")]
         [Test]
         public void Experiment_For_Filters_2_With_Linq_Conversion()
         {
@@ -178,6 +180,7 @@ namespace CrmAdo.IntegrationTests
 
         }
 
+        [Category("Experimentation")]
         [Test]
         public void Experiment_For_Filters_3()
         {
@@ -224,6 +227,7 @@ namespace CrmAdo.IntegrationTests
 
         }
 
+        [Category("Experimentation")]
         [Test]
         public void Experiment_For_Filters_4()
         {
@@ -272,7 +276,7 @@ namespace CrmAdo.IntegrationTests
 
         }
 
-
+        [Category("Experimentation")]
         [Test]
         [TestCase(TestName = "Experiment for filter groups")]
         public void Experiment_For_Filter_Groups()

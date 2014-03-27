@@ -31,7 +31,7 @@ namespace CrmAdo.Tests
         protected T GetOrganizationRequest<T>(CrmDbCommand command) where T : OrganizationRequest
         {
             var subject = CreateTestSubject();
-            var request = subject.GetOrganizationRequest(command) as RetrieveMultipleRequest;
+            var request = subject.GetOrganizationRequest(command) as T;
             return request as T;
         }
 

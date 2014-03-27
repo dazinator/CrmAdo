@@ -7,6 +7,8 @@ using Rhino.Mocks;
 
 namespace CrmAdo.Tests
 {
+    [Category("ADO")]
+    [Category("DataReader")]
     [TestFixture()]
     public class CrmDbDataReaderTests : BaseTest<CrmDbDataReader>
     {

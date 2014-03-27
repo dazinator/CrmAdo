@@ -7,6 +7,8 @@ using Rhino.Mocks;
 
 namespace CrmAdo.Tests
 {
+    [Category("ADO")]
+    [Category("Connection")]
     [TestFixture()]
     public class CrmDbConnectionTests : BaseTest<CrmDbConnection>
     {

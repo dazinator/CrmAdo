@@ -89,6 +89,7 @@ namespace CrmAdo.IntegrationTests
 
         }
 
+        [Category("Integration")]
         [Test(Description = "Integration tests that gets metadata from crm.")]
         public void Should_Get_Changed_Metadata()
         {
@@ -110,6 +111,7 @@ namespace CrmAdo.IntegrationTests
             Assert.That(contactMetadata.Attributes.FirstOrDefault(a => a.LogicalName == "lastname"), Is.Not.Null);
         }
 
+        [Category("Integration")]
         [Test]
         [TestCase("INNER")]
         [TestCase("LEFT")]
@@ -164,7 +166,7 @@ namespace CrmAdo.IntegrationTests
 
         }
 
-
+        [Category("Integration")]
         [TestCase("INNER", "((C.firstname = 'Albert' AND C.lastname = 'Einstein') OR (C.lastname = 'Planck' AND C.firstname = 'Max')) AND (C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", 2, TestName = "Should be able to chain filter groups in parenthesis using AND as well as OR conjunctions")]
         [TestCase("INNER", "(C.firstname = 'Albert' AND C.lastname = 'Einstein') OR (C.lastname = 'Planck' AND C.firstname = 'Max') OR (C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", 4, TestName = "Should be able to chain mutiple filter groups in parenthesis using an OR conjunction")]
         [TestCase("INNER", "C.firstname = 'Albert' AND (C.lastname = 'Einstein' AND C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", 2, TestName = "Should be able to chain an AND conjunction with a nested filter group containing an AND conjunction")]

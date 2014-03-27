@@ -3,6 +3,8 @@ using NUnit.Framework;
 
 namespace CrmAdo.Tests
 {
+    [Category("ADO")]
+    [Category("ProviderFactory")]
     [TestFixture()]
     public class CrmDbProviderFactoryTests : BaseTest<CrmDbProviderFactory>
     {

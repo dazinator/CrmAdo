@@ -5,6 +5,8 @@ using Rhino.Mocks;
 
 namespace CrmAdo.Tests
 {
+    [Category("ADO")]
+    [Category("Command")]
     [TestFixture()]
     public class CrmDbCommandTests : BaseTest<CrmDbCommand>
     {
@@ -13,7 +15,7 @@ namespace CrmAdo.Tests
         {
             var subject = CreateTestSubject();
         }
-
+        
         [Test]
         public void Should_Be_Able_To_Create_A_New_Command_With_Connection()
         {
@@ -21,7 +23,7 @@ namespace CrmAdo.Tests
             var subject = CreateTestSubject(conn);
             Assert.That(subject.Connection, Is.SameAs(conn));
         }
-
+        
         [Test]
         public void Should_Be_Able_To_Create_A_New_Command_With_Connection_And_Command_Text()
         {
@@ -31,7 +33,7 @@ namespace CrmAdo.Tests
             Assert.That(subject.Connection, Is.SameAs(conn));
             Assert.That(subject.CommandText, Is.EqualTo(commandText));
         }
-
+        
         [Test]
         [ExpectedException(typeof(InvalidOperationException))]
         public void Should_Throw_When_It_Has_An_Unopen_Connection_And_ExecuteDbDataReader_Is_Called_()
