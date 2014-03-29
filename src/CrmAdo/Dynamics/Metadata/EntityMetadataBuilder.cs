@@ -11,7 +11,7 @@ namespace CrmAdo.Dynamics.Metadata
 
         public EntityMetadata Entity { get; set; }
 
-        public EntityAttributeBuilder AttributeBuilder { get; set; }
+        public EntityAttributeMetadataBuilder AttributeBuilder { get; set; }
 
         public EntityMetadataBuilder(string entityName)
         {
@@ -26,7 +26,7 @@ namespace CrmAdo.Dynamics.Metadata
                     OwnershipType =  OwnershipTypes.UserOwned
                 };
 
-            AttributeBuilder = new EntityAttributeBuilder(this);
+            AttributeBuilder = new EntityAttributeMetadataBuilder(this);
 
         }
 
@@ -35,7 +35,7 @@ namespace CrmAdo.Dynamics.Metadata
             return Entity;
         }
 
-        public EntityAttributeBuilder WithAttributes()
+        public EntityAttributeMetadataBuilder WithAttributes()
         {
             return AttributeBuilder;
         }

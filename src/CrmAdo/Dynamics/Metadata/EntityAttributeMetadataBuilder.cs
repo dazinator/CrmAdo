@@ -7,20 +7,20 @@ namespace CrmAdo.Dynamics.Metadata
     /// <summary>
     /// Single responsbility: To provide a fluent API for constructing attribute metadata for an entity.
     /// </summary>
-    public class EntityAttributeBuilder
+    public class EntityAttributeMetadataBuilder
     {
         public EntityMetadataBuilder MetaDataBuilder { get; set; }
 
         public List<AttributeMetadata> Attributes { get; set; }
 
-        public EntityAttributeBuilder(EntityMetadataBuilder metadataBuilder)
+        public EntityAttributeMetadataBuilder(EntityMetadataBuilder metadataBuilder)
         {
             MetaDataBuilder = metadataBuilder;
             Attributes = new List<AttributeMetadata>();
         }
 
 
-        public EntityAttributeBuilder StringAttribute(string schemaName,  string displayName, string description,
+        public EntityAttributeMetadataBuilder StringAttribute(string schemaName,  string displayName, string description,
                                                                AttributeRequiredLevel requiredLevel,
                                                                int maxLength, StringFormat format)
         {
@@ -38,7 +38,7 @@ namespace CrmAdo.Dynamics.Metadata
             return this;
         }
 
-        public EntityAttributeBuilder BooleanAttribute(string schemaName,
+        public EntityAttributeMetadataBuilder BooleanAttribute(string schemaName,
                                                                  AttributeRequiredLevel requiredLevel,
                                                                  int maxLength, StringFormat format,
                                                                  string displayName, string description)
@@ -62,7 +62,7 @@ namespace CrmAdo.Dynamics.Metadata
             return this;
         }
 
-        public EntityAttributeBuilder DateTimeAttribute(string schemaName, string displayName, string description,
+        public EntityAttributeMetadataBuilder DateTimeAttribute(string schemaName, string displayName, string description,
                                                                  AttributeRequiredLevel requiredLevel,
                                                                  DateTimeFormat format, ImeMode imeMode)
         {

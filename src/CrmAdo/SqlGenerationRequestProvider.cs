@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using CrmAdo.Dynamics;
 using CrmAdo.Dynamics.Metadata;
+using Microsoft.Xrm.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
@@ -12,7 +13,6 @@ using SQLGeneration.Generators;
 
 namespace CrmAdo
 {
-
     public class SqlGenerationRequestProvider : ICrmRequestProvider
     {
 
@@ -44,7 +44,7 @@ namespace CrmAdo
             if (insertCommandBuilder != null)
             {
                 GuardInsertBuilder(insertCommandBuilder);
-                var entity = BuildEntityFromInsert(insertCommandBuilder, command.Parameters);
+                var entity = BuildEntityFromInsert(insertCommandBuilder, command);
                 var request = new CreateRequest();
                 request.Target = entity;
                 return request;
@@ -66,7 +66,7 @@ namespace CrmAdo
 
         }
 
-        private Entity BuildEntityFromInsert(InsertBuilder insertCommandBuilder, DbParameterCollection parameters)
+        private Entity BuildEntityFromInsert(InsertBuilder insertCommandBuilder, CrmDbCommand command)
         {
             var source = insertCommandBuilder.Table.Source;
             if (!source.IsTable)
@@ -75,8 +75,17 @@ namespace CrmAdo
             }
 
             var table = source as Table;
-            var entity = new Entity();
-            entity.LogicalName = GetTableLogicalEntityName(table);
+
+            var metadataProvider = command.CrmDbConnection.MetadataProvider;
+            var entityName = GetTableLogicalEntityName(table);
+
+            var entityBuilder = EntityBuilder.WithNewEntity(metadataProvider, entityName);
+          
+
+
+            
+           // var entityMetadata = metadataProvider.GetEntityMetadata(entity.LogicalName);
+
 
             ValueList valuesList = insertCommandBuilder.Values.IsValueList ? insertCommandBuilder.Values as ValueList : null;
             if (valuesList != null)
@@ -85,24 +94,26 @@ namespace CrmAdo
                 int columnOrdinal = 0;
                 foreach (var column in insertCommandBuilder.Columns)
                 {
-                    var sqlValue = values[columnOrdinal];
-                    var sdkValue = ConvertToSdkValue(sqlValue);
-                    entity[column.Name] = sdkValue;
+                    var columnValue = values[columnOrdinal];
+                    var sqlValue = GetSqlValue(columnValue);
+                    entityBuilder.WithAttribute(column.Name).SetValueWithTypeCoersion(sqlValue);
                     columnOrdinal++;
                 }
             }
 
-            return entity;
+            return entityBuilder.Build();
         }
 
-        private object ConvertToSdkValue(IProjectionItem sqlValue)
+        private object GetSqlValue(IProjectionItem projectionItem)
         {
-            var literal = sqlValue as Literal;
+            var literal = projectionItem as Literal;
             if (literal != null)
             {
-                var val = GitLiteralValue(literal);
-                // need metadata to convert it to the correct type of sdk value..
-                return val;
+                return GitLiteralValue(literal);
+            }
+            else
+            {
+                // could be a parameter?
             }
 
             throw new NotSupportedException();

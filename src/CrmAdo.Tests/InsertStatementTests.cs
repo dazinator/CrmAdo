@@ -82,7 +82,7 @@ namespace CrmAdo.Tests
         public void Should_Support_Insert_Of_bool_From_Numeric_Literal()
         {
             bool val = true;
-            Test_That_Sql_Insert_Statement_With_A_Literal_Value_Has_The_Value_Translated_To<bool>(val, "doublefield", "1");
+            Test_That_Sql_Insert_Statement_With_A_Literal_Value_Has_The_Value_Translated_To<bool>(val, "boolfield", "1");
         }
 
         [Category("Numeric Literal")]
