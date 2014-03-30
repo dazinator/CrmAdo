@@ -4,7 +4,7 @@
     <id>CrmAdo</id>
     <version>0.0.0</version>
     <title>CrmAdo</title>
-    <description>CrmAdo is an ADO.Net data provider for Dynamics Crm. It hides from you the complexities of using the IOrganisation web service, and instead exposes Dynamics Crm to you as if it was an ordinary SQL database / data source. It allows you to use the familiar ADO.Net model to connect to, and perform queries against Dynamics CRM, and you can use the familiar T-SQL language to write your queries. CrmAdo handles all the conversion between your T-SQL queries / commands into the appropriate IOrganisation web service interactions behind the scenes, so to all intense and purposes it will appear to you as if Dynamics CRM is just an ordinary Sql database.</description>
+    <description>CrmAdo is an ADO.Net data provider for Dynamics Crm. It's goal is to make it easy for you to perform CRUD operations against Dynamics Crm. It hides away the complexities of using the IOrganisation web service, and exposes Dynamics to you as an ordinary ADO.Net data source that you can execute T-SQL against. It allows you to use the familiar ADO.Net classes to connect to, and perform your queries against Dynamics CRM. Architecturally, CrmAdo sits on top of the Dynamics SDK, and handles all the conversion between your T-SQL commands submitted by the ADO.Net classes, into the appropriate IOrganisation web service calls and interactions behind the scenes.</description>
     <authors>Darrell Tunnell</authors>
     <owners>Darrell Tunnell</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>   
@@ -13,15 +13,17 @@
     <copyright>Copyright � Darrell Tunnell 2014</copyright>
     <releaseNotes>
       # 1.0.0-alpha
-      - Intial Alpha release, all unit tests passing, currently only supports "Read" access to Dynamics CRM. Insert / Update and Delete will come in a future version.
+      - Intial Alpha release, all unit tests passing, currently only supports "Read" access to Dynamics CRM.
       # 1.0.1-alpha
       - Changed the invariant name for the provider to be System.Data.DynamicsCrm.CrmAdo
       - Added web and app config transform to NuGet package so that the DbProviderFactory configuration is done for you automatically.
       - Corrected and tidied release notes.
       # 1.0.1
       - Stable release.
+      # 1.0.2
+      - Added INSERT capability.
     </releaseNotes>
-    <tags>Dynamics Crm ADO ADO.Net Data Provider SQL T-SQL</tags>
+    <tags>Dynamics Crm ADO ADO.Net Data Provider SQL T-SQL DynamicsCrm</tags>
     <dependencies>
       <dependency id="SQLGeneration" version="2.4.3.0" />
       <dependency id="Microsoft.IdentityModel" version="6.1.7600.16394" />
