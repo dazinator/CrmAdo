@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using CrmAdo.Dynamics.Metadata;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 
@@ -12,16 +13,18 @@ namespace CrmAdo
     {
         private ICrmRequestProvider _CrmRequestProvider;
         private ICrmMetaDataProvider _MetadataProvider;
+        private ISqlStatementTypeChecker _SqlStatementTypeChecker;
 
         #region Constructor
         public CrmCommandExecutor(CrmDbConnection connection)
-            : this(new SqlGenerationRequestProvider(), connection)
+            : this(new SqlGenerationRequestProvider(), connection, new SqlStatementTypeChecker())
         {
         }
 
-        public CrmCommandExecutor(ICrmRequestProvider requestProvider, CrmDbConnection connection)
+        public CrmCommandExecutor(ICrmRequestProvider requestProvider, CrmDbConnection connection, ISqlStatementTypeChecker sqlStatementTypeChecker)
         {
             _CrmRequestProvider = requestProvider;
+            _SqlStatementTypeChecker = sqlStatementTypeChecker;
             if (connection != null)
             {
                 _MetadataProvider = connection.MetadataProvider;
@@ -76,7 +79,6 @@ namespace CrmAdo
         {
             //  string commandText = "SELECT CustomerId, FirstName, LastName, Created FROM Customer";
             var request = _CrmRequestProvider.GetOrganizationRequest(command);
-
             var retrieveMultipleRequest = request as RetrieveMultipleRequest;
             if (retrieveMultipleRequest != null)
             {
@@ -117,7 +119,33 @@ namespace CrmAdo
 
         private EntityResultSet ProcessCreateRequest(CrmDbCommand command, CreateRequest createRequest)
         {
-            throw new NotImplementedException();
+            var orgService = command.CrmDbConnection.OrganizationService;
+            var response = orgService.Execute(createRequest);
+            var resultSet = new EntityResultSet();
+            var createResponse = response as CreateResponse;
+            if (createResponse != null)
+            {
+                // for execute reader and execute scalar purposes, we provide a result that just ahs the newly created id of the entity.
+                var result = new Entity(createRequest.Target.LogicalName);
+                var idattname = string.Format("{0}id", createRequest.Target.LogicalName);
+                result[idattname] = createResponse.id;
+                result.Id = createResponse.id;
+                resultSet.Results = new EntityCollection(new List<Entity>(new Entity[] { result }));
+
+                // We populate metadata regarding the columns in the results. In this case its just the id attribute column for the inserted record.
+                if (_MetadataProvider != null)
+                {
+                    var columns = new List<ColumnMetadata>();
+                    var entityMeta = _MetadataProvider.GetEntityMetadata(createRequest.Target.LogicalName);
+                    columns.AddRange((from c in entityMeta.Attributes
+                                      join s in result.Attributes.Select(a=>a.Key)
+                                          on c.LogicalName equals s
+                                      select new ColumnMetadata(c)).Reverse());
+                    resultSet.ColumnMetadata = columns;
+                }
+
+            }
+            return resultSet;
         }
 
         private EntityResultSet ProcessRetrieveMultiple(CrmDbCommand command, RetrieveMultipleRequest retrieveMultipleRequest)
@@ -135,6 +163,7 @@ namespace CrmAdo
         }
 
         #region Metadata
+
         private void PopulateMetadata(EntityResultSet resultSet, QueryExpression queryExpression)
         {
             if (_MetadataProvider != null)
@@ -221,8 +250,37 @@ namespace CrmAdo
             // You can use ExecuteNonQuery to perform catalog operations (for example, querying the structure of a database or creating database objects such as tables), or to change the data in a database by executing UPDATE, INSERT, or DELETE statements.
             // Although ExecuteNonQuery does not return any rows, any output parameters or return values mapped to parameters are populated with data.
             // For UPDATE, INSERT, and DELETE statements, the return value is the number of rows affected by the command. For all other types of statements, the return value is -1.
-            return -1;
+           
+            var request = _CrmRequestProvider.GetOrganizationRequest(command);
+            var createRequest = request as CreateRequest;
+            if (createRequest != null)
+            {
+                //todo check for output paramater named after id, and set it..
+                var results = ProcessCreateRequest(command, createRequest);
+                return results.ResultCount();
+            }
+
+            var updateRequest = request as UpdateRequest;
+            if (updateRequest != null)
+            {
+               var results = ProcessUpdateRequest(command, updateRequest);
+               return results.ResultCount();
+            }
+
+            var deleteRequest = request as DeleteRequest;
+            if (deleteRequest != null)
+            {
+                var results = ProcessDeleteRequest(command, deleteRequest);
+                return results.ResultCount();
+            }
+
+            // we don't yet support any DDL.
+            throw new NotSupportedException();
+           
+           // return -1;
         }
+
+
     }
 
 }
