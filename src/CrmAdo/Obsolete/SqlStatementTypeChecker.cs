@@ -1,8 +1,11 @@
+using System;
+
 namespace CrmAdo
 {
     /// <summary>
     /// Responsible for categorising a particular sql command into whether it is a SELECT, INSERT, UPDATE, or DELETE statement. 
     /// </summary>
+    [Obsolete]
     public class SqlStatementTypeChecker : ISqlStatementTypeChecker
     {
         public SqlStatementType GetCommandType(string commandText)

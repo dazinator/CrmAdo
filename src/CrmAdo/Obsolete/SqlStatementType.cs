@@ -1,5 +1,8 @@
+using System;
+
 namespace CrmAdo
 {
+    [Obsolete]
     public enum SqlStatementType
     {
         Insert = 0,

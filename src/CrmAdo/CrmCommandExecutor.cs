@@ -13,18 +13,18 @@ namespace CrmAdo
     {
         private ICrmRequestProvider _CrmRequestProvider;
         private ICrmMetaDataProvider _MetadataProvider;
-        private ISqlStatementTypeChecker _SqlStatementTypeChecker;
+       // private ISqlStatementTypeChecker _SqlStatementTypeChecker;
 
         #region Constructor
         public CrmCommandExecutor(CrmDbConnection connection)
-            : this(new SqlGenerationRequestProvider(), connection, new SqlStatementTypeChecker())
+            : this(new SqlGenerationRequestProvider(), connection)
         {
         }
 
-        public CrmCommandExecutor(ICrmRequestProvider requestProvider, CrmDbConnection connection, ISqlStatementTypeChecker sqlStatementTypeChecker)
+        public CrmCommandExecutor(ICrmRequestProvider requestProvider, CrmDbConnection connection)
         {
             _CrmRequestProvider = requestProvider;
-            _SqlStatementTypeChecker = sqlStatementTypeChecker;
+           // _SqlStatementTypeChecker = sqlStatementTypeChecker;
             if (connection != null)
             {
                 _MetadataProvider = connection.MetadataProvider;
