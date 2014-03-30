@@ -9,7 +9,7 @@ namespace CrmAdo.Dynamics
 
         bool GetBoolean(object value);
 
-        object GetCalendarRules(object value);
+        EntityCollection GetCalendarRules(object value);
 
         EntityReference GetCustomer(object value);
 
@@ -25,7 +25,7 @@ namespace CrmAdo.Dynamics
 
         EntityReference GetLookup(object value);
 
-        object GetManagedProperty(object value);
+        BooleanManagedProperty GetManagedProperty(object value);
 
         string GetMemo(object value);
 
@@ -33,7 +33,7 @@ namespace CrmAdo.Dynamics
 
         EntityReference GetOwner(object value);
 
-        object GetPartyList(object value);
+        EntityCollection GetPartyList(object value);
 
         OptionSetValue GetPicklist(object value);
 
