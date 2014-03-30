@@ -21,6 +21,16 @@ namespace CrmAdo.Tests
             Assert.That(result, Is.EqualTo(x));
         }
 
+        [Test(Description = "Should get BigInt from int")]
+        public void Should_Get_BigInt_From_int()
+        {
+            int x = 8467;
+            long y = Convert.ToInt64(x);
+            var sut = CreateTestSubject();
+            var result = sut.GetBigInt((object)x);
+            Assert.That(result, Is.EqualTo(y));
+        }
+
         [Test(Description = "Should get BigInt from string")]
         public void Should_Get_BigInt_From_String()
         {

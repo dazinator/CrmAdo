@@ -80,13 +80,8 @@ namespace CrmAdo
             var entityName = GetTableLogicalEntityName(table);
 
             var entityBuilder = EntityBuilder.WithNewEntity(metadataProvider, entityName);
-          
-
-
+            // var entityMetadata = metadataProvider.GetEntityMetadata(entity.LogicalName);
             
-           // var entityMetadata = metadataProvider.GetEntityMetadata(entity.LogicalName);
-
-
             ValueList valuesList = insertCommandBuilder.Values.IsValueList ? insertCommandBuilder.Values as ValueList : null;
             if (valuesList != null)
             {
@@ -628,13 +623,23 @@ namespace CrmAdo
             numberLiteral = lit as NumericLiteral;
             if (numberLiteral != null)
             {
-                // cast down from double if possible..
+                // cast down from double to int if possible..
                 checked
                 {
                     try
                     {
-                        int intValue = (int)numberLiteral.Value;
-                        return intValue;
+                        if ((numberLiteral.Value % 1) == 0)
+                        {
+                            int intValue = (int)numberLiteral.Value;
+                            if (intValue == numberLiteral.Value)
+                            {
+                                return intValue;
+                            }
+                        }
+
+                        // can we return a decimal instead?
+                        var decVal = Convert.ToDecimal(numberLiteral.Value);
+                        return decVal;
                     }
                     catch (OverflowException)
                     {

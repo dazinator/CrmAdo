@@ -110,6 +110,10 @@ namespace CrmAdo.Dynamics
             public EntityBuilder SetValue<T>(T val)
             {
                 this.EntityBuilder.Entity[AttributeMetadata.LogicalName] = val;
+                if (AttributeMetadata.IsPrimaryId.GetValueOrDefault())
+                {
+                    this.EntityBuilder.Entity.Id = AttributeTypeConverter.GetUniqueIdentifier(val);
+                }
                 return this.EntityBuilder;
             }
 

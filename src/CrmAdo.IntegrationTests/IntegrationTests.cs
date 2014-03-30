@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
+using System.Xml;
 using CrmAdo.Dynamics;
 using CrmAdo.Dynamics.Metadata;
 using Microsoft.Xrm.Sdk.Query;
@@ -101,6 +103,16 @@ namespace CrmAdo.IntegrationTests
             var sut = new EntityMetadataRepository(serviceProvider);
             // act
             var contactMetadata = sut.GetEntityMetadata("contact");
+
+            var serialised = EntityMetadataUtils.SerializeMetaData(contactMetadata, Formatting.Indented);
+            var path = Environment.CurrentDirectory;
+            var fileName = System.IO.Path.Combine(path, "contactMedadata.xml");
+            Console.Write("writing to: " + fileName);
+            using (var writer = new StreamWriter(fileName))
+            {
+                writer.Write(serialised);
+                writer.Flush();
+            }
 
             // assert
             Assert.That(contactMetadata, Is.Not.Null);

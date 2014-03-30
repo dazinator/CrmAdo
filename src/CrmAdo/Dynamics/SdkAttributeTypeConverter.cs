@@ -15,6 +15,10 @@ namespace CrmAdo.Dynamics
             {
                 return (long)value;
             }
+            if (typeCode == TypeCode.Int32)
+            {
+                return Convert.ToInt64((int)value);
+            }
             if (typeCode == TypeCode.String)
             {
                 long sdkVal;
@@ -103,6 +107,10 @@ namespace CrmAdo.Dynamics
             if (typeCode == TypeCode.Double)
             {
                 return (double)value;
+            }
+            if (typeCode == TypeCode.Decimal || typeCode == TypeCode.Int32)
+            {
+                return Convert.ToDouble(value);
             }
             if (typeCode == TypeCode.String)
             {
