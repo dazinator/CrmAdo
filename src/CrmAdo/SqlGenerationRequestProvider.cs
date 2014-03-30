@@ -81,7 +81,7 @@ namespace CrmAdo
 
             var entityBuilder = EntityBuilder.WithNewEntity(metadataProvider, entityName);
             // var entityMetadata = metadataProvider.GetEntityMetadata(entity.LogicalName);
-            
+
             ValueList valuesList = insertCommandBuilder.Values.IsValueList ? insertCommandBuilder.Values as ValueList : null;
             if (valuesList != null)
             {
@@ -90,8 +90,18 @@ namespace CrmAdo
                 foreach (var column in insertCommandBuilder.Columns)
                 {
                     var columnValue = values[columnOrdinal];
-                    var sqlValue = GetSqlValue(columnValue);
+                    bool isParameter;
+                    var sqlValue = GetSqlValue(columnValue, command.Parameters, out isParameter);
+                    //if (!isParameter)
+                    //{
+                    // parameters provided directly have no need to be coerced..
                     entityBuilder.WithAttribute(column.Name).SetValueWithTypeCoersion(sqlValue);
+                    //  }
+                    //  else
+                    // {
+                    //    entityBuilder.WithAttribute(column.Name).SetValue(sqlValue);
+                    // }
+
                     columnOrdinal++;
                 }
             }
@@ -99,20 +109,22 @@ namespace CrmAdo
             return entityBuilder.Build();
         }
 
-        private object GetSqlValue(IProjectionItem projectionItem)
+        private object GetSqlValue(IProjectionItem projectionItem, DbParameterCollection parameters, out bool isParameter)
         {
+            isParameter = false;
             var literal = projectionItem as Literal;
             if (literal != null)
             {
                 return GitLiteralValue(literal);
             }
-            else
+            var placeholder = projectionItem as Placeholder;
+            if (placeholder != null)
             {
-                // could be a parameter?
+                isParameter = true;
+                var paramVal = GetParamaterValue<object>(parameters, placeholder.Value);
+                return paramVal;
             }
-
             throw new NotSupportedException();
-
         }
 
         private void GuardInsertBuilder(InsertBuilder builder)
