@@ -53,7 +53,11 @@ namespace CrmAdo
             var updateCommandBuilder = sqlCommandBuilder as UpdateBuilder;
             if (updateCommandBuilder != null)
             {
-                throw new NotImplementedException();
+                GuardUpdateBuilder(updateCommandBuilder);
+                var entity = BuildEntityFromUpdate(updateCommandBuilder, command);
+                var request = new UpdateRequest();
+                request.Target = entity;
+                return request;
             }
 
             var deleteCommandBuilder = sqlCommandBuilder as DeleteBuilder;
@@ -64,6 +68,30 @@ namespace CrmAdo
 
             throw new NotSupportedException("Could not translate the command into the appropriate Organization Service Request Message");
 
+        }
+
+        private void GuardUpdateBuilder(UpdateBuilder builder)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException("builder");
+            }
+            if (builder.Table == null)
+            {
+                throw new ArgumentException("The update statement must specify a single table name to update (this is the logical name of the entity).");
+            }
+            // There should be exatly one where filter which is the id of the entity.
+            if (!builder.Where.Any() || builder.Where.Count() > 1)
+            {
+                throw new ArgumentException("The update statement should have exactly one filter in the where clause which should specify the entity id for the record to be updated.");
+            }
+            var firstWhere = builder.Where.FirstOrDefault();
+            var idFilter = firstWhere as EqualToFilter;
+            if (idFilter == null)
+            {
+                throw new NotSupportedException("The update statement has an unsupported filter in it's where clause. The where clause should contain a single 'equal to' filter that specifies the entity id of the particular record to update.");
+            }
+            // idFilter.RightHand
         }
 
         private Entity BuildEntityFromInsert(InsertBuilder insertCommandBuilder, CrmDbCommand command)
@@ -80,7 +108,6 @@ namespace CrmAdo
             var entityName = GetTableLogicalEntityName(table);
 
             var entityBuilder = EntityBuilder.WithNewEntity(metadataProvider, entityName);
-            // var entityMetadata = metadataProvider.GetEntityMetadata(entity.LogicalName);
 
             ValueList valuesList = insertCommandBuilder.Values.IsValueList ? insertCommandBuilder.Values as ValueList : null;
             if (valuesList != null)
@@ -92,18 +119,66 @@ namespace CrmAdo
                     var columnValue = values[columnOrdinal];
                     bool isParameter;
                     var sqlValue = GetSqlValue(columnValue, command.Parameters, out isParameter);
-                    //if (!isParameter)
-                    //{
-                    // parameters provided directly have no need to be coerced..
-                    entityBuilder.WithAttribute(column.Name).SetValueWithTypeCoersion(sqlValue);
-                    //  }
-                    //  else
-                    // {
-                    //    entityBuilder.WithAttribute(column.Name).SetValue(sqlValue);
-                    // }
-
+                    var attName = GetAttributeNameForColumn(column);
+                    entityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(sqlValue);
                     columnOrdinal++;
                 }
+            }
+
+            return entityBuilder.Build();
+        }
+
+        private string GetAttributeNameForColumn(Column column)
+        {
+            if (column == null)
+            {
+                throw new ArgumentNullException("column");
+            }
+            return column.Name.ToLower();
+        }
+
+        private Entity BuildEntityFromUpdate(UpdateBuilder builder, CrmDbCommand command)
+        {
+            var source = builder.Table.Source;
+            if (!source.IsTable)
+            {
+                throw new ArgumentException("Can only update a table");
+            }
+            var table = source as Table;
+            var metadataProvider = command.CrmDbConnection.MetadataProvider;
+            var entityName = GetTableLogicalEntityName(table);
+          
+            var entity = new Entity(entityName);
+
+            var firstWhere = builder.Where.FirstOrDefault();
+            var idFilter = firstWhere as EqualToFilter;
+            if (idFilter == null)
+            {
+                throw new NotSupportedException("The update statement has an unsupported filter in it's where clause. The where clause should contain a single 'equal to' filter that specifies the entity id of the particular record to update.");
+            }
+            bool isColumnOnLeftSide;
+            var attColumn = GetAttributeColumn(idFilter, out isColumnOnLeftSide);
+            if (attColumn == null)
+            {
+                throw new NotSupportedException("The update statement has an unsupported filter in it's where clause. The'equal to' filter should specify the entity id column on one side.");
+            }
+            var idAttName =  GetAttributeNameForColumn(attColumn);
+              var expectedIdAttributeName = string.Format("{0}id", entityName.ToLower());
+            if (idAttName != expectedIdAttributeName)
+            {
+                  throw new NotSupportedException("The update statement has an unsupported filter in it's where clause. The'equal to' filter should specify the id column of the entity on one side.");
+            }
+
+            var idVal = GetFilterValue<object>(idFilter, isColumnOnLeftSide, command.Parameters);
+            var entityBuilder = EntityBuilder.WithExistingEntity(metadataProvider, entity);
+            entityBuilder.WithAttribute(idAttName).SetValueWithTypeCoersion(idVal);
+
+            foreach (var setter in builder.Setters)
+            {
+                var attName = GetAttributeNameForColumn(setter.Column);
+                bool isParam;
+                var val = GetSqlValue(setter.Value, command.Parameters, out isParam);
+                entityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(val);
             }
 
             return entityBuilder.Build();
@@ -833,7 +908,8 @@ namespace CrmAdo
             if (equalTo != null)
             {
                 con = ConditionOperator.Equal;
-                SetColumnCondition(condition, con, filter, isLeft, paramaters);
+                var filterValue = GetFilterValue<object>(filter, isLeft, paramaters);
+                SetConditionExpressionValue(condition, con, filterValue);
                 return condition;
             }
 
@@ -842,7 +918,8 @@ namespace CrmAdo
             if (notEqualTo != null)
             {
                 con = ConditionOperator.NotEqual;
-                SetColumnCondition(condition, con, filter, isLeft, paramaters);
+                var filterValue = GetFilterValue<object>(filter, isLeft, paramaters);
+                SetConditionExpressionValue(condition, con, filterValue);
                 return condition;
             }
 
@@ -851,7 +928,8 @@ namespace CrmAdo
             if (greaterThan != null)
             {
                 con = ConditionOperator.GreaterThan;
-                SetColumnCondition(condition, con, filter, isLeft, paramaters);
+                var filterValue = GetFilterValue<object>(filter, isLeft, paramaters);
+                SetConditionExpressionValue(condition, con, filterValue);
                 return condition;
             }
 
@@ -860,7 +938,8 @@ namespace CrmAdo
             if (greaterEqual != null)
             {
                 con = ConditionOperator.GreaterEqual;
-                SetColumnCondition(condition, con, filter, isLeft, paramaters);
+                var filterValue = GetFilterValue<object>(filter, isLeft, paramaters);
+                SetConditionExpressionValue(condition, con, filterValue);
                 return condition;
             }
 
@@ -869,7 +948,8 @@ namespace CrmAdo
             if (lessThan != null)
             {
                 con = ConditionOperator.LessThan;
-                SetColumnCondition(condition, con, filter, isLeft, paramaters);
+                var filterValue = GetFilterValue<object>(filter, isLeft, paramaters);
+                SetConditionExpressionValue(condition, con, filterValue);
                 return condition;
             }
 
@@ -878,7 +958,8 @@ namespace CrmAdo
             if (lessThanEqual != null)
             {
                 con = ConditionOperator.LessEqual;
-                SetColumnCondition(condition, con, filter, isLeft, paramaters);
+                var filterValue = GetFilterValue<object>(filter, isLeft, paramaters);
+                SetConditionExpressionValue(condition, con, filterValue);
                 return condition;
             }
 
@@ -886,7 +967,7 @@ namespace CrmAdo
             var likeFilter = filter as LikeFilter;
             if (likeFilter != null)
             {
-                var conditionValue = GetConditionValue<string>(likeFilter, isLeft, paramaters);
+                var conditionValue = GetFilterValue<string>(likeFilter, isLeft, paramaters);
                 ConditionOperator likeOperator;
                 var newLike = GetLikeString(conditionValue, likeFilter.Not, out likeOperator);
                 SetConditionExpressionValue(condition, likeOperator, newLike);
@@ -966,36 +1047,13 @@ namespace CrmAdo
             isColumnLeftSide = false;
             if (leftcolumn != null)
             {
-
                 attributeColumn = leftcolumn;
                 isColumnLeftSide = true;
-
-                //// issue with sql generation library, where it doesn't parse @param from sql string as a placeholder, instead it parses it as a column.
-                //if (IsParameter(leftcolumn))
-                //{
-
-                //}
-                //else
-                //{
-                //    attributeColumn = leftcolumn;
-                //    isColumnLeftSide = true;
-                //}
-
             }
             else if (rightcolumn != null)
             {
                 attributeColumn = rightcolumn;
-                // issue with sql generation library, where it doesn't parse @param from sql string as a placeholder, instead it parses it as a column.
-                //if (IsParameter(rightcolumn))
-                //{
-                //    // filter.LeftHand = new Placeholder(leftcolumn.Name);
-                //}
-                //else
-                //{
-                //    attributeColumn = rightcolumn;
-                //}
             }
-
             if (attributeColumn == null)
             {
                 throw new InvalidOperationException("The query contains a WHERE clause, however one side of the where condition must refer to an attribute name.");
@@ -1026,7 +1084,7 @@ namespace CrmAdo
             return table.Name.ToLower();
         }
 
-        private static T GetConditionValue<T>(OrderFilter filter, bool isLeft, DbParameterCollection paramaters)
+        private static T GetFilterValue<T>(OrderFilter filter, bool isLeft, DbParameterCollection paramaters)
         {
             // check for literals..
             Literal lit = null;
@@ -1041,8 +1099,7 @@ namespace CrmAdo
 
             if (lit != null)
             {
-                object litVal = GitLiteralValue(lit);
-                return (T)litVal;
+                return (T)GitLiteralValue(lit);
             }
 
             // check for placeholders..
@@ -1063,48 +1120,16 @@ namespace CrmAdo
 
             throw new NotSupportedException("Could not get value of type: " + typeof(T).FullName);
 
-
         }
 
-        private static void SetColumnCondition(ConditionExpression condition, ConditionOperator conditionOperator, OrderFilter filter, bool isLeft, DbParameterCollection paramaters)
+        private static T GetParamaterValue<T>(DbParameterCollection parameters, string paramName)
         {
-            // check for literals..
-            Literal lit = null;
-            if (isLeft)
+            if (!parameters.Contains(paramName))
             {
-                lit = filter.RightHand as Literal;
+                throw new InvalidOperationException("Missing parameter value for parameter named: " + paramName);
             }
-            else
-            {
-                lit = filter.LeftHand as Literal;
-            }
-
-            if (lit != null)
-            {
-                object litVal = GitLiteralValue(lit);
-                SetConditionExpressionValue(condition, conditionOperator, litVal);
-                return;
-            }
-
-            // check for paramaters - these should be placeholders but sqlgeneration doesn't parse them correctly so they are columns.
-            Placeholder placeholder = null;
-            if (isLeft)
-            {
-                placeholder = filter.RightHand as Placeholder;
-            }
-            else
-            {
-                placeholder = filter.LeftHand as Placeholder;
-            }
-
-            if (placeholder != null)
-            {
-                var param = GetParamaterValue<object>(paramaters, placeholder.Value);
-                SetConditionExpressionValue(condition, conditionOperator, param);
-                return;
-            }
-
-            throw new NotSupportedException();
+            var param = parameters[paramName];
+            return (T)param.Value;
         }
 
         private static void SetConditionExpressionValue(ConditionExpression condition, ConditionOperator conditionOperator, params object[] values)
@@ -1130,15 +1155,7 @@ namespace CrmAdo
             }
         }
 
-        private static T GetParamaterValue<T>(DbParameterCollection parameters, string paramName)
-        {
-            if (!parameters.Contains(paramName))
-            {
-                throw new InvalidOperationException("Missing parameter value for parameter named: " + paramName);
-            }
-            var param = parameters[paramName];
-            return (T)param.Value;
-        }
+
 
         #endregion
 

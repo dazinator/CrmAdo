@@ -114,7 +114,16 @@ namespace CrmAdo
 
         private EntityResultSet ProcessUpdateRequest(CrmDbCommand command, UpdateRequest updateRequest)
         {
-            throw new NotImplementedException();
+            var orgService = command.CrmDbConnection.OrganizationService;
+            var response = orgService.Execute(updateRequest);
+            var resultSet = new EntityResultSet();
+            var updateResponse = response as UpdateResponse;
+            if (updateResponse != null)
+            {
+                var result = updateRequest.Target;
+                resultSet.Results = new EntityCollection(new List<Entity>(new Entity[] { result }));
+            }
+            return resultSet;
         }
 
         private EntityResultSet ProcessCreateRequest(CrmDbCommand command, CreateRequest createRequest)

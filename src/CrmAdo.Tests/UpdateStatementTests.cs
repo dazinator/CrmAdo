@@ -150,7 +150,7 @@ namespace CrmAdo.Tests
         private void Test_That_Sql_Update_Statement_With_A_Literal_Value_Has_The_Value_Translated_To<T>(T assertValue, string fieldname, string sqlLiteralValue)
         {
             var existingContactGuid = Guid.NewGuid();
-            string sqlFormatString = "UPDATE contact SET " + fieldname + " = {0} WHERE contactid = {1}";
+            string sqlFormatString = "UPDATE contact SET " + fieldname + " = {0} WHERE contactid = '{1}'";
             var sqlWithValue = string.Format(sqlFormatString, sqlLiteralValue, existingContactGuid);
 
             // set up fake metadata provider.
