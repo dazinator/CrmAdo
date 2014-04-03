@@ -39,7 +39,7 @@ namespace CrmAdo.IntegrationTests
         {
 
             var sql = string.Format(insertSql, _NewContactId, "Derren", "Brown");
-
+            Console.WriteLine(sql);
             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
             using (var conn = new CrmDbConnection(connectionString.ConnectionString))
             {
@@ -59,10 +59,6 @@ namespace CrmAdo.IntegrationTests
                         var contactId = (Guid)reader["contactid"];
                         Console.WriteLine(string.Format("{0}", contactId));
                     }
-                    //while (reader.Read())
-                    //{
-
-                    //}
                     Console.WriteLine("There were " + resultCount + " results..");
                 }
             }
