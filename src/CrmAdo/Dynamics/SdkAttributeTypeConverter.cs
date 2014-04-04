@@ -4,7 +4,7 @@ using Microsoft.Xrm.Sdk;
 
 namespace CrmAdo.Dynamics
 {
-    public class SdkAttributeTypeConverter : ISdkAttributeTypeConverter
+    public class SdkAttributeTypeConverter : IDynamicsAttributeTypeProvider
     {
         //public const string DateTimeFormatString = "yyyy-MM-ddTHH:mm:ss.fffffffK";
 

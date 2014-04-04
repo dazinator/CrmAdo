@@ -124,6 +124,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeleteStatementTests.cs" />
     <Compile Include="UpdateStatementTests.cs" />
     <Compile Include="SdkAttributeTypeConverterTests.cs" />
     <Compile Include="InsertStatementValidityTests.cs" />

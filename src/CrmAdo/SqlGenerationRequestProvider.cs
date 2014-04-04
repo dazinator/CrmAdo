@@ -17,6 +17,17 @@ namespace CrmAdo
     {
 
         public const string ParameterToken = "@";
+        private IDynamicsAttributeTypeProvider _TypeProvider;
+
+        public SqlGenerationRequestProvider()
+            : this(new SdkAttributeTypeConverter())
+        {
+        }
+
+        public SqlGenerationRequestProvider(IDynamicsAttributeTypeProvider typeProvider)
+        {
+            _TypeProvider = typeProvider;
+        }
 
         /// <summary>
         /// Creates a QueryExpression from the given Select command.
@@ -63,11 +74,38 @@ namespace CrmAdo
             var deleteCommandBuilder = sqlCommandBuilder as DeleteBuilder;
             if (deleteCommandBuilder != null)
             {
-                throw new NotImplementedException();
+                GuardDeleteBuilder(deleteCommandBuilder);
+                var entity = BuildEntityReferenceFromDelete(deleteCommandBuilder, command);
+                var request = new DeleteRequest();
+                request.Target = entity;
+                return request;
             }
 
             throw new NotSupportedException("Could not translate the command into the appropriate Organization Service Request Message");
 
+        }
+
+        private void GuardDeleteBuilder(DeleteBuilder builder)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException("builder");
+            }
+            if (builder.Table == null)
+            {
+                throw new ArgumentException("The delete statement must specify a single table name to delete from (this is the logical name of the entity).");
+            }
+            // There should be exatly one where filter which is the id of the entity.
+            if (!builder.Where.Any() || builder.Where.Count() > 1)
+            {
+                throw new ArgumentException("The delete statement should have exactly one filter in the where clause which should specify the entity id for the record to be deleted.");
+            }
+            var firstWhere = builder.Where.FirstOrDefault();
+            var idFilter = firstWhere as EqualToFilter;
+            if (idFilter == null)
+            {
+                throw new NotSupportedException("The delete statement has an unsupported filter in it's where clause. The where clause should contain a single 'equal to' filter that specifies the entity id of the particular record to delete.");
+            }
         }
 
         private void GuardUpdateBuilder(UpdateBuilder builder)
@@ -137,6 +175,40 @@ namespace CrmAdo
             return column.Name.ToLower();
         }
 
+        private EntityReference BuildEntityReferenceFromDelete(DeleteBuilder builder, CrmDbCommand command)
+        {
+            var source = builder.Table.Source;
+            if (!source.IsTable)
+            {
+                throw new ArgumentException("Can only delete a table");
+            }
+            var table = source as Table;
+            var entityName = GetTableLogicalEntityName(table);
+            var firstWhere = builder.Where.FirstOrDefault();
+            var idFilter = firstWhere as EqualToFilter;
+            if (idFilter == null)
+            {
+                throw new NotSupportedException("The delete statement has an unsupported filter in it's where clause. The where clause should contain a single 'equal to' filter that specifies the entity id of the particular record to delete.");
+            }
+            bool isColumnOnLeftSide;
+            var attColumn = GetAttributeColumn(idFilter, out isColumnOnLeftSide);
+            if (attColumn == null)
+            {
+                throw new NotSupportedException("The delete statement has an unsupported filter in it's where clause. The'equal to' filter should specify the entity id column on one side.");
+            }
+            var idAttName = GetAttributeNameForColumn(attColumn);
+            var expectedIdAttributeName = string.Format("{0}id", entityName.ToLower());
+            if (idAttName != expectedIdAttributeName)
+            {
+                throw new NotSupportedException("The delete statement has an unsupported filter in it's where clause. The'equal to' filter should specify the id column of the entity on one side.");
+            }
+
+            var idVal = GetFilterValue<object>(idFilter, isColumnOnLeftSide, command.Parameters);
+            var targetId = _TypeProvider.GetUniqueIdentifier(idVal);
+            var entRef = new EntityReference(entityName, targetId);
+            return entRef;
+        }
+
         private Entity BuildEntityFromUpdate(UpdateBuilder builder, CrmDbCommand command)
         {
             var source = builder.Table.Source;
@@ -147,7 +219,7 @@ namespace CrmAdo
             var table = source as Table;
             var metadataProvider = command.CrmDbConnection.MetadataProvider;
             var entityName = GetTableLogicalEntityName(table);
-          
+
             var entity = new Entity(entityName);
 
             var firstWhere = builder.Where.FirstOrDefault();
@@ -162,11 +234,11 @@ namespace CrmAdo
             {
                 throw new NotSupportedException("The update statement has an unsupported filter in it's where clause. The'equal to' filter should specify the entity id column on one side.");
             }
-            var idAttName =  GetAttributeNameForColumn(attColumn);
-              var expectedIdAttributeName = string.Format("{0}id", entityName.ToLower());
+            var idAttName = GetAttributeNameForColumn(attColumn);
+            var expectedIdAttributeName = string.Format("{0}id", entityName.ToLower());
             if (idAttName != expectedIdAttributeName)
             {
-                  throw new NotSupportedException("The update statement has an unsupported filter in it's where clause. The'equal to' filter should specify the id column of the entity on one side.");
+                throw new NotSupportedException("The update statement has an unsupported filter in it's where clause. The'equal to' filter should specify the id column of the entity on one side.");
             }
 
             var idVal = GetFilterValue<object>(idFilter, isColumnOnLeftSide, command.Parameters);

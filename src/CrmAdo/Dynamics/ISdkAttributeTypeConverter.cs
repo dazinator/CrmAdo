@@ -3,7 +3,7 @@ using Microsoft.Xrm.Sdk;
 
 namespace CrmAdo.Dynamics
 {
-    public interface ISdkAttributeTypeConverter
+    public interface IDynamicsAttributeTypeProvider
     {
         long GetBigInt(object val);
 
