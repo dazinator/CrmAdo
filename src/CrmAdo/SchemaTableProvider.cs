@@ -73,6 +73,35 @@ namespace CrmAdo
                         row[SchemaTableColumn.NumericPrecision] = doublePrecision;
                         row[SchemaTableColumn.NumericScale] = doubleMeta.Precision; // dynamics uses the term precision in its metadata to refer to the number of decimal places - which is actually the "scale"!
                         break;
+                    case AttributeTypeCode.Money:
+                        var moneyMeta = (MoneyAttributeMetadata)columnMetadata.AttributeMetadata;
+                        int moneyPrecision = 18;
+                        int moneyScale = 2;
+                        switch (moneyMeta.PrecisionSource.GetValueOrDefault())
+                        {
+                            // When the precision is set to zero (0), the MoneyAttributeMetadata.Precision value is used.
+
+                            case 0:
+                                moneyPrecision = Math.Max(moneyMeta.MinValue.ToString().Length, moneyMeta.MaxValue.ToString().Length) + moneyMeta.Precision.GetValueOrDefault();
+                                moneyScale = moneyMeta.Precision.GetValueOrDefault();
+                                break;
+                            // When the precision is set to one (1), the Organization.PricingDecimalPrecision value is used.
+                            case 1:
+                                // todo need to support grabbing this info from the organization. For now just always using metadata.
+                                moneyPrecision = Math.Max(moneyMeta.MinValue.ToString().Length, moneyMeta.MaxValue.ToString().Length) + moneyMeta.Precision.GetValueOrDefault();
+                                moneyScale = moneyMeta.Precision.GetValueOrDefault();
+                                break;
+                            // When the precision is set to two (2), the TransactionCurrency.CurrencyPrecision value is used.
+                            case 2:
+                                // todo: need to grab this information from the transaction currency itself..!
+                                moneyPrecision = Math.Max(moneyMeta.MinValue.ToString().Length, moneyMeta.MaxValue.ToString().Length) + moneyMeta.Precision.GetValueOrDefault();
+                                moneyScale = moneyMeta.Precision.GetValueOrDefault();
+                                break;
+                        }
+
+                        row[SchemaTableColumn.NumericPrecision] = moneyPrecision;
+                        row[SchemaTableColumn.NumericScale] = moneyScale;
+                        break;
                 }
                 row[SchemaTableColumn.ProviderType] = columnMetadata.AttributeType().ToString();
 
