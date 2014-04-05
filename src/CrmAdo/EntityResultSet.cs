@@ -7,7 +7,6 @@ namespace CrmAdo
     public class EntityResultSet
     {
         //TODO: Consider return datatable and using datatable reader?
-
         public EntityCollection Results { get; set; }
         public List<ColumnMetadata> ColumnMetadata { get; set; }
 
@@ -24,5 +23,6 @@ namespace CrmAdo
             }
             return -1;
         }
+
     }
 }

@@ -20,7 +20,7 @@ namespace CrmAdo
         private IDynamicsAttributeTypeProvider _TypeProvider;
 
         public SqlGenerationRequestProvider()
-            : this(new SdkAttributeTypeConverter())
+            : this(new DynamicsAttributeTypeProvider())
         {
         }
 

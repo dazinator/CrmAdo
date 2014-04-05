@@ -17,14 +17,19 @@ namespace CrmAdo
         private const int StartPosition = -1;
         private int _Position = StartPosition;
         private EntityResultSet _Results;
+        private ISchemaTableProvider _SchemaTableProvider;
 
         public CrmDbDataReader(EntityResultSet results)
             : this(results, null)
         {
-
         }
 
         public CrmDbDataReader(EntityResultSet results, DbConnection dbConnection)
+            : this(results, dbConnection, new SchemaTableProvider())
+        {
+        }
+
+        public CrmDbDataReader(EntityResultSet results, DbConnection dbConnection, ISchemaTableProvider schemaTableProvider)
         {
             // TODO: Complete member initialization
             if (results == null)
@@ -33,6 +38,7 @@ namespace CrmAdo
             }
             this._Results = results;
             this._DbConnection = dbConnection;
+            this._SchemaTableProvider = schemaTableProvider;
             _IsOpen = true;
         }
 
@@ -149,67 +155,34 @@ namespace CrmAdo
             throw new IndexOutOfRangeException("The column named " + name + " was not found in the available columns: " + availableColumns);
         }
 
+        /// <summary>
+        /// Retruns the name of the data type for the field, e.g 'varchar'
+        /// </summary>
+        /// <param name="ordinal"></param>
+        /// <returns></returns>
         public override string GetDataTypeName(int ordinal)
         {
-            return _Results.ColumnMetadata[ordinal].ColumnDataType();
+            // retrun the data type name e.g 'varchar'
+            return _Results.ColumnMetadata[ordinal].GetDataTypeName();
         }
 
+        /// <summary>
+        /// Returns the .NET type of the field.
+        /// </summary>
+        /// <param name="ordinal"></param>
+        /// <returns></returns>
         public override Type GetFieldType(int ordinal)
         {
-            switch (_Results.ColumnMetadata[ordinal].AttributeType())
-            {
-                case AttributeTypeCode.BigInt:
-                    return typeof(long);
-                case AttributeTypeCode.Boolean:
-                    return typeof(bool);
-                case AttributeTypeCode.CalendarRules:
-                    return typeof(string);
-                case AttributeTypeCode.Customer:
-                    return typeof(Guid);
-                case AttributeTypeCode.DateTime:
-                    return typeof(DateTime);
-                case AttributeTypeCode.Decimal:
-                    return typeof(decimal);
-                case AttributeTypeCode.Double:
-                    return typeof(double);
-                case AttributeTypeCode.EntityName:
-                    return typeof(string);
-                case AttributeTypeCode.Integer:
-                    return typeof(int);
-                case AttributeTypeCode.Lookup:
-                    return typeof(Guid);
-                case AttributeTypeCode.ManagedProperty:
-                    return typeof(bool);
-                case AttributeTypeCode.Memo:
-                    return typeof(string);
-                case AttributeTypeCode.Money:
-                    return typeof(decimal);
-                case AttributeTypeCode.Owner:
-                    return typeof(Guid);
-                case AttributeTypeCode.PartyList:
-                    return typeof(string);
-                case AttributeTypeCode.Picklist:
-                    return typeof(int);
-                case AttributeTypeCode.State:
-                    return typeof(int);
-                case AttributeTypeCode.Status:
-                    return typeof(int);
-                case AttributeTypeCode.String:
-                    return typeof(string);
-                case AttributeTypeCode.Uniqueidentifier:
-                    return typeof(Guid);
-                case AttributeTypeCode.Virtual:
-                    return typeof(string);
-                default:
-                    throw new NotSupportedException();
-
-            }
+            return _Results.ColumnMetadata[ordinal].GetFieldType();
         }
 
+        /// <summary>
+        /// Returns schema information.
+        /// </summary>
+        /// <returns></returns>
         public override DataTable GetSchemaTable()
         {
-            //Note to self: See here for implementation info: http://msdn.microsoft.com/en-us/library/system.data.sqlclient.sqldatareader.getschematable(v=vs.110).aspx
-            throw new NotSupportedException();
+            return _SchemaTableProvider.GetSchemaTable(this._Results.ColumnMetadata);
         }
 
         #endregion
@@ -239,7 +212,7 @@ namespace CrmAdo
             var val = record[name];
             if (_Results.ColumnMetadata[ordinal].HasAlias)
             {
-                var aliasedVal  = val as AliasedValue;
+                var aliasedVal = val as AliasedValue;
                 if (aliasedVal != null)
                 {
                     //if (!typeof(T).IsAssignableFrom(typeof(AliasedValue)))

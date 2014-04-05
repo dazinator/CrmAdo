@@ -142,9 +142,11 @@
     <Compile Include="CrmDbTypeConverter.cs" />
     <Compile Include="CrmParameterCollection.cs" />
     <Compile Include="Dynamics\EntityBuilder.cs" />
-    <Compile Include="Dynamics\ISdkAttributeTypeConverter.cs" />
-    <Compile Include="Dynamics\SdkAttributeTypeConverter.cs" />
+    <Compile Include="Dynamics\IDynamicsAttributeTypeProvider.cs" />
+    <Compile Include="Dynamics\DynamicsAttributeTypeProvider.cs" />
+    <Compile Include="ISchemaTableProvider.cs" />
     <Compile Include="Obsolete\ISqlStatementTypeChecker.cs" />
+    <Compile Include="SchemaTableProvider.cs" />
     <Compile Include="SqlGenerationRequestProvider.cs" />
     <Compile Include="DataReaderExtensions.cs" />
     <Compile Include="Dynamics\CrmClientCredentialsProvider.cs" />

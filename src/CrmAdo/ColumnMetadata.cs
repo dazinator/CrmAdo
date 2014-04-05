@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using CrmAdo.Dynamics.Metadata;
 using Microsoft.Xrm.Sdk.Metadata;
 
 namespace CrmAdo
@@ -34,13 +35,13 @@ namespace CrmAdo
 
         public string EntityAlias { get; set; }
 
-        public bool HasAlias { get { return _hasAlias;} }
+        public bool HasAlias { get { return _hasAlias; } }
 
         public virtual string ColumnName { get { return _columnName; } }
 
         public virtual string LogicalAttributeName { get { return AttributeMetadata.LogicalName; } }
 
-        public virtual string ColumnDataType()
+        public virtual string GetDataTypeName()
         {
             if (AttributeMetadata.AttributeType != null) return AttributeMetadata.AttributeType.Value.ToString();
             return string.Empty;
@@ -52,6 +53,11 @@ namespace CrmAdo
             return AttributeTypeCode.String;
         }
 
+        public virtual Type GetFieldType()
+        {
+            return AttributeMetadata.GetCrmAgnosticType();
+        }
+
         /// <summary>
         /// Compares the name that could include an alias to see if it matches the same logical name.
         /// </summary>
@@ -60,7 +66,7 @@ namespace CrmAdo
         {
             if (aliasedName.Contains("."))
             {
-                var segments = aliasedName.Split(new char[] {'.'}, StringSplitOptions.RemoveEmptyEntries);
+                var segments = aliasedName.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
                 var name = segments.Last();
                 return name.ToLower() == this.LogicalAttributeName;
             }
@@ -70,15 +76,4 @@ namespace CrmAdo
             }
         }
     }
-
-    //public class ColumnMetadata
-    //{
-    //    public string Name { get; set; }
-    //    public string DataTypeName
-    //    {
-    //        get { return this.AttributeTypeCode.ToString(); }
-    //    }
-    //    public AttributeTypeCode AttributeTypeCode { get; set; }
-    //    public Type DataType { get; set; }
-    //}
 }

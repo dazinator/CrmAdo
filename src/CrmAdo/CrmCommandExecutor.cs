@@ -13,7 +13,7 @@ namespace CrmAdo
     {
         private ICrmRequestProvider _CrmRequestProvider;
         private ICrmMetaDataProvider _MetadataProvider;
-       // private ISqlStatementTypeChecker _SqlStatementTypeChecker;
+        // private ISqlStatementTypeChecker _SqlStatementTypeChecker;
 
         #region Constructor
         public CrmCommandExecutor(CrmDbConnection connection)
@@ -24,7 +24,7 @@ namespace CrmAdo
         public CrmCommandExecutor(ICrmRequestProvider requestProvider, CrmDbConnection connection)
         {
             _CrmRequestProvider = requestProvider;
-           // _SqlStatementTypeChecker = sqlStatementTypeChecker;
+            // _SqlStatementTypeChecker = sqlStatementTypeChecker;
             if (connection != null)
             {
                 _MetadataProvider = connection.MetadataProvider;
@@ -32,18 +32,19 @@ namespace CrmAdo
         }
         #endregion
 
-        public EntityResultSet ExecuteCommand(CrmDbCommand command)
+        public EntityResultSet ExecuteCommand(CrmDbCommand command, CommandBehavior behavior)
         {
             //TODO: Should process the command text, and execute a query to dynamics, returning the Entity Collection results.
             // what would these command types mean in terms of dynamics queries?
             EntityResultSet results = null;
+            // if ((behavior & CommandBehavior.KeyInfo) > 0)
             switch (command.CommandType)
             {
                 case CommandType.Text:
-                    results = ProcessTextCommand(command);
+                    results = ProcessTextCommand(command, behavior);
                     break;
                 case CommandType.TableDirect:
-                    results = ProcessTableDirectCommand(command);
+                    results = ProcessTableDirectCommand(command, behavior);
                     break;
                 case CommandType.StoredProcedure:
                     results = ProcessStoredProcedureCommand(command);
@@ -52,7 +53,7 @@ namespace CrmAdo
             return results;
         }
 
-        private EntityResultSet ProcessTableDirectCommand(CrmDbCommand command)
+        private EntityResultSet ProcessTableDirectCommand(CrmDbCommand command, CommandBehavior behavior)
         {
             // The command should be the name of a single entity.
             var entityName = command.CommandText;
@@ -63,26 +64,33 @@ namespace CrmAdo
 
             var orgService = command.CrmDbConnection.OrganizationService;
             // Todo: possibly support paging by returning a PagedEntityCollection implementation? 
-            var results = orgService.RetrieveMultiple(new QueryExpression(entityName) { ColumnSet = new ColumnSet(true) });
+            bool schemaOnly = (behavior & CommandBehavior.SchemaOnly) > 0;
             var resultSet = new EntityResultSet();
+            if (!schemaOnly)
+            {
+                var results = orgService.RetrieveMultiple(new QueryExpression(entityName) { ColumnSet = new ColumnSet(true) });
+                resultSet.Results = results;
+            }
             if (_MetadataProvider != null)
             {
                 resultSet.ColumnMetadata = new List<ColumnMetadata>();
                 resultSet.ColumnMetadata.AddRange(from a in _MetadataProvider.GetEntityMetadata(entityName).Attributes select new ColumnMetadata(a));
                 resultSet.ColumnMetadata.Reverse();
             }
-            resultSet.Results = results;
             return resultSet;
         }
 
-        private EntityResultSet ProcessTextCommand(CrmDbCommand command)
+        private EntityResultSet ProcessTextCommand(CrmDbCommand command, CommandBehavior behavior)
         {
             //  string commandText = "SELECT CustomerId, FirstName, LastName, Created FROM Customer";
+
+            bool schemaOnly = (behavior & CommandBehavior.SchemaOnly) > 0;
+
             var request = _CrmRequestProvider.GetOrganizationRequest(command);
             var retrieveMultipleRequest = request as RetrieveMultipleRequest;
             if (retrieveMultipleRequest != null)
             {
-                return ProcessRetrieveMultiple(command, retrieveMultipleRequest);
+                return ProcessRetrieveMultiple(command, retrieveMultipleRequest, schemaOnly);
             }
 
             var createRequest = request as CreateRequest;
@@ -109,7 +117,16 @@ namespace CrmAdo
 
         private EntityResultSet ProcessDeleteRequest(CrmDbCommand command, DeleteRequest deleteRequest)
         {
-            throw new NotImplementedException();
+            var orgService = command.CrmDbConnection.OrganizationService;
+            var response = orgService.Execute(deleteRequest);
+            var resultSet = new EntityResultSet();
+            //var delResponse = response as DeleteResponse;
+            //if (delResponse != null)
+            //{
+            //    var result = delResponse.Results;
+            //    resultSet.Results = new EntityCollection(new List<Entity>(new Entity[] { result }));
+            //}
+            return resultSet;
         }
 
         private EntityResultSet ProcessUpdateRequest(CrmDbCommand command, UpdateRequest updateRequest)
@@ -147,7 +164,7 @@ namespace CrmAdo
                     var columns = new List<ColumnMetadata>();
                     var entityMeta = _MetadataProvider.GetEntityMetadata(createRequest.Target.LogicalName);
                     columns.AddRange((from c in entityMeta.Attributes
-                                      join s in result.Attributes.Select(a=>a.Key)
+                                      join s in result.Attributes.Select(a => a.Key)
                                           on c.LogicalName equals s
                                       select new ColumnMetadata(c)).Reverse());
                     resultSet.ColumnMetadata = columns;
@@ -157,17 +174,20 @@ namespace CrmAdo
             return resultSet;
         }
 
-        private EntityResultSet ProcessRetrieveMultiple(CrmDbCommand command, RetrieveMultipleRequest retrieveMultipleRequest)
+        private EntityResultSet ProcessRetrieveMultiple(CrmDbCommand command, RetrieveMultipleRequest retrieveMultipleRequest, bool schemaOnly = false)
         {
             var orgService = command.CrmDbConnection.OrganizationService;
-            var response = orgService.Execute(retrieveMultipleRequest);
             var resultSet = new EntityResultSet();
-            var retrieveMultipleResponse = response as RetrieveMultipleResponse;
-            if (retrieveMultipleResponse != null)
+            if (!schemaOnly)
             {
-                PopulateMetadata(resultSet, retrieveMultipleRequest.Query as QueryExpression);
-                resultSet.Results = retrieveMultipleResponse.EntityCollection;
+                var response = orgService.Execute(retrieveMultipleRequest);
+                var retrieveMultipleResponse = response as RetrieveMultipleResponse;
+                if (retrieveMultipleResponse != null)
+                {
+                    resultSet.Results = retrieveMultipleResponse.EntityCollection;
+                }
             }
+            PopulateMetadata(resultSet, retrieveMultipleRequest.Query as QueryExpression);
             return resultSet;
         }
 
@@ -259,7 +279,7 @@ namespace CrmAdo
             // You can use ExecuteNonQuery to perform catalog operations (for example, querying the structure of a database or creating database objects such as tables), or to change the data in a database by executing UPDATE, INSERT, or DELETE statements.
             // Although ExecuteNonQuery does not return any rows, any output parameters or return values mapped to parameters are populated with data.
             // For UPDATE, INSERT, and DELETE statements, the return value is the number of rows affected by the command. For all other types of statements, the return value is -1.
-           
+
             var request = _CrmRequestProvider.GetOrganizationRequest(command);
             var createRequest = request as CreateRequest;
             if (createRequest != null)
@@ -272,8 +292,8 @@ namespace CrmAdo
             var updateRequest = request as UpdateRequest;
             if (updateRequest != null)
             {
-               var results = ProcessUpdateRequest(command, updateRequest);
-               return results.ResultCount();
+                var results = ProcessUpdateRequest(command, updateRequest);
+                return results.ResultCount();
             }
 
             var deleteRequest = request as DeleteRequest;
@@ -285,8 +305,8 @@ namespace CrmAdo
 
             // we don't yet support any DDL.
             throw new NotSupportedException();
-           
-           // return -1;
+
+            // return -1;
         }
 
 

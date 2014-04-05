@@ -65,12 +65,12 @@ namespace CrmAdo.Tests
 
             var firstNameC = MockRepository.GenerateMock<ColumnMetadata>();
             firstNameC.Stub(a => a.ColumnName).Return("firstname");
-            firstNameC.Stub(a => a.ColumnDataType()).Return("string");
+            firstNameC.Stub(a => a.GetDataTypeName()).Return("string");
             firstNameC.Stub(a => a.AttributeType()).Return( AttributeTypeCode.String);
 
             var lastnameC = MockRepository.GenerateMock<ColumnMetadata>();
             lastnameC.Stub(a => a.ColumnName).Return("lastname");
-            lastnameC.Stub(a => a.ColumnDataType()).Return("string");
+            lastnameC.Stub(a => a.GetDataTypeName()).Return("string");
             lastnameC.Stub(a => a.AttributeType()).Return(AttributeTypeCode.String);
           //  lastnameC.AttributeMetadata
          

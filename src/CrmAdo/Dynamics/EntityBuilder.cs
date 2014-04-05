@@ -78,7 +78,7 @@ namespace CrmAdo.Dynamics
         /// </summary>
         public class EntityAttributeBuilder
         {
-            protected SdkAttributeTypeConverter AttributeTypeConverter { get; set; }
+            protected DynamicsAttributeTypeProvider AttributeTypeConverter { get; set; }
 
             public EntityBuilder EntityBuilder { get; set; }
 
@@ -88,7 +88,7 @@ namespace CrmAdo.Dynamics
             {
                 EntityBuilder = entityBuilder;
                 AttributeMetadata = attributeMetadata;
-                AttributeTypeConverter = new SdkAttributeTypeConverter();
+                AttributeTypeConverter = new DynamicsAttributeTypeProvider();
             }
 
             public EntityBuilder SetNull()
