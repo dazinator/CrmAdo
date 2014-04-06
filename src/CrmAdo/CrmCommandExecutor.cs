@@ -53,6 +53,14 @@ namespace CrmAdo
             return results;
         }
 
+        private void AssignResponseParameter(CrmDbCommand command, OrganizationResponse response)
+        {
+            if (command != null && command.Parameters.Contains(SystemCommandParameters.OrgResponse) && command.Parameters[SystemCommandParameters.OrgResponse].Direction == ParameterDirection.Output)
+            {
+                command.Parameters[SystemCommandParameters.OrgResponse].Value = response;
+            }
+        }
+
         private EntityResultSet ProcessTableDirectCommand(CrmDbCommand command, CommandBehavior behavior)
         {
             // The command should be the name of a single entity.
@@ -68,8 +76,12 @@ namespace CrmAdo
             var resultSet = new EntityResultSet();
             if (!schemaOnly)
             {
-                var results = orgService.RetrieveMultiple(new QueryExpression(entityName) { ColumnSet = new ColumnSet(true) });
-                resultSet.Results = results;
+                var response = (RetrieveMultipleResponse)orgService.Execute(new RetrieveMultipleRequest()
+                      {
+                          Query = new QueryExpression(entityName) { ColumnSet = new ColumnSet(true) }
+                      });
+                AssignResponseParameter(command, response);
+                resultSet.Results = response.EntityCollection;
             }
             if (_MetadataProvider != null)
             {
@@ -119,6 +131,7 @@ namespace CrmAdo
         {
             var orgService = command.CrmDbConnection.OrganizationService;
             var response = orgService.Execute(deleteRequest);
+            AssignResponseParameter(command, response);
             var resultSet = new EntityResultSet();
             //var delResponse = response as DeleteResponse;
             //if (delResponse != null)
@@ -137,6 +150,7 @@ namespace CrmAdo
             var updateResponse = response as UpdateResponse;
             if (updateResponse != null)
             {
+                AssignResponseParameter(command, response);
                 var result = updateRequest.Target;
                 resultSet.Results = new EntityCollection(new List<Entity>(new Entity[] { result }));
             }
@@ -151,6 +165,7 @@ namespace CrmAdo
             var createResponse = response as CreateResponse;
             if (createResponse != null)
             {
+                AssignResponseParameter(command, response);
                 // for execute reader and execute scalar purposes, we provide a result that just ahs the newly created id of the entity.
                 var result = new Entity(createRequest.Target.LogicalName);
                 var idattname = string.Format("{0}id", createRequest.Target.LogicalName);
@@ -184,6 +199,7 @@ namespace CrmAdo
                 var retrieveMultipleResponse = response as RetrieveMultipleResponse;
                 if (retrieveMultipleResponse != null)
                 {
+                    AssignResponseParameter(command, response);
                     resultSet.Results = retrieveMultipleResponse.EntityCollection;
                 }
             }
