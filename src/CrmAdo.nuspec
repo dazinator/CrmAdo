@@ -12,7 +12,7 @@
     <projectUrl>http://dazinator.github.io/CrmAdo/</projectUrl>
     <copyright>Copyright � Darrell Tunnell 2014</copyright>
     <releaseNotes>
-     SQL DELETE statements are now supported. This completes a milestone as SELECT, INSERT, UPDATE and DELETE are now all supported!   
+     TOP clause is now supported. For example, SELECT TOP 10 firstname, lastname FROM contact  
     </releaseNotes>
     <tags>Dynamics Crm ADO ADO.Net Data Provider SQL T-SQL DynamicsCrm</tags>
     <dependencies>
