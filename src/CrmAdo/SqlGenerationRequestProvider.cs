@@ -319,8 +319,26 @@ namespace CrmAdo
                 {
                     AddWhere(selCommand.Where, query, paramaters);
                 }
+                if (selCommand.Top != null)
+                {
+                    AddTop(selCommand.Top, query);
+                }
             }
             return query;
+        }
+
+        private static void AddTop(Top top, QueryExpression query)
+        {
+            if (top.IsPercent)
+            {
+                throw new NotSupportedException("TOP X PERCENT is not supported.");
+            }
+            var topCount = top.Expression as NumericLiteral;
+            if (topCount == null)
+            {
+                throw new ArgumentException("The TOP Clause should specify the number of records to limit the resultset to as a numeric literal.");
+            }
+            query.TopCount = (int)GitLiteralValue(topCount);
         }
 
         #region Where and Filters
@@ -758,6 +776,10 @@ namespace CrmAdo
             if (!builder.Projection.Any())
             {
                 throw new InvalidOperationException("The select statement must select atleast 1 attribute.");
+            }
+            if (builder.Top != null && builder.Top.IsPercent)
+            {
+                throw new NotSupportedException("select TOP X PERCENT is not supported, only select TOP X is supported.");
             }
         }
 

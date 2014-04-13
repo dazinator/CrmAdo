@@ -2,7 +2,8 @@
 
 namespace CrmAdo.Tests
 {
-    [TestFixture()]
+
+    [TestFixture(Category = "Select Statement")]
     public class SelectStatementProjectionTests : CrmQueryExpressionProviderTestsBase
     {
 
@@ -35,5 +36,5 @@ namespace CrmAdo.Tests
             Assert.That(queryExpression.EntityName == "contact");
         }
 
-     }
+    }
 }
