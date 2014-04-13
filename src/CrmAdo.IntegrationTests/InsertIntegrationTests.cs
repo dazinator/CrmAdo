@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -15,30 +16,31 @@ namespace CrmAdo.IntegrationTests
     [TestFixture()]
     public class InsertIntegrationTests
     {
-        private Guid _NewContactId;
+        private List<Guid> _NewContactIds;
 
         [SetUp]
         public void Setup()
         {
-            _NewContactId = Guid.NewGuid();
+            _NewContactIds = new List<Guid>();
         }
 
         [TearDown]
         public void TearDown()
         {
-            _NewContactId = Guid.NewGuid();
-        }
+            // remove the created contacts from dynamics..
 
+        }
 
         // NOTE: THESE TESTS REQUIRE A CONNECTION STRING TO BE SET IN THE CONFIG FILE, WITH A NAME OF 'CrmOrganisation'
         // ============================================================================================================
         [Category("Integration")]
-        [Test(Description = "Integration tests that perform a variety of select queries against CRM.")]
-        [TestCase("INSERT INTO contact (contactid, firstname, lastname) Values('{0}','{1}','{2}')")]
-        public void Should_Get_Results_When_Querying_Crm_Using_Filter_Operators(string insertSql)
+        [Category("Insert Statement")]
+        [Test(Description = "Integration tests that inserts a new contact into Dynamics CRM contacts.")]
+        [TestCase("INSERT INTO contact (firstname, lastname) Values('{0}','{1}')")]
+        public void Should_Be_Able_To_Insert_A_Contact(string insertSql)
         {
 
-            var sql = string.Format(insertSql, _NewContactId, "Derren", "Brown");
+            var sql = string.Format(insertSql, "Derren", "Brown");
             Console.WriteLine(sql);
             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
             using (var conn = new CrmDbConnection(connectionString.ConnectionString))
@@ -65,159 +67,92 @@ namespace CrmAdo.IntegrationTests
 
         }
 
+
+        //[Category("Integration")]
+        //[Category("Insert Statement")]
+        //[Category("Performance")]
+        //[Test(Description = "Integration tests that inserts 10000 contacts into Dynamics CRM.")]
+        //public void Should_Be_Able_To_Insert_Many_Contacts()
+        //{
+        //    var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+        //    using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+        //    {
+        //        conn.Open();
+        //        // create 10000 contacts in dynamics..
+        //        Console.WriteLine("starting insert..");
+        //        var watch = new Stopwatch();
+        //        watch.Start();
+        //        for (int i = 0; i < 10000; i++)
+        //        {
+        //            Guid testdata = Guid.NewGuid();
+        //            var sql = string.Format("INSERT INTO contact (contactid, firstname, lastname) Values('{0}','{1}','{2}')", testdata, "Derren" + testdata.ToString(), "Brown");
+
+        //            var command = conn.CreateCommand();
+        //            command.CommandText = sql;
+        //            var result = command.ExecuteNonQuery();
+        //            Assert.That(result, Is.EqualTo(1));
+        //        }
+        //        watch.Stop();
+        //        Console.WriteLine("Inserting 10000 contacts took " + watch.Elapsed.ToString());
+
+        //    }
+
+        //}
+
+
+
         [Category("Integration")]
-        [Test(Description = "Integration tests that gets metadata from crm.")]
-        public void Should_Get_Changed_Metadata()
+        [Category("Select Statement")]
+        [Category("Performance")]
+        [TestCase(-1, Description = "Can select all contacts")]
+        [TestCase(10000, Description = "Can select TOP 10000 contacts",ExpectedException = typeof(NotSupportedException))]
+        [TestCase(5000, Description = "Can select TOP 5000 contacts")]
+        public void Can_Select_Large_Number_Of_Contacts(int total)
         {
-            // arrange
-            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
-            var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
-                                                       new CrmClientCredentialsProvider());
-
-            var sut = new EntityMetadataRepository(serviceProvider);
-            // act
-            var contactMetadata = sut.GetEntityMetadata("contact");
-
-            var serialised = EntityMetadataUtils.SerializeMetaData(contactMetadata, Formatting.Indented);
-            var path = Environment.CurrentDirectory;
-            var fileName = System.IO.Path.Combine(path, "contactMedadata.xml");
-            Console.Write("writing to: " + fileName);
-            using (var writer = new StreamWriter(fileName))
-            {
-                writer.Write(serialised);
-                writer.Flush();
-            }
-
-            // assert
-            Assert.That(contactMetadata, Is.Not.Null);
-            Assert.That(contactMetadata, Is.Not.Null);
-
-            Assert.That(contactMetadata.Attributes, Is.Not.Null);
-            Assert.That(contactMetadata.Attributes.FirstOrDefault(a => a.LogicalName == "firstname"), Is.Not.Null);
-            Assert.That(contactMetadata.Attributes.FirstOrDefault(a => a.LogicalName == "lastname"), Is.Not.Null);
-        }
-
-        [Category("Integration")]
-        [Test]
-        [TestCase("INNER")]
-        [TestCase("LEFT")]
-        public void Should_Be_Able_To_Select_Using_Table_Joins(String joinType)
-        {
-            var join = JoinOperator.Natural;
-
-            switch (joinType)
-            {
-                case "INNER":
-                    join = JoinOperator.Inner;
-                    //  Enum.Parse(typeof(JoinOperator), joinType)
-                    break;
-                case "LEFT":
-                    join = JoinOperator.LeftOuter;
-                    break;
-            }
-
-
-            var sql = string.Format("Select C.contactid, C.firstname, C.lastname, A.line1 From contact C {0} JOIN customeraddress A on C.contactid = A.parentid", joinType);
-
-            var cmd = new CrmDbCommand(null);
-            cmd.CommandText = sql;
-
+          
             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
             using (var conn = new CrmDbConnection(connectionString.ConnectionString))
             {
                 conn.Open();
+                Console.WriteLine("selecting " + total + " contacts..");
+                var watch = new Stopwatch();
+                watch.Start();
+
+                string sql;
+                if (total!= -1)
+                {
+                    sql = string.Format("select top " + total + " contactid, firstname, lastname from contact");
+                }
+                else
+                {
+                    sql = string.Format("select contactid, firstname, lastname from contact");
+                }
+
                 var command = conn.CreateCommand();
-
-                Console.WriteLine("Executing command " + sql);
                 command.CommandText = sql;
-                //   command.CommandType = CommandType.Text;
-
                 using (var reader = command.ExecuteReader())
                 {
                     int resultCount = 0;
                     foreach (var result in reader)
                     {
                         resultCount++;
-                        var contactId = (Guid)reader["C.contactid"];
-                        var firstName = (string)reader.SafeGetString(1);
-                        var lastName = (string)reader.SafeGetString(2);
-                        var line1 = (string)reader.SafeGetString(3);
-                        var alsoLine1 = (string)reader.SafeGetString("A.line1");
-                        Console.WriteLine(string.Format("{0} {1} {2} {3}", contactId, firstName, lastName, line1));
+                        var contactId = (Guid)reader["contactid"];
+                        Console.WriteLine(contactId);
                     }
                     Console.WriteLine("There were " + resultCount + " results..");
-                }
-            }
 
-
-        }
-
-        [Category("Integration")]
-        [TestCase("INNER", "((C.firstname = 'Albert' AND C.lastname = 'Einstein') OR (C.lastname = 'Planck' AND C.firstname = 'Max')) AND (C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", 2, TestName = "Should be able to chain filter groups in parenthesis using AND as well as OR conjunctions")]
-        [TestCase("INNER", "(C.firstname = 'Albert' AND C.lastname = 'Einstein') OR (C.lastname = 'Planck' AND C.firstname = 'Max') OR (C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", 4, TestName = "Should be able to chain mutiple filter groups in parenthesis using an OR conjunction")]
-        [TestCase("INNER", "C.firstname = 'Albert' AND (C.lastname = 'Einstein' AND C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", 2, TestName = "Should be able to chain an AND conjunction with a nested filter group containing an AND conjunction")]
-        [TestCase("INNER", "C.firstname = 'Albert' OR (C.lastname = 'Planck' AND C.firstname = 'Max')", 4, TestName = "Should be able to chain an OR conjunction with a nested filter group containing an AND conunction")]
-        [TestCase("INNER", "(C.firstname = 'Albert' AND C.lastname = 'Einstein') OR C.contactid = '5f90afbb-41b1-e311-9351-6c3be5be9f98'", 4, TestName = "Should be able to chain multiple AND conjunctions then a single OR conjunction")]
-        [TestCase("INNER", "C.firstname = 'Albert' OR C.lastname = 'Planck' OR C.lastname = 'Galilei'", 6, TestName = "Should be able to chain OR conjunctions")]
-        [TestCase("INNER", "C.firstname = 'Albert' AND C.lastname = 'Einstein' AND C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98'", 2, TestName = "Should be able to chain AND conjunctions")]
-        [TestCase("INNER", "C.firstname = 'Albert' AND C.lastname = 'Einstein'", 2, TestName = "Should be able to use a single AND conjunction")]
-        [TestCase("INNER", "C.firstname = 'Albert' OR C.firstname = 'Max'", 4, TestName = "Should be able to use a single OR conjunction")]
-        [Test]
-        public void Should_Be_Able_To_Query_Using_Filter_Groups(String joinType, string whereClause, int expectedResults)
-        {
-            var join = JoinOperator.Natural;
-
-            switch (joinType)
-            {
-                case "INNER":
-                    join = JoinOperator.Inner;
-                    //  Enum.Parse(typeof(JoinOperator), joinType)
-                    break;
-                case "LEFT":
-                    join = JoinOperator.LeftOuter;
-                    break;
-            }
-
-
-            var sql = string.Format("Select C.contactid, C.firstname, C.lastname, A.line1 From contact C {0} JOIN customeraddress A on C.contactid = A.parentid WHERE {1}", joinType, whereClause);
-
-            var cmd = new CrmDbCommand(null);
-            cmd.CommandText = sql;
-
-            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
-            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
-            {
-                conn.Open();
-                var command = conn.CreateCommand();
-
-                Console.WriteLine("Executing command " + sql);
-                command.CommandText = sql;
-                //   command.CommandType = CommandType.Text;
-
-                using (var reader = command.ExecuteReader())
-                {
-                    int resultCount = 0;
-                    foreach (var result in reader)
+                    if (total != -1)
                     {
-                        resultCount++;
-                        var contactId = (Guid)reader["C.contactid"];
-                        var firstName = (string)reader.SafeGetString(1);
-                        var lastName = (string)reader.SafeGetString(2);
-                        var line1 = (string)reader.SafeGetString(3);
-                        var alsoLine1 = (string)reader.SafeGetString("A.line1");
-                        Console.WriteLine(string.Format("{0} {1} {2} {3}", contactId, firstName, lastName, line1));
+                        Assert.That(resultCount, Is.EqualTo(total));
                     }
-                    Console.WriteLine("There were " + resultCount + " results..");
-                    Assert.That(resultCount, Is.EqualTo(expectedResults));
+
+                    watch.Stop();
+                    Console.WriteLine("selecting " + resultCount + " contacts took " + watch.Elapsed.ToString());
                 }
+
             }
 
-
         }
-
-
-
-
 
     }
 }

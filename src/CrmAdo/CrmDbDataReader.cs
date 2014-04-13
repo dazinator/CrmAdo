@@ -93,9 +93,12 @@ namespace CrmAdo
                 }
                 else
                 {
+                    _Results.LoadNextPage();
+                    _Position = 0;
+                    return true;
                     //TODO: Look into loading this asynchornously and ahead of time - perhaps 100 rows in advance?
                     // Could grab the next page of results..
-                    throw new NotImplementedException("The result set has many pages, and paging has not yet been supported");
+                    //throw new NotImplementedException("The result set has many pages, and paging has not yet been supported");
                 }
             }
             else

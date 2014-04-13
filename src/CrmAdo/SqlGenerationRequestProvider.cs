@@ -323,6 +323,19 @@ namespace CrmAdo
                 {
                     AddTop(selCommand.Top, query);
                 }
+                if (selCommand.Top == null)
+                {
+                    // xrm wont let you use paging and top for some reason..
+                    if (query.PageInfo == null)
+                    {
+                        query.PageInfo = new PagingInfo();
+                    }
+                    query.PageInfo.PageNumber = 1;
+                    //todo take this from the connection string..
+                    query.PageInfo.Count = 500;
+                    query.PageInfo.ReturnTotalRecordCount = true;
+                }
+
             }
             return query;
         }
@@ -338,7 +351,15 @@ namespace CrmAdo
             {
                 throw new ArgumentException("The TOP Clause should specify the number of records to limit the resultset to as a numeric literal.");
             }
-            query.TopCount = (int)GitLiteralValue(topCount);
+            var topCountInt = (int)GitLiteralValue(topCount);
+            if (topCountInt > 5000)
+            {
+                //TODO: To get around the fact that dynamics wont support TOP that is greater than 5000,
+                // we could actually set up paging, and then in the result set, limit the max page number / record number to
+                // coincide with the TOP value.
+                throw new NotSupportedException("Dynamics will not allow a TOP value that is greater than 5000. A work around will be implemented in this provider at a later date.");
+            }
+            query.TopCount = topCountInt;
         }
 
         #region Where and Filters

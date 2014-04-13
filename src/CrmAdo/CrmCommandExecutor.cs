@@ -50,6 +50,7 @@ namespace CrmAdo
                     results = ProcessStoredProcedureCommand(command);
                     break;
             }
+
             return results;
         }
 
@@ -71,17 +72,23 @@ namespace CrmAdo
             }
 
             var orgService = command.CrmDbConnection.OrganizationService;
+            EntityResultSet resultSet;
             // Todo: possibly support paging by returning a PagedEntityCollection implementation? 
             bool schemaOnly = (behavior & CommandBehavior.SchemaOnly) > 0;
-            var resultSet = new EntityResultSet();
             if (!schemaOnly)
             {
-                var response = (RetrieveMultipleResponse)orgService.Execute(new RetrieveMultipleRequest()
-                      {
-                          Query = new QueryExpression(entityName) { ColumnSet = new ColumnSet(true) }
-                      });
+                var request = new RetrieveMultipleRequest()
+                    {
+                        Query = new QueryExpression(entityName) { ColumnSet = new ColumnSet(true), PageInfo = new PagingInfo() { ReturnTotalRecordCount = true } }
+                    };
+                var response = (RetrieveMultipleResponse)orgService.Execute(request);
+                resultSet = new EntityResultSet(command, request);
                 AssignResponseParameter(command, response);
                 resultSet.Results = response.EntityCollection;
+            }
+            else
+            {
+                resultSet = new EntityResultSet(command, null);
             }
             if (_MetadataProvider != null)
             {
@@ -132,7 +139,7 @@ namespace CrmAdo
             var orgService = command.CrmDbConnection.OrganizationService;
             var response = orgService.Execute(deleteRequest);
             AssignResponseParameter(command, response);
-            var resultSet = new EntityResultSet();
+            var resultSet = new EntityResultSet(command, deleteRequest);
             //var delResponse = response as DeleteResponse;
             //if (delResponse != null)
             //{
@@ -146,7 +153,7 @@ namespace CrmAdo
         {
             var orgService = command.CrmDbConnection.OrganizationService;
             var response = orgService.Execute(updateRequest);
-            var resultSet = new EntityResultSet();
+            var resultSet = new EntityResultSet(command, updateRequest);
             var updateResponse = response as UpdateResponse;
             if (updateResponse != null)
             {
@@ -161,7 +168,7 @@ namespace CrmAdo
         {
             var orgService = command.CrmDbConnection.OrganizationService;
             var response = orgService.Execute(createRequest);
-            var resultSet = new EntityResultSet();
+            var resultSet = new EntityResultSet(command, createRequest);
             var createResponse = response as CreateResponse;
             if (createResponse != null)
             {
@@ -192,7 +199,7 @@ namespace CrmAdo
         private EntityResultSet ProcessRetrieveMultiple(CrmDbCommand command, RetrieveMultipleRequest retrieveMultipleRequest, bool schemaOnly = false)
         {
             var orgService = command.CrmDbConnection.OrganizationService;
-            var resultSet = new EntityResultSet();
+            var resultSet = new EntityResultSet(command, retrieveMultipleRequest);
             if (!schemaOnly)
             {
                 var response = orgService.Execute(retrieveMultipleRequest);

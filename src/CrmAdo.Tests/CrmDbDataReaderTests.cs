@@ -24,7 +24,7 @@ namespace CrmAdo.Tests
         [Test]
         public void Should_Be_Able_To_Create_A_New_Data_Reader()
         {
-            var results = new EntityResultSet();
+            var results = new EntityResultSet(null, null);
             results.ColumnMetadata = new List<ColumnMetadata>();
             results.Results = new EntityCollection(new List<Entity>());
             var subject = CreateTestSubject(results);
@@ -34,7 +34,7 @@ namespace CrmAdo.Tests
         public void Should_Be_Able_To_Create_A_New_Data_Reader_With_Connection_And_Results()
         {
             var conn = MockRepository.GenerateMock<CrmDbConnection>();
-            var results = new EntityResultSet();
+            var results = new EntityResultSet(null,null);
             results.ColumnMetadata = new List<ColumnMetadata>();
             var firstName = MockRepository.GenerateMock<AttributeMetadata>();
             var lastname = MockRepository.GenerateMock<AttributeMetadata>();
@@ -57,28 +57,28 @@ namespace CrmAdo.Tests
         public void Should_Close_Connection_When_Finished_Reading()
         {
             var conn = MockRepository.GenerateMock<CrmDbConnection>();
-            var results = new EntityResultSet();
+            var results = new EntityResultSet(null,null);
             results.ColumnMetadata = new List<ColumnMetadata>();
-          
-         //   var firstName = new AttributeMetadata();
-          //  var lastname = new AttributeMetadata();
+
+            //   var firstName = new AttributeMetadata();
+            //  var lastname = new AttributeMetadata();
 
             var firstNameC = MockRepository.GenerateMock<ColumnMetadata>();
             firstNameC.Stub(a => a.ColumnName).Return("firstname");
             firstNameC.Stub(a => a.GetDataTypeName()).Return("string");
-            firstNameC.Stub(a => a.AttributeType()).Return( AttributeTypeCode.String);
+            firstNameC.Stub(a => a.AttributeType()).Return(AttributeTypeCode.String);
 
             var lastnameC = MockRepository.GenerateMock<ColumnMetadata>();
             lastnameC.Stub(a => a.ColumnName).Return("lastname");
             lastnameC.Stub(a => a.GetDataTypeName()).Return("string");
             lastnameC.Stub(a => a.AttributeType()).Return(AttributeTypeCode.String);
-          //  lastnameC.AttributeMetadata
-         
-           // var firstName = MockRepository.GenerateMock<AttributeMetadata>();
+            //  lastnameC.AttributeMetadata
+
+            // var firstName = MockRepository.GenerateMock<AttributeMetadata>();
             //var lastname = MockRepository.GenerateMock<AttributeMetadata>();
-          //  firstName.LogicalName = "firstname";
-          //  lastname.LogicalName = "lastname";
-           
+            //  firstName.LogicalName = "firstname";
+            //  lastname.LogicalName = "lastname";
+
             //lastname.Stub(a => a.LogicalName).Return("lastname");
             //firstName.Stub(a => a.AttributeType).Return(AttributeTypeCode.String);
             //lastname.Stub(a => a.AttributeType).Return(AttributeTypeCode.String);

@@ -36,7 +36,7 @@ namespace CrmAdo.IntegrationTests
         [TestCase("LIKE", "%onal%", "{0} {1} '{2}'", TestName = "Should Support Contains")]
         [TestCase("NOT LIKE", "D%", "{0} {1} '{2}'", TestName = "Should Support Does Not Start With")]
         [TestCase("NOT LIKE", "%d", "{0} {1} '{2}'", TestName = "Should Support Does Not End With")]
-        [TestCase("NOT LIKE", "%onal%", "{0} {1} '{2}'", TestName = "Should Support Does Not Contain")]
+        [TestCase("NOT LIKE", "%erren%", "{0} {1} '{2}'", TestName = "Should Support Does Not Contain")]
         public void Should_Get_Results_When_Querying_Crm_Using_Filter_Operators(string filterOperator, object value, string filterFormatString)
         {
             // Arrange
