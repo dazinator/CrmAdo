@@ -127,7 +127,14 @@ namespace CrmAdo
 
         public override string ServerVersion
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                //RetrieveVersionRequest req = new RetrieveVersionRequest();
+                //RetrieveVersionResponse resp = (RetrieveVersionResponse)service.Execute(req);
+                ////assigns the version to a string
+                //string VersionNumber = resp.Version;
+                throw new NotImplementedException();
+            }
         }
 
         public ICrmMetaDataProvider MetadataProvider

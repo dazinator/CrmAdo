@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using CrmAdo.Dynamics;
 using CrmAdo.Dynamics.Metadata;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Client;
+using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using NUnit.Framework;
 
@@ -127,7 +130,7 @@ namespace CrmAdo.IntegrationTests
 
 
         }
-       
+
         [Category("Experimentation")]
         [Test]
         public void Experiment_For_Filters_2_With_Linq_Conversion()
@@ -325,6 +328,112 @@ namespace CrmAdo.IntegrationTests
 
 
         }
+
+
+        [Category("Experimentation")]
+        [Test]
+        [TestCase(TestName = "Experiment for min active row version")]
+        public void Experiment_For_Min_Active_Row_Version()
+        {
+            // var sql = string.Format("Select C.firstname, C.lastname From contact Where firstname Like '%ax%' ");
+
+            var threadCount = 50;
+            List<Thread> threads = new List<Thread>();
+
+            for (int i = 0; i < threadCount; i++)
+            {
+                var thread = new Thread((a) => DoSomeWork(a));
+            }
+
+            // now keep querying for min active row version..
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
+                                                         new CrmClientCredentialsProvider());
+
+            var orgService = serviceProvider.GetOrganisationService();
+            using (orgService as IDisposable)
+            {
+                // start some accounts being inserted on background thread..
+                foreach (Thread thread in threads)
+                {
+                    thread.Start();
+                }
+
+                // Whilst that is happening keep querying min active row version..
+                for (int i = 0; i < 100; i++)
+                {
+                    var accounts = orgService.RetrieveMultiple(new QueryExpression("account") { ColumnSet = new ColumnSet("accountid") });
+                    Console.WriteLine("min active is: " + accounts.MinActiveRowVersion);
+                }
+            }
+            // ensure threads all finished.
+            foreach (Thread thread in threads)
+            {
+                thread.Join();
+            }
+
+        }
+
+        [Category("Experimentation")]
+        [Test]
+        [TestCase(TestName = "Experiment for min active row version")]
+        public void Experiment_For_Version_Number()
+        {
+            // var sql = string.Format("Select C.firstname, C.lastname From contact Where firstname Like '%ax%' ");
+
+
+            // now keep querying for min active row version..
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
+                                                         new CrmClientCredentialsProvider());
+
+            var orgService = serviceProvider.GetOrganisationService();
+            using (orgService as IDisposable)
+            {
+                var accounts = orgService.RetrieveMultiple(new QueryExpression("account") { ColumnSet = new ColumnSet("versionnumber","name") });
+                foreach (var a in accounts.Entities)
+                {
+                    // 621ae9e6-3fb1-e311-9caa-d89d6764506c is 369649
+                    Console.WriteLine(a.Id + " version number is: " + a["versionnumber"]);
+                }
+
+                var id = Guid.Parse("621ae9e6-3fb1-e311-9caa-d89d6764506c");
+                var acc = orgService.Retrieve("account", id, new ColumnSet("versionnumber", "name"));
+
+                Console.WriteLine("version number is: " + acc["versionnumber"]);
+
+                acc["name"] = acc["name"] + "a";
+                orgService.Update(acc);
+
+                Console.WriteLine("version number immediately following update: " + acc["versionnumber"]);
+
+                acc = orgService.Retrieve("account", id, new ColumnSet("versionnumber", "name"));
+                Console.WriteLine("version number requeried after update: " + acc["versionnumber"]);
+
+            }
+
+
+
+
+        }
+
+        private void DoSomeWork(object o)
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
+                                                         new CrmClientCredentialsProvider());
+
+            var orgService = serviceProvider.GetOrganisationService();
+            using (orgService as IDisposable)
+            {
+
+                var account = new Entity("account");
+                account["name"] = "test";
+                orgService.Create(account);
+            }
+        }
+
+
 
 
     }
