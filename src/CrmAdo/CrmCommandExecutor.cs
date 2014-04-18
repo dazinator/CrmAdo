@@ -238,15 +238,13 @@ namespace CrmAdo
             var entMeta = entityMetadata[query.EntityName];
             if (query.ColumnSet.AllColumns)
             {
-                columns.AddRange((from c in entMeta.Attributes select new ColumnMetadata(c)).Reverse());
-            }
+                columns.AddRange((from c in entMeta.Attributes orderby c.LogicalName select new ColumnMetadata(c)));}
             else
             {
-                columns.AddRange((from c in entMeta.Attributes
-                                  join s in query.ColumnSet.Columns
-                                      on c.LogicalName equals s
-                                  select new ColumnMetadata(c)).Reverse());
-
+                columns.AddRange((from s in query.ColumnSet.Columns
+                                  join c in entMeta.Attributes
+                                      on s equals c.LogicalName
+                                  select new ColumnMetadata(c)));
             }
 
             if (query.LinkEntities != null && query.LinkEntities.Any())
@@ -269,14 +267,20 @@ namespace CrmAdo
             var entMeta = entityMetadata[linkEntity.LinkToEntityName];
             if (linkEntity.Columns.AllColumns)
             {
-                columns.AddRange((from c in entMeta.Attributes select new ColumnMetadata(c, linkEntity.EntityAlias)).Reverse());
+                  columns.AddRange((from c in entMeta.Attributes orderby c.LogicalName select new ColumnMetadata(c, linkEntity.EntityAlias)));
+                //columns.AddRange((from c in entMeta.Attributes select new ColumnMetadata(c, linkEntity.EntityAlias)).Reverse());
             }
             else
             {
-                columns.AddRange((from c in entMeta.Attributes
-                                  join s in linkEntity.Columns.Columns
-                                      on c.LogicalName equals s
-                                  select new ColumnMetadata(c, linkEntity.EntityAlias)).Reverse());
+                columns.AddRange((from s in linkEntity.Columns.Columns
+                                  join c in entMeta.Attributes
+                                      on s equals c.LogicalName
+                                  select new ColumnMetadata(c, linkEntity.EntityAlias)));
+
+                //columns.AddRange((from c in entMeta.Attributes
+                //                  join s in linkEntity.Columns.Columns
+                //                      on c.LogicalName equals s
+                //                  select new ColumnMetadata(c, linkEntity.EntityAlias)).Reverse());
 
             }
 
