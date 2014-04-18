@@ -59,10 +59,6 @@
     <Reference Include="AntiXSSLibrary">
       <HintPath>..\packages\Microsoft.CrmSdk.Extensions.6.0.4\lib\net40\AntiXSSLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="CrmAdo, Version=1.0.9.0, Culture=neutral, PublicKeyToken=ba966c247ee8fd34, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\CrmAdo\obj\Debug\CrmAdo.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Crm.Sdk.Proxy, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CrmSdk.CoreAssemblies.6.0.4\lib\net40\Microsoft.Crm.Sdk.Proxy.dll</HintPath>
     </Reference>
@@ -155,6 +151,8 @@
     <Compile Include="AnchorDbCommandAdapter.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Decompile\IConnectionWrapper.cs" />
+    <Compile Include="Decompile\ICommandWrapperFactory.cs" />
     <Compile Include="InsertEntityDbCommandAdapter.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -164,6 +162,15 @@
     <Compile Include="SampleServerSyncProvider.cs" />
     <Compile Include="SampleStats.cs" />
     <Compile Include="SampleSyncAgent.cs" />
+    <Compile Include="Decompile\SyncColumnMapping.cs" />
+    <Compile Include="Decompile\SyncColumnMappingCollection.cs" />
+    <Compile Include="Decompile\SyncExpt.cs" />
+    <Compile Include="Decompile\SyncResource.cs" />
+    <Compile Include="Decompile\SyncDbAdapter.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Decompile\SyncUtil.cs" />
+    <Compile Include="Decompile\TestSyncAdapter.cs" />
     <Compile Include="UpdateEntityDbCommandAdapter.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -197,6 +204,12 @@
   <ItemGroup>
     <Folder Include="bin\Debug\" />
     <Folder Include="bin\Release\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CrmAdo\CrmAdo.csproj">
+      <Project>{61d9051d-4c85-419f-97dc-d56d4a72c5e3}</Project>
+      <Name>CrmAdo</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
