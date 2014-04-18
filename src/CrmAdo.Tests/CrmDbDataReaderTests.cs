@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CrmAdo.Dynamics.Metadata;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using NUnit.Framework;
@@ -34,7 +35,7 @@ namespace CrmAdo.Tests
         public void Should_Be_Able_To_Create_A_New_Data_Reader_With_Connection_And_Results()
         {
             var conn = MockRepository.GenerateMock<CrmDbConnection>();
-            var results = new EntityResultSet(null,null);
+            var results = new EntityResultSet(null, null);
             results.ColumnMetadata = new List<ColumnMetadata>();
             var firstName = MockRepository.GenerateMock<AttributeMetadata>();
             var lastname = MockRepository.GenerateMock<AttributeMetadata>();
@@ -57,7 +58,7 @@ namespace CrmAdo.Tests
         public void Should_Close_Connection_When_Finished_Reading()
         {
             var conn = MockRepository.GenerateMock<CrmDbConnection>();
-            var results = new EntityResultSet(null,null);
+            var results = new EntityResultSet(null, null);
             results.ColumnMetadata = new List<ColumnMetadata>();
 
             //   var firstName = new AttributeMetadata();
@@ -99,6 +100,49 @@ namespace CrmAdo.Tests
             conn.AssertWasCalled(o => o.Close(), options => options.Repeat.Once());
 
         }
+
+
+        [Test]
+        public void Should_Be_Able_To_Get_Schema_Data_Table()
+        {
+            var conn = MockRepository.GenerateMock<CrmDbConnection>();
+            var results = new EntityResultSet(null, null);
+            results.ColumnMetadata = new List<ColumnMetadata>();
+
+            // set up fake metadata provider.
+            var fakeMetadataProvider = new FakeContactMetadataProvider();
+            var fakeConn = MockRepository.GenerateMock<CrmDbConnection>();
+            fakeConn.Stub(a => a.MetadataProvider).Return(fakeMetadataProvider);
+            var contactMetadata = fakeMetadataProvider.GetEntityMetadata("contact");
+
+            var contactIdMetadata = contactMetadata.Attributes.Find(a => a.LogicalName == "contactid");
+            var firstNameMetadata = contactMetadata.Attributes.Find(a => a.LogicalName == "firstname");
+
+            var contactIdColumnMetadata = new ColumnMetadata(contactIdMetadata);
+            var firstNameColumnMetadata = new ColumnMetadata(firstNameMetadata);
+
+            results.ColumnMetadata.Add(contactIdColumnMetadata);
+            results.ColumnMetadata.Add(firstNameColumnMetadata);
+           
+            results.Results = new EntityCollection(new List<Entity>());
+            
+            //var result = new Entity("contact");
+            //result.Id = Guid.NewGuid();
+            //result["firstname"] = "joe";
+            //result["lastname"] = "schmoe";
+            //results.Results.Entities.Add(result);
+            var subject = CreateTestSubject(results, conn);
+          
+            var schema = subject.GetSchemaTable();
+
+
+           
+
+
+
+        }
+
+
 
 
 
