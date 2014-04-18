@@ -12,7 +12,7 @@
     <projectUrl>http://dazinator.github.io/CrmAdo/</projectUrl>
     <copyright>Copyright � Darrell Tunnell 2014</copyright>
     <releaseNotes>
-     TOP clause is now supported. For example, "SELECT TOP 10 firstname, lastname FROM contact". Paging has now also been implemented in the DataReader for better efficiency.
+     ORDER BY clause is now supported. For example, "SELECT TOP 10 firstname, lastname FROM contact ORDER BY firstname ASC, lastname DESC".
     </releaseNotes>
     <tags>Dynamics Crm ADO ADO.Net Data Provider SQL T-SQL DynamicsCrm</tags>
     <dependencies>

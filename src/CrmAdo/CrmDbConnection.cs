@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.Common;
 using CrmAdo.Dynamics;
 using CrmAdo.Dynamics.Metadata;
+using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 
 namespace CrmAdo
@@ -67,6 +68,15 @@ namespace CrmAdo
             {
                 _State = ConnectionState.Connecting;
                 _OrganizationService = _CrmServiceProvider.GetOrganisationService();
+
+                // could do a whoami request to warmup the connection.
+                //TODO:  would rather cache this information against the connection string so its not requiried on every open.
+                //var req = new WhoAmIRequest();
+                //var resp = (WhoAmIResponse)_OrganizationService.Execute(req);
+                //var orgId = resp.OrganizationId;
+                //var businessUnitId = resp.BusinessUnitId;
+                //var userId = resp.UserId;
+
                 _State = ConnectionState.Open;
             }
             else
@@ -129,11 +139,30 @@ namespace CrmAdo
         {
             get
             {
-                //RetrieveVersionRequest req = new RetrieveVersionRequest();
-                //RetrieveVersionResponse resp = (RetrieveVersionResponse)service.Execute(req);
-                ////assigns the version to a string
-                //string VersionNumber = resp.Version;
-                throw new NotImplementedException();
+                bool hadToOpen = false;
+                try
+                {
+                    if (_State != ConnectionState.Open)
+                    {
+                        hadToOpen = true;
+                        this.Open();
+                    }
+
+                    var req = new RetrieveVersionRequest();
+                    var resp = (RetrieveVersionResponse)_OrganizationService.Execute(req);
+                    //assigns the version to a string
+                    string versionNumber = resp.Version;
+                    return versionNumber;
+                }
+                finally
+                {
+                    // return connection to orginal state.
+                    if (hadToOpen)
+                    {
+                        this.Close();
+                    }
+                }
+                //  throw new NotImplementedException();
             }
         }
 

@@ -335,9 +335,33 @@ namespace CrmAdo
                     query.PageInfo.Count = 500;
                     query.PageInfo.ReturnTotalRecordCount = true;
                 }
+                if (selCommand.OrderBy != null)
+                {
+                    AddOrderBy(selCommand.OrderBy, query);
+                }
 
             }
             return query;
+        }
+
+        private static void AddOrderBy(IEnumerable<OrderBy> orderBy, QueryExpression query)
+        {
+            foreach (var order in orderBy)
+            {
+                var orderType = OrderType.Ascending;
+                if (order.Order == Order.Descending)
+                {
+                    orderType = OrderType.Descending;
+                }
+
+                var column = order.Projection.ProjectionItem as Column;
+                if (column == null)
+                {
+                    throw new InvalidOperationException("Can only apply Order By clause to a column.");
+                }
+                var attName = GetColumnLogicalAttributeName(column);
+                query.AddOrder(attName, orderType);
+            }
         }
 
         private static void AddTop(Top top, QueryExpression query)
