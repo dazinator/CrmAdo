@@ -1,5 +1,7 @@
-CrmAdo
+CrmAdo + Sync
 =======================
+
+THIS IS A BRANCH FOR EXPERIMENTING WITH SUPPORT FOR SYNC FRAMEWORK
 
 An ADO.Net Data Provider for Dynamics Crm
 
