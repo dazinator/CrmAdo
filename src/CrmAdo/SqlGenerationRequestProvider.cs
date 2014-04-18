@@ -135,10 +135,10 @@ namespace CrmAdo
         private Entity BuildEntityFromInsert(InsertBuilder insertCommandBuilder, CrmDbCommand command)
         {
             var source = insertCommandBuilder.Table.Source;
-            if (!source.IsTable)
-            {
-                throw new ArgumentException("Can only insert into a table");
-            }
+            //if (!source.)
+            //{
+            //    throw new ArgumentException("Can only insert into a table");
+            //}
 
             var table = source as Table;
 
@@ -178,10 +178,10 @@ namespace CrmAdo
         private EntityReference BuildEntityReferenceFromDelete(DeleteBuilder builder, CrmDbCommand command)
         {
             var source = builder.Table.Source;
-            if (!source.IsTable)
-            {
-                throw new ArgumentException("Can only delete a table");
-            }
+            //if (!source.IsTable)
+            //{
+            //    throw new ArgumentException("Can only delete a table");
+            //}
             var table = source as Table;
             var entityName = GetTableLogicalEntityName(table);
             var firstWhere = builder.Where.FirstOrDefault();
@@ -212,10 +212,10 @@ namespace CrmAdo
         private Entity BuildEntityFromUpdate(UpdateBuilder builder, CrmDbCommand command)
         {
             var source = builder.Table.Source;
-            if (!source.IsTable)
-            {
-                throw new ArgumentException("Can only update a table");
-            }
+            //if (!source.IsTable)
+            //{
+            //    throw new ArgumentException("Can only update a table");
+            //}
             var table = source as Table;
             var metadataProvider = command.CrmDbConnection.MetadataProvider;
             var entityName = GetTableLogicalEntityName(table);
@@ -551,15 +551,15 @@ namespace CrmAdo
                     {
                         // only reached if no Joins used in select query.
                         var aliasedSource = f as AliasedSource;
-                        if (aliasedSource.Source.IsTable)
-                        {
+                       // if (aliasedSource.Source.IsTable)
+                       // {
                             var table = aliasedSource.Source as Table;
                             query.EntityName = GetTableLogicalEntityName(table);
-                        }
-                        else
-                        {
-                            throw new NotSupportedException("The From keyword must be used in conjunction with a table / entity name. Subqueries not supported.");
-                        }
+                       // }
+                        //else
+                        //{
+                        //    throw new NotSupportedException("The From keyword must be used in conjunction with a table / entity name. Subqueries not supported.");
+                        //}
 
                     }
                 }
@@ -790,10 +790,10 @@ namespace CrmAdo
             {
                 throw new NotSupportedException("No column source found for column: " + column.Name + " do you need to prefix that with the table name?");
             }
-            if (!column.Source.Source.IsTable)
-            {
-                throw new NotSupportedException("The ON operator used in the Join statement has a column name that is not from an entity table. Column Name: " + column.Name);
-            }
+            //if (!column.Source.Source.IsTable)
+            //{
+            //    throw new NotSupportedException("The ON operator used in the Join statement has a column name that is not from an entity table. Column Name: " + column.Name);
+            //}
         }
 
         private static string GetColumnLogicalAttributeName(Column column)

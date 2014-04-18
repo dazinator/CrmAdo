@@ -179,25 +179,25 @@ namespace CrmAdo.Tests
                     stringBuilder.AppendLine(string.Format("{0} {1}", indent, joinItem.GetType().FullName));
                     stringBuilder.AppendLine(string.Format("{0} Source Name: {1}", indent, sourceName));
                  
-                    if (joinItem.IsTable)
-                    {
+                    //if (joinItem.IsTable)
+                    //{
                         var table = joinItem as Table;
                         stringBuilder.AppendLine(string.Format("{0}   Table Name: {1}", indent, table.Name));
                         stringBuilder.AppendLine(string.Format("{0}   Table Qualifier: {1}", indent, table.Qualifier));
-                    }
-                    else
-                    {
-                        var join = joinItem as Join;
-                        if (join != null)
-                        {
-                            LogJoin(join, stringBuilder, level + 1);
-                        }
-                        else
-                        {
-                            throw new NotSupportedException();
-                        }
+                  //  }
+                   // else
+                    //{
+                    //    var join = joinItem as Join;
+                    //    if (join != null)
+                    //    {
+                    //        LogJoin(join, stringBuilder, level + 1);
+                    //    }
+                    //    else
+                    //    {
+                    //        throw new NotSupportedException();
+                    //    }
 
-                    }
+                    //}
                 }
 
             }

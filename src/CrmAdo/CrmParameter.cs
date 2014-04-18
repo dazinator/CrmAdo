@@ -143,17 +143,18 @@ namespace CrmAdo
                 case TypeCode.String:
                     return DbType.String;
 
-                case TypeCode.DBNull:
-                case TypeCode.Char:
-                case TypeCode.SByte:
-                case TypeCode.UInt16:
-                case TypeCode.UInt32:
-                case TypeCode.UInt64:
-                    // Throw a SystemException for unsupported data types.
-                    throw new SystemException("Invalid data type");
+                //case TypeCode.DBNull:
+                //case TypeCode.Char:
+                //case TypeCode.SByte:
+                //case TypeCode.UInt16:
+                //case TypeCode.UInt32:
+                //case TypeCode.UInt64:
+                //    // Throw a SystemException for unsupported data types.
+                //    throw new SystemException("Invalid data type");
 
                 default:
-                    throw new SystemException("Value is of unknown data type");
+                    return DbType.String;   
+                   // throw new SystemException("Value is of unknown data type");
             }
         }
 

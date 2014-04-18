@@ -12,7 +12,7 @@
     <projectUrl>http://dazinator.github.io/CrmAdo/</projectUrl>
     <copyright>Copyright � Darrell Tunnell 2014</copyright>
     <releaseNotes>
-     ORDER BY clause is now supported. For example, "SELECT TOP 10 firstname, lastname FROM contact ORDER BY firstname ASC, lastname DESC". Fixed Column Order issue in data reader.
+     Updated SQLGeneration dependency to latest version number.
     </releaseNotes>
     <tags>Dynamics Crm ADO ADO.Net Data Provider SQL T-SQL DynamicsCrm</tags>
     <dependencies>

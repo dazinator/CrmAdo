@@ -390,7 +390,7 @@ namespace CrmAdo.IntegrationTests
             var orgService = serviceProvider.GetOrganisationService();
             using (orgService as IDisposable)
             {
-                var accounts = orgService.RetrieveMultiple(new QueryExpression("account") { ColumnSet = new ColumnSet("versionnumber","name") });
+                var accounts = orgService.RetrieveMultiple(new QueryExpression("account") { ColumnSet = new ColumnSet("versionnumber", "name") });
                 foreach (var a in accounts.Entities)
                 {
                     // 621ae9e6-3fb1-e311-9caa-d89d6764506c is 369649
@@ -415,6 +415,139 @@ namespace CrmAdo.IntegrationTests
 
 
 
+        }
+
+
+        [Category("Experimentation")]
+        [Test]
+        [TestCase(TestName = "Experiment for version number increments in CRM")]
+        public void Experiment_For_Version_Number_Increments()
+        {
+            // var sql = string.Format("Select C.firstname, C.lastname From contact Where firstname Like '%ax%' ");
+
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+
+                var sql = string.Empty;
+                long contactVersionNumber = 0;
+                long accountVersionNumber = 0;
+
+                long insertedContactVersionNumber = 0;
+                long insertedAccountVersionNumber = 0;
+
+                using (var command = conn.CreateCommand())
+                {
+
+                    sql = string.Format("SELECT TOP 1 contactid, firstname, lastname, versionnumber FROM contact ORDER BY versionnumber DESC");
+                    Console.WriteLine("Executing command " + sql);
+                    command.CommandText = sql;
+                    //   command.CommandType = CommandType.Text;
+                    using (var reader = command.ExecuteReader())
+                    {
+                        int resultCount = 0;
+                        foreach (var result in reader)
+                        {
+                            resultCount++;
+                            var contactId = (Guid)reader["contactid"];
+                            var firstName = (string)reader.SafeGetString(1);
+                            var lastName = (string)reader.SafeGetString(2);
+                            contactVersionNumber = (long)reader[3];
+                            Console.WriteLine(string.Format("{0} {1} {2} {3}", contactId, firstName, lastName, contactVersionNumber.ToString()));
+                        }
+
+                        Console.WriteLine("There were " + resultCount + " results..");
+                    }
+                }
+
+
+                using (var command = conn.CreateCommand())
+                {
+
+                    sql = string.Format("SELECT TOP 1 accountid, name, versionnumber FROM account ORDER BY versionnumber DESC");
+                    Console.WriteLine("Executing command " + sql);
+                    command.CommandText = sql;
+                    //   command.CommandType = CommandType.Text;
+                    using (var reader = command.ExecuteReader())
+                    {
+                        int resultCount = 0;
+                        foreach (var result in reader)
+                        {
+                            resultCount++;
+                            var id = (Guid)reader["accountid"];
+                            var name = (string)reader.SafeGetString(1);
+                            accountVersionNumber = (long)reader[2];
+                            Console.WriteLine(string.Format("{0} {1} {2}", id, name, accountVersionNumber.ToString()));
+                        }
+
+                        Console.WriteLine("There were " + resultCount + " results..");
+                    }
+                }
+
+                // insert new contact.
+                Guid newContactId = Guid.NewGuid();
+                using (var command = conn.CreateCommand())
+                {
+
+                    sql =
+                        string.Format("INSERT INTO contact (contactid, firstname, lastname) VALUES ('" +
+                                      newContactId.ToString() + "', 'ed', 'ed')");
+                    Console.WriteLine("Executing command " + sql);
+                    command.CommandText = sql;
+                    command.ExecuteNonQuery();
+                }
+
+                // get the inserted contact version number.
+                using (var command = conn.CreateCommand())
+                {
+                    Guid newId = Guid.NewGuid();
+                    sql =
+                        string.Format("SELECT versionnumber from contact WHERE contactid = '" +
+                                      newContactId.ToString() + "'");
+                    Console.WriteLine("Executing command " + sql);
+                    command.CommandText = sql;
+                    insertedContactVersionNumber = (long)command.ExecuteScalar();
+                }
+
+
+
+                // insert an account;
+                Guid newAccountId = Guid.NewGuid();
+                using (var command = conn.CreateCommand())
+                {
+
+                    sql =
+                        string.Format("INSERT INTO account (accountid, name) VALUES ('" +
+                                      newAccountId.ToString() + "', 'ed')");
+                    Console.WriteLine("Executing command " + sql);
+                    command.CommandText = sql;
+                    command.ExecuteNonQuery();
+                }
+
+                // get the inserted account version number.
+                using (var command = conn.CreateCommand())
+                {
+                    Guid newId = Guid.NewGuid();
+                    sql =
+                        string.Format("SELECT versionnumber from account WHERE accountid = '" +
+                                      newAccountId.ToString() + "'");
+                    Console.WriteLine("Executing command " + sql);
+                    command.CommandText = sql;
+                    insertedAccountVersionNumber = (long)command.ExecuteScalar();
+                }
+
+
+                // assert that the inserted account version number is the biggest because it was inserted last
+                Console.WriteLine("Max contact versionnumber prior to insert " + contactVersionNumber);
+                Console.WriteLine("Max account versionnumber prior to insert " + accountVersionNumber);
+
+                Console.WriteLine("Inserted new contact and it has version number " + insertedContactVersionNumber);
+                Console.WriteLine("Inserted new account and it has version number " + insertedAccountVersionNumber);
+
+
+            }
         }
 
         [Category("Experimentation")]
