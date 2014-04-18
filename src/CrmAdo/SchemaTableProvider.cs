@@ -60,7 +60,8 @@ namespace CrmAdo
                 row[SchemaTableColumn.ColumnName] = columnMetadata.ColumnName;
                 row[SchemaTableColumn.ColumnOrdinal] = ordinal;
 
-                //  row[SchemaTableColumn.ColumnSize] = ordinal;
+                // set column size
+                row[SchemaTableColumn.ColumnSize] = int.MaxValue;
                 row[SchemaTableColumn.DataType] = columnMetadata.GetFieldType();
                 row[SchemaTableColumn.IsAliased] = columnMetadata.HasAlias;
                 row[SchemaTableColumn.IsExpression] = false;
