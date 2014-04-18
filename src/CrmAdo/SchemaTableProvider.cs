@@ -51,12 +51,13 @@ namespace CrmAdo
                 row[SchemaTableColumn.ColumnOrdinal] = ordinal;
 
                 //  row[SchemaTableColumn.ColumnSize] = ordinal;
-                row[SchemaTableColumn.DataType] = columnMetadata.GetFieldType().Name;
+                row[SchemaTableColumn.DataType] = columnMetadata.GetFieldType();
                 row[SchemaTableColumn.IsAliased] = columnMetadata.HasAlias;
                 row[SchemaTableColumn.IsExpression] = false;
                 row[SchemaTableColumn.IsKey] = false; //for multi part keys // columnMetadata.AttributeMetadata.IsPrimaryId;
                 row[SchemaTableColumn.IsLong] = false;
                 // only id must be unique.
+               
                 row[SchemaTableColumn.IsUnique] = false;  //for timestamp columns only. //columnMetadata.AttributeMetadata.IsPrimaryId;
                 row[SchemaTableColumn.NonVersionedProviderType] = columnMetadata.AttributeType().ToString();
                 switch (columnMetadata.AttributeMetadata.AttributeType.GetValueOrDefault())
