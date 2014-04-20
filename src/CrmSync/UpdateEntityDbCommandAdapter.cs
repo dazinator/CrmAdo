@@ -13,7 +13,7 @@ namespace CrmSync
     /// </summary>
     public class UpdateEntityDbCommandAdapter : CrmDbCommand
     {
-        private List<string> _Log = new List<string>();
+       // private List<string> _Log = new List<string>();
 
         private CrmDbCommand _WrappedCommand;
 
@@ -69,11 +69,28 @@ namespace CrmSync
             // Until above implemented then we allways just update the record.
 
             var param = this.Parameters["@" + SyncSession.SyncRowCount];
-            _WrappedCommand.CommandText = this.CommandText;
+            //_WrappedCommand.CommandText = this.CommandText;
             var rowCount = _WrappedCommand.ExecuteNonQuery();
             Debug.WriteLine("update row count is " + rowCount);
             param.Value = rowCount;
             return rowCount;
+        }
+
+        public override string CommandText
+        {
+            get
+            {
+                return _WrappedCommand.CommandText;
+            }
+            set
+            {
+                _WrappedCommand.CommandText = value;
+            }
+        }
+
+        protected override DbParameterCollection DbParameterCollection
+        {
+            get { return _WrappedCommand.Parameters; }
         }
 
         protected override void Dispose(bool disposing)

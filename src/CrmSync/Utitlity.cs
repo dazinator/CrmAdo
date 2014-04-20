@@ -33,6 +33,11 @@ namespace CrmSync
             get { return @"Data Source='SyncSampleClient.sdf'; Password=" + Utility.Password_SqlCeClientSync; }
         }
 
+        public static string ConnStr_SqlExpressClientSync
+        {
+            get { return @"Data Source=PHOTON\SQLEXPRESS;Initial Catalog=TestCrmSync;Integrated Security=True"; }
+        }
+
 
         public static string ConnStr_DbServerSync
         {

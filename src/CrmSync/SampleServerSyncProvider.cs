@@ -11,6 +11,22 @@ namespace CrmSync
     {
         public SampleServerSyncProvider()
         {
+            
+            // new fields required against entities to be synchronised.
+            // crmsync_updatedbyclientid
+            // crmsync_insertedbyclientid
+
+            // Those fields will allow a client to filter out change detections for records that it has inserted or updated itself during a last sync run.
+            // In addition:-
+
+            // plugin to be fire on delete of entities in crm that will:-
+            //  create a "sync_tombstone" record:-
+            //      entity name, 
+            //      entity id, 
+            //      sync_deletedbyclientid
+
+            //  sync_deletedbyclientid is only set by a sync client that syncs a delete to CRM, so it can later filter out its own delete from change detection on the next sync.
+
 
             //Create a connection to the sample server database.
             var util = new Utility();
@@ -32,13 +48,9 @@ namespace CrmSync
 
             //Create the SyncAdapter.
             var customerSyncAdapter = new SyncAdapter("contact");
-
-            //Select inserts from the server.
-            // possibly need to extend the entity with a "crmsync_insertedbyclientid" and "crmsync_updatedbyclientid" field to hold sync client ids..
-
-            var customerIncrInserts = serverConn.CreateCommand();
+            var customerIncrInserts = new SelectIncrementalChangesDbCommandAdapter(serverConn.CreateCommand() as CrmDbCommand);
             customerIncrInserts.CommandText =
-                "SELECT contactid, firstname, lastname " +
+                "SELECT contactid, firstname, lastname, createdon, modifiedon " +
                 "FROM contact " +
                 "WHERE (versionnumber > @sync_last_received_anchor " +
                 "AND versionnumber <= @sync_new_received_anchor " +
@@ -62,16 +74,13 @@ namespace CrmSync
 
             customerIncrInserts.Connection = serverConn;
             customerSyncAdapter.SelectIncrementalInsertsCommand = customerIncrInserts;
-
-
-            //DT: Might have to adapt command to handle the "SET @sync_row_count = @@rowcount" bit 
+            
+           
             //Apply inserts to the server.
             DbCommand contactInserts = new InsertEntityDbCommandAdapter(serverConn.CreateCommand() as CrmDbCommand);
-            //var contactInserts = serverConn.CreateCommand();
             contactInserts.CommandText =
-                "INSERT INTO contact (contactid, firstname, lastname) " +
+                "INSERT INTO contact (contactid, firstname, lastname, createdon, modifiedon) " +
                 "VALUES (@contactid, @firstname, @lastname)";
-
             //"INSERT INTO contact (contactid, firstname, lastname, InsertId, UpdateId) " +
             //  "VALUES (@contactid, @firstname, @lastname, @sync_client_id, @sync_client_id) " +
             //  "SET @sync_row_count = @@rowcount";
@@ -79,6 +88,8 @@ namespace CrmSync
             AddParameter(contactInserts, "contactid", DbType.Guid);
             AddParameter(contactInserts, "firstname", DbType.String);
             AddParameter(contactInserts, "lastname", DbType.String);
+            AddParameter(contactInserts, "createdon", DbType.DateTime);
+            AddParameter(contactInserts, "modifiedon", DbType.DateTime);
             AddParameter(contactInserts, SyncSession.SyncClientId, DbType.Guid);
             var param = AddParameter(contactInserts, SyncSession.SyncRowCount, DbType.Int32);
             param.Direction = ParameterDirection.Output;
@@ -87,9 +98,9 @@ namespace CrmSync
             customerSyncAdapter.InsertCommand = contactInserts;
 
             //Select updates from the server.
-            var customerIncrUpdates = serverConn.CreateCommand();
+            var customerIncrUpdates = new SelectIncrementalChangesDbCommandAdapter(serverConn.CreateCommand() as CrmDbCommand);
             customerIncrUpdates.CommandText =
-                "SELECT contactid, firstname, lastname " +
+                "SELECT contactid, firstname, lastname, createdon, modifiedon " +
                 "FROM contact " +
                 "WHERE (versionnumber > @sync_last_received_anchor " +
                 "AND versionnumber <= @sync_new_received_anchor " +
@@ -111,13 +122,13 @@ namespace CrmSync
             customerIncrUpdates.Connection = serverConn;
             customerSyncAdapter.SelectIncrementalUpdatesCommand = customerIncrUpdates;
 
-            //DT: Might have to write command adapter to handle the "SET @sync_row_count = @@rowcount" bit.
+       
             var customerUpdates = new UpdateEntityDbCommandAdapter(serverConn.CreateCommand() as CrmDbCommand);
             customerUpdates.CommandText =
                 "UPDATE contact SET " +
                 "firstname = @firstname, lastname = @lastname " +
                 "WHERE (contactid = @contactid)";
-            
+
             //"UPDATE contact SET " +
             // "firstname = @firstname, lastname = @lastname, " +
             // "crmsync_updatedbyclientid = @sync_client_id " +
@@ -138,9 +149,7 @@ namespace CrmSync
             customerUpdates.Connection = serverConn;
             customerSyncAdapter.UpdateCommand = customerUpdates;
 
-
-
-
+            
             ////Select deletes from the server.
             //DbCommand customerIncrDeletes = serverConn.CreateCommand();
             //customerIncrDeletes.CommandText =

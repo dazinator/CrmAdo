@@ -71,23 +71,23 @@
     </Reference>
     <Reference Include="Microsoft.Synchronization, Version=2.1.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\x64\Microsoft.Synchronization.dll</HintPath>
+      <HintPath>..\..\lib\x64\Microsoft.Synchronization.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Synchronization.Data, Version=3.1.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\x64\Microsoft.Synchronization.Data.dll</HintPath>
+      <HintPath>..\..\lib\x64\Microsoft.Synchronization.Data.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Synchronization.Data.Server, Version=3.1.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\x64\Microsoft.Synchronization.Data.Server.dll</HintPath>
+      <HintPath>..\..\lib\x64\Microsoft.Synchronization.Data.Server.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Synchronization.Data.SqlServer, Version=3.1.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\x64\Microsoft.Synchronization.Data.SqlServer.dll</HintPath>
+      <HintPath>..\..\lib\x64\Microsoft.Synchronization.Data.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Synchronization.Data.SqlServerCe, Version=3.1.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\x64\Microsoft.Synchronization.Data.SqlServerCe.dll</HintPath>
+      <HintPath>..\..\lib\x64\Microsoft.Synchronization.Data.SqlServerCe.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.2.0.0.0\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
@@ -121,9 +121,9 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Services" />
     <Reference Include="System.Data.Services.Client" />
-    <Reference Include="System.Data.SqlServerCe, Version=3.5.1.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+    <Reference Include="System.Data.SqlServerCe, Version=3.5.1.50, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\x64\SQLCompact3.5\System.Data.SqlServerCe.dll</HintPath>
+      <HintPath>..\..\lib\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
     </Reference>
     <Reference Include="System.Design" />
     <Reference Include="System.DirectoryServices" />
@@ -149,6 +149,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnchorDbCommandAdapter.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SelectIncrementalChangesDbCommandAdapter.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Decompile\IConnectionWrapper.cs" />
@@ -213,7 +216,11 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if $(ConfigurationName) == Debug xcopy /y $(ProjectDir)\..\..\lib\x64\SQLCompact3.5\native\*.dll $(TargetDir)</PostBuildEvent>
+    <PostBuildEvent>if $(ConfigurationName) == Debug xcopy /y $(ProjectDir)\..\..\lib\x64\SQLCompact3.5\native\*.dll $(TargetDir)
+    if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
+    xcopy /s /y "$(SolutionDir)..\lib\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
+    if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
+    xcopy /s /y "$(SolutionDir)..\lib\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

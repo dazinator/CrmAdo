@@ -11,13 +11,13 @@ namespace CrmSync
     /// <summary>
     /// Adaptor for CrmDbCommand that will enable it to cater for Sync insert commands by setting row count paramater.
     /// </summary>
-    public class InsertEntityDbCommandAdapter : CrmDbCommand
+    public class SelectIncrementalChangesDbCommandAdapter : CrmDbCommand
     {
         private List<string> _Log = new List<string>();
 
         private CrmDbCommand _WrappedCommand;
 
-        public InsertEntityDbCommandAdapter(CrmDbCommand wrappedCommand)
+        public SelectIncrementalChangesDbCommandAdapter(CrmDbCommand wrappedCommand)
         {
             _WrappedCommand = wrappedCommand;
         }
@@ -25,26 +25,39 @@ namespace CrmSync
         public override int ExecuteNonQuery()
         {
             Debug.WriteLine("Execute non query " + DateTime.Now + " for command text: " + this.CommandText);
-            var rowCount = _WrappedCommand.ExecuteNonQuery();
-            var param = this.Parameters["@" + SyncSession.SyncRowCount];
-            Debug.WriteLine("insert row count is " + rowCount);
-            param.Value = rowCount;
-            return rowCount;
+            PreExecuteCheck();
+            return _WrappedCommand.ExecuteNonQuery();
         }
 
         protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
         {
-            throw new NotImplementedException();
+            Debug.WriteLine("Execute non query " + DateTime.Now + " for command text: " + this.CommandText);
+            PreExecuteCheck();
+            return _WrappedCommand.ExecuteReader(behavior);
         }
 
         public override object ExecuteScalar()
         {
             Debug.WriteLine("Execute Scalar " + DateTime.Now + " for command text: " + this.CommandText);
-            var rowCount = _WrappedCommand.ExecuteNonQuery();
-            var param = this.Parameters["@" + SyncSession.SyncRowCount];
-            Debug.WriteLine("insert row count is " + rowCount);
-            param.Value = rowCount;
-            return rowCount;
+            PreExecuteCheck();
+            return _WrappedCommand.ExecuteScalar();
+        }
+
+        protected void PreExecuteCheck()
+        {
+            // if last anchor is currently dbnull (which it will be on very first sync) then change it to 0;
+            var param = this.Parameters["@" + SyncSession.SyncLastReceivedAnchor];
+            if (param != null)
+            {
+                if (param.Value == DBNull.Value)
+                {
+                    param.Value = 0L;
+                }
+                else if (param.Value is int)
+                {
+                    param.Value = System.Convert.ToInt64(param.Value);
+                }
+            }
         }
 
         public override string CommandText

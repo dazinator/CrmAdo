@@ -25,7 +25,7 @@ namespace CrmSync
         public override int ExecuteNonQuery()
         {
             Debug.WriteLine("Execute non query " + DateTime.Now + " for command text: " + this.CommandText);
-            SetAnchor();
+            Execute();
             return 1;
         }
 
@@ -37,19 +37,43 @@ namespace CrmSync
         public override object ExecuteScalar()
         {
             Debug.WriteLine("Execute Scalar " + DateTime.Now + " for command text: " + this.CommandText);
-            return SetAnchor();
+            return Execute();
         }
 
-        protected object SetAnchor()
+        protected object Execute()
         {
             var param = this.Parameters["@" + SyncSession.SyncNewReceivedAnchor];
-            var entityName = this.CommandText;
             // todo should be able to select max versionnumber from contact..
-            _WrappedCommand.CommandText = this.CommandText;
+           // _WrappedCommand.CommandText = this.CommandText;
             var lastrowversion = _WrappedCommand.ExecuteScalar();
             Debug.WriteLine("last versionnumber is " + lastrowversion);
-            param.Value = lastrowversion;
+            if (lastrowversion == DBNull.Value)
+            {
+                param.Value = 0L;
+            }
+            else
+            {
+                param.Value = (long)lastrowversion;
+            }
+
             return lastrowversion;
+        }
+
+        public override string CommandText
+        {
+            get
+            {
+                return _WrappedCommand.CommandText;
+            }
+            set
+            {
+                _WrappedCommand.CommandText = value;
+            }
+        }
+
+        protected override DbParameterCollection DbParameterCollection
+        {
+            get { return _WrappedCommand.Parameters; }
         }
 
         protected override void Dispose(bool disposing)

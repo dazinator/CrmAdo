@@ -4,7 +4,8 @@ using Microsoft.Synchronization.Data.SqlServerCe;
 
 namespace CrmSync
 {
-    public class SampleClientSyncProvider : SqlCeClientSyncProvider
+    public class SampleClientSyncProvider :  SqlCeClientSyncProvider
+    
     {
 
         public SampleClientSyncProvider()
