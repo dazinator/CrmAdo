@@ -43,8 +43,18 @@ namespace CrmAdo
 
         public virtual string GetDataTypeName()
         {
-            if (AttributeMetadata.AttributeType != null) return AttributeMetadata.AttributeType.Value.ToString();
-            return string.Empty;
+            if (AttributeMetadata.AttributeType == null)
+            {
+                return string.Empty;
+            }
+            switch (AttributeMetadata.AttributeType)
+            {
+                case AttributeTypeCode.String:
+                    return "nvarchar";
+                default:
+                    return AttributeMetadata.AttributeType.Value.ToString();
+
+            }
         }
 
         public virtual AttributeTypeCode AttributeType()

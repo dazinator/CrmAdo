@@ -116,7 +116,8 @@ namespace CrmAdo
         #region Not Implemented
         protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
         {
-            throw new NotImplementedException();
+            return new CrmDbTransaction(this);
+            //  throw new NotImplementedException();
         }
 
         public override void ChangeDatabase(string databaseName)

@@ -137,6 +137,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="CrmDbDataReader.cs" />
+    <Compile Include="CrmDbTransaction.cs" />
     <Compile Include="CrmParameter.cs" />
     <Compile Include="CrmDbProviderFactory.cs" />
     <Compile Include="CrmDbTypeConverter.cs" />

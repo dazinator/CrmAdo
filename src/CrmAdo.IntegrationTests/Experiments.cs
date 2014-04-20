@@ -595,6 +595,51 @@ namespace CrmAdo.IntegrationTests
 
         }
 
+        [Category("Experimentation")]
+        [Test]
+        [TestCase(TestName = "Experiment for selecting version number greater than")]
+        public void Experiment_For_Selecting_Version_Number_Greater_Than()
+        {
+            // var sql = string.Format("Select C.firstname, C.lastname From contact Where firstname Like '%ax%' ");
+            var sql = string.Format("SELECT TOP 10 contactid, firstname, lastname, versionnumber FROM contact WHERE versionnumber > NULL ORDER BY versionnumber DESC");
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var command = conn.CreateCommand();
+
+                Console.WriteLine("Executing command " + sql);
+                command.CommandText = sql;
+                //   command.CommandType = CommandType.Text;
+
+
+                using (var reader = command.ExecuteReader())
+                {
+                    int resultCount = 0;
+                    foreach (var result in reader)
+                    {
+                        resultCount++;
+                        var contactId = (Guid)reader["contactid"];
+                        var firstName = (string)reader.SafeGetString(1);
+                        var lastName = (string)reader.SafeGetString(2);
+                        var versionNumber = (long)reader[3];
+                        Console.WriteLine(string.Format("{0} {1} {2} {3}", contactId, firstName, lastName, versionNumber.ToString()));
+                    }
+                    //while (reader.Read())
+                    //{
+
+                    //}
+                    Console.WriteLine("There were " + resultCount + " results..");
+                }
+            }
+
+
+
+
+
+        }
+
         private void DoSomeWork(object o)
         {
             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
