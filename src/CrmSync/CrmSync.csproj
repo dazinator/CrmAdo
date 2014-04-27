@@ -183,6 +183,7 @@
     <None Include="App.config" />
     <None Include="bin\x64\Debug\CrmSync.exe.config" />
     <None Include="packages.config" />
+    <None Include="Solution\SyncTest_1_0_0_managed.zip" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="bin\tools\CrmSvcUtil.exe" />
@@ -203,6 +204,7 @@
     <Content Include="bin\x64\Debug\sqlcese35.dll" />
     <Content Include="bin\x64\Debug\System.Data.SqlServerCe.dll" />
     <Content Include="bin\x64\Debug\System.Data.SqlServerCe.Entity.dll" />
+    <Content Include="ToDo.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\Debug\" />

@@ -67,6 +67,10 @@ namespace CrmAdo.Dynamics.Metadata
         /// <returns></returns>
         public RetrieveMetadataChangesResponse GetChanges(string entityLogicalName, string clientTimestamp)
         {
+            //if (clientTimestamp == null)
+            //{
+                
+            //}
             return this.GetChanges(entityLogicalName, clientTimestamp, null, DeletedMetadataFilters.All);
         }
         

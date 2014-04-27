@@ -13,7 +13,8 @@ namespace CrmSync
     /// </summary>
     public class InsertEntityDbCommandAdapter : CrmDbCommand
     {
-        private List<string> _Log = new List<string>();
+       // private List<string> _Log = new List<string>();
+        private int _TotalUpdates = 0;
 
         private CrmDbCommand _WrappedCommand;
 
@@ -29,6 +30,7 @@ namespace CrmSync
             var param = this.Parameters["@" + SyncSession.SyncRowCount];
             Debug.WriteLine("insert row count is " + rowCount);
             param.Value = rowCount;
+            _TotalUpdates += rowCount;
             return rowCount;
         }
 
@@ -44,6 +46,7 @@ namespace CrmSync
             var param = this.Parameters["@" + SyncSession.SyncRowCount];
             Debug.WriteLine("insert row count is " + rowCount);
             param.Value = rowCount;
+            _TotalUpdates += rowCount;
             return rowCount;
         }
 

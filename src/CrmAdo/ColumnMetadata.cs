@@ -50,10 +50,27 @@ namespace CrmAdo
             switch (AttributeMetadata.AttributeType)
             {
                 case AttributeTypeCode.String:
+                case AttributeTypeCode.Memo:
                     return "nvarchar";
+                case AttributeTypeCode.Lookup:
+                case AttributeTypeCode.Owner:
+                    return "uniqueidentifier";
+                case AttributeTypeCode.Virtual:
+                    if (this.LogicalAttributeName == "entityimage")
+                    {
+                        return "image";
+                    }
+                    return "nvarchar";
+                case AttributeTypeCode.Double:
+                    return "float";
+                case AttributeTypeCode.State:
+                case AttributeTypeCode.Status:
+                case AttributeTypeCode.Picklist:
+                    return "integer";
+                case AttributeTypeCode.Boolean:
+                    return "bit";
                 default:
                     return AttributeMetadata.AttributeType.Value.ToString();
-
             }
         }
 

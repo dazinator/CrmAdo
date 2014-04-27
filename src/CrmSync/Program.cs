@@ -35,8 +35,8 @@ namespace CrmSync
             sampleStats.DisplayStats(syncStatistics, "initial");
 
             //Make changes on the server and client.
-            Utility.MakeDataChangesOnServer("contact");
-            Utility.MakeDataChangesOnClient("contact");
+            Utility.MakeDataChangesOnServer(SampleServerSyncProvider.EntityName);
+            Utility.MakeDataChangesOnClient(SampleServerSyncProvider.EntityName);
 
             //Subsequent synchronization.
             syncStatistics = sampleSyncAgent.Synchronize();

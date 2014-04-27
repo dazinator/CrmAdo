@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Data.SqlServerCe;
+using System.Globalization;
 using System.IO;
+using System.Text;
 using CrmAdo;
 
 namespace CrmSync
@@ -75,6 +78,103 @@ namespace CrmSync
         /* ----------  BEGIN CODE FOR DBSERVERSYNCPROVIDER AND --------- //
            ----------      SQLCECLIENTSYNCPROVIDER SAMPLES     --------- */
 
+        public static string GetValuesClauseForInsert(Dictionary<string, DbType> columns, Dictionary<string, string> specificValues)
+        {
+            var builder = new StringBuilder(string.Empty);
+            var rand = new Random();
+
+            foreach (var column in columns)
+            {
+
+                if (specificValues.ContainsKey(column.Key))
+                {
+                    builder.Append(specificValues[column.Key]);
+                }
+                else
+                {
+                    switch (column.Value)
+                    {
+                        case DbType.AnsiString:
+                        case DbType.AnsiStringFixedLength:
+                        case DbType.String:
+                        case DbType.StringFixedLength:
+                            builder.Append("'");
+                            builder.Append("randomstringval");
+                            builder.Append(Guid.NewGuid().ToString());
+                            builder.Append("'");
+                            break;
+                        case DbType.Boolean:
+                            int randomInt = rand.Next(0, 1);
+                            // bool randomBool = randomInt == 1;
+                            builder.Append(randomInt.ToString());
+                            break;
+                        case DbType.Currency:
+
+                            builder.Append("10");
+                            break;
+
+                        case DbType.Date:
+                            builder.Append("'");
+                            builder.Append(DateTime.UtcNow.Date.ToString(CultureInfo.InvariantCulture));
+                            builder.Append("'");
+                            break;
+                        case DbType.DateTime:
+                            builder.Append("'");
+                            builder.Append(DateTime.UtcNow.ToString(CultureInfo.InvariantCulture));
+                            builder.Append("'");
+                            break;
+                        case DbType.Decimal:
+                            builder.Append("11");
+                            break;
+
+                        case DbType.Double:
+                            builder.Append("12");
+                            break;
+
+                        case DbType.Guid:
+                            builder.Append("'");
+                            builder.Append(Guid.NewGuid().ToString());
+                            builder.Append("'");
+                            break;
+                        case DbType.Int16:
+                            builder.Append(rand.Next(0, Int16.MaxValue));
+                            break;
+                        case DbType.Int32:
+                            builder.Append(rand.Next(0, int.MaxValue));
+                            break;
+
+                        case DbType.Int64:
+                            builder.Append(LongRandom(0, Int64.MaxValue, rand));
+                            break;
+
+
+                        case DbType.DateTimeOffset:
+                        case DbType.DateTime2:
+                        case DbType.Byte:
+                        case DbType.Binary:
+                            throw new NotSupportedException("column type of : " + column.Value.ToString() + "is not supported.");
+                        default:
+                            throw new NotSupportedException("column type of : " + column.Value.ToString() + "is not supported.");
+
+                    }
+                }
+
+
+                builder.Append(",");
+            }
+            builder.Remove(builder.Length - 1, 1);
+            return builder.ToString();
+        }
+
+        static long LongRandom(long min, long max, Random rand)
+        {
+            byte[] buf = new byte[8];
+            rand.NextBytes(buf);
+            long longRand = BitConverter.ToInt64(buf, 0);
+            return (Math.Abs(longRand % (max - min)) + min);
+        }
+
+
         public static void MakeDataChangesOnServer(string tableName)
         {
             int rowCount = 0;
@@ -83,14 +183,27 @@ namespace CrmSync
             {
 
                 serverConn.Open();
-                if (tableName == "contact")
+                if (tableName == SampleServerSyncProvider.EntityName)
                 {
                     // An insert..
+
+                    var valuesForInsert = new Dictionary<string, string>();
+                    valuesForInsert["new_contactlookup"] = "'21476b89-41b1-e311-9351-6c3be5be9f98'";
+                    valuesForInsert["new_optionset"] = "100000002";
+                    valuesForInsert["new_wholenumberlanguage"] = "1033";
+                    valuesForInsert["new_wholenumbertimezone"] = "85";
+                    valuesForInsert["new_wholenumberduration"] = "55";
+
+                    var valuesClause = GetValuesClauseForInsert(SampleServerSyncProvider.ColumnInfo, valuesForInsert);
+
+
                     using (var command = serverConn.CreateCommand())
                     {
                         command.CommandText =
-                         "INSERT INTO contact (firstname, lastname) " +
-                         "VALUES ('Bill" + Guid.NewGuid().ToString() + "', 'Gates')";
+                         "INSERT INTO " + SampleServerSyncProvider.EntityName + " ("
+                        + string.Join(",", SampleServerSyncProvider.InsertColumns) +
+                           ") " +
+                         "VALUES (" + valuesClause + ")";
                         rowCount = command.ExecuteNonQuery();
                     }
 
@@ -150,14 +263,16 @@ namespace CrmSync
             //connection open. The client provider will commit and close.
             switch (tableName)
             {
-                case "contact":
+                case SampleServerSyncProvider.EntityName:
+                    var idColumnName = SampleServerSyncProvider.EntityName + "id";
+
                     alterTable.CommandText =
-                        "ALTER TABLE contact " +
-                        "ADD CONSTRAINT DF_contactid " +
-                        "DEFAULT NEWID() FOR contactid";
+                        "ALTER TABLE " + SampleServerSyncProvider.EntityName +
+                        " ADD CONSTRAINT DF_" + idColumnName +
+                        " DEFAULT NEWID() FOR " + idColumnName;
                     alterTable.ExecuteNonQuery();
                     break;
-                
+
             }
 
         }
@@ -168,16 +283,28 @@ namespace CrmSync
 
             using (SqlCeConnection clientConn = new SqlCeConnection(Utility.ConnStr_SqlCeClientSync))
             {
-                
+
                 clientConn.Open();
 
-                if (tableName == "contact")
+                if (tableName == SampleServerSyncProvider.EntityName)
                 {
                     using (var sqlCeCommand = clientConn.CreateCommand())
                     {
+
+                        var valuesForInsert = new Dictionary<string, string>();
+                        valuesForInsert["new_contactlookup"] = "'21476b89-41b1-e311-9351-6c3be5be9f98'";
+                        valuesForInsert["new_optionset"] = "100000002";
+                        valuesForInsert["new_wholenumberlanguage"] = "1033";
+                        valuesForInsert["new_wholenumbertimezone"] = "85";
+                        valuesForInsert["new_wholenumberduration"] = "55";
+
+                        var valuesClause = GetValuesClauseForInsert(SampleServerSyncProvider.ColumnInfo, valuesForInsert);
+
                         sqlCeCommand.CommandText =
-                      "INSERT INTO contact (firstname, lastname) " +
-                      "VALUES ('Carl', 'Sagan') ";
+                        "INSERT INTO " + SampleServerSyncProvider.EntityName + " ("
+                        + string.Join(",", SampleServerSyncProvider.InsertColumns) +
+                           ") " +
+                         "VALUES (" + valuesClause + ")";
                         rowCount = sqlCeCommand.ExecuteNonQuery();
                     }
                 }

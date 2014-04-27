@@ -19,11 +19,11 @@ namespace CrmSync
             //for the single table we are synchronizing; it is typically
             //used so that changes to multiple related tables are 
             //synchronized at the same time.
-            SyncGroup customerSyncGroup = new SyncGroup("contact");
+            SyncGroup customerSyncGroup = new SyncGroup("dynamics");
 
             //Add the Customer table: specify a synchronization direction of
             //Bidirectional, and that an existing table should be dropped.
-            SyncTable customerSyncTable = new SyncTable("contact");
+            SyncTable customerSyncTable = new SyncTable(SampleServerSyncProvider.EntityName);
             customerSyncTable.CreationOption = TableCreationOption.DropExistingOrCreateNewTable;
             customerSyncTable.SyncDirection = SyncDirection.Bidirectional;
             customerSyncTable.SyncGroup = customerSyncGroup;

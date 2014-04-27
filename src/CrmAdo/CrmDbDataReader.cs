@@ -213,19 +213,35 @@ namespace CrmAdo
                 return DBNull.Value;
             }
             var val = record[name];
-            if (_Results.ColumnMetadata[ordinal].HasAlias)
+            var meta = _Results.ColumnMetadata[ordinal];
+
+            if (meta.HasAlias)
             {
                 var aliasedVal = val as AliasedValue;
                 if (aliasedVal != null)
                 {
                     //if (!typeof(T).IsAssignableFrom(typeof(AliasedValue)))
                     //{
-                    return aliasedVal.Value;
+                    val = aliasedVal.Value;
                     // }
                 }
             }
 
-            return val;
+            switch (meta.AttributeType())
+            {
+                case AttributeTypeCode.Lookup:
+                case AttributeTypeCode.Owner:
+                    return ((EntityReference)val).Id;
+                case AttributeTypeCode.Money:
+                    return ((Money)val).Value;
+                case AttributeTypeCode.Picklist:
+                case AttributeTypeCode.State:
+                case AttributeTypeCode.Status:
+                    return ((OptionSetValue)val).Value;
+                default:
+                    return val;
+            }
+          
         }
 
         public T GetValue<T>(int ordinal)

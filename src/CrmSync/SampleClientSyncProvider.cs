@@ -29,7 +29,8 @@ namespace CrmSync
             //but we will specify defaults like NEWID() by calling
             //ALTER TABLE after the table is created.
             Console.Write("Creating schema for " + e.Table.TableName + " | ");
-            e.Schema.Tables["contact"].Columns["contactid"].RowGuid = true;
+            var idColumn = e.Table.TableName + "id";
+            e.Schema.Tables[e.Table.TableName].Columns[idColumn].RowGuid = true;
         }
 
         private void SampleClientSyncProvider_SchemaCreated(object sender, SchemaCreatedEventArgs e)

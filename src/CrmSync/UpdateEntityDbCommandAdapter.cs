@@ -14,6 +14,7 @@ namespace CrmSync
     public class UpdateEntityDbCommandAdapter : CrmDbCommand
     {
        // private List<string> _Log = new List<string>();
+        private int _TotalUpdates = 0;
 
         private CrmDbCommand _WrappedCommand;
 
@@ -73,6 +74,7 @@ namespace CrmSync
             var rowCount = _WrappedCommand.ExecuteNonQuery();
             Debug.WriteLine("update row count is " + rowCount);
             param.Value = rowCount;
+            _TotalUpdates += rowCount;
             return rowCount;
         }
 
