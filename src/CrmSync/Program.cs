@@ -42,6 +42,13 @@ namespace CrmSync
             syncStatistics = sampleSyncAgent.Synchronize();
             sampleStats.DisplayStats(syncStatistics, "subsequent");
 
+            //Exit.
+            Console.Write("\nPress Enter to do another sync..");
+            Console.ReadLine();
+
+            syncStatistics = sampleSyncAgent.Synchronize();
+            sampleStats.DisplayStats(syncStatistics, "subsequent");
+            
             //Return server data back to its original state.
             Utility.CleanUpServer();
 
