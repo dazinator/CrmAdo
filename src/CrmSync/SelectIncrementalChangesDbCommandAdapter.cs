@@ -26,6 +26,9 @@ namespace CrmSync
         {
             Debug.WriteLine("Execute non query " + DateTime.Now + " for command text: " + this.CommandText);
             PreExecuteCheck();
+#if DEBUG
+            Console.WriteLine("Selecting incremental changes between " + this.Parameters[0].Value + " and " + this.Parameters[1].Value);
+#endif
             return _WrappedCommand.ExecuteNonQuery();
         }
 
@@ -33,6 +36,9 @@ namespace CrmSync
         {
             Debug.WriteLine("Execute non query " + DateTime.Now + " for command text: " + this.CommandText);
             PreExecuteCheck();
+#if DEBUG
+            Console.WriteLine("Selecting incremental changes between " + this.Parameters[0].Value + " and " + this.Parameters[1].Value);
+#endif
             return _WrappedCommand.ExecuteReader(behavior);
         }
 

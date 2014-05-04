@@ -13,7 +13,7 @@ namespace CrmSync
     /// </summary>
     public class UpdateEntityDbCommandAdapter : CrmDbCommand
     {
-       // private List<string> _Log = new List<string>();
+        // private List<string> _Log = new List<string>();
         private int _TotalUpdates = 0;
 
         private CrmDbCommand _WrappedCommand;
@@ -70,9 +70,18 @@ namespace CrmSync
             // Until above implemented then we allways just update the record.
 
             var param = this.Parameters["@" + SyncSession.SyncRowCount];
+
+#if DEBUG
+            Console.WriteLine("Updating entity in CRM.");
+#endif
+
             //_WrappedCommand.CommandText = this.CommandText;
             var rowCount = _WrappedCommand.ExecuteNonQuery();
             Debug.WriteLine("update row count is " + rowCount);
+
+#if DEBUG
+            Console.WriteLine("row count was " + rowCount);
+#endif
             param.Value = rowCount;
             _TotalUpdates += rowCount;
             return rowCount;

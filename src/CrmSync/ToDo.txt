@@ -1,31 +1,24 @@
-﻿Table '[new_synctest]' 
-could not be created. The generated script is 
-' CREATE TABLE [new_synctest] ([createdby]Lookup NULL  , [createdon]DateTime NULL  , [entityimage]Virtual NULL  , 
-[exchangerate]numeric(22, 10)  NULL  , [importsequencenumber]Integer NULL  , [modifiedby]Lookup NULL  , 
-[modifiedon]DateTime NULL  , [new_contactlookup]Lookup NULL  , [new_currencycurrencyprecision]Money NULL  , 
-[new_currencycurrencyprecision_base]Money NULL  , [new_currencyprecision0]Money NULL  ,
- [new_currencyprecision0_base]Money NULL  , [new_currencyprecision1]Money NULL  , 
- [new_currencyprecision1_base]Money NULL  , [new_currencyprecision2]Money NULL  , 
- [new_currencyprecision2_base]Money NULL  , [new_currencyprecision3]Money NULL  ,
-  [new_currencyprecision3_base]Money NULL  , [new_currencyprecision4]Money NULL  , 
-  [new_currencyprecision4_base]Money NULL  , [new_currencypricingprecision]Money NULL  ,
-   [new_currencypricingprecision_base]Money NULL  , [new_dateandtime]DateTime NULL  ,
-    [new_dateonly]DateTime NULL  , [new_decimalprecision0]numeric(10, 0)  NULL  , 
-	[new_decimalprecision1]numeric(11, 1)  NULL  , [new_decimalprecision2]numeric(12, 2)  NULL  , 
-	[new_decimalprecision3]numeric(13, 3)  NULL  , [new_decimalprecision4]numeric(14, 4)  NULL  , 
-	[new_decimalprecision5]numeric(15, 5)  NULL  , [new_decimalprecision6]numeric(16, 6)  NULL  , 
-	[new_decimalprecision7]numeric(17, 7)  NULL  , [new_decimalprecision8]numeric(18, 8)  NULL  ,
-	 [new_decimalprecision9]numeric(19, 9)  NULL  , [new_decimalprecision10]numeric(20, 10)  NULL  , 
-	 [new_floatingpointprecision0]Double NULL  , [new_floatingpointprecision1]Double NULL  , 
-	 [new_floatingpointprecision2]Double NULL  , [new_floatingpointprecision3]Double NULL  ,
-	  [new_floatingpointprecision4]Double NULL  , [new_floatingpointprecision5]Double NULL  ,
-	   [new_multiplelinesoftext]Memo NULL  , [new_name]ntext NULL  , [new_optionset]Picklist NULL  ,
-	    [new_synctestid]Uniqueidentifier UNIQUE  ROWGUIDCOL  NOT  NULL  , [new_twooptions]Boolean NULL  , 
-		[new_wholenumberduration]Integer NULL  , [new_wholenumberlanguage]Integer NULL  , 
-		[new_wholenumbernone]Integer NULL  , [new_wholenumbertimezone]Integer NULL  , 
-		[overriddencreatedon]DateTime NULL  , [ownerid]Owner NULL  , 
-		[owningbusinessunit]Lookup NULL  , [owningteam]Lookup NULL  , 
-		[owninguser]Lookup NULL  , [statecode]State NULL  , 
-		[statuscode]Status NULL  , [timezoneruleversionnumber]Integer NULL  , 
-		[transactioncurrencyid]Lookup NULL  , [utcconversiontimezonecode]Integer NULL  , 
-		[versionnumber]BigInt NULL  ); '.
+﻿Sync Current Issue:
+
+
+At the moment when a new record is created in the local database, it doesn't have the following attributes becuase these are set only once the record is inserted into the CRM server:-
+
+createdby
+exchangerate
+modifiedby
+ownerid
+owningbusinessunit
+owningteam
+owninguser
+statecode
+statuscode
+timezoneruleversionnumber
+transactioncurrencyid
+utcconversiontimezonecode
+versionnumber
+
+In addition to this, its also possible that a plugin could fire on insert of the record into CRM and modify the record further on the server.
+
+Unfortunately, the Sync looks like it inserts the records into the server, and then gets the next anchor value at that point.. which is odd.. as that basically means our inserts have a versionnumber less than or equal to the next anchor
+which means on the next sync, they are not detected as changes.
+

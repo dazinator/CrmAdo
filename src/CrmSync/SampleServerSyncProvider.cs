@@ -164,7 +164,7 @@ namespace CrmSync
 
             DbCommand contactInserts = new InsertEntityDbCommandAdapter(serverConn.CreateCommand() as CrmDbCommand);
             contactInserts.CommandText =
-                "INSERT INTO" + EntityName
+                "INSERT INTO " + EntityName
             + " (" + string.Join(",", InsertColumns) + " ) " +
                 "VALUES (" + string.Join(",", insertParamNames) + ")";
 

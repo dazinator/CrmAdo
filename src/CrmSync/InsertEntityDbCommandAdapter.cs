@@ -13,7 +13,7 @@ namespace CrmSync
     /// </summary>
     public class InsertEntityDbCommandAdapter : CrmDbCommand
     {
-       // private List<string> _Log = new List<string>();
+        // private List<string> _Log = new List<string>();
         private int _TotalUpdates = 0;
 
         private CrmDbCommand _WrappedCommand;
@@ -26,11 +26,19 @@ namespace CrmSync
         public override int ExecuteNonQuery()
         {
             Debug.WriteLine("Execute non query " + DateTime.Now + " for command text: " + this.CommandText);
+
+#if DEBUG
+            Console.Write("Inserting entity into CRM. ");
+#endif
+
             var rowCount = _WrappedCommand.ExecuteNonQuery();
             var param = this.Parameters["@" + SyncSession.SyncRowCount];
             Debug.WriteLine("insert row count is " + rowCount);
             param.Value = rowCount;
             _TotalUpdates += rowCount;
+#if DEBUG
+            Console.Write("insert row count: " + rowCount);
+#endif
             return rowCount;
         }
 

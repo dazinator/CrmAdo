@@ -177,6 +177,7 @@ namespace CrmSync
 
         public static void MakeDataChangesOnServer(string tableName)
         {
+            return;
             int rowCount = 0;
 
             using (CrmDbConnection serverConn = new CrmDbConnection(Utility.ConnStr_DbServerSync))
@@ -188,11 +189,13 @@ namespace CrmSync
                     // An insert..
 
                     var valuesForInsert = new Dictionary<string, string>();
+                    //                                       21476b89-41b1-e311-9351-6c3be5be9f98
                     valuesForInsert["new_contactlookup"] = "'21476b89-41b1-e311-9351-6c3be5be9f98'";
                     valuesForInsert["new_optionset"] = "100000002";
                     valuesForInsert["new_wholenumberlanguage"] = "1033";
                     valuesForInsert["new_wholenumbertimezone"] = "85";
                     valuesForInsert["new_wholenumberduration"] = "55";
+                   // valuesForInsert["new_synctestid"] = "'af42495d-642d-480a-8fdc-24ec328d294e'";
 
                     var valuesClause = GetValuesClauseForInsert(SampleServerSyncProvider.ColumnInfo, valuesForInsert);
 
@@ -297,7 +300,7 @@ namespace CrmSync
                         valuesForInsert["new_wholenumberlanguage"] = "1033";
                         valuesForInsert["new_wholenumbertimezone"] = "85";
                         valuesForInsert["new_wholenumberduration"] = "55";
-
+                       // valuesForInsert["new_synctestid"] = "'ef42495d-642d-480a-8fdc-24ec328d294a'";
                         var valuesClause = GetValuesClauseForInsert(SampleServerSyncProvider.ColumnInfo, valuesForInsert);
 
                         sqlCeCommand.CommandText =

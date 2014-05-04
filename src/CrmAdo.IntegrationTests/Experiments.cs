@@ -527,9 +527,10 @@ namespace CrmAdo.IntegrationTests
                 }
 
                 // get the inserted account version number.
+                Guid newaccountid;
                 using (var command = conn.CreateCommand())
                 {
-                    Guid newId = Guid.NewGuid();
+                    newaccountid = Guid.NewGuid();
                     sql =
                         string.Format("SELECT versionnumber from account WHERE accountid = '" +
                                       newAccountId.ToString() + "'");
@@ -539,12 +540,40 @@ namespace CrmAdo.IntegrationTests
                 }
 
 
+                // update account and see version number change?
+                using (var command = conn.CreateCommand())
+                {
+
+                    sql =
+                        string.Format("UPDATE account SET name = 'testsyncchange' WHERE accountid = '" +
+                                      newAccountId.ToString() + "'");
+                    Console.WriteLine("Executing command " + sql);
+                    command.CommandText = sql;
+                    command.ExecuteNonQuery();
+                }
+
+
+                // get the updated account version number.
+                long updatedAccountVersionNumber;
+                using (var command = conn.CreateCommand())
+                {
+                    sql =
+                        string.Format("SELECT versionnumber from account WHERE accountid = '" +
+                                      newAccountId.ToString() + "'");
+                    Console.WriteLine("Executing command " + sql);
+                    command.CommandText = sql;
+                    updatedAccountVersionNumber = (long)command.ExecuteScalar();
+                }
+
+
                 // assert that the inserted account version number is the biggest because it was inserted last
                 Console.WriteLine("Max contact versionnumber prior to insert " + contactVersionNumber);
                 Console.WriteLine("Max account versionnumber prior to insert " + accountVersionNumber);
 
                 Console.WriteLine("Inserted new contact and it has version number " + insertedContactVersionNumber);
                 Console.WriteLine("Inserted new account and it has version number " + insertedAccountVersionNumber);
+
+                Console.WriteLine("Then updated the account and now it has version number " + updatedAccountVersionNumber);
 
 
             }
@@ -639,6 +668,32 @@ namespace CrmAdo.IntegrationTests
 
 
         }
+
+
+        //
+        [Category("Experimentation")]
+        [Test]
+        [TestCase(TestName = "Experiment for row version of particular entity")]
+        public void Experiment_For_Row_Version_oF_Entity()
+        {
+            // var sql = string.Format("Select C.firstname, C.lastname From contact Where firstname Like '%ax%' ");
+
+
+            // now keep querying for min active row version..
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
+                                                         new CrmClientCredentialsProvider());
+
+            var orgService = serviceProvider.GetOrganisationService();
+            using (orgService as IDisposable)
+            {
+                var entId = Guid.Parse("cfbc27e7-46a3-459c-992f-daa6c51d49f4");
+                var ent = orgService.Retrieve("new_synctest", entId, new ColumnSet("versionnumber", "new_name"));
+                Console.WriteLine(ent.Id + " version number is: " + ent["versionnumber"]);
+            }
+
+        }
+
 
         private void DoSomeWork(object o)
         {

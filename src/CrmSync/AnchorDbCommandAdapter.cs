@@ -44,9 +44,15 @@ namespace CrmSync
         {
             var param = this.Parameters["@" + SyncSession.SyncNewReceivedAnchor];
             // todo should be able to select max versionnumber from contact..
-           // _WrappedCommand.CommandText = this.CommandText;
+            // _WrappedCommand.CommandText = this.CommandText;
+
             var lastrowversion = _WrappedCommand.ExecuteScalar();
             Debug.WriteLine("last versionnumber is " + lastrowversion);
+
+#if DEBUG
+            Console.WriteLine("Get new anchor value: " + lastrowversion);
+#endif
+
             if (lastrowversion == DBNull.Value)
             {
                 param.Value = 0L;
