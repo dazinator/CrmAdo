@@ -14,20 +14,27 @@ namespace CrmSync
     {
 
         public const string EntityName = "new_synctest";
+        //public static string[] SelectColumns =
+        //    ("createdby,createdon,createdonbehalfby,entityimage,exchangerate," +
+        //    "importsequencenumber,modifiedby,modifiedon,modifiedonbehalfby,new_contactlookup,new_currencycurrencyprecision," +
+        //    "new_currencycurrencyprecision_base,new_currencyprecision0,new_currencyprecision0_base,new_currencyprecision1," +
+        //    "new_currencyprecision1_base,new_currencyprecision2,new_currencyprecision2_base,new_currencyprecision3," +
+        //    "new_currencyprecision3_base,new_currencyprecision4,new_currencyprecision4_base,new_currencypricingprecision," +
+        //    "new_currencypricingprecision_base,new_dateandtime,new_dateonly,new_decimalprecision0,new_decimalprecision1," +
+        //    "new_decimalprecision2,new_decimalprecision3,new_decimalprecision4,new_decimalprecision5,new_decimalprecision6," +
+        //    "new_decimalprecision7,new_decimalprecision8,new_decimalprecision9,new_decimalprecision10,new_floatingpointprecision0," +
+        //    "new_floatingpointprecision1,new_floatingpointprecision2,new_floatingpointprecision3,new_floatingpointprecision4," +
+        //    "new_floatingpointprecision5,new_multiplelinesoftext,new_name,new_optionset,new_synctestid,new_twooptions," +
+        //    "new_wholenumberduration,new_wholenumberlanguage,new_wholenumbernone,new_wholenumbertimezone,overriddencreatedon," +
+        //    "ownerid,owningbusinessunit,owningteam,owninguser,statecode,statuscode,timezoneruleversionnumber,transactioncurrencyid," +
+        //    "utcconversiontimezonecode,versionnumber").Split(',');
+
         public static string[] SelectColumns =
-            ("createdby,createdon,createdonbehalfby,entityimage,exchangerate," +
-            "importsequencenumber,modifiedby,modifiedon,modifiedonbehalfby,new_contactlookup,new_currencycurrencyprecision," +
-            "new_currencycurrencyprecision_base,new_currencyprecision0,new_currencyprecision0_base,new_currencyprecision1," +
-            "new_currencyprecision1_base,new_currencyprecision2,new_currencyprecision2_base,new_currencyprecision3," +
-            "new_currencyprecision3_base,new_currencyprecision4,new_currencyprecision4_base,new_currencypricingprecision," +
-            "new_currencypricingprecision_base,new_dateandtime,new_dateonly,new_decimalprecision0,new_decimalprecision1," +
-            "new_decimalprecision2,new_decimalprecision3,new_decimalprecision4,new_decimalprecision5,new_decimalprecision6," +
-            "new_decimalprecision7,new_decimalprecision8,new_decimalprecision9,new_decimalprecision10,new_floatingpointprecision0," +
-            "new_floatingpointprecision1,new_floatingpointprecision2,new_floatingpointprecision3,new_floatingpointprecision4," +
-            "new_floatingpointprecision5,new_multiplelinesoftext,new_name,new_optionset,new_synctestid,new_twooptions," +
-            "new_wholenumberduration,new_wholenumberlanguage,new_wholenumbernone,new_wholenumbertimezone,overriddencreatedon," +
-            "ownerid,owningbusinessunit,owningteam,owninguser,statecode,statuscode,timezoneruleversionnumber,transactioncurrencyid," +
-            "utcconversiontimezonecode,versionnumber").Split(',');
+          ("createdby,createdonbehalfby," +
+          "modifiedby,modifiedonbehalfby,new_contactlookup," +
+          "new_name,new_synctestid," +
+          "ownerid,owningbusinessunit,owningteam,owninguser,transactioncurrencyid," +
+          "versionnumber").Split(',');
 
         public static string[] InsertColumns;
         public static string[] UpdateColumns;
@@ -41,54 +48,68 @@ namespace CrmSync
         {
 
             // could get metadata from crm.//new_currencypricingprecision," +
-            ColumnInfo["createdon"] = DbType.DateTime;
-            ColumnInfo["modifiedon"] = DbType.DateTime;
+           // ColumnInfo["createdon"] = DbType.DateTime;
+          //  ColumnInfo["modifiedon"] = DbType.DateTime;
+            ColumnInfo["createdby"] = DbType.Guid;
+            ColumnInfo["createdonbehalfby"] = DbType.Guid;
+            ColumnInfo["modifiedby"] = DbType.Guid;
+            ColumnInfo["modifiedonbehalfby"] = DbType.Guid;
             ColumnInfo["new_contactlookup"] = DbType.Guid;
-            ColumnInfo["new_currencycurrencyprecision"] = DbType.Currency;
-            ColumnInfo["new_currencycurrencyprecision_base"] = DbType.Currency;
-            ColumnInfo["new_currencyprecision0"] = DbType.Currency;
-            ColumnInfo["new_currencyprecision0_base"] = DbType.Currency;
-            ColumnInfo["new_currencyprecision1"] = DbType.Currency;
-            ColumnInfo["new_currencyprecision1_base"] = DbType.Currency;
-            ColumnInfo["new_currencyprecision2"] = DbType.Currency;
-            ColumnInfo["new_currencyprecision2_base"] = DbType.Currency;
-            ColumnInfo["new_currencyprecision3"] = DbType.Currency;
-            ColumnInfo["new_currencyprecision3_base"] = DbType.Currency;
-            ColumnInfo["new_currencyprecision4"] = DbType.Currency;
-            ColumnInfo["new_currencyprecision4_base"] = DbType.Currency;
-            ColumnInfo["new_currencypricingprecision"] = DbType.Currency;
-            ColumnInfo["new_currencypricingprecision_base"] = DbType.Currency;
-            ColumnInfo["new_dateandtime"] = DbType.DateTime;
-            ColumnInfo["new_dateonly"] = DbType.Date;
-            ColumnInfo["new_decimalprecision0"] = DbType.Decimal;
-            ColumnInfo["new_decimalprecision1"] = DbType.Decimal;
-            ColumnInfo["new_decimalprecision2"] = DbType.Decimal;
-            ColumnInfo["new_decimalprecision3"] = DbType.Decimal;
-            ColumnInfo["new_decimalprecision4"] = DbType.Decimal;
-            ColumnInfo["new_decimalprecision5"] = DbType.Decimal;
-            ColumnInfo["new_decimalprecision6"] = DbType.Decimal;
-            ColumnInfo["new_decimalprecision7"] = DbType.Decimal;
-            ColumnInfo["new_decimalprecision8"] = DbType.Decimal;
-            ColumnInfo["new_decimalprecision9"] = DbType.Decimal;
-            ColumnInfo["new_decimalprecision10"] = DbType.Decimal;
-            ColumnInfo["new_floatingpointprecision0"] = DbType.Double;
-            ColumnInfo["new_floatingpointprecision1"] = DbType.Double;
-            ColumnInfo["new_floatingpointprecision2"] = DbType.Double;
-            ColumnInfo["new_floatingpointprecision3"] = DbType.Double;
-            ColumnInfo["new_floatingpointprecision4"] = DbType.Double;
-            ColumnInfo["new_floatingpointprecision5"] = DbType.Double;
-            ColumnInfo["new_multiplelinesoftext"] = DbType.String;
+            //ColumnInfo["new_currencycurrencyprecision"] = DbType.Currency;
+            //ColumnInfo["new_currencycurrencyprecision_base"] = DbType.Currency;
+            //ColumnInfo["new_currencyprecision0"] = DbType.Currency;
+            //ColumnInfo["new_currencyprecision0_base"] = DbType.Currency;
+            //ColumnInfo["new_currencyprecision1"] = DbType.Currency;
+            //ColumnInfo["new_currencyprecision1_base"] = DbType.Currency;
+            //ColumnInfo["new_currencyprecision2"] = DbType.Currency;
+            //ColumnInfo["new_currencyprecision2_base"] = DbType.Currency;
+            //ColumnInfo["new_currencyprecision3"] = DbType.Currency;
+            //ColumnInfo["new_currencyprecision3_base"] = DbType.Currency;
+            //ColumnInfo["new_currencyprecision4"] = DbType.Currency;
+            //ColumnInfo["new_currencyprecision4_base"] = DbType.Currency;
+            //ColumnInfo["new_currencypricingprecision"] = DbType.Currency;
+            //ColumnInfo["new_currencypricingprecision_base"] = DbType.Currency;
+            //ColumnInfo["new_dateandtime"] = DbType.DateTime;
+            //ColumnInfo["new_dateonly"] = DbType.Date;
+            //ColumnInfo["new_decimalprecision0"] = DbType.Decimal;
+            //ColumnInfo["new_decimalprecision1"] = DbType.Decimal;
+            //ColumnInfo["new_decimalprecision2"] = DbType.Decimal;
+            //ColumnInfo["new_decimalprecision3"] = DbType.Decimal;
+            //ColumnInfo["new_decimalprecision4"] = DbType.Decimal;
+            //ColumnInfo["new_decimalprecision5"] = DbType.Decimal;
+            //ColumnInfo["new_decimalprecision6"] = DbType.Decimal;
+            //ColumnInfo["new_decimalprecision7"] = DbType.Decimal;
+            //ColumnInfo["new_decimalprecision8"] = DbType.Decimal;
+            //ColumnInfo["new_decimalprecision9"] = DbType.Decimal;
+            //ColumnInfo["new_decimalprecision10"] = DbType.Decimal;
+            //ColumnInfo["new_floatingpointprecision0"] = DbType.Double;
+            //ColumnInfo["new_floatingpointprecision1"] = DbType.Double;
+            //ColumnInfo["new_floatingpointprecision2"] = DbType.Double;
+            //ColumnInfo["new_floatingpointprecision3"] = DbType.Double;
+            //ColumnInfo["new_floatingpointprecision4"] = DbType.Double;
+            //ColumnInfo["new_floatingpointprecision5"] = DbType.Double;
+            //ColumnInfo["new_multiplelinesoftext"] = DbType.String;
             ColumnInfo["new_name"] = DbType.String;
-            ColumnInfo["new_optionset"] = DbType.Int32;
+           // ColumnInfo["new_optionset"] = DbType.Int32;
             ColumnInfo["new_synctestid"] = DbType.Guid;
-            ColumnInfo["new_twooptions"] = DbType.Boolean;
-            ColumnInfo["new_wholenumberduration"] = DbType.Int32;
-            ColumnInfo["new_wholenumberlanguage"] = DbType.Int32;
-            ColumnInfo["new_wholenumbernone"] = DbType.Int32;
-            ColumnInfo["new_wholenumbertimezone"] = DbType.Int32;
+          
+           // ColumnInfo["new_twooptions"] = DbType.Boolean;
+            //ColumnInfo["new_wholenumberduration"] = DbType.Int32;
+            //ColumnInfo["new_wholenumberlanguage"] = DbType.Int32;
+            //ColumnInfo["new_wholenumbernone"] = DbType.Int32;
+            //ColumnInfo["new_wholenumbertimezone"] = DbType.Int32;
 
-            InsertColumns = (from a in ColumnInfo select a.Key).ToArray();
-            UpdateColumns = (from a in ColumnInfo select a.Key).ToArray();
+            ColumnInfo["ownerid"] = DbType.Guid;
+            ColumnInfo["owningbusinessunit"] = DbType.Guid;
+            ColumnInfo["owningteam"] = DbType.Guid;
+            ColumnInfo["owninguser"] = DbType.Guid;
+            ColumnInfo["transactioncurrencyid"] = DbType.Guid;
+            ColumnInfo["versionnumber"] = DbType.Int64;
+
+            string[] excludeNames = new string[] { "createdby", "createdonbehalfby", "modifiedby", "modifiedonbehalfby", "owningbusinessunit", "ownerid", "owningteam", "owninguser", "transactioncurrencyid", "versionnumber" };
+           // var excludeForInsertAndUpdate = (from a in ColumnInfo where excludeNames.Contains(a.Key) select a).ToArray();
+            InsertColumns = (from a in ColumnInfo where !excludeNames.Contains(a.Key) select a.Key).ToArray();
+            UpdateColumns = (from a in ColumnInfo where !excludeNames.Contains(a.Key) select a.Key).ToArray();
         }
 
         public SampleServerSyncProvider()

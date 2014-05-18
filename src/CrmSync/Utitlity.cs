@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Data.SqlServerCe;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using CrmAdo;
 
@@ -13,6 +14,9 @@ namespace CrmSync
     public class Utility
     {
 
+
+        public static Guid CrmSystemUserId = Guid.Parse("ac229fe3-40b1-e311-9caa-d89d6764506c");
+        public static Guid CrmTransactionCurrency = Guid.Parse("ffb0803a-40b1-e311-9351-6c3be5be9f98");
 
         // Set the password and connection string for samples with clients 
         // that use SqlCeClientSyncProvider.    
@@ -195,7 +199,7 @@ namespace CrmSync
                     valuesForInsert["new_wholenumberlanguage"] = "1033";
                     valuesForInsert["new_wholenumbertimezone"] = "85";
                     valuesForInsert["new_wholenumberduration"] = "55";
-                   // valuesForInsert["new_synctestid"] = "'af42495d-642d-480a-8fdc-24ec328d294e'";
+                    // valuesForInsert["new_synctestid"] = "'af42495d-642d-480a-8fdc-24ec328d294e'";
 
                     var valuesClause = GetValuesClauseForInsert(SampleServerSyncProvider.ColumnInfo, valuesForInsert);
 
@@ -297,11 +301,30 @@ namespace CrmSync
                         var valuesForInsert = new Dictionary<string, string>();
                         valuesForInsert["new_contactlookup"] = "'21476b89-41b1-e311-9351-6c3be5be9f98'";
                         valuesForInsert["new_optionset"] = "100000002";
-                        valuesForInsert["new_wholenumberlanguage"] = "1033";
-                        valuesForInsert["new_wholenumbertimezone"] = "85";
-                        valuesForInsert["new_wholenumberduration"] = "55";
-                       // valuesForInsert["new_synctestid"] = "'ef42495d-642d-480a-8fdc-24ec328d294a'";
-                        var valuesClause = GetValuesClauseForInsert(SampleServerSyncProvider.ColumnInfo, valuesForInsert);
+
+                      //  valuesForInsert["createdby"] = "'" + CrmSystemUserId + "'";
+                     //   valuesForInsert["modifiedby"] = "'" + CrmSystemUserId + "'";
+                      //  valuesForInsert["createdonbehalfby"] = "'" + CrmSystemUserId + "'";
+                      //  valuesForInsert["modifiedonbehalfby"] = "'" + CrmSystemUserId + "'";
+                      //  valuesForInsert["ownerid"] = "'" + CrmSystemUserId + "'";
+                     //   valuesForInsert["transactioncurrencyid"] = "'" + CrmTransactionCurrency + "'";
+                       
+                        //valuesForInsert["new_wholenumberlanguage"] = "1033";
+                        // valuesForInsert["new_wholenumbertimezone"] = "85";
+                        // valuesForInsert["new_wholenumberduration"] = "55";
+                        // valuesForInsert["new_synctestid"] = "'ef42495d-642d-480a-8fdc-24ec328d294a'";
+                        var insertColumns = (from a in SampleServerSyncProvider.ColumnInfo
+                                             where SampleServerSyncProvider.InsertColumns.Contains(a.Key)
+                                             select a);
+
+                        var insertColumnsDictionary = new Dictionary<string, DbType>();
+                        foreach (var i in insertColumns)
+                        {
+                            insertColumnsDictionary.Add(i.Key, i.Value);
+                        }
+
+
+                        var valuesClause = GetValuesClauseForInsert(insertColumnsDictionary, valuesForInsert);
 
                         sqlCeCommand.CommandText =
                         "INSERT INTO " + SampleServerSyncProvider.EntityName + " ("
