@@ -162,6 +162,10 @@
             try {
               var pageTracker = _gat._getTracker("UA-49278315-1");
             pageTracker._trackPageview();
+            setTimeout(function(){
+              var pageTracker = _gat._getTracker("UA-49278315-1");
+              pageTracker._trackEvent('bouncethreshold', 'thresholdreached', 'seconds', 20)
+              },20000);
             } catch(err) {}
           </script>
 
