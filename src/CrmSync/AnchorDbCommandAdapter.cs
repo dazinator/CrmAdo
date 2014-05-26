@@ -53,7 +53,7 @@ namespace CrmSync
             Console.WriteLine("Get new anchor value: " + lastrowversion);
 #endif
 
-            if (lastrowversion == DBNull.Value)
+            if (lastrowversion == DBNull.Value || lastrowversion == null)
             {
                 param.Value = 0L;
             }

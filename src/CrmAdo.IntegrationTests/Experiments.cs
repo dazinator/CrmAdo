@@ -630,7 +630,7 @@ namespace CrmAdo.IntegrationTests
         public void Experiment_For_Selecting_Version_Number_Greater_Than()
         {
             // var sql = string.Format("Select C.firstname, C.lastname From contact Where firstname Like '%ax%' ");
-            var sql = string.Format("SELECT TOP 10 contactid, firstname, lastname, versionnumber FROM contact WHERE versionnumber > NULL ORDER BY versionnumber DESC");
+            var sql = string.Format("SELECT TOP 10 contactid, firstname, lastname, versionnumber FROM contact WHERE versionnumber NOT NULL ORDER BY versionnumber DESC");
 
             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
             using (var conn = new CrmDbConnection(connectionString.ConnectionString))

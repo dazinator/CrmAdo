@@ -9,6 +9,8 @@ using Microsoft.Xrm.Sdk.Query;
 
 namespace CrmAdo.Dynamics.Metadata
 {
+
+
     /// <summary>
     /// A repository, providing access to metadata for Dynamics Crm entities.
     /// </summary>

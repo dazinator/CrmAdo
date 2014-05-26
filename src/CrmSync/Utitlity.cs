@@ -17,7 +17,9 @@ namespace CrmSync
 
         public static Guid CrmSystemUserId = Guid.Parse("ac229fe3-40b1-e311-9caa-d89d6764506c");
         public static Guid CrmTransactionCurrency = Guid.Parse("ffb0803a-40b1-e311-9351-6c3be5be9f98");
+        public static Guid CrmContactId = Guid.Parse("01fd8460-eee4-e311-a935-6c3be5be5ec4");
 
+        
         // Set the password and connection string for samples with clients 
         // that use SqlCeClientSyncProvider.    
         private static string _clientPassword;
@@ -299,7 +301,7 @@ namespace CrmSync
                     {
 
                         var valuesForInsert = new Dictionary<string, string>();
-                        valuesForInsert["new_contactlookup"] = "'21476b89-41b1-e311-9351-6c3be5be9f98'";
+                        valuesForInsert["new_contactlookup"] = "'" + CrmContactId.ToString() + "'";
                         valuesForInsert["new_optionset"] = "100000002";
 
                       //  valuesForInsert["createdby"] = "'" + CrmSystemUserId + "'";

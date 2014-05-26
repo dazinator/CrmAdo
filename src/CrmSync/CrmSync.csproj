@@ -151,6 +151,8 @@
     <Compile Include="AnchorDbCommandAdapter.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="CrmComponents\BasePlugin.cs" />
+    <Compile Include="CrmComponents\CrmSyncPlugin.cs" />
     <Compile Include="SelectIncrementalChangesDbCommandAdapter.cs">
       <SubType>Component</SubType>
     </Compile>
