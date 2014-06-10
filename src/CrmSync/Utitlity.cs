@@ -190,7 +190,7 @@ namespace CrmSync
             {
 
                 serverConn.Open();
-                if (tableName == SampleServerSyncProvider.EntityName)
+                if (tableName == DynamicsCrmServerSyncProvider.EntityName)
                 {
                     // An insert..
 
@@ -203,14 +203,14 @@ namespace CrmSync
                     valuesForInsert["new_wholenumberduration"] = "55";
                     // valuesForInsert["new_synctestid"] = "'af42495d-642d-480a-8fdc-24ec328d294e'";
 
-                    var valuesClause = GetValuesClauseForInsert(SampleServerSyncProvider.ColumnInfo, valuesForInsert);
+                    var valuesClause = GetValuesClauseForInsert(DynamicsCrmServerSyncProvider.ColumnInfo, valuesForInsert);
 
 
                     using (var command = serverConn.CreateCommand())
                     {
                         command.CommandText =
-                         "INSERT INTO " + SampleServerSyncProvider.EntityName + " ("
-                        + string.Join(",", SampleServerSyncProvider.InsertColumns) +
+                         "INSERT INTO " + DynamicsCrmServerSyncProvider.EntityName + " ("
+                        + string.Join(",", DynamicsCrmServerSyncProvider.InsertColumns) +
                            ") " +
                          "VALUES (" + valuesClause + ")";
                         rowCount = command.ExecuteNonQuery();
@@ -272,11 +272,11 @@ namespace CrmSync
             //connection open. The client provider will commit and close.
             switch (tableName)
             {
-                case SampleServerSyncProvider.EntityName:
-                    var idColumnName = SampleServerSyncProvider.EntityName + "id";
+                case DynamicsCrmServerSyncProvider.EntityName:
+                    var idColumnName = DynamicsCrmServerSyncProvider.EntityName + "id";
 
                     alterTable.CommandText =
-                        "ALTER TABLE " + SampleServerSyncProvider.EntityName +
+                        "ALTER TABLE " + DynamicsCrmServerSyncProvider.EntityName +
                         " ADD CONSTRAINT DF_" + idColumnName +
                         " DEFAULT NEWID() FOR " + idColumnName;
                     alterTable.ExecuteNonQuery();
@@ -295,7 +295,7 @@ namespace CrmSync
 
                 clientConn.Open();
 
-                if (tableName == SampleServerSyncProvider.EntityName)
+                if (tableName == DynamicsCrmServerSyncProvider.EntityName)
                 {
                     using (var sqlCeCommand = clientConn.CreateCommand())
                     {
@@ -315,8 +315,8 @@ namespace CrmSync
                         // valuesForInsert["new_wholenumbertimezone"] = "85";
                         // valuesForInsert["new_wholenumberduration"] = "55";
                         // valuesForInsert["new_synctestid"] = "'ef42495d-642d-480a-8fdc-24ec328d294a'";
-                        var insertColumns = (from a in SampleServerSyncProvider.ColumnInfo
-                                             where SampleServerSyncProvider.InsertColumns.Contains(a.Key)
+                        var insertColumns = (from a in DynamicsCrmServerSyncProvider.ColumnInfo
+                                             where DynamicsCrmServerSyncProvider.InsertColumns.Contains(a.Key)
                                              select a);
 
                         var insertColumnsDictionary = new Dictionary<string, DbType>();
@@ -329,8 +329,8 @@ namespace CrmSync
                         var valuesClause = GetValuesClauseForInsert(insertColumnsDictionary, valuesForInsert);
 
                         sqlCeCommand.CommandText =
-                        "INSERT INTO " + SampleServerSyncProvider.EntityName + " ("
-                        + string.Join(",", SampleServerSyncProvider.InsertColumns) +
+                        "INSERT INTO " + DynamicsCrmServerSyncProvider.EntityName + " ("
+                        + string.Join(",", DynamicsCrmServerSyncProvider.InsertColumns) +
                            ") " +
                          "VALUES (" + valuesClause + ")";
                         rowCount = sqlCeCommand.ExecuteNonQuery();

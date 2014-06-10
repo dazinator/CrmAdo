@@ -30,13 +30,13 @@ namespace CrmSync
 
             //Initial synchronization. Instantiate the SyncAgent
             //and call Synchronize.
-            SampleSyncAgent sampleSyncAgent = new SampleSyncAgent();
+            DynamicsCrmSyncAgent sampleSyncAgent = new DynamicsCrmSyncAgent();
             SyncStatistics syncStatistics = sampleSyncAgent.Synchronize();
             sampleStats.DisplayStats(syncStatistics, "initial");
 
             //Make changes on the server and client.
-            Utility.MakeDataChangesOnServer(SampleServerSyncProvider.EntityName);
-            Utility.MakeDataChangesOnClient(SampleServerSyncProvider.EntityName);
+            Utility.MakeDataChangesOnServer(DynamicsCrmServerSyncProvider.EntityName);
+            Utility.MakeDataChangesOnClient(DynamicsCrmServerSyncProvider.EntityName);
 
             //Subsequent synchronization.
             syncStatistics = sampleSyncAgent.Synchronize();

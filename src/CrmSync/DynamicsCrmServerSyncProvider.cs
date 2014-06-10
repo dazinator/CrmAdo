@@ -10,8 +10,10 @@ using Microsoft.Synchronization.Data.Server;
 
 namespace CrmSync
 {
-    public class SampleServerSyncProvider : DbServerSyncProvider
+    public class DynamicsCrmServerSyncProvider : DbServerSyncProvider
     {
+
+
 
         public const string EntityName = "new_synctest";
         //public static string[] SelectColumns =
@@ -112,7 +114,7 @@ namespace CrmSync
             UpdateColumns = (from a in ColumnInfo where !excludeNames.Contains(a.Key) select a.Key).ToArray();
         }
 
-        public SampleServerSyncProvider()
+        public DynamicsCrmServerSyncProvider()
         {
             LoadColumnInfo();
             // new fields required against entities to be synchronised.

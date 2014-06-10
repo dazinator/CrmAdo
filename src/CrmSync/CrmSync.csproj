@@ -164,9 +164,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SampleClientSyncProvider.cs" />
-    <Compile Include="SampleServerSyncProvider.cs" />
+    <Compile Include="DynamicsCrmServerSyncProvider.cs" />
     <Compile Include="SampleStats.cs" />
-    <Compile Include="SampleSyncAgent.cs" />
+    <Compile Include="DynamicsCrmSyncAgent.cs" />
     <Compile Include="Decompile\SyncColumnMapping.cs" />
     <Compile Include="Decompile\SyncColumnMappingCollection.cs" />
     <Compile Include="Decompile\SyncExpt.cs" />

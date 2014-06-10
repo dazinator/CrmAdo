@@ -3,9 +3,9 @@ using Microsoft.Synchronization.Data;
 
 namespace CrmSync
 {
-    public class SampleSyncAgent : SyncAgent
+    public class DynamicsCrmSyncAgent : SyncAgent
     {
-        public SampleSyncAgent()
+        public DynamicsCrmSyncAgent()
         {
             //Instantiate a client synchronization provider and specify it
             //as the local provider for this synchronization agent.
@@ -13,7 +13,7 @@ namespace CrmSync
 
             //Instantiate a server synchronization provider and specify it
             //as the remote provider for this synchronization agent.
-            this.RemoteProvider = new SampleServerSyncProvider();
+            this.RemoteProvider = new DynamicsCrmServerSyncProvider();
 
             //Create a Customer SyncGroup. This is not required
             //for the single table we are synchronizing; it is typically
@@ -23,11 +23,24 @@ namespace CrmSync
 
             //Add the Customer table: specify a synchronization direction of
             //Bidirectional, and that an existing table should be dropped.
-            SyncTable customerSyncTable = new SyncTable(SampleServerSyncProvider.EntityName);
+            SyncTable customerSyncTable = new SyncTable(DynamicsCrmServerSyncProvider.EntityName);
             customerSyncTable.CreationOption = TableCreationOption.DropExistingOrCreateNewTable;
             customerSyncTable.SyncDirection = SyncDirection.Bidirectional;
             customerSyncTable.SyncGroup = customerSyncGroup;
             this.Configuration.SyncTables.Add(customerSyncTable);
         }
+
+        public virtual void AddEntity(string logicalEntityName)
+        {
+            //            This will involve:-
+
+            //Ensuring the entity exists.
+            //Ensuring the entity has additional custom fields created that are required for Sync Process
+            //crmsync_createdrowversion attribute needs to exist.
+            //Registering a plugin for #1 with correct plugin step to run post create.
+
+        }
+
+
     }
 }
