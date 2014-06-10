@@ -12,7 +12,7 @@
     <projectUrl>http://dazinator.github.io/CrmAdo/</projectUrl>
     <copyright>Copyright � Darrell Tunnell 2014</copyright>
     <releaseNotes>
-     Updated SQLGeneration dependency to latest version number.
+     Various fixes to support Microsoft Sync Framework ADO.Net Provider.
     </releaseNotes>
     <tags>Dynamics Crm ADO ADO.Net Data Provider SQL T-SQL DynamicsCrm</tags>
     <dependencies>
