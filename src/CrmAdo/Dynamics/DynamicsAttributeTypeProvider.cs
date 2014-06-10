@@ -90,6 +90,10 @@ namespace CrmAdo.Dynamics
             {
                 return (decimal)value;
             }
+            if (typeCode == TypeCode.Int32)
+            {
+                return System.Convert.ToDecimal(value);
+            }
             if (typeCode == TypeCode.String)
             {
                 decimal sdkVal;

@@ -125,6 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DeleteStatementTests.cs" />
+    <Compile Include="FakeContactMetadataProvider.cs" />
     <Compile Include="SelectStatementTests.cs" />
     <Compile Include="UpdateStatementTests.cs" />
     <Compile Include="SdkAttributeTypeConverterTests.cs" />
