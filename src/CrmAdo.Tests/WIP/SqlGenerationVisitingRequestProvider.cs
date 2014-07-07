@@ -42,7 +42,7 @@ namespace CrmAdo.Tests.WIP
 
             public void Dispose()
             {
-                _Visitor.Level = _Visitor.Level - 1;
+                Visitor.Level = Visitor.Level - 1;
             }
 
             public OrganizationRequestBuilderVisitor Visitor { get; set; }
