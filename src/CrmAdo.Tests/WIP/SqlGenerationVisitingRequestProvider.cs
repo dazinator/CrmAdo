@@ -90,7 +90,7 @@ namespace CrmAdo.Tests.WIP
         public Table LeftTable { get; set; }
         public Table RightTable { get; set; }
 
-        public string LeftEntityName { get; set; }
+       // public string LeftEntityName { get; set; }
 
         public LinkEntityBuilderVisitor(LinkEntity linkEntity)
         {
@@ -109,9 +109,9 @@ namespace CrmAdo.Tests.WIP
 
             LeftTable = LeftColumn.Source.Source as Table;
             RightTable = RightColumn.Source.Source as Table;
-            LeftEntityName = GetTableLogicalEntityName(LeftTable);
+          //  LeftEntityName = 
 
-            LinkEntity.LinkFromEntityName = leftEntityName;
+            LinkEntity.LinkFromEntityName = GetTableLogicalEntityName(LeftTable);
             LinkEntity.LinkToEntityName = GetTableLogicalEntityName(RightTable);
             LinkEntity.LinkFromAttributeName = GetColumnLogicalAttributeName(LeftColumn);
             LinkEntity.LinkToAttributeName = GetColumnLogicalAttributeName(RightColumn);
@@ -232,7 +232,7 @@ namespace CrmAdo.Tests.WIP
 
                 bool isAliased = !string.IsNullOrEmpty(linkEntityBuilder.LeftColumn.Source.Alias);
                 var match = string.IsNullOrEmpty(linkEntityBuilder.LeftColumn.Source.Alias)
-                                   ? linkEntityBuilder.LeftEntityName
+                                   ? linkEntityBuilder.LinkEntity.LinkFromEntityName
                                    : linkEntityBuilder.LeftColumn.Source.Alias;
 
 
