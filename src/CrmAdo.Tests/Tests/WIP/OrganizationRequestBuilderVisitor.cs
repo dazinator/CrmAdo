@@ -15,7 +15,7 @@ using CrmAdo.Dynamics;
 namespace CrmAdo.Tests.WIP
 {
 
-    public class OrganizationRequestBuilderVisitor : BuilderVisitor
+    public class BaseOrganizationRequestBuilderVisitor : BuilderVisitor
     {
         private int _Level;
         public int Level
@@ -37,7 +37,7 @@ namespace CrmAdo.Tests.WIP
 
         protected class VisitorSubCommandContext : IDisposable
         {
-            public VisitorSubCommandContext(OrganizationRequestBuilderVisitor visitor)
+            public VisitorSubCommandContext(BaseOrganizationRequestBuilderVisitor visitor)
             {
                 Visitor = visitor;
                 Visitor.Level = Visitor.Level + 1;
@@ -48,7 +48,7 @@ namespace CrmAdo.Tests.WIP
                 Visitor.Level = Visitor.Level - 1;
             }
 
-            public OrganizationRequestBuilderVisitor Visitor { get; set; }
+            public BaseOrganizationRequestBuilderVisitor Visitor { get; set; }
 
         }
 
@@ -77,7 +77,7 @@ namespace CrmAdo.Tests.WIP
         protected string GetColumnLogicalAttributeName(Column column)
         {
             return column.Name.ToLower();
-        }       
+        }
 
         protected object GitLiteralValue(Literal lit)
         {
@@ -139,7 +139,7 @@ namespace CrmAdo.Tests.WIP
 
     }
 
-    public class LinkEntityBuilderVisitor : OrganizationRequestBuilderVisitor
+    public class LinkEntityBuilderVisitor : BaseOrganizationRequestBuilderVisitor
     {
 
         public LinkEntity LinkEntity { get; set; }
@@ -180,365 +180,180 @@ namespace CrmAdo.Tests.WIP
 
     }
 
-    public class RetrieveMultipleRequestBuilderVisitor : OrganizationRequestBuilderVisitor
+    public class FilterExpressionBuilderVisitor : BaseOrganizationRequestBuilderVisitor
     {
 
-        public int SourceTableLevel = 0;
-        public AliasedSource MainSource = null;
-        public Table MainSourceTable = null;
-
-        public RetrieveMultipleRequestBuilderVisitor()
-        {
-            Request = new RetrieveMultipleRequest();
-            QueryExpression = new QueryExpression();
-            Request.Query = QueryExpression;
-        }
-
-        public RetrieveMultipleRequest Request { get; set; }
         public QueryExpression QueryExpression { get; set; }
+        public FilterExpression FilterExpression { get; set; }
         public DbParameterCollection Parameters { get; set; }
 
-        public RetrieveMultipleRequestBuilderVisitor(DbParameterCollection parameters)
+        public bool NegateOperator { get; set; }
+
+        public FilterExpressionBuilderVisitor(QueryExpression queryExpression, DbParameterCollection parameters)
         {
+            FilterExpression = null;
+            QueryExpression = queryExpression;
             Parameters = parameters;
         }
 
-
-        #region Visit Methods
-        protected override void VisitSelect(SelectBuilder item)
+        protected override void VisitFilterGroup(FilterGroup item)
         {
-            this.QueryExpression = new QueryExpression();
-            Request.Query = this.QueryExpression;
-            if (item.From.Any())
+            if (item.HasFilters)
             {
-                VisitEach(item.From);
-            }
-            if (item.Projection.Any())
-            {
-                AddProjections(item.Projection);
-            }
-            if (item.WhereFilterGroup != null)
-            {
-                AddFilterGroup(item.WhereFilterGroup, null);
-            }
-            else
-            {
-                AddFilters(item.Where);
-            }
 
-        }
-
-        #region Join
-        protected override void VisitCrossJoin(CrossJoin item)
-        {
-            this.AddJoin(item);
-        }
-        protected override void VisitFullOuterJoin(FullOuterJoin item)
-        {
-            this.AddJoin(item);
-        }
-        protected override void VisitInnerJoin(InnerJoin item)
-        {
-            this.AddJoin(item);
-        }
-        protected override void VisitLeftOuterJoin(LeftOuterJoin item)
-        {
-            this.AddJoin(item);
-        }
-        protected override void VisitRightOuterJoin(RightOuterJoin item)
-        {
-            this.AddJoin(item);
-        }
-
-        protected override void VisitAliasedSource(AliasedSource aliasedSource)
-        {
-            // We want the top aliased source (furthest source to the left) as this is the main entity.
-            if (this.Level > SourceTableLevel)
-            {
-                SourceTableLevel = this.Level;
-                MainSource = aliasedSource;
-                MainSourceTable = aliasedSource.Source as Table;
-                // source should be a table.                 
-                QueryExpression.EntityName = GetTableLogicalEntityName(MainSourceTable);
-            }
-        }
-
-        protected override void VisitColumn(Column item)
-        {
-            bool isAliasedSource = !string.IsNullOrEmpty(item.Source.Alias);
-            var sourceName = !isAliasedSource
-                                 ? GetTableLogicalEntityName(item.Source.Source as Table)
-                                 : item.Source.Alias;
-            var linkItem = QueryExpression.FindLinkEntity(sourceName, isAliasedSource);
-            var columnAttributeName = GetColumnLogicalAttributeName(item);
-            if (linkItem == null)
-            {
-                QueryExpression.ColumnSet.AddColumn(columnAttributeName);
-                // wehn we can;t find the source, assume default entity..
-                //   throw new InvalidOperationException("Could not find source named: " + sourceName);
-            }
-            else
-            {
-                linkItem.Columns.AddColumn(columnAttributeName);
-            }
-        }
-
-        protected override void VisitAllColumns(AllColumns item)
-        {
-            this.QueryExpression.IncludeAllColumns();
-        }
-
-        #endregion
-        #endregion
-
-        #region Add Methods
-
-        #region Joins
-        private void AddJoin(InnerJoin item)
-        {
-            AddJoin(item, JoinOperator.Inner);
-        }
-        private void AddJoin(LeftOuterJoin item)
-        {
-            AddJoin(item, JoinOperator.LeftOuter);
-        }
-        private void AddJoin(FilteredJoin item, JoinOperator jointype)
-        {
-            NavigateBinaryJoins(item);
-
-            var linkEntity = CreateLinkEntity(item, jointype);
-
-            int onFilterCount = item.OnFilters.Count();
-            if (onFilterCount != 1)
-            {
-                throw new NotSupportedException("You must use exactly one ON condition in a join. For example: INNER JOIN X ON Y.ID = X.ID is supported, but INNER JOIN X ON Y.ID = X.ID AND Y.NAME = X.NAME is not supported.");
-            }
-            var singleFilter = item.OnFilters.Single();
-            var linkEntityBuilder = new LinkEntityBuilderVisitor(linkEntity);
-            singleFilter.Accept(linkEntityBuilder);
-            if (linkEntityBuilder.EqualToFilter == null)
-            {
-                throw new NotSupportedException("When using an ON condition in a join, only Equal To operator is supported. For example: INNER JOIN X ON Y.ID = X.ID");
-            }
-
-            // throw new NotImplementedException();
-
-            if (!QueryExpression.LinkEntities.Any())
-            {
-                if (QueryExpression.EntityName != linkEntity.LinkFromEntityName)
+                var newFilterExpression = new FilterExpression();
+                var conjunction = item.Conjunction;
+                if (conjunction == Conjunction.Or)
                 {
-                    throw new InvalidOperationException("The first JOIN in the query must link from the main entity which in your case is " +
-                        linkEntity + " but the first join in your query links from: " +
-                        linkEntity.LinkFromEntityName + " which is an unknown entity,");
+                    newFilterExpression.FilterOperator = LogicalOperator.Or;
                 }
-                QueryExpression.LinkEntities.Add(linkEntity);
-            }
-            else
-            {
-
-                bool isAliased = !string.IsNullOrEmpty(linkEntityBuilder.LeftColumn.Source.Alias);
-                var match = string.IsNullOrEmpty(linkEntityBuilder.LeftColumn.Source.Alias)
-                                   ? linkEntityBuilder.LinkEntity.LinkFromEntityName
-                                   : linkEntityBuilder.LeftColumn.Source.Alias;
-
-
-                var leftLink = QueryExpression.FindLinkEntity(match, isAliased);
-                if (leftLink == null)
+                else
                 {
-                    throw new InvalidOperationException("Could not perform join, as " + match + " is an unknown entity.");
+                    newFilterExpression.FilterOperator = LogicalOperator.And;
                 }
-                leftLink.LinkEntities.Add(linkEntity);
-            }
 
-        }
+                var existingFilter = this.FilterExpression;
+                this.FilterExpression = newFilterExpression;
 
-        #region NotSupported
-        private void AddJoin(CrossJoin item)
-        {
-            throw new NotSupportedException();
-        }
-        private void AddJoin(FullOuterJoin item)
-        {
-            throw new NotSupportedException();
-        }
-        private void AddJoin(RightOuterJoin item)
-        {
-            throw new NotSupportedException();
-        }
-        #endregion
-
-        #region Helper Methods
-
-        private void NavigateBinaryJoins(BinaryJoin item)
-        {
-            // visit left side first.            
-            using (var ctx = GetSubCommand())
-            {
-                IJoinItem leftHand = item.LeftHand;
-                leftHand.Accept(ctx.Visitor);
-            }
-        }
-
-        private LinkEntity CreateLinkEntity(BinaryJoin item, JoinOperator jointype)
-        {
-            var linkEntity = new LinkEntity();
-            linkEntity.JoinOperator = jointype;
-            // This is what we are joining on to..
-            AliasedSource asource = item.RightHand;
-            if (!string.IsNullOrEmpty(asource.Alias))
-            {
-                linkEntity.EntityAlias = asource.Alias;
-            }
-            return linkEntity;
-        }
-
-        #endregion
-
-        #endregion
-
-        #region Projections
-
-        private void AddProjections(IEnumerable<AliasedProjection> projections)
-        {
-            foreach (AliasedProjection a in projections)
-            {
-                using (var ctx = GetSubCommand())
-                {
-                    string colAlias = a.Alias;
-                    if (!string.IsNullOrEmpty(colAlias))
-                    {
-                        throw new NotSupportedException("Column aliases are not supported.");
-                    }
-                    a.ProjectionItem.Accept(ctx.Visitor);
-                }
-            }
-        }
-
-        #endregion
-
-        #region Filters
-
-        private void AddFilters(IEnumerable<IFilter> whereFilter, FilterExpression filterExpression = null)
-        {
-            // do where clause..
-            if (whereFilter != null && whereFilter.Any())
-            {
                 //TODO: Should only be one where clause?
-                foreach (var where in whereFilter)
+                foreach (var where in item.Filters)
                 {
-                    ProcessFilter(where, filterExpression);
+                    where.Accept(this);
                 }
-            }
-        }
 
-        private void AddFilterGroup(FilterGroup filterGroup, FilterExpression filterExpression)
-        {
-            if (filterGroup.HasFilters)
-            {
-                var filter = new FilterExpression();
-
-                // add each filter in this as a condition to the filter..
-                AddFilters(filterGroup.Filters, filter);
+                this.FilterExpression = existingFilter;
 
                 // if there is a filter expression, chain this filter to that one..
-                if (filterExpression != null)
+                if (existingFilter != null)
                 {
-                    filterExpression.AddFilter(filter);
+                    existingFilter.AddFilter(newFilterExpression);
                 }
                 else
                 {
                     // this is top level filter expression, add it directly to query.
-                    QueryExpression.Criteria.AddFilter(filter);
+                    QueryExpression.Criteria.AddFilter(newFilterExpression);
                 }
 
-                var conjunction = filterGroup.Conjunction;
-                if (conjunction == Conjunction.Or)
-                {
-                    filter.FilterOperator = LogicalOperator.Or;
-                }
-                else
-                {
-                    filter.FilterOperator = LogicalOperator.And;
-                }
             }
         }
 
-        private void ProcessFilter(IFilter filter, FilterExpression filterExpression = null, bool negateOperator = false)
+        #region Order Filter
+
+        protected override void VisitEqualToFilter(EqualToFilter item)
         {
-
-            var filterGroup = filter as FilterGroup;
-            if (filterGroup != null)
-            {
-                AddFilterGroup(filterGroup, filterExpression);
-                return;
-            }
-
-            var orderFilter = filter as OrderFilter;
-            if (orderFilter != null)
-            {
-                bool isLeft;
-                Column attColumn;
-                var condition = GetCondition(orderFilter, out attColumn, out isLeft);
-                if (negateOperator)
-                {
-                    condition.NegateOperator();
-                }
-                AddFilterCondition(filterExpression, condition, attColumn);
-                return;
-            }
-
-            var nullFilter = filter as NullFilter;
-            if (nullFilter != null)
-            {
-                Column attColumn;
-                var condition = GetCondition(nullFilter, out attColumn);
-                if (negateOperator)
-                {
-                    condition.NegateOperator();
-                }
-                AddFilterCondition(filterExpression, condition, attColumn);
-                return;
-            }
-
-            var inFilter = filter as InFilter;
-            if (inFilter != null)
-            {
-                Column attColumn;
-                var condition = GetCondition(inFilter, out attColumn);
-                if (negateOperator)
-                {
-                    condition.NegateOperator();
-                }
-                AddFilterCondition(filterExpression, condition, attColumn);
-                return;
-            }
-
-            var functionFilter = filter as Function;
-            if (functionFilter != null)
-            {
-                Column attColumn;
-                var condition = GetCondition(functionFilter, out attColumn);
-                if (negateOperator)
-                {
-                    condition.NegateOperator();
-                }
-                AddFilterCondition(filterExpression, condition, attColumn);
-                return;
-            }
-
-            var notFilter = filter as NotFilter;
-            if (notFilter != null)
-            {
-                var negatedFilter = notFilter.Filter;
-                ProcessFilter(negatedFilter, filterExpression, true);
-                return;
-            }
-
-            throw new NotSupportedException();
-
+            VisitOrderFilter(item);
         }
 
-        private void AddFilterCondition(FilterExpression filterExpression, ConditionExpression condition, Column attColumn)
+        protected override void VisitGreaterThanEqualToFilter(GreaterThanEqualToFilter item)
+        {
+            VisitOrderFilter(item);
+        }
+
+        protected override void VisitGreaterThanFilter(GreaterThanFilter item)
+        {
+            VisitOrderFilter(item);
+        }
+
+        protected override void VisitLessThanEqualToFilter(LessThanEqualToFilter item)
+        {
+            VisitOrderFilter(item);
+        }
+
+        protected override void VisitLessThanFilter(LessThanFilter item)
+        {
+            VisitOrderFilter(item);
+        }
+
+        protected override void VisitLikeFilter(LikeFilter item)
+        {
+            VisitOrderFilter(item);
+        }
+
+        protected override void VisitNotEqualToFilter(NotEqualToFilter item)
+        {
+            VisitOrderFilter(item);
+        }
+
+        protected virtual void VisitOrderFilter(OrderFilter filter)
+        {
+            bool isLeft;
+            Column attColumn;
+            var condition = GetCondition(filter, out attColumn, out isLeft);
+            if (this.NegateOperator)
+            {
+                condition.NegateOperator();
+            }
+            AddFilterCondition(condition, attColumn);
+            return;
+        }
+
+        #endregion
+
+        #region Null Filter
+
+        protected override void VisitNullFilter(NullFilter item)
+        {
+            Column attColumn;
+            var condition = GetCondition(item, out attColumn);
+            if (this.NegateOperator)
+            {
+                condition.NegateOperator();
+            }
+            AddFilterCondition(condition, attColumn);
+            return;
+        }
+
+        #endregion
+
+        #region InFilter
+
+        protected override void VisitInFilter(InFilter item)
+        {
+            Column attColumn;
+            var condition = GetCondition(item, out attColumn);
+            if (this.NegateOperator)
+            {
+                condition.NegateOperator();
+            }
+            AddFilterCondition(condition, attColumn);
+            return;
+        }
+
+        #endregion
+
+        #region Function Filter
+
+        protected override void VisitFunction(Function item)
+        {
+            Column attColumn;
+            var condition = GetCondition(item, out attColumn);
+            if (this.NegateOperator)
+            {
+                condition.NegateOperator();
+            }
+            AddFilterCondition(condition, attColumn);
+            return;
+        }
+
+        #endregion
+
+        #region Not Filter
+
+        protected override void VisitNotFilter(NotFilter item)
+        {
+            var negatedFilter = item.Filter;
+            var currentNegate = this.NegateOperator;
+            this.NegateOperator = true;
+            item.Filter.Accept(this);
+            this.NegateOperator = currentNegate;
+            return;
+        }
+
+        #endregion
+
+        #region TODO revisit these methods
+
+        private void AddFilterCondition(ConditionExpression condition, Column attColumn)
         {
 
             bool isAlias;
@@ -547,9 +362,9 @@ namespace CrmAdo.Tests.WIP
             condition.EntityName = sourceEntityName;
 
             // if filter expression present, add it to that.
-            if (filterExpression != null)
+            if (FilterExpression != null)
             {
-                filterExpression.AddCondition(condition);
+                FilterExpression.AddCondition(condition);
             }
             else
             {
@@ -563,7 +378,7 @@ namespace CrmAdo.Tests.WIP
                 }
             }
         }
-           
+
         private ConditionExpression GetCondition(Function functionFilter, out Column attColumn)
         {
             switch (functionFilter.Name.ToLower())
@@ -671,7 +486,7 @@ namespace CrmAdo.Tests.WIP
                 throw new ArgumentException("The values list for the IN expression is null");
             }
             throw new NotSupportedException();
-        }      
+        }
 
         private ConditionExpression GetCondition(NullFilter filter, out Column attColumn)
         {
@@ -838,7 +653,7 @@ namespace CrmAdo.Tests.WIP
             var param = Parameters[paramName];
             return (T)param.Value;
         }
-        
+
         private T GetFilterValue<T>(OrderFilter filter, bool isLeft)
         {
             // check for literals..
@@ -969,12 +784,321 @@ namespace CrmAdo.Tests.WIP
 
         #endregion
 
+    }
+
+    public class RetrieveMultipleRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor
+    {
+
+        public int SourceTableLevel = 0;
+        public AliasedSource MainSource = null;
+        public Table MainSourceTable = null;
+
+        public RetrieveMultipleRequestBuilderVisitor()
+        {
+            Request = new RetrieveMultipleRequest();
+            QueryExpression = new QueryExpression();
+            Request.Query = QueryExpression;
+        }
+
+        public RetrieveMultipleRequest Request { get; set; }
+        public QueryExpression QueryExpression { get; set; }
+        public DbParameterCollection Parameters { get; set; }
+
+        public RetrieveMultipleRequestBuilderVisitor(DbParameterCollection parameters)
+        {
+            Parameters = parameters;
+        }
+
+        #region Visit Methods
+
+        protected override void VisitSelect(SelectBuilder item)
+        {
+            this.QueryExpression = new QueryExpression();
+            Request.Query = this.QueryExpression;
+            if (item.From.Any())
+            {
+                VisitEach(item.From);
+            }
+            if (item.Projection.Any())
+            {
+                NavigateProjections(item.Projection);
+            }
+            var filterBuilder = new FilterExpressionBuilderVisitor(QueryExpression, Parameters);
+            if (item.WhereFilterGroup != null)
+            {
+                IFilter where = item.WhereFilterGroup;
+                where.Accept(filterBuilder);
+            }
+            else
+            {
+                //TODO: Should only be one where clause?
+                foreach (var where in item.Where)
+                {
+                    where.Accept(this);
+                }
+            }
+            if (item.Top != null)
+            {
+                IVisitableBuilder top = item.Top;
+                top.Accept(this);
+            }
+            else
+            {
+                // xrm wont let you use paging and top for some reason..
+                if (QueryExpression.PageInfo == null)
+                {
+                    QueryExpression.PageInfo = new PagingInfo();
+                }
+                QueryExpression.PageInfo.PageNumber = 1;
+                //todo take this from the connection string..
+                QueryExpression.PageInfo.Count = 500;
+                QueryExpression.PageInfo.ReturnTotalRecordCount = true;
+            }
+            if (item.OrderBy != null)
+            {
+                NavigateOrderBy(item.OrderBy);
+            }
+
+        }
+
+        protected override void VisitCrossJoin(CrossJoin item)
+        {
+            this.AddJoin(item);
+        }
+        protected override void VisitFullOuterJoin(FullOuterJoin item)
+        {
+            this.AddJoin(item);
+        }
+        protected override void VisitInnerJoin(InnerJoin item)
+        {
+            this.AddJoin(item);
+        }
+        protected override void VisitLeftOuterJoin(LeftOuterJoin item)
+        {
+            this.AddJoin(item);
+        }
+        protected override void VisitRightOuterJoin(RightOuterJoin item)
+        {
+            this.AddJoin(item);
+        }
+
+        protected override void VisitAliasedSource(AliasedSource aliasedSource)
+        {
+            // We want the top aliased source (furthest source to the left) as this is the main entity.
+            if (this.Level > SourceTableLevel)
+            {
+                SourceTableLevel = this.Level;
+                MainSource = aliasedSource;
+                MainSourceTable = aliasedSource.Source as Table;
+                // source should be a table.                 
+                QueryExpression.EntityName = GetTableLogicalEntityName(MainSourceTable);
+            }
+        }
+
+        protected override void VisitColumn(Column item)
+        {
+            bool isAliasedSource = !string.IsNullOrEmpty(item.Source.Alias);
+            var sourceName = !isAliasedSource
+                                 ? GetTableLogicalEntityName(item.Source.Source as Table)
+                                 : item.Source.Alias;
+            var linkItem = QueryExpression.FindLinkEntity(sourceName, isAliasedSource);
+            var columnAttributeName = GetColumnLogicalAttributeName(item);
+            if (linkItem == null)
+            {
+                QueryExpression.ColumnSet.AddColumn(columnAttributeName);
+                // wehn we can;t find the source, assume default entity..
+                //   throw new InvalidOperationException("Could not find source named: " + sourceName);
+            }
+            else
+            {
+                linkItem.Columns.AddColumn(columnAttributeName);
+            }
+        }
+
+        protected override void VisitAllColumns(AllColumns item)
+        {
+            this.QueryExpression.IncludeAllColumns();
+        }
+
+        protected override void VisitTop(Top item)
+        {
+            if (item.IsPercent)
+            {
+                throw new NotSupportedException("TOP X PERCENT is not supported.");
+            }
+            var topCount = item.Expression as NumericLiteral;
+            if (topCount == null)
+            {
+                throw new ArgumentException("The TOP Clause should specify the number of records to limit the resultset to as a numeric literal.");
+            }
+            var topCountInt = (int)GitLiteralValue(topCount);
+            if (topCountInt > 5000)
+            {
+                //TODO: To get around the fact that dynamics wont support TOP that is greater than 5000,
+                // we could actually set up paging, and then in the result set, limit the max page number / record number to
+                // coincide with the TOP value.
+                throw new NotSupportedException("Dynamics will not allow a TOP value that is greater than 5000. A work around will be implemented in this provider at a later date.");
+            }
+            QueryExpression.TopCount = topCountInt;
+        }
+
+        protected override void VisitOrderBy(OrderBy item)
+        {
+            var orderType = OrderType.Ascending;
+            if (item.Order == Order.Descending)
+            {
+                orderType = OrderType.Descending;
+            }
+            var column = item.Projection.ProjectionItem as Column;
+            if (column == null)
+            {
+                throw new InvalidOperationException("Can only apply Order By clause to a column.");
+            }
+            var attName = GetColumnLogicalAttributeName(column);
+            QueryExpression.AddOrder(attName, orderType);
+        }
+
         #endregion
 
+        #region Joins
+        private void AddJoin(InnerJoin item)
+        {
+            AddJoin(item, JoinOperator.Inner);
+        }
+        private void AddJoin(LeftOuterJoin item)
+        {
+            AddJoin(item, JoinOperator.LeftOuter);
+        }
+        private void AddJoin(FilteredJoin item, JoinOperator jointype)
+        {
+            NavigateBinaryJoins(item);
+
+            var linkEntity = CreateLinkEntity(item, jointype);
+
+            int onFilterCount = item.OnFilters.Count();
+            if (onFilterCount != 1)
+            {
+                throw new NotSupportedException("You must use exactly one ON condition in a join. For example: INNER JOIN X ON Y.ID = X.ID is supported, but INNER JOIN X ON Y.ID = X.ID AND Y.NAME = X.NAME is not supported.");
+            }
+            var singleFilter = item.OnFilters.Single();
+            var linkEntityBuilder = new LinkEntityBuilderVisitor(linkEntity);
+            singleFilter.Accept(linkEntityBuilder);
+            if (linkEntityBuilder.EqualToFilter == null)
+            {
+                throw new NotSupportedException("When using an ON condition in a join, only Equal To operator is supported. For example: INNER JOIN X ON Y.ID = X.ID");
+            }
+
+            // throw new NotImplementedException();
+
+            if (!QueryExpression.LinkEntities.Any())
+            {
+                if (QueryExpression.EntityName != linkEntity.LinkFromEntityName)
+                {
+                    throw new InvalidOperationException("The first JOIN in the query must link from the main entity which in your case is " +
+                        linkEntity + " but the first join in your query links from: " +
+                        linkEntity.LinkFromEntityName + " which is an unknown entity,");
+                }
+                QueryExpression.LinkEntities.Add(linkEntity);
+            }
+            else
+            {
+
+                bool isAliased = !string.IsNullOrEmpty(linkEntityBuilder.LeftColumn.Source.Alias);
+                var match = string.IsNullOrEmpty(linkEntityBuilder.LeftColumn.Source.Alias)
+                                   ? linkEntityBuilder.LinkEntity.LinkFromEntityName
+                                   : linkEntityBuilder.LeftColumn.Source.Alias;
+
+
+                var leftLink = QueryExpression.FindLinkEntity(match, isAliased);
+                if (leftLink == null)
+                {
+                    throw new InvalidOperationException("Could not perform join, as " + match + " is an unknown entity.");
+                }
+                leftLink.LinkEntities.Add(linkEntity);
+            }
+
+        }
+
+        #region NotSupported
+        private void AddJoin(CrossJoin item)
+        {
+            throw new NotSupportedException();
+        }
+        private void AddJoin(FullOuterJoin item)
+        {
+            throw new NotSupportedException();
+        }
+        private void AddJoin(RightOuterJoin item)
+        {
+            throw new NotSupportedException();
+        }
+        #endregion
+
+        private void NavigateBinaryJoins(BinaryJoin item)
+        {
+            // visit left side first.            
+            using (var ctx = GetSubCommand())
+            {
+                IJoinItem leftHand = item.LeftHand;
+                leftHand.Accept(ctx.Visitor);
+            }
+        }
+
+        private LinkEntity CreateLinkEntity(BinaryJoin item, JoinOperator jointype)
+        {
+            var linkEntity = new LinkEntity();
+            linkEntity.JoinOperator = jointype;
+            // This is what we are joining on to..
+            AliasedSource asource = item.RightHand;
+            if (!string.IsNullOrEmpty(asource.Alias))
+            {
+                linkEntity.EntityAlias = asource.Alias;
+            }
+            return linkEntity;
+        }
+
+        #region Helper Methods
+
+        #endregion
+
+        #endregion
+
+        #region Projections
+
+        private void NavigateProjections(IEnumerable<AliasedProjection> projections)
+        {
+            foreach (AliasedProjection a in projections)
+            {
+                using (var ctx = GetSubCommand())
+                {
+                    string colAlias = a.Alias;
+                    if (!string.IsNullOrEmpty(colAlias))
+                    {
+                        throw new NotSupportedException("Column aliases are not supported.");
+                    }
+                    a.ProjectionItem.Accept(ctx.Visitor);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Order By
+
+        private void NavigateOrderBy(IEnumerable<OrderBy> orderBy)
+        {
+            foreach (var order in orderBy)
+            {
+                IVisitableBuilder o = order;
+                o.Accept(this);
+            }
+        }
+
+        #endregion
 
     }
 
-    public class SqlGenerationVisitingRequestProvider : OrganizationRequestBuilderVisitor
+    public class OrganizationRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor
     {
         public const string ParameterToken = "@";
 
@@ -982,36 +1106,50 @@ namespace CrmAdo.Tests.WIP
 
         protected override void VisitSelect(SQLGeneration.Builders.SelectBuilder item)
         {
+            // Could use alternate builders like a fetch xml builder.
             var selectVisitorBuilder = new RetrieveMultipleRequestBuilderVisitor();
             IVisitableBuilder builder = item;
             builder.Accept(selectVisitorBuilder);
             OrganizationRequest = selectVisitorBuilder.Request;
 
-            //  throw new NotImplementedException();                  
-            //if (selCommand.Top != null)
-            //{
-            //    AddTop(selCommand.Top, query);
-            //}
-            //if (selCommand.Top == null)
-            //{
-            //    // xrm wont let you use paging and top for some reason..
-            //    if (query.PageInfo == null)
-            //    {
-            //        query.PageInfo = new PagingInfo();
-            //    }
-            //    query.PageInfo.PageNumber = 1;
-            //    //todo take this from the connection string..
-            //    query.PageInfo.Count = 500;
-            //    query.PageInfo.ReturnTotalRecordCount = true;
-            //}
-            //if (selCommand.OrderBy != null)
-            //{
-            //    AddOrderBy(selCommand.OrderBy, query);
-            //}
-
-
-            //return query;
         }
 
+    }
+
+    public class VisitingRequestProvider : ICrmRequestProvider
+    {
+        public const string ParameterToken = "@";
+        private IDynamicsAttributeTypeProvider _TypeProvider;
+
+        public VisitingRequestProvider()
+            : this(new DynamicsAttributeTypeProvider())
+        {
+        }
+
+        public VisitingRequestProvider(IDynamicsAttributeTypeProvider typeProvider)
+        {
+            _TypeProvider = typeProvider;
+        }
+
+        /// <summary>
+        /// Creates a QueryExpression from the given Select command.
+        /// </summary>
+        /// <returns></returns>
+        public OrganizationRequest GetOrganizationRequest(CrmDbCommand command)
+        {
+            var commandText = command.CommandText;
+            var commandBuilder = new CommandBuilder();
+            var options = new CommandBuilderOptions();
+            options.PlaceholderPrefix = ParameterToken;
+            var sqlCommandBuilder = commandBuilder.GetCommand(commandText, options);
+            var orgRequestVisitingBuilder = new OrganizationRequestBuilderVisitor();
+            sqlCommandBuilder.Accept(orgRequestVisitingBuilder);
+            var request = orgRequestVisitingBuilder.OrganizationRequest;
+            if (request == null)
+            {
+                throw new NotSupportedException("Could not translate the command into the appropriate Organization Service Request Message");
+            }
+            return request;
+        }
     }
 }

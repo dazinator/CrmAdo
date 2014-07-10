@@ -6,12 +6,67 @@ using SQLGeneration.Builders;
 using CrmAdo.Tests.WIP;
 using Microsoft.Xrm.Sdk.Messages;
 using CrmAdo.Tests.Support;
+using Microsoft.Xrm.Sdk;
+using System.Collections.Generic;
+using System.Collections;
 
-namespace CrmAdo.Tests
+namespace CrmAdo.Tests.Visitor
 {
-    [TestFixture()]
     [Category("Visitor")]
-    public class SqlGenerationVisitingRequestProviderTests
+    public class BaseOrganisationRequestBuilderVisitorTest : BaseTest<SqlGenerationRequestProvider>
+    {
+        protected QueryExpression GetQueryExpression(string sql)
+        {
+            var cmd = new CrmDbCommand(null);
+            cmd.CommandText = sql;
+            return GetQueryExpression(cmd);
+        }
+
+        protected QueryExpression GetQueryExpression(CrmDbCommand command)
+        {
+            var req = GetOrganizationRequest<RetrieveMultipleRequest>(command);
+            return req.Query as QueryExpression;
+        }
+
+        protected T GetOrganizationRequest<T>(string sql) where T : OrganizationRequest
+        {
+            var cmd = new CrmDbCommand(null);
+            cmd.CommandText = sql;
+            return GetOrganizationRequest<T>(cmd);
+        }
+
+        protected T GetOrganizationRequest<T>(CrmDbCommand command) where T : OrganizationRequest
+        {
+            var subject = CreateTestSubject();
+            var request = subject.GetOrganizationRequest(command) as T;
+            return request as T;
+        }
+
+        protected static string GetSqlFilterString(string filterOperator, object filterValue, string filterFormatString, string filterColumnName)
+        {
+            string sqlFilterString;
+            if (filterValue == null || !filterValue.GetType().IsArray)
+            {
+                sqlFilterString = string.Format(filterFormatString, filterColumnName, filterOperator, filterValue);
+                return sqlFilterString;
+            }
+            var formatArgs = new List<object>();
+            formatArgs.Add(filterColumnName);
+            formatArgs.Add(filterOperator);
+            var args = filterValue as IEnumerable;
+            foreach (var arg in args)
+            {
+                formatArgs.Add(arg);
+            }
+            sqlFilterString = string.Format(filterFormatString, formatArgs.ToArray());
+            return sqlFilterString;
+        }
+              
+
+    }
+
+    [TestFixture()]
+    public class SelectStatementJoinTests : BaseOrganisationRequestBuilderVisitorTest
     {
 
         [Category("Joins")]
@@ -40,7 +95,7 @@ namespace CrmAdo.Tests
             var queryExpression = GetQueryExpression(sql);
 
             //Assert
-        
+
             Assert.That(queryExpression.LinkEntities, Is.Not.Null);
             Assert.That(queryExpression.LinkEntities[0], Is.Not.Null);
             Assert.That(queryExpression.LinkEntities[0].LinkFromEntityName, Is.EqualTo("contact"));
@@ -163,19 +218,6 @@ namespace CrmAdo.Tests
 
         }
 
-        private QueryExpression GetQueryExpression(string sql)
-        {
-            var sut = new SqlGenerationVisitingRequestProvider();
-            var commandText = sql;
-            var commandBuilder = new CommandBuilder();
-            var options = new CommandBuilderOptions();
-            options.PlaceholderPrefix = "@";
-            var sqlCommandBuilder = commandBuilder.GetCommand(commandText, options);
-            sut.Visit(sqlCommandBuilder);
-            RetrieveMultipleRequest req = (RetrieveMultipleRequest)sut.OrganizationRequest;
-            var query = (QueryExpression)req.Query;
-            return query;
-        }
 
         private string GetTestSqlWithJoinAndFilters(string joinType, string filterOperator, object filterValue, string filterFormatString)
         {

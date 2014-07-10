@@ -9,7 +9,7 @@ namespace CrmAdo.Tests
 {
     [Category("Type Conversion")]
     [TestFixture()]
-    public class SdkAttributeTypeConverterTests : BaseTest<DynamicsAttributeTypeProvider>
+    public class DynamicsAttributeTypeProviderTests : BaseTest<DynamicsAttributeTypeProvider>
     {
 
         [Test(Description = "Should get BigInt from long")]

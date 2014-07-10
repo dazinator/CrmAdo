@@ -28,7 +28,7 @@ namespace CrmAdo.Tests
         }
 
         [Test]
-        public void Should_Be_Able_To_Create_A_New_Command()
+        public void Should_Be_Able_To_Create_A_New_Command_Via_Provider_Factory()
         {
             var dbprovider = DbProviderFactories.GetFactory(CrmDbProviderFactory.Invariant);
             var command = dbprovider.CreateCommand();
