@@ -146,7 +146,6 @@
     <Compile Include="Dynamics\IDynamicsAttributeTypeProvider.cs" />
     <Compile Include="Dynamics\DynamicsAttributeTypeProvider.cs" />
     <Compile Include="Core\ISchemaTableProvider.cs" />
-    <Compile Include="Obsolete\ISqlStatementTypeChecker.cs" />
     <Compile Include="SchemaTableProvider.cs" />
     <Compile Include="SqlGenerationRequestProvider.cs" />
     <Compile Include="DataReaderExtensions.cs" />
@@ -176,8 +175,6 @@
     <Compile Include="Core\ICrmCommandExecutor.cs" />
     <Compile Include="Core\ICrmRequestProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Obsolete\SqlStatementType.cs" />
-    <Compile Include="Obsolete\SqlStatementTypeChecker.cs" />
     <Compile Include="SystemCommandParameters.cs" />
   </ItemGroup>
   <ItemGroup>
