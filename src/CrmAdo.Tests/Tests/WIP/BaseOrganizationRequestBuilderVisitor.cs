@@ -5,7 +5,9 @@ using System.Data.Common;
 
 namespace CrmAdo.Tests.WIP
 {
-
+    /// <summary>
+    /// Serves as a base <see cref="BuilderVisitor"/> class, for visitors that will build Dynamics Xrm objects from Sql Generation <see cref="IVisitableBuilder"/>'s 
+    /// </summary>
     public class BaseOrganizationRequestBuilderVisitor : BuilderVisitor
     {
         private int _Level;
@@ -48,6 +50,10 @@ namespace CrmAdo.Tests.WIP
             return new VisitorSubCommandContext(this);
         }
 
+        /// <summary>
+        /// Visits each of the <see cref="IVisitableBuilder"/> instances, and while visiting each one, the current Level property is incremented for the duration of the visit.
+        /// </summary>
+        /// <param name="builders"></param>
         protected void VisitEach(IEnumerable<IVisitableBuilder> builders)
         {
             foreach (var item in builders)
@@ -60,16 +66,31 @@ namespace CrmAdo.Tests.WIP
             }
         }
 
+        /// <summary>
+        /// Returns the entity logical name for the table.
+        /// </summary>
+        /// <param name="table"></param>
+        /// <returns></returns>
         protected string GetTableLogicalEntityName(Table table)
         {
             return table.Name.ToLower();
         }
 
+        /// <summary>
+        /// Returns the attribute logical name for the Column.
+        /// </summary>
+        /// <param name="column"></param>
+        /// <returns></returns>
         protected string GetColumnLogicalAttributeName(Column column)
         {
             return column.Name.ToLower();
         }
 
+        /// <summary>
+        /// Returns the object value of the literal.
+        /// </summary>
+        /// <param name="lit"></param>
+        /// <returns></returns>
         protected object GitLiteralValue(Literal lit)
         {
             // Support string literals.
@@ -128,6 +149,11 @@ namespace CrmAdo.Tests.WIP
 
         }
 
+        /// <summary>
+        /// Returns the object value of the string literal.
+        /// </summary>
+        /// <param name="literal"></param>
+        /// <returns></returns>
         protected object ParseStringLiteralValue(StringLiteral literal)
         {
             // cast to GUID?
@@ -139,6 +165,11 @@ namespace CrmAdo.Tests.WIP
             return literal.Value;
         }
 
+        /// <summary>
+        /// Returns the object value of the numeric literal.
+        /// </summary>
+        /// <param name="literal"></param>
+        /// <returns></returns>
         protected object ParseNumericLiteralValue(NumericLiteral literal)
         {
             // cast down from double to int if possible..

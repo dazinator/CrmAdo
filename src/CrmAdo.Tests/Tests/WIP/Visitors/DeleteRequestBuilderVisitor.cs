@@ -14,6 +14,9 @@ using Microsoft.Xrm.Sdk;
 
 namespace CrmAdo.Tests.Tests.WIP.Visitors
 {
+    /// <summary>
+    /// A <see cref="BuilderVisitor"/> that builds a <see cref="DeleteRequest"/> when it visits an <see cref="DeleteBuilder"/> 
+    /// </summary>
     public class DeleteRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor
     {
 

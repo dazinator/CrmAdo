@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace CrmAdo.Tests.Tests.WIP.Visitors
 {
+    /// <summary>
+    /// A <see cref="BuilderVisitor"/> that builds a <see cref="OrganizationRequest"/> when it visits an <see cref="ICommand"/> 
+    /// </summary>
     public class OrganizationRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor
     {
         public const string ParameterToken = "@";

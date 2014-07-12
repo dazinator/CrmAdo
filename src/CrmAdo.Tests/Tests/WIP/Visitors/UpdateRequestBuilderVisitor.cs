@@ -14,6 +14,9 @@ using Microsoft.Xrm.Sdk;
 
 namespace CrmAdo.Tests.Tests.WIP.Visitors
 {
+    /// <summary>
+    /// A <see cref="BuilderVisitor"/> that builds a <see cref="UpdateRequest"/> when it visits a <see cref="UpdateBuilder"/> 
+    /// </summary>
     public class UpdateRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor
     {
 

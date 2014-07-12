@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 
 namespace CrmAdo.Tests.Tests.WIP.Visitors
 {
+
+    /// <summary>
+    /// A <see cref="BuilderVisitor"/> that sets a <see cref="LinkEntity"/> when it visits an <see cref="EqualToFilter" present on a Join./> 
+    /// </summary>
     public class LinkEntityBuilderVisitor : BaseOrganizationRequestBuilderVisitor
     {
 

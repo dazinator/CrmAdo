@@ -14,6 +14,9 @@ using Microsoft.Xrm.Sdk;
 
 namespace CrmAdo.Tests.Tests.WIP.Visitors
 {
+    /// <summary>
+    /// A <see cref="BuilderVisitor"/> that builds a <see cref="CreateRequest"/> when it visits an <see cref="InsertBuilder"/> 
+    /// </summary>
     public class CreateRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor
     {
 
@@ -114,9 +117,9 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
                 {
                     throw new ArgumentException("There is a mismatch between the number of columns and the number of values specified in the insert statement.");
                 }
-            }           
-        } 
-      
+            }
+        }
+
         private object GetParamaterValue(string paramName)
         {
             if (!Parameters.Contains(paramName))

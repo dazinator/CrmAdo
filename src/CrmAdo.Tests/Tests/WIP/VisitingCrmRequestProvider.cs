@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace CrmAdo.Tests.Tests.WIP
 {
+    /// <summary>
+    /// An <see cref="ICrmRequestProvider"/> implementation that uses the Visitor pattern and SQL Generation to build an <see cref="OrganizationRequest"/> for the <see cref="CrmDbCommand"/>
+    /// </summary>
     public class VisitingCrmRequestProvider : ICrmRequestProvider
     {
         public const string ParameterToken = "@";
@@ -28,7 +31,7 @@ namespace CrmAdo.Tests.Tests.WIP
         }
 
         /// <summary>
-        /// Creates a QueryExpression from the given Select command.
+        /// Returns the <see cref="OrganizationRequest"/> for the <see cref="CrmDbCommand"/>
         /// </summary>
         /// <returns></returns>
         public OrganizationRequest GetOrganizationRequest(CrmDbCommand command)

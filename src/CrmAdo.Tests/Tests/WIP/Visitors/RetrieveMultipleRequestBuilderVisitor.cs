@@ -12,6 +12,9 @@ using CrmAdo.Dynamics.Metadata;
 
 namespace CrmAdo.Tests.Tests.WIP.Visitors
 {
+    /// <summary>
+    /// A <see cref="BuilderVisitor"/> that builds a <see cref="RetrieveMultipleRequest"/> when it visits a <see cref="SelectBuilder"/> 
+    /// </summary>
     public class RetrieveMultipleRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor
     {
 

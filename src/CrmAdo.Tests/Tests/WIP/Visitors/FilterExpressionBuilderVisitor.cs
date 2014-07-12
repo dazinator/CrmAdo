@@ -12,6 +12,9 @@ using CrmAdo.Dynamics;
 
 namespace CrmAdo.Tests.Tests.WIP.Visitors
 {
+    /// <summary>
+    /// A <see cref="BuilderVisitor"/> that builds the <see cref="FilterExpression"/> for a <see cref="QueryExpression"/> when it visits an <see cref="FilterGroup"/> 
+    /// </summary>
     public class FilterExpressionBuilderVisitor : BaseOrganizationRequestBuilderVisitor
     {
 
