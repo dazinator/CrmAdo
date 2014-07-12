@@ -40,12 +40,12 @@ namespace CrmAdo.Tests.Tests.WIP
             var sqlCommandBuilder = commandBuilder.GetCommand(commandText, options);
 
             ICrmMetaDataProvider metadataProvider = null;
-            if(command.CrmDbConnection != null)
+            if (command.CrmDbConnection != null)
             {
                 metadataProvider = command.CrmDbConnection.MetadataProvider;
             }
 
-            var orgRequestVisitingBuilder = new OrganizationRequestBuilderVisitor(metadataProvider, command.Parameters);
+            var orgRequestVisitingBuilder = new OrganizationRequestBuilderVisitor(metadataProvider, command.Parameters, _TypeProvider);
             sqlCommandBuilder.Accept(orgRequestVisitingBuilder);
             var request = orgRequestVisitingBuilder.OrganizationRequest;
             if (request == null)

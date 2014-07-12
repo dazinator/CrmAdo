@@ -1,4 +1,5 @@
-﻿using CrmAdo.Dynamics.Metadata;
+﻿using CrmAdo.Dynamics;
+using CrmAdo.Dynamics.Metadata;
 using CrmAdo.Tests.WIP;
 using Microsoft.Xrm.Sdk;
 using SQLGeneration.Builders;
@@ -18,13 +19,14 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
         public OrganizationRequest OrganizationRequest { get; set; }
         public ICrmMetaDataProvider CrmMetadataProvider { get; set; }
         public DbParameterCollection Parameters { get; set; }
+        public IDynamicsAttributeTypeProvider TypeProvider { get; set; }
 
-
-
-        public OrganizationRequestBuilderVisitor(ICrmMetaDataProvider crmMetadataProvider, DbParameterCollection parameters)
+        public OrganizationRequestBuilderVisitor(ICrmMetaDataProvider crmMetadataProvider, DbParameterCollection parameters, IDynamicsAttributeTypeProvider typeProvider)
         {
             CrmMetadataProvider = crmMetadataProvider;
             Parameters = parameters;
+            TypeProvider = typeProvider;
+
         }
 
         protected override void VisitSelect(SQLGeneration.Builders.SelectBuilder item)
@@ -47,6 +49,14 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
         protected override void VisitUpdate(UpdateBuilder item)
         {
             var visitor = new UpdateRequestBuilderVisitor(Parameters, CrmMetadataProvider);
+            IVisitableBuilder visitable = item;
+            visitable.Accept(visitor);
+            OrganizationRequest = visitor.Request;
+        }
+
+        protected override void VisitDelete(DeleteBuilder item)
+        {
+            var visitor = new DeleteRequestBuilderVisitor(Parameters, CrmMetadataProvider, TypeProvider);
             IVisitableBuilder visitable = item;
             visitable.Accept(visitor);
             OrganizationRequest = visitor.Request;

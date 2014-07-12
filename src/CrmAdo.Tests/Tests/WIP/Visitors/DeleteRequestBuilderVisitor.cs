@@ -14,27 +14,29 @@ using Microsoft.Xrm.Sdk;
 
 namespace CrmAdo.Tests.Tests.WIP.Visitors
 {
-    public class UpdateRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor
+    public class DeleteRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor
     {
 
-        public UpdateRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider)
-            : this(null, metadataProvider)
+        public DeleteRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider)
+            : this(null, metadataProvider, new DynamicsAttributeTypeProvider())
         {
 
         }
 
-        public UpdateRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider)
+        public DeleteRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider, IDynamicsAttributeTypeProvider typeProvider)
         {
-            Request = new UpdateRequest();
+            Request = new DeleteRequest();
             Parameters = parameters;
             MetadataProvider = metadataProvider;
             IsVisitingRightFilterItem = false;
+            DynamicsTypeProvider = typeProvider;
         }
 
-        public UpdateRequest Request { get; set; }
+        private IDynamicsAttributeTypeProvider DynamicsTypeProvider { get; set; }
+        public DeleteRequest Request { get; set; }
+
         public DbParameterCollection Parameters { get; set; }
         private ICrmMetaDataProvider MetadataProvider { get; set; }
-        private EntityBuilder EntityBuilder { get; set; }
 
         private string EntityName { get; set; }
         private EqualToFilter EqualToFilter { get; set; }
@@ -43,15 +45,13 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
 
         private Column IdFilterColumn { get; set; }
         private object IdFilterValue { get; set; }
-        private Column CurrentSetterColumn { get; set; }
 
         #region Visit Methods
 
-        protected override void VisitUpdate(UpdateBuilder item)
+        protected override void VisitDelete(DeleteBuilder item)
         {
-            GuardUpdateBuilder(item);
+            GuardDeleteBuilder(item);
             item.Table.Source.Accept(this);
-
             int whereCount = 0;
             foreach (IVisitableBuilder where in item.Where)
             {
@@ -76,18 +76,16 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
             {
                 throw new NotSupportedException("The update statement has an unsupported filter in it's where clause. The'equal to' filter should specify the id column of the entity on one side.");
             }
-            EntityBuilder.WithAttribute(idAttName).SetValueWithTypeCoersion(IdFilterValue);
-            foreach (IVisitableBuilder setter in item.Setters)
-            {
-                setter.Accept(this);
-            }
-            Request.Target = EntityBuilder.Build();
-            EntityBuilder = null;
+
+            EntityReference entRef = new EntityReference();
+            entRef.LogicalName = EntityName;
+            entRef.Id = DynamicsTypeProvider.GetUniqueIdentifier(IdFilterValue);
+            Request.Target = entRef;
+
         }
 
         protected override void VisitEqualToFilter(EqualToFilter item)
         {
-
             EqualToFilter = item;
             IsVisitingFilterItem = true;
             item.LeftHand.Accept(this);
@@ -100,7 +98,6 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
         protected override void VisitTable(Table item)
         {
             EntityName = GetTableLogicalEntityName(item);
-            EntityBuilder = EntityBuilder.WithNewEntity(MetadataProvider, EntityName);
         }
 
         protected override void VisitColumn(Column item)
@@ -120,8 +117,7 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
             }
             else
             {
-                var attName = GetColumnLogicalAttributeName(this.CurrentSetterColumn);
-                EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(sqlValue);
+                throw new NotSupportedException();
             }
         }
 
@@ -134,8 +130,7 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
             }
             else
             {
-                var attName = GetColumnLogicalAttributeName(this.CurrentSetterColumn);
-                EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(sqlValue);
+                throw new NotSupportedException();
             }
         }
 
@@ -147,8 +142,7 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
             }
             else
             {
-                var attName = GetColumnLogicalAttributeName(this.CurrentSetterColumn);
-                EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(null);
+                throw new NotSupportedException();
             }
         }
 
@@ -161,22 +155,14 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
             }
             else
             {
-                var attName = GetColumnLogicalAttributeName(this.CurrentSetterColumn);
-                EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(paramVal);
+                throw new NotSupportedException();
             }
 
         }
 
-        protected override void VisitSetter(Setter item)
-        {
-            CurrentSetterColumn = item.Column;
-            item.Value.Accept(this);
-            CurrentSetterColumn = null;
-        }
-
         #endregion
 
-        private void GuardUpdateBuilder(UpdateBuilder builder)
+        private void GuardDeleteBuilder(DeleteBuilder builder)
         {
             if (builder == null)
             {
@@ -185,7 +171,7 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
             if (builder.Table == null)
             {
                 throw new ArgumentException("The update statement must specify a single table name to update (this is the logical name of the entity).");
-            }           
+            }
         }
 
         private object GetParamaterValue(string paramName)

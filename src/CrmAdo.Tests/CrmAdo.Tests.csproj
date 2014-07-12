@@ -150,6 +150,7 @@
     <Compile Include="Tests\SelectTests\SelectStatementWhereFilterOperatorTests.cs" />
     <Compile Include="Support\LogUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tests\WIP\Delete\DeleteStatementTests.cs" />
     <Compile Include="Tests\WIP\Insert\InsertStatementTests.cs" />
     <Compile Include="Tests\WIP\Insert\InsertStatementValidityTests.cs" />
     <Compile Include="Tests\WIP\Select\SelectStatementProjectionTests.cs" />
@@ -163,6 +164,7 @@
     <Compile Include="Tests\WIP\BaseOrganizationRequestBuilderVisitor.cs" />
     <Compile Include="Tests\WIP\Update\UpdateStatementTests.cs" />
     <Compile Include="Tests\WIP\VisitingCrmRequestProvider.cs" />
+    <Compile Include="Tests\WIP\Visitors\DeleteRequestBuilderVisitor.cs" />
     <Compile Include="Tests\WIP\Visitors\UpdateRequestBuilderVisitor.cs" />
     <Compile Include="Tests\WIP\Visitors\FilterExpressionBuilderVisitor.cs" />
     <Compile Include="Tests\WIP\Visitors\LinkEntityBuilderVisitor.cs" />
