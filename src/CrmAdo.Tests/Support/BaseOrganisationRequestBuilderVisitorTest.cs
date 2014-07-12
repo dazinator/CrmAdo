@@ -1,4 +1,5 @@
-﻿using CrmAdo.Tests.WIP;
+﻿using CrmAdo.Tests.Tests.WIP;
+using CrmAdo.Tests.WIP;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 namespace CrmAdo.Tests.Support
 {
     [Category("Visitor")]
-    public class BaseOrganisationRequestBuilderVisitorTest : BaseTest<VisitingRequestProvider>
+    public class BaseOrganisationRequestBuilderVisitorTest : BaseTest<VisitingCrmRequestProvider>
     {
         protected QueryExpression GetQueryExpression(string sql)
         {

@@ -64,7 +64,7 @@ namespace CrmAdo
             set { _DbConnection = value; }
         }
 
-        internal CrmDbConnection CrmDbConnection
+        public CrmDbConnection CrmDbConnection
         {
             get { return DbConnection as CrmDbConnection; }
         }

@@ -257,7 +257,7 @@ namespace CrmAdo
             }
             catch (InvalidCastException e)
             {
-                Debug.Write("error casting value to T!");
+                Debug.Write("error casting value to T! " + e.Message);
                 throw;
             }
 

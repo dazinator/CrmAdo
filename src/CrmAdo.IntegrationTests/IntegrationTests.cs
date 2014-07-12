@@ -129,18 +129,18 @@ namespace CrmAdo.IntegrationTests
         [TestCase("LEFT")]
         public void Should_Be_Able_To_Select_Using_Table_Joins(String joinType)
         {
-            var join = JoinOperator.Natural;
+            // var join = JoinOperator.Natural;
 
-            switch (joinType)
-            {
-                case "INNER":
-                    join = JoinOperator.Inner;
-                    //  Enum.Parse(typeof(JoinOperator), joinType)
-                    break;
-                case "LEFT":
-                    join = JoinOperator.LeftOuter;
-                    break;
-            }
+            //switch (joinType)
+            //{
+            //    case "INNER":
+            //        //  join = JoinOperator.Inner;
+            //        //  Enum.Parse(typeof(JoinOperator), joinType)
+            //        break;
+            //    case "LEFT":
+            //        //   join = JoinOperator.LeftOuter;
+            //        break;
+            //}
 
 
             var sql = string.Format("Select C.contactid, C.firstname, C.lastname, A.line1 From contact C {0} JOIN customeraddress A on C.contactid = A.parentid", joinType);
@@ -191,18 +191,18 @@ namespace CrmAdo.IntegrationTests
         [Test]
         public void Should_Be_Able_To_Query_Using_Filter_Groups(String joinType, string whereClause, int expectedResults)
         {
-            var join = JoinOperator.Natural;
+            // var join = JoinOperator.Natural;
 
-            switch (joinType)
-            {
-                case "INNER":
-                    join = JoinOperator.Inner;
-                    //  Enum.Parse(typeof(JoinOperator), joinType)
-                    break;
-                case "LEFT":
-                    join = JoinOperator.LeftOuter;
-                    break;
-            }
+            //switch (joinType)
+            //{
+            //    case "INNER":
+            //        join = JoinOperator.Inner;
+            //        //  Enum.Parse(typeof(JoinOperator), joinType)
+            //        break;
+            //    case "LEFT":
+            //        join = JoinOperator.LeftOuter;
+            //        break;
+            //}
 
 
             var sql = string.Format("Select C.contactid, C.firstname, C.lastname, A.line1 From contact C {0} JOIN customeraddress A on C.contactid = A.parentid WHERE {1}", joinType, whereClause);

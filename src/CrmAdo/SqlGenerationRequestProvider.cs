@@ -688,7 +688,7 @@ namespace CrmAdo
 
                     // need to add the link entity onto the query - or onto the appropriate link entity in the chain..
                     // if the left entity name has a link entity in the query, then 
-                    LinkEntity existing = null;
+                  //  LinkEntity existing = null;
                     if (!query.LinkEntities.Any() || isFirstFrom)
                     {
                         if (query.EntityName != linkEntity.LinkFromEntityName)
