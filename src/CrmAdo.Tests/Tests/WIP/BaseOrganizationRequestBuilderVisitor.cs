@@ -68,7 +68,7 @@ namespace CrmAdo.Tests.WIP
         protected string GetColumnLogicalAttributeName(Column column)
         {
             return column.Name.ToLower();
-        }       
+        }
 
         protected object GitLiteralValue(Literal lit)
         {
@@ -126,10 +126,48 @@ namespace CrmAdo.Tests.WIP
 
             throw new NotSupportedException("Unknown Literal");
 
-        } 
+        }
 
+        protected object ParseStringLiteralValue(StringLiteral literal)
+        {
+            // cast to GUID?
+            Guid val;
+            if (Guid.TryParse(literal.Value, out val))
+            {
+                return val;
+            }
+            return literal.Value;
+        }
+
+        protected object ParseNumericLiteralValue(NumericLiteral literal)
+        {
+            // cast down from double to int if possible..
+            checked
+            {
+                try
+                {
+                    if ((literal.Value % 1) == 0)
+                    {
+                        int intValue = (int)literal.Value;
+                        if (intValue == literal.Value)
+                        {
+                            return intValue;
+                        }
+                    }
+
+                    // can we return a decimal instead?
+                    var decVal = Convert.ToDecimal(literal.Value);
+                    return decVal;
+                }
+                catch (OverflowException)
+                {
+                    //   can't down cast to int so remain as double.
+                    return literal.Value;
+                }
+            }
+        }
 
 
     }
-    
+
 }

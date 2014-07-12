@@ -19,8 +19,14 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
         public AliasedSource MainSource = null;
         public Table MainSourceTable = null;
 
-        public RetrieveMultipleRequestBuilderVisitor()
+        public RetrieveMultipleRequestBuilderVisitor():this(null)
         {
+           
+        }
+
+        public RetrieveMultipleRequestBuilderVisitor(DbParameterCollection parameters)
+        {
+            Parameters = parameters;
             Request = new RetrieveMultipleRequest();
             QueryExpression = new QueryExpression();
             Request.Query = QueryExpression;
@@ -30,10 +36,7 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
         public QueryExpression QueryExpression { get; set; }
         public DbParameterCollection Parameters { get; set; }
 
-        public RetrieveMultipleRequestBuilderVisitor(DbParameterCollection parameters)
-        {
-            Parameters = parameters;
-        }
+      
 
         #region Visit Methods
 

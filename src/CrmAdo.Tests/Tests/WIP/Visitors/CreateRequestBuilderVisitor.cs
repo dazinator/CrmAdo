@@ -17,31 +17,83 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
     public class CreateRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor
     {
 
-        public int SourceTableLevel = 0;
-        public AliasedSource MainSource = null;
-        public Table MainSourceTable = null;
-
-        public CreateRequestBuilderVisitor()
-            : this(null)
+        public CreateRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider)
+            : this(null, metadataProvider)
         {
 
         }
 
-        public CreateRequestBuilderVisitor(DbParameterCollection parameters)
+        public CreateRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider)
         {
             Request = new CreateRequest();
             Parameters = parameters;
+            MetadataProvider = metadataProvider;
         }
 
         public CreateRequest Request { get; set; }
         public DbParameterCollection Parameters { get; set; }
+        private ICrmMetaDataProvider MetadataProvider { get; set; }
+        private EntityBuilder EntityBuilder { get; set; }
+        private Column[] Columns { get; set; }
+        private Column CurrentColumn { get; set; }
 
         #region Visit Methods
 
         protected override void VisitInsert(InsertBuilder item)
         {
             GuardInsertBuilder(item);
-        }       
+            item.Table.Source.Accept(this);
+            Columns = item.Columns.ToArray();
+            item.Values.Accept(this);
+            Columns = null;
+            Request.Target = EntityBuilder.Build();
+            EntityBuilder = null;
+        }
+
+        protected override void VisitTable(Table item)
+        {
+            var entityName = GetTableLogicalEntityName(item);
+            EntityBuilder = EntityBuilder.WithNewEntity(MetadataProvider, entityName);
+        }
+
+        protected override void VisitValueList(ValueList item)
+        {
+            var index = 0;
+            foreach (IVisitableBuilder value in item.Values)
+            {
+                CurrentColumn = this.Columns[index];
+                value.Accept(this);
+                index++;
+            }
+            CurrentColumn = null;
+        }
+
+        protected override void VisitStringLiteral(StringLiteral item)
+        {
+            var sqlValue = ParseStringLiteralValue(item);
+            var attName = GetColumnLogicalAttributeName(this.CurrentColumn);
+            this.EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(sqlValue);
+        }
+
+        protected override void VisitNumericLiteral(NumericLiteral item)
+        {
+            var sqlValue = ParseNumericLiteralValue(item);
+            var attName = GetColumnLogicalAttributeName(this.CurrentColumn);
+            this.EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(sqlValue);
+        }
+
+        protected override void VisitNullLiteral(NullLiteral item)
+        {
+            var attName = GetColumnLogicalAttributeName(this.CurrentColumn);
+            this.EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(null);
+        }
+
+        protected override void VisitPlaceholder(Placeholder item)
+        {
+            var paramVal = GetParamaterValue(item.Value);
+            var attName = GetColumnLogicalAttributeName(this.CurrentColumn);
+            this.EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(paramVal);
+        }
 
         #endregion
 
@@ -62,77 +114,17 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
                 {
                     throw new ArgumentException("There is a mismatch between the number of columns and the number of values specified in the insert statement.");
                 }
-            }
-            //if (!builder.Values > 1)
-            //{
-            //    throw new NotSupportedException("The select statement must select from a single entity.");
-            //}
-            //if (!builder.Columns.Any())
-            //{
-            //    throw new InvalidOperationException("The select statement must select atleast 1 attribute.");
-            //}
-        }
-
-        private Entity BuildEntityFromInsert(InsertBuilder insertCommandBuilder, CrmDbCommand command)
-        {
-            var source = insertCommandBuilder.Table.Source;
-            //if (!source.)
-            //{
-            //    throw new ArgumentException("Can only insert into a table");
-            //}
-
-            var table = source as Table;
-
-            var metadataProvider = command.CrmDbConnection.MetadataProvider;
-            var entityName = GetTableLogicalEntityName(table);
-
-            var entityBuilder = EntityBuilder.WithNewEntity(metadataProvider, entityName);
-
-            ValueList valuesList = insertCommandBuilder.Values.IsValueList ? insertCommandBuilder.Values as ValueList : null;
-            if (valuesList != null)
-            {
-                var values = valuesList.Values.ToArray();
-                int columnOrdinal = 0;
-                foreach (var column in insertCommandBuilder.Columns)
-                {
-                    var columnValue = values[columnOrdinal];
-                    bool isParameter;
-                    var sqlValue = GetSqlValue(columnValue, out isParameter);
-                    var attName = GetColumnLogicalAttributeName(column);
-                    entityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(sqlValue);
-                    columnOrdinal++;
-                }
-            }
-
-            return entityBuilder.Build();
-        }
-
-        private object GetSqlValue(IProjectionItem projectionItem, out bool isParameter)
-        {
-            isParameter = false;
-            var literal = projectionItem as Literal;
-            if (literal != null)
-            {
-                return GitLiteralValue(literal);
-            }
-            var placeholder = projectionItem as Placeholder;
-            if (placeholder != null)
-            {
-                isParameter = true;
-                var paramVal = GetParamaterValue<object>(placeholder.Value);
-                return paramVal;
-            }
-            throw new NotSupportedException();
-        }
-
-        private T GetParamaterValue<T>(string paramName)
+            }           
+        } 
+      
+        private object GetParamaterValue(string paramName)
         {
             if (!Parameters.Contains(paramName))
             {
                 throw new InvalidOperationException("Missing parameter value for parameter named: " + paramName);
             }
             var param = Parameters[paramName];
-            return (T)param.Value;
+            return param.Value;
         }
 
     }

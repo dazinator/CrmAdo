@@ -1,4 +1,5 @@
 ﻿using CrmAdo.Dynamics;
+using CrmAdo.Dynamics.Metadata;
 using CrmAdo.Tests.Tests.WIP.Visitors;
 using CrmAdo.Tests.WIP;
 using Microsoft.Xrm.Sdk;
@@ -37,7 +38,14 @@ namespace CrmAdo.Tests.Tests.WIP
             var options = new CommandBuilderOptions();
             options.PlaceholderPrefix = ParameterToken;
             var sqlCommandBuilder = commandBuilder.GetCommand(commandText, options);
-            var orgRequestVisitingBuilder = new OrganizationRequestBuilderVisitor();
+
+            ICrmMetaDataProvider metadataProvider = null;
+            if(command.CrmDbConnection != null)
+            {
+                metadataProvider = command.CrmDbConnection.MetadataProvider;
+            }
+
+            var orgRequestVisitingBuilder = new OrganizationRequestBuilderVisitor(metadataProvider, command.Parameters);
             sqlCommandBuilder.Accept(orgRequestVisitingBuilder);
             var request = orgRequestVisitingBuilder.OrganizationRequest;
             if (request == null)
