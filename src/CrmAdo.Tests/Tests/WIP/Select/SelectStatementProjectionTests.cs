@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using CrmAdo.Tests.Support;
+using NUnit.Framework;
 
 namespace CrmAdo.Tests.Visitor
 {

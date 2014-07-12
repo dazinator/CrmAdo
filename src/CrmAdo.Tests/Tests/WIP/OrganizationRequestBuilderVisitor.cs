@@ -815,10 +815,11 @@ namespace CrmAdo.Tests.WIP
         {
             this.QueryExpression = new QueryExpression();
             Request.Query = this.QueryExpression;
-            if (item.From.Any())
+            if (!item.From.Any())
             {
-                VisitEach(item.From);
+                throw new InvalidOperationException("The query does not have a valid FROM clause");
             }
+            VisitEach(item.From);
             if (item.Projection.Any())
             {
                 NavigateProjections(item.Projection);
