@@ -161,7 +161,9 @@
     <Compile Include="Tests\WIP\Select\SelectStatementWhereFilterOperatorValidityTests.cs" />
     <Compile Include="Tests\WIP\Select\SelectStatementWhereFilterParameterTests.cs" />
     <Compile Include="Tests\WIP\BaseOrganizationRequestBuilderVisitor.cs" />
+    <Compile Include="Tests\WIP\Update\UpdateStatementTests.cs" />
     <Compile Include="Tests\WIP\VisitingCrmRequestProvider.cs" />
+    <Compile Include="Tests\WIP\Visitors\UpdateRequestBuilderVisitor.cs" />
     <Compile Include="Tests\WIP\Visitors\FilterExpressionBuilderVisitor.cs" />
     <Compile Include="Tests\WIP\Visitors\LinkEntityBuilderVisitor.cs" />
     <Compile Include="Tests\WIP\Visitors\OrganizationRequestBuilderVisitor.cs" />

@@ -19,6 +19,8 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
         public ICrmMetaDataProvider CrmMetadataProvider { get; set; }
         public DbParameterCollection Parameters { get; set; }
 
+
+
         public OrganizationRequestBuilderVisitor(ICrmMetaDataProvider crmMetadataProvider, DbParameterCollection parameters)
         {
             CrmMetadataProvider = crmMetadataProvider;
@@ -28,18 +30,26 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
         protected override void VisitSelect(SQLGeneration.Builders.SelectBuilder item)
         {
             // Could use alternate builders like a fetch xml builder.
-            var selectVisitorBuilder = new RetrieveMultipleRequestBuilderVisitor(Parameters);
-            IVisitableBuilder builder = item;
-            builder.Accept(selectVisitorBuilder);
-            OrganizationRequest = selectVisitorBuilder.Request;
+            var visitor = new RetrieveMultipleRequestBuilderVisitor(Parameters);
+            IVisitableBuilder visitable = item;
+            visitable.Accept(visitor);
+            OrganizationRequest = visitor.Request;
         }
 
         protected override void VisitInsert(InsertBuilder item)
         {
-            var createBuilder = new CreateRequestBuilderVisitor(Parameters, CrmMetadataProvider);
-            IVisitableBuilder builder = item;
-            builder.Accept(createBuilder);
-            OrganizationRequest = createBuilder.Request;
+            var visitor = new CreateRequestBuilderVisitor(Parameters, CrmMetadataProvider);
+            IVisitableBuilder visitable = item;
+            visitable.Accept(visitor);
+            OrganizationRequest = visitor.Request;
+        }
+
+        protected override void VisitUpdate(UpdateBuilder item)
+        {
+            var visitor = new UpdateRequestBuilderVisitor(Parameters, CrmMetadataProvider);
+            IVisitableBuilder visitable = item;
+            visitable.Accept(visitor);
+            OrganizationRequest = visitor.Request;
         }
 
     }
