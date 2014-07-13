@@ -6,6 +6,7 @@ using CrmAdo.Dynamics.Metadata;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
+using CrmAdo.Visitor;
 
 namespace CrmAdo
 {
@@ -17,7 +18,7 @@ namespace CrmAdo
 
         #region Constructor
         public CrmCommandExecutor(CrmDbConnection connection)
-            : this(new SqlGenerationRequestProvider(), connection)
+            : this(new VisitingCrmRequestProvider(), connection)
         {
         }
 

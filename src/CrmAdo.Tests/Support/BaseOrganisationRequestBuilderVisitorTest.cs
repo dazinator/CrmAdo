@@ -1,16 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using CrmAdo.Visitor;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using NUnit.Framework;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace CrmAdo.Tests
+namespace CrmAdo.Tests.Support
 {
-    [Category("Non Visitor")]
-    [Obsolete]
-    public abstract class CrmQueryExpressionProviderTestsBase : BaseTest<SqlGenerationRequestProvider>
+    [Category("Visitor")]
+    public class BaseOrganisationRequestBuilderVisitorTest : BaseTest<VisitingCrmRequestProvider>
     {
         protected QueryExpression GetQueryExpression(string sql)
         {
@@ -25,7 +28,7 @@ namespace CrmAdo.Tests
             return req.Query as QueryExpression;
         }
 
-        protected T GetOrganizationRequest<T>(string sql) where T: OrganizationRequest
+        protected T GetOrganizationRequest<T>(string sql) where T : OrganizationRequest
         {
             var cmd = new CrmDbCommand(null);
             cmd.CommandText = sql;
@@ -58,5 +61,7 @@ namespace CrmAdo.Tests
             sqlFilterString = string.Format(filterFormatString, formatArgs.ToArray());
             return sqlFilterString;
         }
+
+
     }
 }

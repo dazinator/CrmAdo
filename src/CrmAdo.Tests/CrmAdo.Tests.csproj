@@ -92,9 +92,9 @@
     <Reference Include="Rhino.Mocks">
       <HintPath>..\..\lib\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
     </Reference>
-    <Reference Include="SQLGeneration, Version=2.5.0.0, Culture=neutral, PublicKeyToken=afc02b0a5b22e21e, processorArchitecture=MSIL">
+    <Reference Include="SQLGeneration, Version=2.5.0.0, Culture=neutral, PublicKeyToken=22ea15b5a3c0e6aa, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\SQLGeneration.2.5.0.0\lib\net40\SQLGeneration.dll</HintPath>
+      <HintPath>..\..\lib\SQLGeneration.DazinatorFork.2.5.3\lib\net40\SQLGeneration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -124,30 +124,44 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DeleteStatementTests.cs" />
-    <Compile Include="FakeContactMetadataProvider.cs" />
-    <Compile Include="SelectStatementTests.cs" />
-    <Compile Include="UpdateStatementTests.cs" />
-    <Compile Include="SdkAttributeTypeConverterTests.cs" />
-    <Compile Include="InsertStatementValidityTests.cs" />
-    <Compile Include="InsertStatementTests.cs" />
-    <Compile Include="SelectStatementJoinTests.cs" />
-    <Compile Include="SelectStatementWhereFilterOperatorValidityTests.cs" />
-    <Compile Include="SelectStatementWhereFilterParameterTests.cs" />
+    <Compile Include="Support\BaseOrganisationRequestBuilderVisitorTest.cs" />
+    <Compile Include="Tests\DeleteTests\DeleteStatementTests.cs" />
+    <Compile Include="Support\FakeContactMetadataProvider.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementTests.cs" />
+    <Compile Include="Support\Utils.cs" />
+    <Compile Include="Tests\UpdateTests\UpdateStatementTests.cs" />
+    <Compile Include="Tests\DynamicsAttributeTypeProviderTests.cs" />
+    <Compile Include="Tests\InsertTests\InsertStatementValidityTests.cs" />
+    <Compile Include="Tests\InsertTests\InsertStatementTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementJoinTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementWhereFilterOperatorValidityTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementWhereFilterParameterTests.cs" />
     <Compile Include="Support\AssertUtils.cs" />
     <Compile Include="Support\BaseTest.cs" />
-    <Compile Include="CrmDbProviderFactoryTests.cs" />
-    <Compile Include="CrmDbDataReaderTests.cs" />
-    <Compile Include="SelectStatementProjectionTests.cs" />
-    <Compile Include="SelectStatementWhereFilterConjunctionTests.cs" />
-    <Compile Include="CrmDbCommandTests.cs" />
-    <Compile Include="CrmDbConnectionTests.cs" />
+    <Compile Include="Tests\AdoTests\CrmDbProviderFactoryTests.cs" />
+    <Compile Include="Tests\AdoTests\CrmDbDataReaderTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementProjectionTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementWhereFilterConjunctionTests.cs" />
+    <Compile Include="Tests\AdoTests\CrmDbCommandTests.cs" />
+    <Compile Include="Tests\AdoTests\CrmDbConnectionTests.cs" />
     <Compile Include="Support\CrmQueryExpressionProviderTestsBase.cs" />
-    <Compile Include="Experiments.cs" />
-    <Compile Include="SelectStatementValidityTests.cs" />
-    <Compile Include="SelectStatementWhereFilterOperatorTests.cs" />
+    <Compile Include="Tests\Experiments.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementValidityTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementWhereFilterOperatorTests.cs" />
     <Compile Include="Support\LogUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tests\DeleteTests\DeleteStatementVisitorTests.cs" />
+    <Compile Include="Tests\InsertTests\InsertStatementVisitorTests.cs" />
+    <Compile Include="Tests\InsertTests\InsertStatementValidityVisitorTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementProjectionVisitorTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementValidityVisitorTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementVisitorTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementJoinVisitorTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementWhereFilterConjunctionVisitorTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementWhereFilterOperatorVisitorTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementWhereFilterOperatorValidityVisitorTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementWhereFilterParameterVisitorTests.cs" />
+    <Compile Include="Tests\UpdateTests\UpdateStatementVisitorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
@@ -175,6 +189,9 @@
     <Content Include="MetadataFiles\contactMetadata.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

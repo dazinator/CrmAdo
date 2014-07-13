@@ -6,6 +6,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Deployment;
 using Microsoft.Xrm.Sdk.Discovery;
 using OrganizationState = Microsoft.Xrm.Sdk.Deployment.OrganizationState;
+using System.Diagnostics;
 
 namespace CrmAdo.Dynamics
 {
@@ -54,7 +55,7 @@ namespace CrmAdo.Dynamics
                     };
 
                     // Execute the request
-                   // upgradeLog.WriteInformation("Creating new Crm Organisation: {0}", org.UniqueName);
+                    // upgradeLog.WriteInformation("Creating new Crm Organisation: {0}", org.UniqueName);
                     var response = (BeginCreateOrganizationResponse)service.Execute(request);
 
                     // The operation is asynchronous, so the response object contains
@@ -89,7 +90,7 @@ namespace CrmAdo.Dynamics
 
                     Microsoft.Xrm.Sdk.Deployment.OrganizationState orgState;
 
-                  //  upgradeLog.WriteInformation("Retrieving state of the organization...");
+                    //  upgradeLog.WriteInformation("Retrieving state of the organization...");
 
                     // Retrieve and check the Organization State until is enabled
                     RetrieveResponse resp = null;
@@ -104,11 +105,11 @@ namespace CrmAdo.Dynamics
                     while (orgState != OrganizationState.Enabled && orgState != OrganizationState.Failed);
                     if (orgState == OrganizationState.Enabled)
                     {
-                  //      upgradeLog.WriteInformation("Organization has been created!");
+                        //      upgradeLog.WriteInformation("Organization has been created!");
                     }
                     else
                     {
-                  //      upgradeLog.WriteInformation("The organization create operation failed.!");
+                        //      upgradeLog.WriteInformation("The organization create operation failed.!");
                         throw new Exception("The organization create operation failed.!");
                     }
 
@@ -116,6 +117,7 @@ namespace CrmAdo.Dynamics
             }
             catch (FaultException<OrganizationServiceFault> ex)
             {
+                Debug.WriteLine(ex.Message);
                 //upgradeLog.WriteError("The application encountered an error.");
                 //upgradeLog.WriteError("Timestamp: {0}", ex.Detail.Timestamp);
                 //upgradeLog.WriteError("Code: {0}", ex.Detail.ErrorCode);
@@ -127,6 +129,7 @@ namespace CrmAdo.Dynamics
             }
             catch (TimeoutException ex)
             {
+                Debug.WriteLine(ex.Message);
                 //upgradeLog.WriteError("The application encountered an error..");
                 //upgradeLog.WriteError("Message: {0}", ex.Message);
                 //upgradeLog.WriteError("Stack Trace: {0}", ex.StackTrace);
@@ -141,17 +144,17 @@ namespace CrmAdo.Dynamics
                 // Display the details of the inner exception.
                 if (ex.InnerException != null)
                 {
-                  //  upgradeLog.WriteError(ex.InnerException.Message);
+                    //  upgradeLog.WriteError(ex.InnerException.Message);
 
                     var fe = ex.InnerException as FaultException<OrganizationServiceFault>;
                     if (fe != null)
                     {
-                       // upgradeLog.WriteError("Timestamp: {0}", fe.Detail.Timestamp);
-                       // upgradeLog.WriteError("Code: {0}", fe.Detail.ErrorCode);
-                       // upgradeLog.WriteError("Message: {0}", fe.Detail.Message);
-                       // upgradeLog.WriteError("Plugin Trace: {0}", fe.Detail.TraceText);
-                       // upgradeLog.WriteError("Inner Fault: {0}",
-                           // null == fe.Detail.InnerFault ? "No Inner Fault" : "Has Inner Fault");
+                        // upgradeLog.WriteError("Timestamp: {0}", fe.Detail.Timestamp);
+                        // upgradeLog.WriteError("Code: {0}", fe.Detail.ErrorCode);
+                        // upgradeLog.WriteError("Message: {0}", fe.Detail.Message);
+                        // upgradeLog.WriteError("Plugin Trace: {0}", fe.Detail.TraceText);
+                        // upgradeLog.WriteError("Inner Fault: {0}",
+                        // null == fe.Detail.InnerFault ? "No Inner Fault" : "Has Inner Fault");
                     }
                 }
                 throw;

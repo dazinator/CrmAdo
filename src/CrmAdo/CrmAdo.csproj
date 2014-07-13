@@ -96,9 +96,9 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="SQLGeneration, Version=2.5.0.0, Culture=neutral, PublicKeyToken=afc02b0a5b22e21e, processorArchitecture=MSIL">
+    <Reference Include="SQLGeneration, Version=2.5.0.0, Culture=neutral, PublicKeyToken=22ea15b5a3c0e6aa, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\SQLGeneration.2.5.0.0\lib\net40\SQLGeneration.dll</HintPath>
+      <HintPath>..\..\lib\SQLGeneration.DazinatorFork.2.5.3\lib\net40\SQLGeneration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -130,25 +130,24 @@
   <ItemGroup>
     <Compile Include="ColumnMetadata.cs" />
     <Compile Include="CrmCommandExecutor.cs" />
-    <Compile Include="CrmDbCommand.cs">
+    <Compile Include="Ado\CrmDbCommand.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="CrmDbConnection.cs">
+    <Compile Include="Ado\CrmDbConnection.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="CrmDbDataReader.cs" />
-    <Compile Include="CrmDbTransaction.cs" />
-    <Compile Include="CrmParameter.cs" />
-    <Compile Include="CrmDbProviderFactory.cs" />
+    <Compile Include="Ado\CrmDbDataReader.cs" />
+    <Compile Include="Ado\CrmDbTransaction.cs" />
+    <Compile Include="Ado\CrmParameter.cs" />
+    <Compile Include="Ado\CrmDbProviderFactory.cs" />
     <Compile Include="CrmDbTypeConverter.cs" />
-    <Compile Include="CrmParameterCollection.cs" />
+    <Compile Include="Ado\CrmParameterCollection.cs" />
     <Compile Include="Dynamics\EntityBuilder.cs" />
     <Compile Include="Dynamics\IDynamicsAttributeTypeProvider.cs" />
     <Compile Include="Dynamics\DynamicsAttributeTypeProvider.cs" />
-    <Compile Include="ISchemaTableProvider.cs" />
-    <Compile Include="Obsolete\ISqlStatementTypeChecker.cs" />
+    <Compile Include="Core\ISchemaTableProvider.cs" />
     <Compile Include="SchemaTableProvider.cs" />
-    <Compile Include="SqlGenerationRequestProvider.cs" />
+    <Compile Include="Obsolete\SqlGenerationRequestProvider.cs" />
     <Compile Include="DataReaderExtensions.cs" />
     <Compile Include="Dynamics\CrmClientCredentialsProvider.cs" />
     <Compile Include="Dynamics\CrmConnectionProvider.cs" />
@@ -173,12 +172,18 @@
     <Compile Include="Dynamics\Metadata\IEntityMetadataRepository.cs" />
     <Compile Include="Dynamics\OrganisationDoesNotExistException.cs" />
     <Compile Include="EntityResultSet.cs" />
-    <Compile Include="ICrmCommandExecutor.cs" />
-    <Compile Include="ICrmRequestProvider.cs" />
+    <Compile Include="Core\ICrmCommandExecutor.cs" />
+    <Compile Include="Core\ICrmRequestProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Obsolete\SqlStatementType.cs" />
-    <Compile Include="Obsolete\SqlStatementTypeChecker.cs" />
     <Compile Include="SystemCommandParameters.cs" />
+    <Compile Include="Visitor\BaseOrganizationRequestBuilderVisitor.cs" />
+    <Compile Include="Visitor\CreateRequestBuilderVisitor.cs" />
+    <Compile Include="Visitor\DeleteRequestBuilderVisitor.cs" />
+    <Compile Include="Visitor\OrganizationRequestBuilderVisitor.cs" />
+    <Compile Include="Visitor\RetrieveMultipleRequestBuilderVisitor.cs" />
+    <Compile Include="Visitor\SqlGenerationCrmExtensions.cs" />
+    <Compile Include="Visitor\UpdateRequestBuilderVisitor.cs" />
+    <Compile Include="Visitor\VisitingCrmRequestProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
