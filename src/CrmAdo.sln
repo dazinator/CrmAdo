@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{31343D89-C6F5-4397-91EC-2DF4CCAA849B}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\packages.config = .nuget\packages.config
@@ -26,6 +28,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo.Tests", "CrmAdo.Tests\CrmAdo.Tests.csproj", "{35FB72AA-FD92-4A2D-9E52-B5E221687E56}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo.IntegrationTests", "CrmAdo.IntegrationTests\CrmAdo.IntegrationTests.csproj", "{050B2CC8-C601-4792-B0B7-50B4514C618B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo.DDEX", "CrmAdo.DDEX\CrmAdo.DDEX.csproj", "{A3E7B916-D0C3-4FEB-8F24-7208B36C28F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -86,6 +90,21 @@ Global
 		{050B2CC8-C601-4792-B0B7-50B4514C618B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{050B2CC8-C601-4792-B0B7-50B4514C618B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{050B2CC8-C601-4792-B0B7-50B4514C618B}.Release|x64.ActiveCfg = Release|Any CPU
+		{A3E7B916-D0C3-4FEB-8F24-7208B36C28F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3E7B916-D0C3-4FEB-8F24-7208B36C28F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3E7B916-D0C3-4FEB-8F24-7208B36C28F4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A3E7B916-D0C3-4FEB-8F24-7208B36C28F4}.IntegrationTesting|Any CPU.ActiveCfg = Release|Any CPU
+		{A3E7B916-D0C3-4FEB-8F24-7208B36C28F4}.IntegrationTesting|Any CPU.Build.0 = Release|Any CPU
+		{A3E7B916-D0C3-4FEB-8F24-7208B36C28F4}.IntegrationTesting|x64.ActiveCfg = Release|Any CPU
+		{A3E7B916-D0C3-4FEB-8F24-7208B36C28F4}.Release 4.0|Any CPU.ActiveCfg = Release|Any CPU
+		{A3E7B916-D0C3-4FEB-8F24-7208B36C28F4}.Release 4.0|Any CPU.Build.0 = Release|Any CPU
+		{A3E7B916-D0C3-4FEB-8F24-7208B36C28F4}.Release 4.0|x64.ActiveCfg = Release|Any CPU
+		{A3E7B916-D0C3-4FEB-8F24-7208B36C28F4}.Release 4.5|Any CPU.ActiveCfg = Release|Any CPU
+		{A3E7B916-D0C3-4FEB-8F24-7208B36C28F4}.Release 4.5|Any CPU.Build.0 = Release|Any CPU
+		{A3E7B916-D0C3-4FEB-8F24-7208B36C28F4}.Release 4.5|x64.ActiveCfg = Release|Any CPU
+		{A3E7B916-D0C3-4FEB-8F24-7208B36C28F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3E7B916-D0C3-4FEB-8F24-7208B36C28F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3E7B916-D0C3-4FEB-8F24-7208B36C28F4}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
