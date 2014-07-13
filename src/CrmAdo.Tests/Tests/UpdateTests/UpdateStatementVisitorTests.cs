@@ -10,11 +10,11 @@ using NUnit.Framework;
 using Rhino.Mocks;
 using CrmAdo.Tests.Support;
 
-namespace CrmAdo.Tests.Visitor
+namespace CrmAdo.Tests
 {
     [Category("Update Statement")]
     [TestFixture()]
-    public class UpdateStatementTests : BaseOrganisationRequestBuilderVisitorTest
+    public class UpdateStatementVisitorTests : BaseOrganisationRequestBuilderVisitorTest
     {
 
         [Test(Description = "Should support Update of a single entity with named columns")]

@@ -10,11 +10,11 @@ using NUnit.Framework;
 using Rhino.Mocks;
 using CrmAdo.Tests.Support;
 
-namespace CrmAdo.Tests.Visitor
+namespace CrmAdo.Tests
 {
     [Category("Insert Statement")]
     [TestFixture()]
-    public class InsertStatementTests : BaseOrganisationRequestBuilderVisitorTest
+    public class InsertStatementVisitorTests : BaseOrganisationRequestBuilderVisitorTest
     {
 
         [Test(Description = "Should support Insert of a single entity with named columns")]

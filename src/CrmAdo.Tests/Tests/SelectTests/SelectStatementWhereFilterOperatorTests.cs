@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
+using System;
 
 namespace CrmAdo.Tests
 {
+    [Obsolete]
     [TestFixture(Category = "Select Statement",
         Description = "Tests for ensuring various filter operators can be used in the SQL command text, and are correctly translated to the appropriate Dynamics CRM filter conditions.")]
     public class SelectStatementWhereFilterOperatorTests : CrmQueryExpressionProviderTestsBase

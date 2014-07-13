@@ -1,5 +1,4 @@
-﻿using CrmAdo.Tests.WIP;
-using Microsoft.Xrm.Sdk.Messages;
+﻿using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using SQLGeneration.Builders;
 using System;
@@ -12,7 +11,7 @@ using CrmAdo.Dynamics.Metadata;
 using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk;
 
-namespace CrmAdo.Tests.Tests.WIP.Visitors
+namespace CrmAdo.Visitor
 {
     /// <summary>
     /// A <see cref="BuilderVisitor"/> that builds a <see cref="UpdateRequest"/> when it visits a <see cref="UpdateBuilder"/> 
@@ -73,7 +72,7 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
             {
                 throw new NotSupportedException("The update statement has an unsupported filter in it's where clause. The'equal to' filter should specify the entity id column on one side.");
             }
-            var idAttName = GetColumnLogicalAttributeName(IdFilterColumn);
+            var idAttName = IdFilterColumn.GetColumnLogicalAttributeName();
             var expectedIdAttributeName = string.Format("{0}id", EntityName.ToLower());
             if (idAttName != expectedIdAttributeName)
             {
@@ -102,7 +101,7 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
 
         protected override void VisitTable(Table item)
         {
-            EntityName = GetTableLogicalEntityName(item);
+            EntityName = item.GetTableLogicalEntityName();
             EntityBuilder = EntityBuilder.WithNewEntity(MetadataProvider, EntityName);
         }
 
@@ -116,28 +115,28 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
 
         protected override void VisitStringLiteral(StringLiteral item)
         {
-            var sqlValue = ParseStringLiteralValue(item);
+            var sqlValue = item.ParseStringLiteralValue();
             if (IsVisitingFilterItem)
             {
                 IdFilterValue = sqlValue;
             }
             else
             {
-                var attName = GetColumnLogicalAttributeName(this.CurrentSetterColumn);
+                var attName = this.CurrentSetterColumn.GetColumnLogicalAttributeName();
                 EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(sqlValue);
             }
         }
 
         protected override void VisitNumericLiteral(NumericLiteral item)
         {
-            var sqlValue = ParseNumericLiteralValue(item);
+            var sqlValue = item.ParseNumericLiteralValue();
             if (IsVisitingFilterItem)
             {
                 IdFilterValue = sqlValue;
             }
             else
             {
-                var attName = GetColumnLogicalAttributeName(this.CurrentSetterColumn);
+                var attName = this.CurrentSetterColumn.GetColumnLogicalAttributeName();
                 EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(sqlValue);
             }
         }
@@ -150,7 +149,7 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
             }
             else
             {
-                var attName = GetColumnLogicalAttributeName(this.CurrentSetterColumn);
+                var attName = this.CurrentSetterColumn.GetColumnLogicalAttributeName();
                 EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(null);
             }
         }
@@ -164,7 +163,7 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
             }
             else
             {
-                var attName = GetColumnLogicalAttributeName(this.CurrentSetterColumn);
+                var attName = this.CurrentSetterColumn.GetColumnLogicalAttributeName();
                 EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(paramVal);
             }
 

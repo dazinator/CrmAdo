@@ -11,6 +11,7 @@ using Rhino.Mocks;
 
 namespace CrmAdo.Tests
 {
+    [Obsolete]
     [Category("Delete Statement")]
     [TestFixture()]
     public class DeleteStatementTests : CrmQueryExpressionProviderTestsBase

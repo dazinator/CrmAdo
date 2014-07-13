@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using Microsoft.Xrm.Sdk.Query;
 using NUnit.Framework;
+using System;
 
 namespace CrmAdo.Tests
 {
+    [Obsolete]
     [TestFixture()]
     public class SelectStatementWhereFilterConjunctionTests : CrmQueryExpressionProviderTestsBase
     {

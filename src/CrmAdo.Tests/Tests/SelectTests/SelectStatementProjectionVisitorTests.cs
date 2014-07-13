@@ -1,11 +1,11 @@
 ﻿using CrmAdo.Tests.Support;
 using NUnit.Framework;
 
-namespace CrmAdo.Tests.Visitor
+namespace CrmAdo.Tests
 {
 
     [TestFixture(Category = "Select Statement")]
-    public class SelectStatementProjectionTests : BaseOrganisationRequestBuilderVisitorTest
+    public class SelectStatementProjectionVisitorTests : BaseOrganisationRequestBuilderVisitorTest
     {
 
         [Category("Projecting")]

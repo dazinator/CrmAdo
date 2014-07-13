@@ -4,6 +4,7 @@ using NUnit.Framework;
 
 namespace CrmAdo.Tests
 {
+    [Obsolete]
     [TestFixture(Category = "Select Statement", 
         Description = "Tests for ensuring suitable errors are thrown if unsupported filter operators are encountered in the sql.")]
     public class SelectStatementWhereFilterOperatorValidityTests : CrmQueryExpressionProviderTestsBase

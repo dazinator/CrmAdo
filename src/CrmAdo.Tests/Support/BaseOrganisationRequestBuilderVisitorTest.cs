@@ -1,5 +1,4 @@
-﻿using CrmAdo.Tests.Tests.WIP;
-using CrmAdo.Tests.WIP;
+﻿using CrmAdo.Visitor;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;

@@ -2,11 +2,11 @@
 using NUnit.Framework;
 using CrmAdo.Tests.Support;
 
-namespace CrmAdo.Tests.Visitor
+namespace CrmAdo.Tests
 {
     [TestFixture(Category = "Select Statement",
         Description = "Tests for ensuring various filter operators can be used in the SQL command text, and are correctly translated to the appropriate Dynamics CRM filter conditions.")]
-    public class SelectStatementWhereFilterOperatorTests : BaseOrganisationRequestBuilderVisitorTest
+    public class SelectStatementWhereFilterOperatorVisitorTests : BaseOrganisationRequestBuilderVisitorTest
     {
 
         [Category("Filtering")]

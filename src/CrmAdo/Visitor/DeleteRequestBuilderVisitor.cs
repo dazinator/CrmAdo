@@ -1,5 +1,4 @@
-﻿using CrmAdo.Tests.WIP;
-using Microsoft.Xrm.Sdk.Messages;
+﻿using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using SQLGeneration.Builders;
 using System;
@@ -12,7 +11,7 @@ using CrmAdo.Dynamics.Metadata;
 using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk;
 
-namespace CrmAdo.Tests.Tests.WIP.Visitors
+namespace CrmAdo.Visitor
 {
     /// <summary>
     /// A <see cref="BuilderVisitor"/> that builds a <see cref="DeleteRequest"/> when it visits an <see cref="DeleteBuilder"/> 
@@ -73,7 +72,8 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
             {
                 throw new NotSupportedException("The update statement has an unsupported filter in it's where clause. The'equal to' filter should specify the entity id column on one side.");
             }
-            var idAttName = GetColumnLogicalAttributeName(IdFilterColumn);
+            var idAttName = IdFilterColumn.GetColumnLogicalAttributeName();
+           
             var expectedIdAttributeName = string.Format("{0}id", EntityName.ToLower());
             if (idAttName != expectedIdAttributeName)
             {
@@ -100,7 +100,7 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
 
         protected override void VisitTable(Table item)
         {
-            EntityName = GetTableLogicalEntityName(item);
+            EntityName = item.GetTableLogicalEntityName();
         }
 
         protected override void VisitColumn(Column item)
@@ -113,7 +113,7 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
 
         protected override void VisitStringLiteral(StringLiteral item)
         {
-            var sqlValue = ParseStringLiteralValue(item);
+            var sqlValue = item.ParseStringLiteralValue();
             if (IsVisitingFilterItem)
             {
                 IdFilterValue = sqlValue;
@@ -126,7 +126,7 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
 
         protected override void VisitNumericLiteral(NumericLiteral item)
         {
-            var sqlValue = ParseNumericLiteralValue(item);
+            var sqlValue = item.ParseNumericLiteralValue();
             if (IsVisitingFilterItem)
             {
                 IdFilterValue = sqlValue;

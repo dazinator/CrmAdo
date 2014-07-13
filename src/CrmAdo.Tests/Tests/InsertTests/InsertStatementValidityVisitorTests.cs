@@ -5,12 +5,12 @@ using Microsoft.Xrm.Sdk.Messages;
 using NUnit.Framework;
 using CrmAdo.Tests.Support;
 
-namespace CrmAdo.Tests.Visitor
+namespace CrmAdo.Tests
 {
     [Category("Validity")]
     [Category("Insert Statement")]
     [TestFixture()]
-    public class InsertStatementValidityTests : BaseOrganisationRequestBuilderVisitorTest
+    public class InsertStatementValidityVisitorTests : BaseOrganisationRequestBuilderVisitorTest
     {
 
         [Test(Description = "Should Throw when Insert statement has different number of columns to values specified")]

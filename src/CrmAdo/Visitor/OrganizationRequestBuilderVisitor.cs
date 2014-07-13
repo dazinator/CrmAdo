@@ -1,6 +1,5 @@
 ﻿using CrmAdo.Dynamics;
 using CrmAdo.Dynamics.Metadata;
-using CrmAdo.Tests.WIP;
 using Microsoft.Xrm.Sdk;
 using SQLGeneration.Builders;
 using System;
@@ -10,26 +9,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrmAdo.Tests.Tests.WIP.Visitors
+namespace CrmAdo.Visitor
 {
     /// <summary>
     /// A <see cref="BuilderVisitor"/> that builds a <see cref="OrganizationRequest"/> when it visits an <see cref="ICommand"/> 
     /// </summary>
-    public class OrganizationRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor
+    public class OrganizationRequestBuilderVisitor : BuilderVisitor
     {
         public const string ParameterToken = "@";
 
         public OrganizationRequest OrganizationRequest { get; set; }
         public ICrmMetaDataProvider CrmMetadataProvider { get; set; }
         public DbParameterCollection Parameters { get; set; }
-        public IDynamicsAttributeTypeProvider TypeProvider { get; set; }
+        public IDynamicsAttributeTypeProvider TypeProvider { get; set; }    
 
         public OrganizationRequestBuilderVisitor(ICrmMetaDataProvider crmMetadataProvider, DbParameterCollection parameters, IDynamicsAttributeTypeProvider typeProvider)
         {
             CrmMetadataProvider = crmMetadataProvider;
             Parameters = parameters;
-            TypeProvider = typeProvider;
-
+            TypeProvider = typeProvider;        
         }
 
         protected override void VisitSelect(SQLGeneration.Builders.SelectBuilder item)

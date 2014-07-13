@@ -4,10 +4,12 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using NUnit.Framework;
+using System;
 
 namespace CrmAdo.Tests
 {
     [Category("Non Visitor")]
+    [Obsolete]
     public abstract class CrmQueryExpressionProviderTestsBase : BaseTest<SqlGenerationRequestProvider>
     {
         protected QueryExpression GetQueryExpression(string sql)

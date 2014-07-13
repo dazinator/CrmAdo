@@ -10,11 +10,11 @@ using NUnit.Framework;
 using Rhino.Mocks;
 using CrmAdo.Tests.Support;
 
-namespace CrmAdo.Tests.Visitor
+namespace CrmAdo.Tests
 {
     [Category("Delete Statement")]
     [TestFixture()]
-    public class DeleteStatementTests : BaseOrganisationRequestBuilderVisitorTest
+    public class DeleteStatementVisitorTests : BaseOrganisationRequestBuilderVisitorTest
     {
 
         [Category("String Literal")]

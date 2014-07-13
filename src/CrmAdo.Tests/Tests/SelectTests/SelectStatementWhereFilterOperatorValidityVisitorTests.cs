@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using CrmAdo.Tests.Support;
 
-namespace CrmAdo.Tests.Visitor
+namespace CrmAdo.Tests
 {
     [TestFixture(Category = "Select Statement", 
         Description = "Tests for ensuring suitable errors are thrown if unsupported filter operators are encountered in the sql.")]
-    public class SelectStatementWhereFilterOperatorValidityTests : BaseOrganisationRequestBuilderVisitorTest
+    public class SelectStatementWhereFilterOperatorValidityVisitorTests : BaseOrganisationRequestBuilderVisitorTest
     {
 
         [Category("Filtering")]

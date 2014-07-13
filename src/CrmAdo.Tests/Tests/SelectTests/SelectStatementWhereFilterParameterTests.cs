@@ -3,6 +3,7 @@ using NUnit.Framework;
 
 namespace CrmAdo.Tests
 {
+    [Obsolete]
     [TestFixture(Description = "Verifies that paramaters can be used with the filter expressions in the Where clause of the select statement")]
     public class SelectStatementWhereFilterParameterTests : CrmQueryExpressionProviderTestsBase
     {

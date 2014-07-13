@@ -2,10 +2,10 @@
 using NUnit.Framework;
 using CrmAdo.Tests.Support;
 
-namespace CrmAdo.Tests.Visitor
+namespace CrmAdo.Tests
 {
     [TestFixture(Description = "Verifies that paramaters can be used with the filter expressions in the Where clause of the select statement")]
-    public class SelectStatementWhereFilterParameterTests : BaseOrganisationRequestBuilderVisitorTest
+    public class SelectStatementWhereFilterParameterVisitorTests : BaseOrganisationRequestBuilderVisitorTest
     {
 
        [Category("Filtering")]

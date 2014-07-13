@@ -1,7 +1,5 @@
 ﻿using CrmAdo.Dynamics;
 using CrmAdo.Dynamics.Metadata;
-using CrmAdo.Tests.Tests.WIP.Visitors;
-using CrmAdo.Tests.WIP;
 using Microsoft.Xrm.Sdk;
 using SQLGeneration.Generators;
 using System;
@@ -10,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrmAdo.Tests.Tests.WIP
+namespace CrmAdo.Visitor
 {
     /// <summary>
     /// An <see cref="ICrmRequestProvider"/> implementation that uses the Visitor pattern and SQL Generation to build an <see cref="OrganizationRequest"/> for the <see cref="CrmDbCommand"/>

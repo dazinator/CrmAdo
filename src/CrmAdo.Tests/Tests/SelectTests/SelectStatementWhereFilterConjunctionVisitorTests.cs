@@ -4,10 +4,10 @@ using Microsoft.Xrm.Sdk.Query;
 using NUnit.Framework;
 using CrmAdo.Tests.Support;
 
-namespace CrmAdo.Tests.Visitor
+namespace CrmAdo.Tests
 {
     [TestFixture()]
-    public class SelectStatementWhereFilterConjunctionTests : BaseOrganisationRequestBuilderVisitorTest
+    public class SelectStatementWhereFilterConjunctionVisitorTests : BaseOrganisationRequestBuilderVisitorTest
     {
 
 

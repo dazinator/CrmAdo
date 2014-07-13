@@ -4,6 +4,7 @@ using NUnit.Framework;
 
 namespace CrmAdo.Tests
 {
+    [Obsolete]
     [TestFixture()]
     public class SelectStatementJoinTests : CrmQueryExpressionProviderTestsBase
     {

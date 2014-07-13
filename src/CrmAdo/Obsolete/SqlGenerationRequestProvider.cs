@@ -13,6 +13,7 @@ using SQLGeneration.Generators;
 
 namespace CrmAdo
 {
+    [Obsolete("Replaced with new VisitingCrmRequestProvider")]
     public class SqlGenerationRequestProvider : ICrmRequestProvider
     {
 

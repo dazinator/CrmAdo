@@ -3,18 +3,17 @@ using Microsoft.Xrm.Sdk.Query;
 using NUnit.Framework;
 using SQLGeneration.Generators;
 using SQLGeneration.Builders;
-using CrmAdo.Tests.WIP;
 using Microsoft.Xrm.Sdk.Messages;
 using CrmAdo.Tests.Support;
 using Microsoft.Xrm.Sdk;
 using System.Collections.Generic;
 using System.Collections;
 
-namespace CrmAdo.Tests.Visitor
+namespace CrmAdo.Tests
 {  
 
     [TestFixture()]
-    public class SelectStatementJoinTests : BaseOrganisationRequestBuilderVisitorTest
+    public class SelectStatementJoinVisitorTests : BaseOrganisationRequestBuilderVisitorTest
     {
 
         [Category("Joins")]

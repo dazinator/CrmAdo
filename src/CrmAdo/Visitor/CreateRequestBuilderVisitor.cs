@@ -1,5 +1,4 @@
-﻿using CrmAdo.Tests.WIP;
-using Microsoft.Xrm.Sdk.Messages;
+﻿using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using SQLGeneration.Builders;
 using System;
@@ -12,7 +11,7 @@ using CrmAdo.Dynamics.Metadata;
 using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk;
 
-namespace CrmAdo.Tests.Tests.WIP.Visitors
+namespace CrmAdo.Visitor
 {
     /// <summary>
     /// A <see cref="BuilderVisitor"/> that builds a <see cref="CreateRequest"/> when it visits an <see cref="InsertBuilder"/> 
@@ -55,7 +54,7 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
 
         protected override void VisitTable(Table item)
         {
-            var entityName = GetTableLogicalEntityName(item);
+            var entityName = item.GetTableLogicalEntityName();
             EntityBuilder = EntityBuilder.WithNewEntity(MetadataProvider, entityName);
         }
 
@@ -73,28 +72,28 @@ namespace CrmAdo.Tests.Tests.WIP.Visitors
 
         protected override void VisitStringLiteral(StringLiteral item)
         {
-            var sqlValue = ParseStringLiteralValue(item);
-            var attName = GetColumnLogicalAttributeName(this.CurrentColumn);
+            var sqlValue = item.ParseStringLiteralValue();
+            var attName = this.CurrentColumn.GetColumnLogicalAttributeName();
             this.EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(sqlValue);
         }
 
         protected override void VisitNumericLiteral(NumericLiteral item)
         {
-            var sqlValue = ParseNumericLiteralValue(item);
-            var attName = GetColumnLogicalAttributeName(this.CurrentColumn);
+            var sqlValue = item.ParseNumericLiteralValue();
+            var attName = this.CurrentColumn.GetColumnLogicalAttributeName();
             this.EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(sqlValue);
         }
 
         protected override void VisitNullLiteral(NullLiteral item)
         {
-            var attName = GetColumnLogicalAttributeName(this.CurrentColumn);
+            var attName = this.CurrentColumn.GetColumnLogicalAttributeName();
             this.EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(null);
         }
 
         protected override void VisitPlaceholder(Placeholder item)
         {
             var paramVal = GetParamaterValue(item.Value);
-            var attName = GetColumnLogicalAttributeName(this.CurrentColumn);
+            var attName = this.CurrentColumn.GetColumnLogicalAttributeName();
             this.EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(paramVal);
         }
 

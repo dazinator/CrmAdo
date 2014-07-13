@@ -1,9 +1,11 @@
 ﻿using NUnit.Framework;
+using System;
 
 namespace CrmAdo.Tests
 {
 
     [TestFixture(Category = "Select Statement")]
+    [Obsolete]
     public class SelectStatementProjectionTests : CrmQueryExpressionProviderTestsBase
     {
 

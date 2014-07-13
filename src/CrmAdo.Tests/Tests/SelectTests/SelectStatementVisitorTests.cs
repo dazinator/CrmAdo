@@ -4,10 +4,10 @@ using Microsoft.Xrm.Sdk.Query;
 using NUnit.Framework;
 using CrmAdo.Tests.Support;
 
-namespace CrmAdo.Tests.Visitor
+namespace CrmAdo.Tests
 {
     [TestFixture(Category = "Select Statement")]
-    public class SelectStatementTests : BaseOrganisationRequestBuilderVisitorTest
+    public class SelectStatementVisitorTests : BaseOrganisationRequestBuilderVisitorTest
     {
         [Category("TOP")]
         [Test(Description = "Should support TOP X")]

@@ -2,10 +2,10 @@
 using NUnit.Framework;
 using CrmAdo.Tests.Support;
 
-namespace CrmAdo.Tests.Visitor
+namespace CrmAdo.Tests
 {
     [TestFixture(Category = "Select Statement")]
-    public class SelectStatementValidityTests : BaseOrganisationRequestBuilderVisitorTest
+    public class SelectStatementValidityVisitorTests : BaseOrganisationRequestBuilderVisitorTest
     {
 
         [Category("Validity")]

@@ -6,6 +6,7 @@ using NUnit.Framework;
 
 namespace CrmAdo.Tests
 {
+    [Obsolete]
     [Category("Validity")]
     [Category("Insert Statement")]
     [TestFixture()]

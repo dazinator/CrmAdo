@@ -12,11 +12,11 @@
     <projectUrl>http://dazinator.github.io/CrmAdo/</projectUrl>
     <copyright>Copyright � Darrell Tunnell 2014</copyright>
     <releaseNotes>
-     Various fixes to support Microsoft Sync Framework ADO.Net Provider.
+     Internal improvements: new engine for building XRM request messages based on visitor design pattern.
     </releaseNotes>
     <tags>Dynamics Crm ADO ADO.Net Data Provider SQL T-SQL DynamicsCrm</tags>
     <dependencies>
-      <dependency id="SQLGeneration" version="2.5.0.0" />
+      <dependency id="SQLGeneration.DazinatorFork" version="2.5.3" />   
       <dependency id="Microsoft.IdentityModel" version="6.1.7600.16394" />
       <dependency id="Microsoft.CrmSdk.Extensions" version="6.0.4" />
       <dependency id="Microsoft.CrmSdk.CoreAssemblies" version="6.0.4" />

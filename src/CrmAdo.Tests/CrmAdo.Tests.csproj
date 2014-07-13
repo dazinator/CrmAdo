@@ -94,7 +94,7 @@
     </Reference>
     <Reference Include="SQLGeneration, Version=2.5.0.0, Culture=neutral, PublicKeyToken=22ea15b5a3c0e6aa, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\SQLGeneration.DazinatorFork.2.5.3-dazinatorfork\lib\net40\SQLGeneration.dll</HintPath>
+      <HintPath>..\..\lib\SQLGeneration.DazinatorFork.2.5.3\lib\net40\SQLGeneration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -150,27 +150,18 @@
     <Compile Include="Tests\SelectTests\SelectStatementWhereFilterOperatorTests.cs" />
     <Compile Include="Support\LogUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tests\WIP\Delete\DeleteStatementTests.cs" />
-    <Compile Include="Tests\WIP\Insert\InsertStatementTests.cs" />
-    <Compile Include="Tests\WIP\Insert\InsertStatementValidityTests.cs" />
-    <Compile Include="Tests\WIP\Select\SelectStatementProjectionTests.cs" />
-    <Compile Include="Tests\WIP\Select\SelectStatementValidityTests.cs" />
-    <Compile Include="Tests\WIP\Select\SelectStatementTests.cs" />
-    <Compile Include="Tests\WIP\Select\SelectStatementJoinTests.cs" />
-    <Compile Include="Tests\WIP\Select\SelectStatementWhereFilterConjunctionTests.cs" />
-    <Compile Include="Tests\WIP\Select\SelectStatementWhereFilterOperatorTests.cs" />
-    <Compile Include="Tests\WIP\Select\SelectStatementWhereFilterOperatorValidityTests.cs" />
-    <Compile Include="Tests\WIP\Select\SelectStatementWhereFilterParameterTests.cs" />
-    <Compile Include="Tests\WIP\BaseOrganizationRequestBuilderVisitor.cs" />
-    <Compile Include="Tests\WIP\Update\UpdateStatementTests.cs" />
-    <Compile Include="Tests\WIP\VisitingCrmRequestProvider.cs" />
-    <Compile Include="Tests\WIP\Visitors\DeleteRequestBuilderVisitor.cs" />
-    <Compile Include="Tests\WIP\Visitors\UpdateRequestBuilderVisitor.cs" />
-    <Compile Include="Tests\WIP\Visitors\FilterExpressionBuilderVisitor.cs" />
-    <Compile Include="Tests\WIP\Visitors\LinkEntityBuilderVisitor.cs" />
-    <Compile Include="Tests\WIP\Visitors\OrganizationRequestBuilderVisitor.cs" />
-    <Compile Include="Tests\WIP\Visitors\CreateRequestBuilderVisitor.cs" />
-    <Compile Include="Tests\WIP\Visitors\RetrieveMultipleRequestBuilderVisitor.cs" />
+    <Compile Include="Tests\DeleteTests\DeleteStatementVisitorTests.cs" />
+    <Compile Include="Tests\InsertTests\InsertStatementVisitorTests.cs" />
+    <Compile Include="Tests\InsertTests\InsertStatementValidityVisitorTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementProjectionVisitorTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementValidityVisitorTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementVisitorTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementJoinVisitorTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementWhereFilterConjunctionVisitorTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementWhereFilterOperatorVisitorTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementWhereFilterOperatorValidityVisitorTests.cs" />
+    <Compile Include="Tests\SelectTests\SelectStatementWhereFilterParameterVisitorTests.cs" />
+    <Compile Include="Tests\UpdateTests\UpdateStatementVisitorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
