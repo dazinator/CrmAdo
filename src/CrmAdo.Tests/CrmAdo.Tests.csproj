@@ -125,6 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Support\BaseOrganisationRequestBuilderVisitorTest.cs" />
+    <Compile Include="Tests\AdoTests\CrmConnectionStringBuilderTests.cs" />
     <Compile Include="Tests\DeleteTests\DeleteStatementTests.cs" />
     <Compile Include="Support\FakeContactMetadataProvider.cs" />
     <Compile Include="Tests\SelectTests\SelectStatementTests.cs" />

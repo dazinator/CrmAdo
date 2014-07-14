@@ -18,49 +18,7 @@ namespace CrmAdo.Ado
     /// A Connection string builder for Dynamics Crm connection strings.
     /// </summary>
     public class CrmConnectionStringBuilder : DbConnectionStringBuilder
-    {
-
-        private StringComparer _StringComparer = StringComparer.OrdinalIgnoreCase;
-
-        private string _Username;
-        private string _Password;
-        private string _Domain;
-        private string _Url;
-        private string _DeviceId;
-        private string _DevicePassword;
-        private TimeSpan _Timeout;
-        private string _HomeRealmUri;
-        private bool _ProxyTypesEnabled;
-        private string _CallerId;
-        private OrganizationServiceInstanceMode _ServiceConfigurationInstanceMode;
-        private TimeSpan _UserTokenExpiryWindow;
-
-        //private List<string> _AllowedKeys;
-
-        /// <summary>
-        /// Indexer.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public override object this[string key]
-        {
-            get
-            {
-                object obj = null;
-                if (!this.TryGetValue(key, out obj))
-                {
-                    throw this.InvalidProperty(key);
-                }
-                return obj;
-            }
-            set
-            {
-                if (!this.LoadProperty(key, value))
-                {
-                    throw this.InvalidProperty(key);
-                }
-            }
-        }
+    {      
 
         [Category("Authentication")]
         [DefaultValue("")]
@@ -71,11 +29,10 @@ namespace CrmAdo.Ado
         {
             get
             {
-                return this._Username;
+                return this.GetPropertyValue<string>("Username");
             }
             set
             {
-                this._Username = value;
                 this.SetProperty("Username", value);
             }
         }
@@ -89,11 +46,10 @@ namespace CrmAdo.Ado
         {
             get
             {
-                return this._Password;
+                return this.GetPropertyValue<string>("Password");
             }
             set
             {
-                this._Password = value;
                 this.SetProperty("Password", value);
             }
         }
@@ -107,11 +63,10 @@ namespace CrmAdo.Ado
         {
             get
             {
-                return this._Domain;
+                return this.GetPropertyValue<string>("Domain");
             }
             set
             {
-                this._Domain = value;
                 this.SetProperty("Domain", value);
             }
         }
@@ -125,11 +80,10 @@ namespace CrmAdo.Ado
         {
             get
             {
-                return this._Url;
+                return this.GetPropertyValue<string>("Url");
             }
             set
             {
-                this._Url = value;
                 this.SetProperty("Url", value);
             }
         }
@@ -143,11 +97,10 @@ namespace CrmAdo.Ado
         {
             get
             {
-                return this._DeviceId;
+                return this.GetPropertyValue<string>("DeviceId");
             }
             set
             {
-                this._DeviceId = value;
                 this.SetProperty("DeviceId", value);
             }
         }
@@ -161,11 +114,10 @@ namespace CrmAdo.Ado
         {
             get
             {
-                return this._DevicePassword;
+                return this.GetPropertyValue<string>("DevicePassword");
             }
             set
             {
-                this._DevicePassword = value;
                 this.SetProperty("DevicePassword", value);
             }
         }
@@ -180,11 +132,10 @@ namespace CrmAdo.Ado
         {
             get
             {
-                return this._Timeout;
+                return this.GetPropertyValue<TimeSpan>("Timeout");
             }
             set
             {
-                this._Timeout = value;
                 this.SetProperty("Timeout", value);
             }
         }
@@ -198,11 +149,10 @@ namespace CrmAdo.Ado
         {
             get
             {
-                return this._HomeRealmUri;
+                return this.GetPropertyValue<string>("HomeRealmUri");
             }
             set
             {
-                this._HomeRealmUri = value;
                 this.SetProperty("HomeRealmUri", value);
             }
         }
@@ -216,11 +166,10 @@ namespace CrmAdo.Ado
         {
             get
             {
-                return this._ProxyTypesEnabled;
+                return this.GetPropertyValue<bool>("ProxyTypesEnabled");
             }
             set
             {
-                this._ProxyTypesEnabled = value;
                 this.SetProperty("ProxyTypesEnabled", value);
             }
         }
@@ -234,11 +183,10 @@ namespace CrmAdo.Ado
         {
             get
             {
-                return this._CallerId;
+                return this.GetPropertyValue<string>("CallerId");
             }
             set
             {
-                this._CallerId = value;
                 this.SetProperty("CallerId", value);
             }
         }
@@ -254,11 +202,10 @@ namespace CrmAdo.Ado
         {
             get
             {
-                return this._ServiceConfigurationInstanceMode;
+                return this.GetPropertyValue<OrganizationServiceInstanceMode>("ServiceConfigurationInstanceMode");
             }
             set
             {
-                this._ServiceConfigurationInstanceMode = value;
                 this.SetProperty("ServiceConfigurationInstanceMode", value);
             }
         }
@@ -273,130 +220,55 @@ namespace CrmAdo.Ado
         {
             get
             {
-                return this._UserTokenExpiryWindow;
+                return this.GetPropertyValue<TimeSpan>("UserTokenExpiryWindow");
             }
             set
             {
-                this._UserTokenExpiryWindow = value;
                 this.SetProperty("UserTokenExpiryWindow", value);
             }
-        }
+        }               
 
         /// <summary>
-        /// The connection string.
+        /// Gets the property value.
         /// </summary>
-        public new string ConnectionString
-        {
-            get
-            {
-                return base.ConnectionString;
-            }
-            set
-            {
-                if (!string.IsNullOrEmpty(value))
-                {
-                    base.ConnectionString = value;
-                }
-                else
-                {
-                    base.ConnectionString = this.GetDefaultConnectionString();
-                }
-            }
-        }
-
-        /// <summary>
-        /// The default connection string.
-        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
         /// <returns></returns>
-        private string GetDefaultConnectionString()
+        private T GetPropertyValue<T>(string key)
         {
-            return string.Empty;
-        }
+            object val;
+            var type = typeof(T);
+            bool loaded = TryGetValue(key, out val);
 
-        /// <summary>
-        /// Throws an exception for an invalid property.
-        /// </summary>
-        /// <param name="propertyName"></param>
-        /// <returns></returns>
-        private Exception InvalidProperty(string propertyName)
-        {
-            return new ArgumentException(string.Format("Invalid connection string property '{0}'", propertyName));
-        }
-
-        private bool LoadProperty(string propertyName, object value)
-        {
-            propertyName = Regex.Replace(propertyName, "\\s+", string.Empty);
-            bool loaded = false;
-
-            if (_StringComparer.Compare(propertyName, "username") == 0)
+            if (loaded)
             {
-                this.Username = Convert.ToString(value);
-                loaded = true;
-            }
-            else if (_StringComparer.Compare(propertyName, "password") == 0)
-            {
-                this.Password = Convert.ToString(value);
-                loaded = true;
-            }
-            else if (_StringComparer.Compare(propertyName, "domain") == 0)
-            {
-                this.Domain = Convert.ToString(value);
-                loaded = true;
-            }
-            else if (_StringComparer.Compare(propertyName, "url") == 0)
-            {
-                this.Url = Convert.ToString(value);
-                loaded = true;
-            }
-            else if (_StringComparer.Compare(propertyName, "deviceid") == 0)
-            {
-                this.DeviceId = Convert.ToString(value);
-                loaded = true;
-            }
-            else if (_StringComparer.Compare(propertyName, "devicepassword") == 0)
-            {
-                this.DevicePassword = Convert.ToString(value);
-                loaded = true;
-            }
-            else if (_StringComparer.Compare(propertyName, "timeout") == 0)
-            {
-                this.Timeout = TimeSpan.Parse(Convert.ToString(value));
-                loaded = true;
-            }
-            else if (_StringComparer.Compare(propertyName, "homerealmuri") == 0)
-            {
-                this.HomeRealmUri = Convert.ToString(value);
-                loaded = true;
-            }
-            else if (_StringComparer.Compare(propertyName, "proxytypesenabled") == 0)
-            {
-                this.ProxyTypesEnabled = Convert.ToBoolean(value);
-                loaded = true;
-            }
-            else if (_StringComparer.Compare(propertyName, "callerId") == 0)
-            {
-                this.CallerId = Convert.ToString(value);
-                loaded = true;
-            }
-            else if (_StringComparer.Compare(propertyName, "serviceconfigurationinstancemode") == 0)
-            {
-                this.ServiceConfigurationInstanceMode = (OrganizationServiceInstanceMode)Enum.Parse(typeof(OrganizationServiceInstanceMode), Convert.ToString(value), true);
-                loaded = true;
-            }
-            else if (_StringComparer.Compare(propertyName, "usertokenexpirywindow") == 0)
-            {
-                this._UserTokenExpiryWindow = TimeSpan.Parse(Convert.ToString(value));
-                loaded = true;
+                if (type.IsEnum)
+                {
+                    if (val is string)
+                    {
+                        return (T)Enum.Parse(type, val as string);
+                    }
+                }
+                if (type == typeof(TimeSpan))
+                {
+                    if (val is string)
+                    {                        
+                        return (T)System.Convert.ChangeType(TimeSpan.Parse(val as string), type);
+                    }
+                }
+                return (T)System.Convert.ChangeType(val, type);
             }
             else
             {
-                this.SetProperty(propertyName, Convert.ToString(value));
-                loaded = true;
+                return default(T);
             }
-            return loaded;
-
         }
 
+        /// <summary>
+        /// Sets the property value as a string.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
         private void SetProperty(string key, object value)
         {
             base[key] = Convert.ToString(value);
@@ -427,6 +299,8 @@ namespace CrmAdo.Ado
             [Description("Service Configuration Instance Mode")]
             ServiceConfigurationInstanceMode
         }
+
+
 
     }
 
