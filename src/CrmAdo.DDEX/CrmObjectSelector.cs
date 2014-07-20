@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrmAdo.DDEX
+namespace CrmAdo.Ddex
 {
     /// <summary>
     /// Represents a custom data object selector to supplement or replace
@@ -21,7 +21,7 @@ namespace CrmAdo.DDEX
     /// for Crm.  Many of the enumerations here are required for full
     /// support of the built in data design scenarios.
     /// </summary>
-    internal class SqlObjectSelector : DataObjectSelector
+    internal class CrmObjectSelector : DataObjectSelector
     {
         #region Protected Methods
 

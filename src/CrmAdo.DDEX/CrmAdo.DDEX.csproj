@@ -7,8 +7,8 @@
     <ProjectGuid>{A3E7B916-D0C3-4FEB-8F24-7208B36C28F4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CrmAdo.DDEX</RootNamespace>
-    <AssemblyName>CrmAdo.DDEX</AssemblyName>
+    <RootNamespace>CrmAdo.Ddex</RootNamespace>
+    <AssemblyName>CrmAdo.Ddex</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -61,8 +61,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CrmObjectSupport.xml" />
-    <Content Include="CrmViewSupport.xml" />
+    <EmbeddedResource Include="CrmObjectSupport.xml" />
+    <EmbeddedResource Include="CrmViewSupport.xml" />
     <Content Include="Install.vbs" />
   </ItemGroup>
   <ItemGroup>
@@ -73,9 +73,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="DDEX provider sample for the ADO.NET Entity Designer.doc" />
+    <None Include="CrmAdoDdexProvider.reg" />
     <None Include="Install.cmd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>"$(ProjectDir)Install.cmd" /ranu /codebase "$(TargetDir)$(TargetFileName)"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

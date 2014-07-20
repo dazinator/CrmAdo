@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.Data.Services;
 using Microsoft.VisualStudio.Data.Framework;
 using Microsoft.VisualStudio.Data.Services.SupportEntities;
 
-namespace CrmAdo.DDEX
+namespace CrmAdo.Ddex
 {
 
     /// <summary>

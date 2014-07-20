@@ -29,7 +29,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo.Tests", "CrmAdo.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo.IntegrationTests", "CrmAdo.IntegrationTests\CrmAdo.IntegrationTests.csproj", "{050B2CC8-C601-4792-B0B7-50B4514C618B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo.DDEX", "CrmAdo.DDEX\CrmAdo.DDEX.csproj", "{A3E7B916-D0C3-4FEB-8F24-7208B36C28F4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo.Ddex", "CrmAdo.DDEX\CrmAdo.Ddex.csproj", "{A3E7B916-D0C3-4FEB-8F24-7208B36C28F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

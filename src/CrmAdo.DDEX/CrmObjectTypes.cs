@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrmAdo.DDEX
+namespace CrmAdo.Ddex
 {
     /// <summary>
     /// Represents constant string values for all the supported data object

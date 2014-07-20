@@ -2,7 +2,7 @@
 
 SETLOCAL
 
-ECHO SampleEntityDDEXProvider Installation
+ECHO CrmAdoDdexProvider Installation
 
 SET MYDIR=%~dp0
 SET RANU=No
