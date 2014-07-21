@@ -57,7 +57,7 @@
 					it does not need to be explicitly specified here, but it is shown
 					anyway for sample purposes.
 				-->
-				<Service type="IVsDataObjectSelector" implementationType="Microsoft.Samples.VisualStudio.Data.ExtendedProvider.SqlObjectSelector" />
+				<Service type="IVsDataObjectSelector" implementationType="CrmAdo.Ddex.CrmObjectSelector" />
 			</Services>
 		</RootType>
 		<!--
@@ -753,48 +753,7 @@
 			<Services>
 				<Service type="IVsDataObjectSelector" />
 			</Services>
-		</Type>
-		<!--
-			Defines a type that represents a user defined type.  User defined types
-			are specific to SQL Server 2005 or later, so the minSourceVersion
-			attribute is applied to ensure this type only exists for this version.
-		-->
-		<Type name="UserDefinedType" preferredOrdering="Name, Assembly" minSourceVersion="09">
-			<Identifier>
-				<Part name="Assembly" />
-				<Part name="Name" />
-			</Identifier>
-			<Properties>
-				<Property name="Name" isIdentifierPart="true" />
-				<Property name="CreateDate" type="System.DateTime" />
-				<Property name="IsFixedLength" type="System.Boolean" />
-				<Property name="MaxLength" type="System.Int32" />
-			</Properties>
-			<Services>
-				<Service type="IVsDataObjectSelector" implementationType="Microsoft.VisualStudio.Data.Framework.AdoDotNet.AdoDotNetObjectSelector, Microsoft.VisualStudio.Data.Framework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-					<Parameters method="SelectObjects">
-						<Parameter value="UserDefinedTypes" />
-						<Parameter>
-							<Parameter value="Assembly">
-								<Parameter value="assembly_name" />
-							</Parameter>
-							<Parameter value="Name">
-								<Parameter value="udt_name" />
-							</Parameter>
-							<Parameter value="CreateDate">
-								<Parameter value="create_date" />
-							</Parameter>
-							<Parameter value="IsFixedLength">
-								<Parameter value="is_fixed_length" />
-							</Parameter>
-							<Parameter value="MaxLength">
-								<Parameter value="max_length" />
-							</Parameter>
-						</Parameter>
-					</Parameters>
-				</Service>
-			</Services>
-		</Type>
+		</Type>		
 	</Types>
 	<!-- Mapped object types -->
 	<MappedTypes>

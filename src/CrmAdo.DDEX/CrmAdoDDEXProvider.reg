@@ -101,7 +101,7 @@ Windows Registry Editor Version 5.00
 [%REGROOT%\DataProviders\%PROVIDERGUID%\SupportedObjects\IVsDataObjectSupport]
 @="Microsoft.VisualStudio.Data.Framework.DataObjectSupport"
 "Assembly"="Microsoft.VisualStudio.Data.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
-"XmlResource"="CrmObjectSupport"
+"XmlResource"="CrmAdo.Ddex.CrmObjectSupport"
 
 ;
 ; This registry key indicates the existence of an IVsDataSourceInformation
@@ -129,7 +129,7 @@ Windows Registry Editor Version 5.00
 [%REGROOT%\DataProviders\%PROVIDERGUID%\SupportedObjects\IVsDataViewSupport]
 @="Microsoft.VisualStudio.Data.Framework.DataViewSupport"
 "Assembly"="Microsoft.VisualStudio.Data.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
-"XmlResource"="CrmViewSupport"
+"XmlResource"="CrmAdo.Ddex.CrmViewSupport"
 
 ;
 ; This registry key registers a datacource for crmado dynamics crm, and then associates the crm provider to it.

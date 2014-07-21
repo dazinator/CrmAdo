@@ -222,24 +222,7 @@
 								</SelectionNode>
 							</Selection>
 						</Children>
-					</StaticNode>
-					<!--
-						Just as the data object support XML file can specify minimum or
-						maximum data source versions for elements, the data view support
-						XML file can filter the same way, ensuring only the correct nodes
-						for the correct data source version show up.  In this case, user
-						defined types should not be shown unless the version is 9 or more.
-					-->
-					<StaticNode minSourceVersion="09">
-						<DisplayName resource="Node_UserDefinedTypes" />
-						<Children>
-							<Selection type="UserDefinedType">
-								<SelectionNode>
-									<Icon name="DataType" />
-								</SelectionNode>
-							</Selection>
-						</Children>
-					</StaticNode>
+					</StaticNode>				
 					<StaticNode>
 						<DisplayName resource="Node_Users" />
 						<Children>
