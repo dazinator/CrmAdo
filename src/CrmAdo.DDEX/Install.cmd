@@ -6,7 +6,7 @@ ECHO CrmAdoDdexProvider Installation
 
 SET MYDIR=%~dp0
 SET RANU=No
-SET REGROOT=SOFTWARE\Microsoft\VisualStudio\11.0Exp_Config
+SET REGROOT=SOFTWARE\Microsoft\VisualStudio\12.0Exp_Config
 SET CODEBASE=
 
 :ParseCmdLine

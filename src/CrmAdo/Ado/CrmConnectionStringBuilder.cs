@@ -11,6 +11,7 @@ using System.Collections;
 using CrmAdo.Util;
 using System.Text.RegularExpressions;
 using Microsoft.Xrm.Client.Configuration;
+using System.Diagnostics;
 
 namespace CrmAdo.Ado
 {
@@ -18,7 +19,18 @@ namespace CrmAdo.Ado
     /// A Connection string builder for Dynamics Crm connection strings.
     /// </summary>
     public class CrmConnectionStringBuilder : DbConnectionStringBuilder
-    {      
+    {
+
+        public CrmConnectionStringBuilder():base()
+        {
+            Debug.Write("constructed.");
+        }
+
+        public CrmConnectionStringBuilder(bool useOdbcRules)
+            : base(useOdbcRules)
+        {
+            Debug.Write("constructed.");
+        }
 
         [Category("Authentication")]
         [DefaultValue("")]

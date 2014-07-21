@@ -11,7 +11,7 @@ Windows Registry Editor Version 5.00
 ;
 [%REGROOT%\DataProviders\%PROVIDERGUID%]
 @="CrmAdoDdexProvider"
-"AssociatedSource"="{067EA0D9-BA62-43f7-9106-34930C60C528}"
+"AssociatedSource"="{867F28CF-BFE4-465A-91D3-88F250AAA667}"
 "Codebase"="%CODEBASE%"
 "Description"="Provider_Description, CrmAdo.Ddex.Properties.Resources"
 "DisplayName"="Provider_DisplayName, CrmAdo.Ddex.Properties.Resources"
@@ -40,7 +40,7 @@ Windows Registry Editor Version 5.00
 ;
 [%REGROOT%\DataProviders\%PROVIDERGUID%\SupportedObjects\IDSRefBuilder]
 @="Microsoft.VisualStudio.Data.Framework.DSRefBuilder"
-"Assembly"="Microsoft.VisualStudio.Data.Framework, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+"Assembly"="Microsoft.VisualStudio.Data.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
 
 ;
 ; This registry key indicates the existence of an IVsDataAsyncCommand
@@ -62,15 +62,15 @@ Windows Registry Editor Version 5.00
 ;
 [%REGROOT%\DataProviders\%PROVIDERGUID%\SupportedObjects\IVsDataConnectionProperties]
 @="Microsoft.VisualStudio.Data.Framework.AdoDotNet.AdoDotNetConnectionProperties"
-"Assembly"="Microsoft.VisualStudio.Data.Framework, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+"Assembly"="Microsoft.VisualStudio.Data.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
 
 [%REGROOT%\DataProviders\%PROVIDERGUID%\SupportedObjects\IVsDataConnectionSupport]
 @="Microsoft.VisualStudio.Data.Framework.AdoDotNet.AdoDotNetConnectionSupport"
-"Assembly"="Microsoft.VisualStudio.Data.Framework, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+"Assembly"="Microsoft.VisualStudio.Data.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
 
 [%REGROOT%\DataProviders\%PROVIDERGUID%\SupportedObjects\IVsDataConnectionUIProperties]
 @="Microsoft.VisualStudio.Data.Framework.AdoDotNet.AdoDotNetConnectionProperties"
-"Assembly"="Microsoft.VisualStudio.Data.Framework, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+"Assembly"="Microsoft.VisualStudio.Data.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
 
 [%REGROOT%\DataProviders\%PROVIDERGUID%\SupportedObjects\IVsDataMappedObjectConverter]
 
@@ -100,8 +100,8 @@ Windows Registry Editor Version 5.00
 ;
 [%REGROOT%\DataProviders\%PROVIDERGUID%\SupportedObjects\IVsDataObjectSupport]
 @="Microsoft.VisualStudio.Data.Framework.DataObjectSupport"
-"Assembly"="Microsoft.VisualStudio.Data.Framework, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
-"XmlResource"="CrmAdo.Ddex.CrmObjectSupport"
+"Assembly"="Microsoft.VisualStudio.Data.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+"XmlResource"="CrmObjectSupport"
 
 ;
 ; This registry key indicates the existence of an IVsDataSourceInformation
@@ -128,11 +128,15 @@ Windows Registry Editor Version 5.00
 
 [%REGROOT%\DataProviders\%PROVIDERGUID%\SupportedObjects\IVsDataViewSupport]
 @="Microsoft.VisualStudio.Data.Framework.DataViewSupport"
-"Assembly"="Microsoft.VisualStudio.Data.Framework, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
-"XmlResource"="CrmAdo.Ddex.CrmViewSupport"
+"Assembly"="Microsoft.VisualStudio.Data.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+"XmlResource"="CrmViewSupport"
 
 ;
-; This registry key registers a mapping from the existing DDEX data source
-; for Microsoft SQL Server to this sample provider as a supporting provider.
-;
-[%REGROOT%\DataSources\{067EA0D9-BA62-43f7-9106-34930C60C528}\SupportingProviders\%PROVIDERGUID%]
+; This registry key registers a datacource for crmado dynamics crm, and then associates the crm provider to it.
+
+[%REGROOT%\DataSources\{867F28CF-BFE4-465A-91D3-88F250AAA667}]
+@="Dynamics CRM (CrmAdo)"
+"DefaultProvider"="%PROVIDERGUID%"
+
+[%REGROOT%\DataSources\{867F28CF-BFE4-465A-91D3-88F250AAA667}\SupportingProviders]
+[%REGROOT%\DataSources\{867F28CF-BFE4-465A-91D3-88F250AAA667}\SupportingProviders\%PROVIDERGUID%]
