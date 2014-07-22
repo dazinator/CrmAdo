@@ -320,21 +320,21 @@ namespace CrmAdo.Ddex
 
         private const string rootEnumerationSql =
             "SELECT" +
-            "	[Server] = SERVERPROPERTY('ServerName')," +
-            "	[Instance] = SERVERPROPERTY('InstanceName')," +
-            "	[Login] = SUSER_SNAME(SUSER_SID())," +
-            "	[Database] = DB_NAME()," +
-            "	[User] = USER_NAME()," +
-            "	[Schema] = SCHEMA_NAME()";
+            "	SERVERPROPERTY('ServerName') AS [Server]," +
+            "	SERVERPROPERTY('InstanceName') AS [Instance]," +
+            "	SUSER_SNAME(SUSER_SID()) AS [Login]," +
+            "	DB_NAME() AS [Database]," +
+            "	USER_NAME() AS [User]," +
+            "	SCHEMA_NAME() AS [Schema]";
 
         private const string indexEnumerationSql =
             "SELECT" +
-            "	[Database] = d.name," +
-            "	[Schema] = SCHEMA_NAME(o.schema_id)," +
-            "	[Table] = OBJECT_NAME(o.object_id)," +
-            "	[Name] = i.name," +
-            "	[IsUnique] = i.is_unique," +
-            "	[IsPrimary] = i.is_primary_key" +
+            "	d.name AS [Database]," +
+            "	SCHEMA_NAME(o.schema_id) AS [Schema]," +
+            "	OBJECT_NAME(o.object_id) AS [Table]," +
+            "	i.name AS [Name]," +
+            "	i.is_unique AS [IsUnique]," +
+            "	i.is_primary_key AS [IsPrimary]" +
             " FROM" +
             "	[{0}].sys.indexes i INNER JOIN" +
             "	[{0}].sys.objects o ON i.object_id = o.object_id INNER JOIN" +
@@ -356,12 +356,12 @@ namespace CrmAdo.Ddex
 
         private const string indexColumnEnumerationSql =
             "SELECT" +
-            "	[Database] = d.name," +
-            "	[Schema] = SCHEMA_NAME(o.schema_id)," +
-            "	[Table] = OBJECT_NAME(o.object_id)," +
-            "	[Index] = i.name," +
-            "	[Name] = c.name," +
-            "	[Ordinal] = ic.key_ordinal" +
+            "	d.name AS [Database]," +
+            "	SCHEMA_NAME(o.schema_id) AS [Schema]," +
+            "	OBJECT_NAME(o.object_id) [Table]," +
+            "	i.name AS [Index]," +
+            "	c.name AS [Name]," +
+            "	ic.key_ordinal AS [Ordinal]" +
             " FROM" +
             "	[{0}].sys.index_columns ic INNER JOIN" +
             "	[{0}].sys.columns c ON ic.object_id = c.object_id AND ic.column_id = c.column_id INNER JOIN" +
@@ -388,14 +388,14 @@ namespace CrmAdo.Ddex
 
         private const string foreignKeyEnumerationSql =
             "SELECT" +
-            "	[Database] = d.name," +
-            "	[Schema] = SCHEMA_NAME(o.schema_id)," +
-            "	[Table] = OBJECT_NAME(o.object_id)," +
-            "	[Name] = fk.name," +
-            "	[ReferencedTableSchema] = SCHEMA_NAME(rk.schema_id)," +
-            "	[ReferencedTableName] = OBJECT_NAME(rk.object_id)," +
-            "   [UpdateAction] = fk.update_referential_action," +
-            "   [DeleteAction] = fk.delete_referential_action" +
+            "	d.name AS [Database]," +
+            "	SCHEMA_NAME(o.schema_id) AS [Schema]," +
+            "	OBJECT_NAME(o.object_id) AS [Table]," +
+            "	fk.name AS [Name]," +
+            "	SCHEMA_NAME(rk.schema_id) AS [ReferencedTableSchema]," +
+            "	OBJECT_NAME(rk.object_id) AS [ReferencedTableName]," +
+            "   fk.update_referential_action [UpdateAction]," +
+            "   fk.delete_referential_action AS [DeleteAction]" +
             " FROM" +
             "	[{0}].sys.foreign_keys fk INNER JOIN" +
             "	[{0}].sys.objects rk ON fk.referenced_object_id = rk.object_id INNER JOIN" +
@@ -417,13 +417,13 @@ namespace CrmAdo.Ddex
 
         private const string foreignKeyColumnEnumerationSql =
             "SELECT" +
-            "	[Database] = d.name," +
-            "	[Schema] = SCHEMA_NAME(o.schema_id)," +
-            "	[Table] = OBJECT_NAME(o.object_id)," +
-            "	[ForeignKey] = fk.name," +
-            "	[Name] = fc.name," +
-            "	[Ordinal] = fkc.constraint_column_id," +
-            "	[ReferencedColumnName] = rc.name" +
+            "	d.name AS [Database]," +
+            "	SCHEMA_NAME(o.schema_id) AS [Schema]," +
+            "	OBJECT_NAME(o.object_id) AS [Table] ," +
+            "	fk.name AS [ForeignKey]," +
+            "	fc.name AS [Name]," +
+            "	fkc.constraint_column_id AS [Ordinal]," +
+            "	rc.name AS [ReferencedColumnName]" +
             " FROM" +
             "	[{0}].sys.foreign_key_columns fkc INNER JOIN" +
             "	[{0}].sys.columns fc ON fkc.parent_object_id = fc.object_id AND fkc.parent_column_id = fc.column_id INNER JOIN" +
@@ -450,9 +450,9 @@ namespace CrmAdo.Ddex
 
         private const string storedProcedureEnumerationSql =
             "SELECT" +
-            "	[Database] = d.name," +
-            "	[Schema] = SCHEMA_NAME(o.schema_id)," +
-            "	[Name] = o.name" +
+            "	d.name AS [Database]," +
+            "	SCHEMA_NAME(o.schema_id) AS [Schema]," +
+            "	o.name AS [Name]" +
             " FROM" +
             "	[{0}].sys.objects o INNER JOIN" +
             "	master.sys.databases d ON d.name = {1}" +
@@ -471,16 +471,16 @@ namespace CrmAdo.Ddex
 
         private const string storedProcedureParameterEnumerationSql =
             "SELECT" +
-            "	[Database] = d.name," +
-            "	[Schema] = SCHEMA_NAME(o.schema_id)," +
-            "	[StoredProcedure] = o.name," +
-            "	[Name] = p.name," +
-            "	[Ordinal] = p.parameter_id," +
-            "	[DataType] = t.name," +
-            "	[MaxLength] = CASE WHEN t.name IN (N'nchar', N'nvarchar') THEN p.max_length/2 ELSE p.max_length END," +
-            "	[Precision] = p.precision," +
-            "	[Scale] = p.scale," +
-            "	[IsOutput] = p.is_output" +
+            "	d.name AS [Database]," +
+            "	SCHEMA_NAME(o.schema_id) AS [Schema]," +
+            "	o.name AS [StoredProcedure]," +
+            "	p.name AS [Name]," +
+            "	p.parameter_id AS [Ordinal] ," +
+            "	t.name AS [DataType]," +
+            "	CASE WHEN t.name IN (N'nchar', N'nvarchar') THEN p.max_length/2 ELSE p.max_length END AS [MaxLength]," +
+            "	p.precision [Precision]," +
+            "	p.scale [Scale]," +
+            "	p.is_output [IsOutput]" +
             " FROM" +
             "	[{0}].sys.parameters p INNER JOIN" +
             "	[{0}].sys.types t ON p.system_type_id = t.user_type_id INNER JOIN" +
@@ -503,10 +503,10 @@ namespace CrmAdo.Ddex
 
         private const string functionEnumerationSql =
             "SELECT" +
-            "	[Database] = d.name," +
-            "	[Schema] = SCHEMA_NAME(o.schema_id)," +
-            "	[Name] = o.name," +
-            "	[Type] = o.type" +
+            "	d.name AS [Database]," +
+            "	SCHEMA_NAME(o.schema_id) AS [Schema]," +
+            "	o.name AS [Name]," +
+            "	o.type AS [Type]" +
             " FROM" +
             "	[{0}].sys.objects o INNER JOIN" +
             "	master.sys.databases d ON d.name = {1}" +
@@ -525,16 +525,16 @@ namespace CrmAdo.Ddex
 
         private const string functionParameterEnumerationSql =
             "SELECT" +
-            "	[Database] = d.name," +
-            "	[Schema] = SCHEMA_NAME(o.schema_id)," +
-            "	[Function] = o.name," +
-            "	[Name] = CASE WHEN p.parameter_id = 0 THEN N'@RETURN_VALUE' ELSE p.name END," +
-            "	[Ordinal] = p.parameter_id," +
-            "	[DataType] = t.name," +
-            "	[MaxLength] = CASE WHEN t.name IN (N'nchar', N'nvarchar') THEN p.max_length/2 ELSE p.max_length END," +
-            "	[Precision] = p.precision," +
-            "	[Scale] = p.scale," +
-            "	[IsOutput] = p.is_output" +
+            "	d.name AS [Database]," +
+            "	SCHEMA_NAME(o.schema_id) AS [Schema]," +
+            "	o.name AS [Function]," +
+            "	CASE WHEN p.parameter_id = 0 THEN N'@RETURN_VALUE' ELSE p.name END AS [Name]," +
+            "	p.parameter_id AS [Ordinal] ," +
+            "	t.name AS [DataType]," +
+            "	CASE WHEN t.name IN (N'nchar', N'nvarchar') THEN p.max_length/2 ELSE p.max_length END AS [MaxLength]," +
+            "	p.precision AS [Precision]," +
+            "	p.scale AS [Scale]," +
+            "	p.is_output AS [IsOutput]" +
             " FROM" +
             "	[{0}].sys.parameters p INNER JOIN" +
             "	[{0}].sys.types t ON p.system_type_id = t.user_type_id INNER JOIN" +
@@ -557,15 +557,15 @@ namespace CrmAdo.Ddex
 
         private const string functionColumnEnumerationSql =
             "SELECT" +
-            "	[Database] = d.name," +
-            "	[Schema] = SCHEMA_NAME(o.schema_id)," +
-            "	[Function] = o.name," +
-            "	[Name] = c.name," +
-            "	[Ordinal] = c.column_id," +
-            "	[DataType] = t.name," +
-            "	[MaxLength] = CASE WHEN t.name IN (N'nchar', N'nvarchar') THEN c.max_length/2 ELSE c.max_length END," +
-            "	[Precision] = c.precision," +
-            "	[Scale] = c.scale" +
+            "	d.name AS [Database]," +
+            "	SCHEMA_NAME(o.schema_id) AS [Schema]," +
+            "	o.name AS [Function]," +
+            "	c.name AS [Name]," +
+            "	c.column_id AS [Ordinal] ," +
+            "	t.name AS [DataType]," +
+            "	CASE WHEN t.name IN (N'nchar', N'nvarchar') THEN c.max_length/2 ELSE c.max_length END AS [MaxLength]," +
+            "	c.precision AS [Precision]," +
+            "	c.scale AS [Scale] " +
             " FROM" +
             "	[{0}].sys.columns c INNER JOIN" +
             "	[{0}].sys.types t ON c.system_type_id = t.user_type_id INNER JOIN" +
