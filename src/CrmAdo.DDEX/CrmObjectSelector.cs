@@ -25,8 +25,7 @@ namespace CrmAdo.Ddex
     {
         #region Protected Methods
 
-        protected override IList<string> GetRequiredRestrictions(
-            string typeName, object[] parameters)
+        protected override IList<string> GetRequiredRestrictions(string typeName, object[] parameters)
         {
             if (typeName == null)
             {
@@ -38,21 +37,19 @@ namespace CrmAdo.Ddex
             // multiple databases at the same time.  Also, the method used to
             // enumerate stored procedure columns only works to retrieve
             // columns for a single stored procedure at a time.
-            if (!typeName.Equals(CrmObjectTypes.Root,
-                StringComparison.OrdinalIgnoreCase))
+            if (!typeName.Equals(CrmObjectTypes.Root, StringComparison.OrdinalIgnoreCase))
             {
-                if (typeName.Equals(CrmObjectTypes.StoredProcedureColumn,
-                        StringComparison.OrdinalIgnoreCase))
-                {
-                    return new string[] {
-						"Database",
-						"Schema",
-						"StoredProcedure"
-					};
-                }
+                //if (typeName.Equals(CrmObjectTypes.StoredProcedureColumn, StringComparison.OrdinalIgnoreCase))
+                //{
+                //    return new string[] {
+                //        "Database",
+                //        "Schema",
+                //        "StoredProcedure"
+                //    };
+                //}
                 return new string[] {
-					"Database"
-				};
+                    "Database"
+                };
             }
 
             return base.GetRequiredRestrictions(typeName, parameters);
@@ -94,27 +91,23 @@ namespace CrmAdo.Ddex
                 else if (restrictions.Length == 0 ||
                     !(restrictions[0] is string))
                 {
-                    throw new ArgumentException(
-                        "Missing required restriction(s).");
+                    throw new ArgumentException("Missing required restriction(s).");
                 }
-                else if (typeName.Equals(CrmObjectTypes.Index,
-                    StringComparison.OrdinalIgnoreCase))
+                else if (typeName.Equals(CrmObjectTypes.Index, StringComparison.OrdinalIgnoreCase))
                 {
                     comm.CommandText = FormatSqlString(
                         indexEnumerationSql,
                         restrictions,
                         indexEnumerationDefaults);
                 }
-                else if (typeName.Equals(CrmObjectTypes.IndexColumn,
-                    StringComparison.OrdinalIgnoreCase))
+                else if (typeName.Equals(CrmObjectTypes.IndexColumn, StringComparison.OrdinalIgnoreCase))
                 {
                     comm.CommandText = FormatSqlString(
                         indexColumnEnumerationSql,
                         restrictions,
                         indexColumnEnumerationDefaults);
                 }
-                else if (typeName.Equals(CrmObjectTypes.ForeignKey,
-                    StringComparison.OrdinalIgnoreCase))
+                else if (typeName.Equals(CrmObjectTypes.ForeignKey, StringComparison.OrdinalIgnoreCase))
                 {
                     comm.CommandText = FormatSqlString(
                         foreignKeyEnumerationSql,
@@ -129,138 +122,134 @@ namespace CrmAdo.Ddex
                         restrictions,
                         foreignKeyColumnEnumerationDefaults);
                 }
-                else if (typeName.Equals(CrmObjectTypes.StoredProcedure,
-                    StringComparison.OrdinalIgnoreCase))
-                {
-                    comm.CommandText = FormatSqlString(
-                        storedProcedureEnumerationSql,
-                        restrictions,
-                        storedProcedureEnumerationDefaults);
-                }
-                else if (typeName.Equals(CrmObjectTypes.StoredProcedureParameter,
-                    StringComparison.OrdinalIgnoreCase))
-                {
-                    comm.CommandText = FormatSqlString(
-                        storedProcedureParameterEnumerationSql,
-                        restrictions,
-                        storedProcedureParameterEnumerationDefaults);
-                }
-                else if (typeName.Equals(CrmObjectTypes.StoredProcedureColumn,
-                    StringComparison.OrdinalIgnoreCase))
-                {
-                    if (restrictions.Length < 3 ||
-                        !(restrictions[0] is string) ||
-                        !(restrictions[1] is string) ||
-                        !(restrictions[2] is string))
-                    {
-                        throw new ArgumentException(
-                            "Missing required restriction(s).");
-                    }
+                //else if (typeName.Equals(CrmObjectTypes.StoredProcedure, StringComparison.OrdinalIgnoreCase))
+                //{
+                //    comm.CommandText = FormatSqlString(
+                //        storedProcedureEnumerationSql,
+                //        restrictions,
+                //        storedProcedureEnumerationDefaults);
+                //}
+                //else if (typeName.Equals(CrmObjectTypes.StoredProcedureParameter,  StringComparison.OrdinalIgnoreCase))
+                //{
+                //    comm.CommandText = FormatSqlString(
+                //        storedProcedureParameterEnumerationSql,
+                //        restrictions,
+                //        storedProcedureParameterEnumerationDefaults);
+                //}
+                //else if (typeName.Equals(CrmObjectTypes.StoredProcedureColumn, StringComparison.OrdinalIgnoreCase))
+                //{
+                //    if (restrictions.Length < 3 ||
+                //        !(restrictions[0] is string) ||
+                //        !(restrictions[1] is string) ||
+                //        !(restrictions[2] is string))
+                //    {
+                //        throw new ArgumentException("Missing required restriction(s).");
+                //    }
 
-                    //
-                    // In order to implement stored procedure columns we
-                    // execute the stored procedure in schema only mode
-                    // and intepret the resulting schema table.
-                    //
+                //    //
+                //    // In order to implement stored procedure columns we
+                //    // execute the stored procedure in schema only mode
+                //    // and intepret the resulting schema table.
+                //    //
 
-                    // Format the command type and text
-                    comm.CommandType = CommandType.StoredProcedure;
-                    comm.CommandText = String.Format(
-                        CultureInfo.CurrentCulture,
-                        "[{0}].[{1}].[{2}]",
-                        (restrictions[0] as string).Replace("]", "]]"),
-                        (restrictions[1] as string).Replace("]", "]]"),
-                        (restrictions[2] as string).Replace("]", "]]"));
+                //    // Format the command type and text
+                //    comm.CommandType = CommandType.StoredProcedure;
+                //    comm.CommandText = String.Format(
+                //        CultureInfo.CurrentCulture,
+                //        "[{0}].[{1}].[{2}]",
+                //        (restrictions[0] as string).Replace("]", "]]"),
+                //        (restrictions[1] as string).Replace("]", "]]"),
+                //        (restrictions[2] as string).Replace("]", "]]"));
 
-                    // Get the schema of the stored procedure
-                    DataTable schemaTable = null;
-                    DbDataReader reader = null;
-                    try
-                    {
-                        // SqlCommandBuilder.DeriveParameters(comm);
-                        reader = comm.ExecuteReader(CommandBehavior.SchemaOnly);
-                        schemaTable = reader.GetSchemaTable();
-                    }
-                    catch (DbException)
-                    {
-                        // The DeriveParameters and GetSchemaTable calls can
-                        // be flaky; catch SqlException here because we would
-                        // rather return an empty result set than an error.
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        // DeriveParameters sometimes throws this as well
-                    }
-                    finally
-                    {
-                        if (reader != null)
-                        {
-                            reader.Close();
-                        }
-                    }
+                //    // Get the schema of the stored procedure
+                //    DataTable schemaTable = null;
+                //    DbDataReader reader = null;
+                //    try
+                //    {
+                //        // SqlCommandBuilder.DeriveParameters(comm);
+                //        reader = comm.ExecuteReader(CommandBehavior.SchemaOnly);
+                //        schemaTable = reader.GetSchemaTable();
+                //    }
+                //    catch (DbException)
+                //    {
+                //        // The DeriveParameters and GetSchemaTable calls can
+                //        // be flaky; catch SqlException here because we would
+                //        // rather return an empty result set than an error.
+                //    }
+                //    catch (InvalidOperationException)
+                //    {
+                //        // DeriveParameters sometimes throws this as well
+                //    }
+                //    finally
+                //    {
+                //        if (reader != null)
+                //        {
+                //            reader.Close();
+                //        }
+                //    }
 
-                    // Build a different data table to contain the right
-                    // information (must have full identifier)
-                    DataTable dataTable = new DataTable();
-                    dataTable.Locale = CultureInfo.CurrentCulture;
-                    dataTable.Columns.Add("Database", typeof(string));
-                    dataTable.Columns.Add("Schema", typeof(string));
-                    dataTable.Columns.Add("StoredProcedure", typeof(string));
-                    dataTable.Columns.Add("Name", typeof(string));
-                    dataTable.Columns.Add("Ordinal", typeof(int));
-                    dataTable.Columns.Add("ProviderType", typeof(int));
-                    dataTable.Columns.Add("FrameworkType", typeof(Type));
-                    dataTable.Columns.Add("MaxLength", typeof(int));
-                    dataTable.Columns.Add("Precision", typeof(short));
-                    dataTable.Columns.Add("Scale", typeof(short));
-                    dataTable.Columns.Add("IsNullable", typeof(bool));
+                //    // Build a different data table to contain the right
+                //    // information (must have full identifier)
+                //    DataTable dataTable = new DataTable();
+                //    dataTable.Locale = CultureInfo.CurrentCulture;
+                //    dataTable.Columns.Add("Database", typeof(string));
+                //    dataTable.Columns.Add("Schema", typeof(string));
+                //    dataTable.Columns.Add("StoredProcedure", typeof(string));
+                //    dataTable.Columns.Add("Name", typeof(string));
+                //    dataTable.Columns.Add("Ordinal", typeof(int));
+                //    dataTable.Columns.Add("ProviderType", typeof(int));
+                //    dataTable.Columns.Add("FrameworkType", typeof(Type));
+                //    dataTable.Columns.Add("MaxLength", typeof(int));
+                //    dataTable.Columns.Add("Precision", typeof(short));
+                //    dataTable.Columns.Add("Scale", typeof(short));
+                //    dataTable.Columns.Add("IsNullable", typeof(bool));
 
-                    // Populate the data table if a schema table was returned
-                    if (schemaTable != null)
-                    {
-                        foreach (DataRow row in schemaTable.Rows)
-                        {
-                            dataTable.Rows.Add(
-                                restrictions[0],
-                                restrictions[1],
-                                restrictions[2],
-                                row["ColumnName"],
-                                row["ColumnOrdinal"],
-                                row["ProviderType"],
-                                row["DataType"],
-                                row["ColumnSize"],
-                                row["NumericPrecision"],
-                                row["NumericScale"],
-                                row["AllowDBNull"]);
-                        }
-                    }
+                //    // Populate the data table if a schema table was returned
+                //    if (schemaTable != null)
+                //    {
+                //        foreach (DataRow row in schemaTable.Rows)
+                //        {
+                //            dataTable.Rows.Add(
+                //                restrictions[0],
+                //                restrictions[1],
+                //                restrictions[2],
+                //                row["ColumnName"],
+                //                row["ColumnOrdinal"],
+                //                row["ProviderType"],
+                //                row["DataType"],
+                //                row["ColumnSize"],
+                //                row["NumericPrecision"],
+                //                row["NumericScale"],
+                //                row["AllowDBNull"]);
+                //        }
+                //    }
 
-                    return new AdoDotNetTableReader(dataTable);
-                }
-                else if (typeName.Equals(CrmObjectTypes.Function,
-                    StringComparison.OrdinalIgnoreCase))
-                {
-                    comm.CommandText = FormatSqlString(
-                        functionEnumerationSql,
-                        restrictions,
-                        functionEnumerationDefaults);
-                }
-                else if (typeName.Equals(CrmObjectTypes.FunctionParameter,
-                    StringComparison.OrdinalIgnoreCase))
-                {
-                    comm.CommandText = FormatSqlString(
-                        functionParameterEnumerationSql,
-                        restrictions,
-                        functionParameterEnumerationDefaults);
-                }
-                else if (typeName.Equals(CrmObjectTypes.FunctionColumn,
-                    StringComparison.OrdinalIgnoreCase))
-                {
-                    comm.CommandText = FormatSqlString(
-                        functionColumnEnumerationSql,
-                        restrictions,
-                        functionColumnEnumerationDefaults);
-                }
+                //    return new AdoDotNetTableReader(dataTable);
+                //}
+                //else if (typeName.Equals(CrmObjectTypes.Function,
+                //    StringComparison.OrdinalIgnoreCase))
+                //{
+                //    comm.CommandText = FormatSqlString(
+                //        functionEnumerationSql,
+                //        restrictions,
+                //        functionEnumerationDefaults);
+                //}
+                //else if (typeName.Equals(CrmObjectTypes.FunctionParameter,
+                //    StringComparison.OrdinalIgnoreCase))
+                //{
+                //    comm.CommandText = FormatSqlString(
+                //        functionParameterEnumerationSql,
+                //        restrictions,
+                //        functionParameterEnumerationDefaults);
+                //}
+                //else if (typeName.Equals(CrmObjectTypes.FunctionColumn,
+                //    StringComparison.OrdinalIgnoreCase))
+                //{
+                //    comm.CommandText = FormatSqlString(
+                //        functionColumnEnumerationSql,
+                //        restrictions,
+                //        functionColumnEnumerationDefaults);
+                //}
                 else
                 {
                     throw new NotSupportedException();
@@ -277,6 +266,7 @@ namespace CrmAdo.Ddex
         #endregion
 
         #region Private Methods
+
 
         /// <summary>
         /// This method formats a SQL string by specifying format arguments
@@ -448,143 +438,145 @@ namespace CrmAdo.Ddex
 			"fc.name"
 		};
 
-        private const string storedProcedureEnumerationSql =
-            "SELECT" +
-            "	d.name AS [Database]," +
-            "	SCHEMA_NAME(o.schema_id) AS [Schema]," +
-            "	o.name AS [Name]" +
-            " FROM" +
-            "	[{0}].sys.objects o INNER JOIN" +
-            "	master.sys.databases d ON d.name = {1}" +
-            " WHERE" +
-            "	o.type IN ('P', 'PC') AND" +
-            "	SCHEMA_NAME(o.schema_id) = {2} AND" +
-            "	OBJECT_NAME(o.object_id) = {3}" +
-            " ORDER BY" +
-            "	1,2,3";
-        private static string[] storedProcedureEnumerationDefaults =
-		{
-			"d.name",
-			"SCHEMA_NAME(o.schema_id)",
-			"OBJECT_NAME(o.object_id)"
-		};
+        //private const string storedProcedureEnumerationSql =
+        //    "SELECT" +
+        //    "	d.name AS [Database]," +
+        //    "	SCHEMA_NAME(o.schema_id) AS [Schema]," +
+        //    "	o.name AS [Name]" +
+        //    " FROM" +
+        //    "	[{0}].sys.objects o INNER JOIN" +
+        //    "	master.sys.databases d ON d.name = {1}" +
+        //    " WHERE" +
+        //    "	o.type IN ('P', 'PC') AND" +
+        //    "	SCHEMA_NAME(o.schema_id) = {2} AND" +
+        //    "	OBJECT_NAME(o.object_id) = {3}" +
+        //    " ORDER BY" +
+        //    "	1,2,3";
+        //private static string[] storedProcedureEnumerationDefaults =
+        //{
+        //    "d.name",
+        //    "SCHEMA_NAME(o.schema_id)",
+        //    "OBJECT_NAME(o.object_id)"
+        //};
 
-        private const string storedProcedureParameterEnumerationSql =
-            "SELECT" +
-            "	d.name AS [Database]," +
-            "	SCHEMA_NAME(o.schema_id) AS [Schema]," +
-            "	o.name AS [StoredProcedure]," +
-            "	p.name AS [Name]," +
-            "	p.parameter_id AS [Ordinal] ," +
-            "	t.name AS [DataType]," +
-            "	CASE WHEN t.name IN (N'nchar', N'nvarchar') THEN p.max_length/2 ELSE p.max_length END AS [MaxLength]," +
-            "	p.precision [Precision]," +
-            "	p.scale [Scale]," +
-            "	p.is_output [IsOutput]" +
-            " FROM" +
-            "	[{0}].sys.parameters p INNER JOIN" +
-            "	[{0}].sys.types t ON p.system_type_id = t.user_type_id INNER JOIN" +
-            "	[{0}].sys.objects o ON p.object_id = o.object_id INNER JOIN" +
-            "	master.sys.databases d ON d.name = {1}" +
-            " WHERE" +
-            "	o.type IN ('P', 'PC') AND" +
-            "	SCHEMA_NAME(o.schema_id) = {2} AND" +
-            "	OBJECT_NAME(o.object_id) = {3} AND" +
-            "	p.name = {4}" +
-            " ORDER BY" +
-            "	1,2,3,5";
-        private static string[] storedProcedureParameterEnumerationDefaults =
-		{
-			"d.name",
-			"SCHEMA_NAME(o.schema_id)",
-			"OBJECT_NAME(o.object_id)",
-			"p.name"
-		};
+        //private const string storedProcedureParameterEnumerationSql =
+        //    "SELECT" +
+        //    "	d.name AS [Database]," +
+        //    "	SCHEMA_NAME(o.schema_id) AS [Schema]," +
+        //    "	o.name AS [StoredProcedure]," +
+        //    "	p.name AS [Name]," +
+        //    "	p.parameter_id AS [Ordinal] ," +
+        //    "	t.name AS [DataType]," +
+        //    "	CASE WHEN t.name IN (N'nchar', N'nvarchar') THEN p.max_length/2 ELSE p.max_length END AS [MaxLength]," +
+        //    "	p.precision [Precision]," +
+        //    "	p.scale [Scale]," +
+        //    "	p.is_output [IsOutput]" +
+        //    " FROM" +
+        //    "	[{0}].sys.parameters p INNER JOIN" +
+        //    "	[{0}].sys.types t ON p.system_type_id = t.user_type_id INNER JOIN" +
+        //    "	[{0}].sys.objects o ON p.object_id = o.object_id INNER JOIN" +
+        //    "	master.sys.databases d ON d.name = {1}" +
+        //    " WHERE" +
+        //    "	o.type IN ('P', 'PC') AND" +
+        //    "	SCHEMA_NAME(o.schema_id) = {2} AND" +
+        //    "	OBJECT_NAME(o.object_id) = {3} AND" +
+        //    "	p.name = {4}" +
+        //    " ORDER BY" +
+        //    "	1,2,3,5";
+        //private static string[] storedProcedureParameterEnumerationDefaults =
+        //{
+        //    "d.name",
+        //    "SCHEMA_NAME(o.schema_id)",
+        //    "OBJECT_NAME(o.object_id)",
+        //    "p.name"
+        //};
 
-        private const string functionEnumerationSql =
-            "SELECT" +
-            "	d.name AS [Database]," +
-            "	SCHEMA_NAME(o.schema_id) AS [Schema]," +
-            "	o.name AS [Name]," +
-            "	o.type AS [Type]" +
-            " FROM" +
-            "	[{0}].sys.objects o INNER JOIN" +
-            "	master.sys.databases d ON d.name = {1}" +
-            " WHERE" +
-            "	o.type IN ('AF', 'FN', 'FS', 'FT', 'IF', 'TF') AND" +
-            "	SCHEMA_NAME(o.schema_id) = {2} AND" +
-            "	OBJECT_NAME(o.object_id) = {3}" +
-            " ORDER BY" +
-            "	1,2,3";
-        private static string[] functionEnumerationDefaults =
-		{
-			"d.name",
-			"SCHEMA_NAME(o.schema_id)",
-			"OBJECT_NAME(o.object_id)"
-		};
+        //private const string functionEnumerationSql =
+        //    "SELECT" +
+        //    "	d.name AS [Database]," +
+        //    "	SCHEMA_NAME(o.schema_id) AS [Schema]," +
+        //    "	o.name AS [Name]," +
+        //    "	o.type AS [Type]" +
+        //    " FROM" +
+        //    "	[{0}].sys.objects o INNER JOIN" +
+        //    "	master.sys.databases d ON d.name = {1}" +
+        //    " WHERE" +
+        //    "	o.type IN ('AF', 'FN', 'FS', 'FT', 'IF', 'TF') AND" +
+        //    "	SCHEMA_NAME(o.schema_id) = {2} AND" +
+        //    "	OBJECT_NAME(o.object_id) = {3}" +
+        //    " ORDER BY" +
+        //    "	1,2,3";
+        //private static string[] functionEnumerationDefaults =
+        //{
+        //    "d.name",
+        //    "SCHEMA_NAME(o.schema_id)",
+        //    "OBJECT_NAME(o.object_id)"
+        //};
 
-        private const string functionParameterEnumerationSql =
-            "SELECT" +
-            "	d.name AS [Database]," +
-            "	SCHEMA_NAME(o.schema_id) AS [Schema]," +
-            "	o.name AS [Function]," +
-            "	CASE WHEN p.parameter_id = 0 THEN N'@RETURN_VALUE' ELSE p.name END AS [Name]," +
-            "	p.parameter_id AS [Ordinal] ," +
-            "	t.name AS [DataType]," +
-            "	CASE WHEN t.name IN (N'nchar', N'nvarchar') THEN p.max_length/2 ELSE p.max_length END AS [MaxLength]," +
-            "	p.precision AS [Precision]," +
-            "	p.scale AS [Scale]," +
-            "	p.is_output AS [IsOutput]" +
-            " FROM" +
-            "	[{0}].sys.parameters p INNER JOIN" +
-            "	[{0}].sys.types t ON p.system_type_id = t.user_type_id INNER JOIN" +
-            "	[{0}].sys.objects o ON p.object_id = o.object_id INNER JOIN" +
-            "	master.sys.databases d ON d.name = {1}" +
-            " WHERE" +
-            "	o.type IN ('AF', 'FN', 'FS', 'FT', 'IF', 'TF') AND" +
-            "	SCHEMA_NAME(o.schema_id) = {2} AND" +
-            "	OBJECT_NAME(o.object_id) = {3} AND" +
-            "	p.name = {4}" +
-            " ORDER BY" +
-            "	1,2,3,5";
-        private static string[] functionParameterEnumerationDefaults =
-		{
-			"d.name",
-			"SCHEMA_NAME(o.schema_id)",
-			"OBJECT_NAME(o.object_id)",
-			"p.name"
-		};
+        //private const string functionParameterEnumerationSql =
+        //    "SELECT" +
+        //    "	d.name AS [Database]," +
+        //    "	SCHEMA_NAME(o.schema_id) AS [Schema]," +
+        //    "	o.name AS [Function]," +
+        //    "	CASE WHEN p.parameter_id = 0 THEN N'@RETURN_VALUE' ELSE p.name END AS [Name]," +
+        //    "	p.parameter_id AS [Ordinal] ," +
+        //    "	t.name AS [DataType]," +
+        //    "	CASE WHEN t.name IN (N'nchar', N'nvarchar') THEN p.max_length/2 ELSE p.max_length END AS [MaxLength]," +
+        //    "	p.precision AS [Precision]," +
+        //    "	p.scale AS [Scale]," +
+        //    "	p.is_output AS [IsOutput]" +
+        //    " FROM" +
+        //    "	[{0}].sys.parameters p INNER JOIN" +
+        //    "	[{0}].sys.types t ON p.system_type_id = t.user_type_id INNER JOIN" +
+        //    "	[{0}].sys.objects o ON p.object_id = o.object_id INNER JOIN" +
+        //    "	master.sys.databases d ON d.name = {1}" +
+        //    " WHERE" +
+        //    "	o.type IN ('AF', 'FN', 'FS', 'FT', 'IF', 'TF') AND" +
+        //    "	SCHEMA_NAME(o.schema_id) = {2} AND" +
+        //    "	OBJECT_NAME(o.object_id) = {3} AND" +
+        //    "	p.name = {4}" +
+        //    " ORDER BY" +
+        //    "	1,2,3,5";
+        //private static string[] functionParameterEnumerationDefaults =
+        //{
+        //    "d.name",
+        //    "SCHEMA_NAME(o.schema_id)",
+        //    "OBJECT_NAME(o.object_id)",
+        //    "p.name"
+        //};
 
-        private const string functionColumnEnumerationSql =
-            "SELECT" +
-            "	d.name AS [Database]," +
-            "	SCHEMA_NAME(o.schema_id) AS [Schema]," +
-            "	o.name AS [Function]," +
-            "	c.name AS [Name]," +
-            "	c.column_id AS [Ordinal] ," +
-            "	t.name AS [DataType]," +
-            "	CASE WHEN t.name IN (N'nchar', N'nvarchar') THEN c.max_length/2 ELSE c.max_length END AS [MaxLength]," +
-            "	c.precision AS [Precision]," +
-            "	c.scale AS [Scale] " +
-            " FROM" +
-            "	[{0}].sys.columns c INNER JOIN" +
-            "	[{0}].sys.types t ON c.system_type_id = t.user_type_id INNER JOIN" +
-            "	[{0}].sys.objects o ON c.object_id = o.object_id AND o.type IN ('AF', 'FN', 'FS', 'FT', 'IF', 'TF') INNER JOIN" +
-            "	master.sys.databases d ON d.name = {1}" +
-            " WHERE" +
-            "	SCHEMA_NAME(o.schema_id) = {2} AND" +
-            "	OBJECT_NAME(o.object_id) = {3} AND" +
-            "	c.name = {4}" +
-            " ORDER BY" +
-            "	1,2,3,5";
-        private static string[] functionColumnEnumerationDefaults =
-		{
-			"d.name",
-			"SCHEMA_NAME(o.schema_id)",
-			"OBJECT_NAME(o.object_id)",
-			"c.name"
-		};
+        //private const string functionColumnEnumerationSql =
+        //    "SELECT" +
+        //    "	d.name AS [Database]," +
+        //    "	SCHEMA_NAME(o.schema_id) AS [Schema]," +
+        //    "	o.name AS [Function]," +
+        //    "	c.name AS [Name]," +
+        //    "	c.column_id AS [Ordinal] ," +
+        //    "	t.name AS [DataType]," +
+        //    "	CASE WHEN t.name IN (N'nchar', N'nvarchar') THEN c.max_length/2 ELSE c.max_length END AS [MaxLength]," +
+        //    "	c.precision AS [Precision]," +
+        //    "	c.scale AS [Scale] " +
+        //    " FROM" +
+        //    "	[{0}].sys.columns c INNER JOIN" +
+        //    "	[{0}].sys.types t ON c.system_type_id = t.user_type_id INNER JOIN" +
+        //    "	[{0}].sys.objects o ON c.object_id = o.object_id AND o.type IN ('AF', 'FN', 'FS', 'FT', 'IF', 'TF') INNER JOIN" +
+        //    "	master.sys.databases d ON d.name = {1}" +
+        //    " WHERE" +
+        //    "	SCHEMA_NAME(o.schema_id) = {2} AND" +
+        //    "	OBJECT_NAME(o.object_id) = {3} AND" +
+        //    "	c.name = {4}" +
+        //    " ORDER BY" +
+        //    "	1,2,3,5";
+        //private static string[] functionColumnEnumerationDefaults =
+        //{
+        //    "d.name",
+        //    "SCHEMA_NAME(o.schema_id)",
+        //    "OBJECT_NAME(o.object_id)",
+        //    "c.name"
+        //};
 
         #endregion
+
+
     }
 }

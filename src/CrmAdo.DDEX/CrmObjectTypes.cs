@@ -20,14 +20,14 @@ namespace CrmAdo.Ddex
         public const string IndexColumn = "IndexColumn";
         public const string ForeignKey = "ForeignKey";
         public const string ForeignKeyColumn = "ForeignKeyColumn";
-        public const string View = "View";
-        public const string ViewColumn = "ViewColumn";
-        public const string StoredProcedure = "StoredProcedure";
-        public const string StoredProcedureParameter = "StoredProcedureParameter";
-        public const string StoredProcedureColumn = "StoredProcedureColumn";
-        public const string Function = "Function";
-        public const string FunctionParameter = "FunctionParameter";
-        public const string FunctionColumn = "FunctionColumn";
-        public const string UserDefinedType = "UserDefinedType";
+        //public const string View = "View";
+        //public const string ViewColumn = "ViewColumn";
+        //public const string StoredProcedure = "StoredProcedure";
+        //public const string StoredProcedureParameter = "StoredProcedureParameter";
+        //public const string StoredProcedureColumn = "StoredProcedureColumn";
+        //public const string Function = "Function";
+        //public const string FunctionParameter = "FunctionParameter";
+        //public const string FunctionColumn = "FunctionColumn";
+        //public const string UserDefinedType = "UserDefinedType";
     }
 }
