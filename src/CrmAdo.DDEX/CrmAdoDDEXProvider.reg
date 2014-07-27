@@ -82,8 +82,8 @@ Windows Registry Editor Version 5.00
 ; customized by this provider.  The default value is simply the full name of
 ; the type in the main provider assembly.
 ;
-[%REGROOT%\DataProviders\%PROVIDERGUID%\SupportedObjects\IVsDataObjectIdentifierResolver]
-@="CrmAdo.Ddex.CrmObjectIdentifierResolver"
+; [%REGROOT%\DataProviders\%PROVIDERGUID%\SupportedObjects\IVsDataObjectIdentifierResolver]
+; @="CrmAdo.Ddex.CrmObjectIdentifierResolver"
 
 [%REGROOT%\DataProviders\%PROVIDERGUID%\SupportedObjects\IVsDataObjectMemberComparer]
 

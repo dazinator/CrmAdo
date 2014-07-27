@@ -5,6 +5,7 @@ using CrmAdo.Dynamics;
 using CrmAdo.Dynamics.Metadata;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
+using CrmAdo.Ado;
 
 namespace CrmAdo
 {
@@ -113,27 +114,20 @@ namespace CrmAdo
             base.Dispose(disposing);
         }
 
-        #region Not Implemented
         protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
         {
             return new CrmDbTransaction(this);
             //  throw new NotImplementedException();
         }
 
-        public override void ChangeDatabase(string databaseName)
-        {
-            // TODO: change crm organisation for connection?
-            throw new NotImplementedException();
-        }
-
-        public override string Database
-        {
-            get { throw new NotImplementedException(); }
-        }
-
         public override string DataSource
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                var connStringBuilder = new CrmConnectionStringBuilder();
+                connStringBuilder.ConnectionString = _CrmServiceProvider.ConnectionProvider.OrganisationServiceConnectionString;
+                return connStringBuilder.Url;
+            }
         }
 
         public override string ServerVersion
@@ -171,6 +165,24 @@ namespace CrmAdo
         {
             get { return _MetadataProvider; }
         }
+
+        #region Not Implemented
+       
+
+        public override void ChangeDatabase(string databaseName)
+        {
+            // TODO: change crm organisation for connection?
+            throw new NotImplementedException();
+        }
+
+        public override string Database
+        {
+            get { throw new NotImplementedException(); }
+        }    
+
+  
+
+    
 
         #endregion
 

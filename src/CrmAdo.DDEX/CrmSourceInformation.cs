@@ -37,8 +37,7 @@ namespace CrmAdo.Ddex
         /// </summary>
         protected override object RetrieveValue(string propertyName)
         {
-            if (propertyName.Equals(DefaultSchema,
-                    StringComparison.OrdinalIgnoreCase))
+            if (propertyName.Equals(DataSourceName, StringComparison.OrdinalIgnoreCase))
             {
                 if (Site.State != DataConnectionState.Open)
                 {
@@ -48,11 +47,9 @@ namespace CrmAdo.Ddex
                 Debug.Assert(conn != null, "Invalid provider object.");
                 if (conn != null)
                 {
-                    DbCommand comm = conn.CreateCommand();
                     try
                     {
-                        comm.CommandText = "SELECT SCHEMA_NAME()";
-                        return comm.ExecuteScalar() as string;
+                        return conn.DataSource;
                     }
                     catch (DbException)
                     {
@@ -61,6 +58,31 @@ namespace CrmAdo.Ddex
                 }
             }
             return base.RetrieveValue(propertyName);
+
+            //if (propertyName.Equals(DefaultSchema,
+            //        StringComparison.OrdinalIgnoreCase))
+            //{
+            //    if (Site.State != DataConnectionState.Open)
+            //    {
+            //        Site.Open();
+            //    }
+            //    CrmDbConnection conn = Connection as CrmDbConnection;
+            //    Debug.Assert(conn != null, "Invalid provider object.");
+            //    if (conn != null)
+            //    {
+            //        DbCommand comm = conn.CreateCommand();
+            //        try
+            //        {
+            //            comm.CommandText = "SELECT SCHEMA_NAME()";
+            //            return comm.ExecuteScalar() as string;
+            //        }
+            //        catch (DbException)
+            //        {
+            //            // We let the base class apply default behavior
+            //        }
+            //    }
+            //}
+            //return base.RetrieveValue(propertyName);
         }
 
         #endregion

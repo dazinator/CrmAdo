@@ -13,13 +13,13 @@ namespace CrmAdo.Ddex
     internal static class CrmObjectTypes
     {
         public const string Root = "";
-        public const string User = "User";
-        public const string Table = "Table";
-        public const string Column = "Column";
-        public const string Index = "Index";
-        public const string IndexColumn = "IndexColumn";
-        public const string ForeignKey = "ForeignKey";
-        public const string ForeignKeyColumn = "ForeignKeyColumn";
+        //public const string User = "User";
+        //public const string Table = "Table";
+        //public const string Column = "Column";
+        //public const string Index = "Index";
+        //public const string IndexColumn = "IndexColumn";
+        //public const string ForeignKey = "ForeignKey";
+        //public const string ForeignKeyColumn = "ForeignKeyColumn";
         //public const string View = "View";
         //public const string ViewColumn = "ViewColumn";
         //public const string StoredProcedure = "StoredProcedure";
