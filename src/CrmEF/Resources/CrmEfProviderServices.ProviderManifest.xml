@@ -1,0 +1,53 @@
+﻿<ProviderManifest Namespace="CrmEf" xmlns="http://schemas.microsoft.com/ado/2006/04/edm/providermanifest">
+  <Types>
+    <Type Name="int" PrimitiveTypeKind="Int32">
+    </Type>
+    <Type Name="integer" PrimitiveTypeKind="Int32">
+    </Type>
+    <Type Name="long" PrimitiveTypeKind="Int64">
+    </Type>
+    <Type Name="float" PrimitiveTypeKind="Double">
+    </Type>
+    <Type Name="real" PrimitiveTypeKind="Single">
+    </Type>
+    <Type Name="binary" PrimitiveTypeKind="Binary">
+      <FacetDescriptions>
+        <MaxLength DefaultValue="2147483647" Constant="true" />
+        <FixedLength DefaultValue="false" Constant="true" />
+      </FacetDescriptions>
+    </Type>
+    <Type Name="decimal" PrimitiveTypeKind="Decimal">
+      <FacetDescriptions>
+        <Precision Minimum="1" Maximum="38" DefaultValue="18" Constant="false" />
+        <Scale Minimum="0" Maximum="38" DefaultValue="0" Constant="false" />
+      </FacetDescriptions>
+    </Type>
+    <Type Name="double" PrimitiveTypeKind="Decimal">
+      <FacetDescriptions>
+        <Precision Minimum="1" Maximum="38" DefaultValue="18" Constant="false" />
+        <Scale Minimum="0" Maximum="38" DefaultValue="0" Constant="false" />
+      </FacetDescriptions>
+    </Type>
+    <Type Name="boolean" PrimitiveTypeKind="Boolean">
+    </Type>
+    <Type Name="date" PrimitiveTypeKind="DateTime">
+      <FacetDescriptions>
+        <Precision DefaultValue="3" Constant="true" />
+      </FacetDescriptions>
+    </Type>
+    <Type Name="datetime" PrimitiveTypeKind="DateTime">
+      <FacetDescriptions>
+        <Precision DefaultValue="3" Constant="true" />
+      </FacetDescriptions>
+    </Type>
+    <Type Name="string" PrimitiveTypeKind="String">
+      <FacetDescriptions>
+        <MaxLength DefaultValue="1073741823" Constant="true" />
+        <Unicode DefaultValue="true" Constant="true" />
+        <FixedLength DefaultValue="false" Constant="true" />
+      </FacetDescriptions>
+    </Type>
+  </Types>
+  <Functions>
+  </Functions>
+</ProviderManifest>

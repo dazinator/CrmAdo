@@ -166,6 +166,11 @@ namespace CrmAdo
             get { return _MetadataProvider; }
         }
 
+        public ICrmServiceProvider CrmServiceProvider
+        {
+            get { return _CrmServiceProvider; }
+        }
+
         #region Not Implemented
        
 

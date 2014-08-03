@@ -119,21 +119,14 @@
       <Project>{61d9051d-4c85-419f-97dc-d56d4a72c5e3}</Project>
       <Name>CrmAdo</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CrmEF\CrmEF.csproj">
+      <Project>{d9372b45-9334-4997-bf80-3f0383f7bb3c}</Project>
+      <Name>CrmEF</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CrmObjectSupport.xml" />
     <EmbeddedResource Include="CrmViewSupport.xml" />
-    <Content Include="bin\Debug\CrmAdo.Ddex.dll" />
-    <Content Include="bin\Debug\CrmAdo.Ddex.pdb" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Sdk.Deployment.dll" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Sdk.Deployment.xml" />
-    <Content Include="bin\tools\CrmSvcUtil.exe" />
-    <Content Include="bin\tools\CrmSvcUtil.xml" />
-    <Content Include="bin\tools\Microsoft.Crm.Sdk.Proxy.dll" />
-    <Content Include="bin\tools\Microsoft.Xrm.Client.dll" />
-    <Content Include="bin\tools\Microsoft.Xrm.Sdk.dll" />
-    <Content Include="bin\tools\SolutionPackager.exe" />
-    <Content Include="bin\tools\WebsiteCopy.exe" />
     <Content Include="Install.vbs" />
   </ItemGroup>
   <ItemGroup>
@@ -149,9 +142,7 @@
     <None Include="Install.cmd" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="bin\Release\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /Y "$(TargetDir)Microsoft.Xrm.Client.dll" "$(DevEnvDir)"

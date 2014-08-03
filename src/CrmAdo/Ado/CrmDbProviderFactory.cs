@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CrmAdo
 {
-    public class CrmDbProviderFactory : DbProviderFactory
+    public partial class CrmDbProviderFactory : DbProviderFactory
     {
 
         public const string Invariant = "System.Data.DynamicsCrm.CrmAdo";

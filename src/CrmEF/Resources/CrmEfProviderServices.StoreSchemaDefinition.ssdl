@@ -1,0 +1,554 @@
+﻿<Schema Namespace="CrmEF.Store" Provider="System.Data.DynamicsCrm.CrmAdo" ProviderManifestToken="CrmEF" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2006/04/edm/ssdl">
+  <EntityContainer Name="Schema">
+    <EntitySet Name="STables" EntityType="Self.Table">
+      <DefiningQuery>
+        Sys_Schema('Tables')
+      </DefiningQuery>
+    </EntitySet>
+
+    <EntitySet Name="STableColumns" EntityType="Self.TableColumn">
+      <DefiningQuery>
+        Sys_Schema('Columns')
+      </DefiningQuery>
+    </EntitySet>
+
+    <EntitySet Name="SViews" EntityType="Self.View">
+      <DefiningQuery>
+        Sys_Schema('Views')
+      </DefiningQuery>
+    </EntitySet>
+
+    <EntitySet Name="SViewColumns" EntityType="Self.ViewColumn">
+      <DefiningQuery>
+        Sys_Schema('ViewColumns')
+      </DefiningQuery>
+    </EntitySet>
+
+    <EntitySet Name="SProcedures" EntityType="Self.Procedure">
+      <DefiningQuery>
+        Sys_Schema('Procedures')
+      </DefiningQuery>
+    </EntitySet>
+
+    <EntitySet Name="SProcedureParameters" EntityType="Self.Parameter">
+      <DefiningQuery>
+        Sys_Schema('ProcedureParameters')
+      </DefiningQuery>
+    </EntitySet>
+
+    <!--<EntitySet Name="SFunctions" EntityType="Self.Function">
+      <DefiningQuery>
+        SELECT Id, ProcedureName, '' as CatalogName, '' as SchemaName,
+          'string' as ReturnTypeName, 0 as ReturnMaxLength, 0 as ReturnPrecision,
+          0 as ReturnDateTimePrecision, 0 as ReturnScale, '' as ReturnCollationCatalog,
+          '' as ReturnCollationSchema, '' as ReturnCollationName,
+          '' as ReturnCharacterSetCatalog, '' as ReturnCharacterSetSchema,
+          '' as ReturnCharacterSetName, 0 as ReturnIsMultiSet, 0 as IsAggregate, 
+          0 as IsBuiltIn, 0 as IsNiladic
+        FROM asys_procedures WHERE ProcedureType = 'FUNCTION'
+      </DefiningQuery>
+    </EntitySet>
+    
+    <EntitySet Name="SFunctionParameters" EntityType="Self.Parameter">
+      <DefiningQuery>
+        SELECT Id, ProcedureName, ParameterName, Ordinal, 
+          Direction, DataType,
+          NULL as MaxLength, NULL as DateTimePrecision,
+          NULL as Precision, Scale, ''as CollationCatalog, 
+          '' as CollationSchema, '' as CollationName, 
+          '' as CharacterSetCatalog, '' as CharacterSetSchema, 
+          '' as CharacterSetName, 0 as IsMultiSet,
+          Direction as Mode, NULL as [Default]
+        FROM asys_procedureparameters
+      </DefiningQuery>
+    </EntitySet>-->
+
+    <EntitySet Name="SConstraints" EntityType="Self.Constraint">
+      <DefiningQuery>
+        Sys_Schema('TableConstraints')
+      </DefiningQuery>
+    </EntitySet>
+
+    <EntitySet Name="SCheckConstraints" EntityType="Self.CheckConstraint">
+      <DefiningQuery>
+        Sys_Schema('CheckConstraints')
+      </DefiningQuery>
+    </EntitySet>
+
+    <EntitySet Name="SConstraintColumns" EntityType="Self.ConstraintColumn">
+      <DefiningQuery>
+        Sys_Schema('ConstraintColumns')
+      </DefiningQuery>
+    </EntitySet>
+
+    <EntitySet Name="SForeignKeyConstraints" EntityType="Self.ForeignKeyConstraint">
+      <DefiningQuery>
+        Sys_Schema('ForeignKeyConstraints')
+      </DefiningQuery>
+    </EntitySet>
+
+    <EntitySet Name="SForeignKeys" EntityType="Self.ForeignKey">     
+      <DefiningQuery>
+        Sys_Schema('ForeignKeys')
+      </DefiningQuery>
+    </EntitySet>
+
+    <EntitySet Name="SViewConstraints" EntityType="Self.ViewConstraint">
+      <DefiningQuery>
+        Sys_Schema('ViewConstraints')
+      </DefiningQuery>
+    </EntitySet>
+
+    <EntitySet Name="SViewConstraintColumns" EntityType="Self.ConstraintColumn">
+      <DefiningQuery>
+        Sys_Schema('ViewConstraintColumns')
+      </DefiningQuery>
+    </EntitySet>
+
+    <EntitySet Name="SViewForeignKeys" EntityType="Self.ForeignKey">
+      <DefiningQuery>
+        Sys_Schema('ViewForeignKeys')
+      </DefiningQuery>
+    </EntitySet>
+
+    <AssociationSet Name="STableTableColumns" Association="Self.TableTableColumn" >
+      <End Role="Parent" EntitySet="STables"/>
+      <End Role="Column" EntitySet="STableColumns"/>
+    </AssociationSet>
+    <AssociationSet Name="SViewViewColumns" Association="Self.ViewViewColumn" >
+      <End Role="Parent" EntitySet="SViews"/>
+      <End Role="Column" EntitySet="SViewColumns"/>
+    </AssociationSet>    
+    <AssociationSet Name="STableConstraints" Association="Self.TableTableConstraint" >
+      <End Role="Parent" EntitySet="STables"/>
+      <End Role="Constraint" EntitySet="SConstraints"/>
+    </AssociationSet>    
+    <AssociationSet Name="SConstraintConstraintColumns" Association="Self.ConstraintConstraintColumn" >
+      <End Role="ConstraintColumn" EntitySet="SConstraintColumns"/>
+      <End Role="Constraint" EntitySet="SConstraints"/>
+    </AssociationSet>    
+    <AssociationSet Name="SConstraintForeignKeys" Association="Self.ConstraintForeignKey" >
+      <End Role="ForeignKey" EntitySet="SForeignKeys"/>
+      <End Role="Constraint" EntitySet="SForeignKeyConstraints"/>
+    </AssociationSet>    
+    <AssociationSet Name="SFromForeignKeyColumns" Association="Self.FromForeignKeyColumn" >
+      <End Role="ForeignKey" EntitySet="SForeignKeys"/>
+      <End Role="Column" EntitySet="STableColumns"/>
+    </AssociationSet>    
+    <AssociationSet Name="SToForeignKeyColumns" Association="Self.ToForeignKeyColumn" >
+      <End Role="ForeignKey" EntitySet="SForeignKeys"/>
+      <End Role="Column" EntitySet="STableColumns"/>
+    </AssociationSet>
+    <AssociationSet Name="SViewViewConstraints" Association="Self.ViewViewConstraint" >
+      <End Role="Parent" EntitySet="SViews"/>
+      <End Role="Constraint" EntitySet="SViewConstraints"/>
+    </AssociationSet>
+    <AssociationSet Name="SViewConstraintConstraintColumns" Association="Self.ViewConstraintConstraintColumn" >
+      <End Role="ConstraintColumn" EntitySet="SViewConstraintColumns"/>
+      <End Role="Constraint" EntitySet="SViewConstraints"/>
+    </AssociationSet>
+    <AssociationSet Name="SViewConstraintForeignKeys" Association="Self.ViewConstraintForeignKey" >
+      <End Role="ForeignKey" EntitySet="SViewForeignKeys"/>
+      <End Role="Constraint" EntitySet="SViewConstraints"/>
+    </AssociationSet>
+    <AssociationSet Name="SFromForeignKeyViewColumns" Association="Self.FromForeignKeyViewColumn" >
+      <End Role="ForeignKey" EntitySet="SViewForeignKeys"/>
+      <End Role="Column" EntitySet="SViewColumns"/>
+    </AssociationSet>
+    <AssociationSet Name="SToForeignKeyViewColumns" Association="Self.ToForeignKeyViewColumn" >
+      <End Role="ForeignKey" EntitySet="SViewForeignKeys"/>
+      <End Role="Column" EntitySet="SViewColumns"/>
+    </AssociationSet>
+
+    <!--<AssociationSet Name="FunctionFunctionParameters" Association="Self.FunctionFunctionParameter">
+      <End Role="Function" EntitySet="SFunctions"/>
+      <End Role="Parameter" EntitySet="SFunctionParameters"/>
+    </AssociationSet>-->
+    <AssociationSet Name="ProcedureProcedureParameters" Association="Self.ProcedureProcedureParameter" >
+      <End Role="Procedure" EntitySet="SProcedures"/>
+      <End Role="Parameter" EntitySet="SProcedureParameters"/>
+    </AssociationSet>
+
+  </EntityContainer>
+
+  <EntityType Name="Table">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Nullable="false" Type="string" />
+    <Property Name="TableName" Nullable="false" Type="string" />
+    <Property Name="CatalogName" Nullable="true" Type="string"  />
+    <Property Name="SchemaName" Nullable="true" Type="string"  />
+  </EntityType>
+
+  <EntityType Name="TableColumn" >
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Nullable="false" Type="string"/>
+    <Property Name="TableName" Nullable="false" Type="string"/>
+    <Property Name="ColumnName" Nullable="false" Type="string" />
+    <Property Name="Ordinal" Nullable="false" Type="int" />
+    <Property Name="IsNullable" Nullable="false" Type="boolean" />
+    <Property Name="DataType" Nullable="false" Type="string" />
+    <Property Name="IsDbGenerated" Nullable="false" Type="boolean" />
+    <Property Name="IsIdentity" Nullable="false" Type="boolean" />   
+    <Property Name="Default" Nullable="true" Type="string"  />
+    <Property Name="MaxLength" Nullable="true" Type="int"  />
+    <Property Name="DateTimePrecision" Nullable="true" Type="int"  />
+    <Property Name="Precision" Nullable="true" Type="int"  />
+    <Property Name="Scale" Nullable="true" Type="int"  />
+    <Property Name="CollationCatalog" Nullable="true" Type="string"  />
+    <Property Name="CollationSchema" Nullable="true" Type="string"  />
+    <Property Name="CollationName" Nullable="true" Type="string"  />
+    <Property Name="CharacterSetCatalog" Nullable="true" Type="string"  />
+    <Property Name="CharacterSetSchema" Nullable="true" Type="string"  />
+    <Property Name="CharacterSetName" Nullable="true" Type="string"  />
+    <Property Name="IsMultiSet" Nullable="true" Type="boolean"  />
+  </EntityType>
+
+  <EntityType Name="View">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Nullable="false" Type="string" />
+    <Property Name="TableName" Nullable="false" Type="string" />    
+    <Property Name="CatalogName" Nullable="true" Type="string"  />
+    <Property Name="SchemaName" Nullable="true" Type="string"  />
+    <Property Name="IsUpdatable" Nullable="true" Type="boolean"  />
+    <Property Name="ViewDefinition" Nullable="true" Type="string"  />
+  </EntityType>
+
+  <EntityType Name="ViewColumn">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Nullable="false" Type="string"/>
+    <Property Name="TableName" Nullable="false" Type="string"/>
+    <Property Name="ColumnName" Nullable="false" Type="string" />
+    <Property Name="Ordinal" Nullable="false" Type="int" />
+    <Property Name="IsNullable" Nullable="false" Type="boolean" />
+    <Property Name="DataType" Nullable="false" Type="string" />
+    <Property Name="IsDbGenerated" Nullable="false" Type="boolean" />
+    <Property Name="IsIdentity" Nullable="false" Type="boolean" />   
+    <Property Name="Default" Nullable="true" Type="string"  />
+    <Property Name="MaxLength" Nullable="true" Type="int"  />
+    <Property Name="DateTimePrecision" Nullable="true" Type="int"  />
+    <Property Name="Precision" Nullable="true" Type="int"  />
+    <Property Name="Scale" Nullable="true" Type="int"  />
+    <Property Name="CollationCatalog" Nullable="true" Type="string"  />
+    <Property Name="CollationSchema" Nullable="true" Type="string"  />
+    <Property Name="CollationName" Nullable="true" Type="string"  />
+    <Property Name="CharacterSetCatalog" Nullable="true" Type="string"  />
+    <Property Name="CharacterSetSchema" Nullable="true" Type="string"  />
+    <Property Name="CharacterSetName" Nullable="true" Type="string"  />
+    <Property Name="IsMultiSet" Nullable="true" Type="boolean" />
+  </EntityType>
+
+  <Association Name="TableTableColumn">
+    <End Type="Self.Table" Role="Parent" Multiplicity="1" />
+    <End Type="Self.TableColumn" Role="Column" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Parent">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Column">
+        <PropertyRef Name="TableName" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+
+  <Association Name="ViewViewColumn">
+    <End Type="Self.View" Role="Parent" Multiplicity="1" />
+    <End Type="Self.ViewColumn" Role="Column" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Parent">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Column">
+        <PropertyRef Name="TableName" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+
+
+  <!--<EntityType Name="Function">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Nullable="false" Type="string"/>
+    <Property Name="ProcedureName" Nullable="false" Type="string" />
+    <Property Name="CatalogName" Type="string" />
+    <Property Name="SchemaName" Type="string" />
+    <Property Name="ReturnTypeName" Type="string"  />
+    <Property Name="ReturnMaxLength" Type="int" />
+    <Property Name="ReturnPrecision" Type="int" />
+    <Property Name="ReturnDateTimePrecision" Type="int" />
+    <Property Name="ReturnScale" Type="int" />
+    <Property Name="ReturnCollationCatalog" Type="string"  />
+    <Property Name="ReturnCollationSchema" Type="string"  />
+    <Property Name="ReturnCollationName" Type="string"  />
+    <Property Name="ReturnCharacterSetCatalog" Type="string"  />
+    <Property Name="ReturnCharacterSetSchema" Type="string"  />
+    <Property Name="ReturnCharacterSetName" Type="string"  />
+    <Property Name="ReturnIsMultiSet" Nullable="false" Type="boolean" />
+    <Property Name="IsAggregate" Type="boolean" />
+    <Property Name="IsBuiltIn" Type="boolean" />
+    <Property Name="IsNiladic" Type="boolean" />
+  </EntityType>-->
+
+  <EntityType Name="Procedure">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Nullable="false" Type="string"/>
+    <Property Name="ProcedureName" Nullable="false" Type="string" />
+    <Property Name="CatalogName" Type="string" />
+    <Property Name="SchemaName" Type="string" />
+  </EntityType>
+
+  <EntityType Name="Parameter">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Nullable="false" Type="string"/>
+    <Property Name="ProcedureName" Nullable="false" Type="string"/>
+    <Property Name="ParameterName" Nullable="false" Type="string" />
+    <Property Name="Ordinal" Nullable="false" Type="int"/>
+    <Property Name="DataType" Nullable="false" Type="string"  />
+    <Property Name="MaxLength" Nullable="true" Type="int" />
+    <Property Name="Precision" Nullable="true" Type="int" />
+    <Property Name="DateTimePrecision" Type="int" />
+    <Property Name="Scale" Nullable="true" Type="int" />
+    <Property Name="CollationCatalog" Type="string"  />
+    <Property Name="CollationSchema" Type="string"  />
+    <Property Name="CollationName" Type="string"  />
+    <Property Name="CharacterSetCatalog" Type="string"  />
+    <Property Name="CharacterSetSchema" Type="string"  />
+    <Property Name="CharacterSetName" Type="string"  />
+    <Property Name="IsMultiSet" Nullable="false" Type="boolean" />
+    <Property Name="Direction" Type="string"  />
+    <Property Name="Default" Type="string" />
+  </EntityType>
+
+  <EntityType Name="Constraint">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Nullable="false" Type="string" />
+    <Property Name="TableName" Nullable="false" Type="string" />
+    <Property Name="ConstraintName" Nullable="false"  Type="string" />
+    <Property Name="IsDeferrable" Nullable="false" Type="boolean" />
+    <Property Name="IsInitiallyDeferred" Nullable="false" Type="boolean" />
+    <Property Name="ConstraintType" Nullable="false"  Type="string" />
+  </EntityType>
+
+  <EntityType Name="CheckConstraint">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Nullable="false" Type="string" />
+    <Property Name="Expression" Nullable="true"  Type="string" />
+  </EntityType>
+
+  <EntityType Name="ConstraintColumn">
+    <Key>
+      <PropertyRef Name="ConstraintId" />
+      <PropertyRef Name="ColumnId" />
+    </Key>
+    <Property Name="ConstraintId" Nullable="false" Type="string" />
+    <Property Name="ColumnId" Nullable="false" Type="string" />
+  </EntityType>
+
+  <EntityType Name="ForeignKeyConstraint">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Nullable="false" Type="string" />
+    <Property Name="UpdateRule" Nullable="false"  Type="string" />
+    <Property Name="DeleteRule" Nullable="false"  Type="string" />
+  </EntityType>
+
+  <EntityType Name="ForeignKey">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Nullable="false" Type="string" />
+    <Property Name="Ordinal" Nullable="false" Type="int" />
+    <Property Name="ConstraintId" Nullable="false" Type="string" />
+    <Property Name="FromColumnId" Nullable="false" Type="string" />
+    <Property Name="ToColumnId" Nullable="false" Type="string" />
+  </EntityType>
+
+  <EntityType Name="ViewConstraint">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Nullable="false" Type="string" />
+    <Property Name="TableName" Nullable="false" Type="string" />
+    <Property Name="ConstraintName" Nullable="false"  Type="string" />
+    <Property Name="IsDeferrable" Nullable="false" Type="boolean" />
+    <Property Name="IsInitiallyDeferred" Nullable="false" Type="boolean" />
+    <Property Name="ConstraintType" Nullable="false"  Type="string" />
+    <Property Name="Expression" Nullable="true"  Type="string" />
+    <Property Name="UpdateRule" Nullable="true"  Type="string" />
+    <Property Name="DeleteRule" Nullable="true"  Type="string" />
+  </EntityType>
+
+  <Association Name="TableTableConstraint">
+    <End Type="Self.Table" Role="Parent" Multiplicity="1" />
+    <End Type="Self.Constraint" Role="Constraint" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Parent">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Constraint">
+        <PropertyRef Name="TableName" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+
+  <Association Name="ConstraintConstraintColumn">
+    <End Type="Self.Constraint" Role="Constraint" Multiplicity="1" />
+    <End Type="Self.ConstraintColumn" Role="ConstraintColumn" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Constraint">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ConstraintColumn">
+        <PropertyRef Name="ConstraintId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+
+  <Association Name="ConstraintForeignKey">
+    <End Type="Self.ForeignKeyConstraint" Role="Constraint" Multiplicity="1" />
+    <End Type="Self.ForeignKey" Role="ForeignKey" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Constraint">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ForeignKey">
+        <PropertyRef Name="ConstraintId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+
+  <Association Name="FromForeignKeyColumn">
+    <End Type="Self.TableColumn" Role="Column" Multiplicity="1" />
+    <End Type="Self.ForeignKey" Role="ForeignKey" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Column">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ForeignKey">
+        <PropertyRef Name="FromColumnId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+
+  <Association Name="ToForeignKeyColumn">
+    <End Type="Self.TableColumn" Role="Column" Multiplicity="1" />
+    <End Type="Self.ForeignKey" Role="ForeignKey" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Column">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ForeignKey">
+        <PropertyRef Name="ToColumnId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+
+  <!--<Association Name="FunctionFunctionParameter">
+    <End Type="Self.Function" Role="Function" Multiplicity="1" />
+    <End Type="Self.Parameter" Role="Parameter" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Function">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Parameter">
+        <PropertyRef Name="ProcedureName" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>-->
+
+  <Association Name="ProcedureProcedureParameter">
+    <End Type="Self.Procedure" Role="Procedure" Multiplicity="1" />
+    <End Type="Self.Parameter" Role="Parameter" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Procedure">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Parameter">
+        <PropertyRef Name="ProcedureName" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+
+  <Association Name="ViewViewConstraint">
+    <End Type="Self.View" Role="Parent" Multiplicity="1" />
+    <End Type="Self.ViewConstraint" Role="Constraint" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Parent">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Constraint">
+        <PropertyRef Name="TableName" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+
+  <Association Name="ViewConstraintConstraintColumn">
+    <End Type="Self.ViewConstraint" Role="Constraint" Multiplicity="1" />
+    <End Type="Self.ConstraintColumn" Role="ConstraintColumn" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Constraint">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ConstraintColumn">
+        <PropertyRef Name="ConstraintId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+
+  <Association Name="ViewConstraintForeignKey">
+    <End Type="Self.ViewConstraint" Role="Constraint" Multiplicity="1" />
+    <End Type="Self.ForeignKey" Role="ForeignKey" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Constraint">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ForeignKey">
+        <PropertyRef Name="ConstraintId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+
+  <Association Name="FromForeignKeyViewColumn">
+    <End Type="Self.ViewColumn" Role="Column" Multiplicity="1" />
+    <End Type="Self.ForeignKey" Role="ForeignKey" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Column">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ForeignKey">
+        <PropertyRef Name="FromColumnId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+
+  <Association Name="ToForeignKeyViewColumn">
+    <End Type="Self.ViewColumn" Role="Column" Multiplicity="1" />
+    <End Type="Self.ForeignKey" Role="ForeignKey" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Column">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ForeignKey">
+        <PropertyRef Name="ToColumnId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+
+</Schema>
