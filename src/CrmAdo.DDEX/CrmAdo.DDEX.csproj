@@ -29,6 +29,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Key.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AntiXSSLibrary">
       <HintPath>..\..\lib\Microsoft.CrmSdk.Extensions.6.0.4\lib\net40\AntiXSSLibrary.dll</HintPath>
@@ -140,6 +146,7 @@
     <None Include="DDEX provider sample for the ADO.NET Entity Designer.doc" />
     <None Include="CrmAdoDdexProvider.reg" />
     <None Include="Install.cmd" />
+    <None Include="Key.pfx" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

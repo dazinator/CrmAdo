@@ -5,7 +5,9 @@ VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{31343D89-C6F5-4397-91EC-2DF4CCAA849B}"
 	ProjectSection(SolutionItems) = preProject
+		IntegrationTests.testsettings = IntegrationTests.testsettings
 		.nuget\packages.config = .nuget\packages.config
+		UnitTests.testsettings = UnitTests.testsettings
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{3F08C5C4-EBE3-49FE-8C3D-B5DCD230FACC}"
@@ -34,6 +36,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmEF", "CrmEF\CrmEF.csproj", "{D9372B45-9334-4997-BF80-3F0383F7BB3C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{0873ABB3-96CD-4F00-A291-D98860388834}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo.DdexProvider2013", "CrmAdo.VsPackage\CrmAdo.DdexProvider2013.csproj", "{9024366D-45C9-47BA-8D20-F88975A7ED7C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -124,6 +128,21 @@ Global
 		{D9372B45-9334-4997-BF80-3F0383F7BB3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9372B45-9334-4997-BF80-3F0383F7BB3C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D9372B45-9334-4997-BF80-3F0383F7BB3C}.Release|x64.ActiveCfg = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.IntegrationTesting|Any CPU.ActiveCfg = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.IntegrationTesting|Any CPU.Build.0 = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.IntegrationTesting|x64.ActiveCfg = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Release 4.0|Any CPU.ActiveCfg = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Release 4.0|Any CPU.Build.0 = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Release 4.0|x64.ActiveCfg = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Release 4.5|Any CPU.ActiveCfg = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Release 4.5|Any CPU.Build.0 = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Release 4.5|x64.ActiveCfg = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

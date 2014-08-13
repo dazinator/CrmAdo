@@ -20,8 +20,8 @@ namespace CrmAdo.Ddex
         #region Constructors
 
         public SqlSourceInformation()
-        {
-            AddProperty(DefaultSchema);
+        {            
+            AddProperty(DefaultSchema);          
         }
 
         #endregion
