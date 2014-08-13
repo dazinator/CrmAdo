@@ -8,20 +8,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrmAdo.Ddex
+namespace CrmAdo.DdexProvider
 {
     /// <summary>
     /// Represents a custom data source information class that is able to
     /// provide data source information values that require some form of
     /// computation, perhaps based on an active connection.
     /// </summary>
-    internal class SqlSourceInformation : AdoDotNetSourceInformation
+    internal class CrmSourceInformation : AdoDotNetSourceInformation
     {
         #region Constructors
 
-        public SqlSourceInformation()
-        {            
-            AddProperty(DefaultSchema);          
+        public CrmSourceInformation()
+        {
+            AddProperty(DefaultSchema);
         }
 
         #endregion

@@ -21,7 +21,12 @@ namespace CrmEF
 {
     internal class CrmEfProviderServices : DbProviderServices
     {
-        internal static readonly CrmEfProviderServices Instance = new CrmEfProviderServices();
+        private static readonly CrmEfProviderServices _Instance = new CrmEfProviderServices();
+
+        public static CrmEfProviderServices Instance
+        {
+            get { return _Instance; }
+        }
 
         protected override string GetDbProviderManifestToken(DbConnection connection)
         {
@@ -123,9 +128,7 @@ namespace CrmEF
             // Ensure a value that can be used with SqlParameter
             parameter.Value = EnsureParameterValue(value);
         }
-
-
-
+        
         protected override DbProviderManifest GetDbProviderManifest(string versionHint)
         {
             //if (string.IsNullOrEmpty(versionHint))
@@ -135,8 +138,7 @@ namespace CrmEF
 
             return new CrmEfProviderManifest(versionHint);
         }
-
-
+        
         protected override string DbCreateDatabaseScript(string providerManifestToken, StoreItemCollection storeItemCollection)
         {
             if (providerManifestToken == null)
@@ -209,47 +211,11 @@ namespace CrmEF
                 throw new InvalidOperationException("Connection String did not specify an Initial Catalog");
 
             return databaseName;
-        }
-
-        private static string ExpandDataDirectory(string filenameWithMacro)
-        {
-            string dataDir = null;
-            const string DataDirectory = "|DataDirectory|";
-
-            if (filenameWithMacro == null || filenameWithMacro.Length <= DataDirectory.Length)
-                return null;
-
-            if (!filenameWithMacro.StartsWith(DataDirectory, StringComparison.OrdinalIgnoreCase))
-                return null;
-
-            dataDir = AppDomain.CurrentDomain.GetData("DataDirectory") as string;
-            if (string.IsNullOrEmpty(dataDir))
-                dataDir = AppDomain.CurrentDomain.BaseDirectory;
-
-            string dbFilename = filenameWithMacro.Substring(DataDirectory.Length, filenameWithMacro.Length - DataDirectory.Length);
-
-            // See if dataDir ends with a '\'
-            bool dataDirEndsWith = (0 < dataDir.Length) && (dataDir[dataDir.Length - 1] == '\\');
-            if (dataDirEndsWith)
-            {
-                // remove the trailing '\'
-                dataDir = dataDir.Substring(0, dataDir.Length - 1);
-            }
-
-            // see if dbFilename starts with a '\'
-            bool dbFilenameStartsWith = (0 < dbFilename.Length) && (dbFilename[0] == '\\');
-            if (!dbFilenameStartsWith)
-            {
-                // add a leading '\'
-                dbFilename = string.Concat("\\", dbFilename);
-            }
-
-            string expandedPath = string.Concat(dataDir, dbFilename);
-            return expandedPath;
-        }
+            
+        }  
 
         protected override bool DbDatabaseExists(DbConnection connection, int? commandTimeout, StoreItemCollection storeItemCollection)
-        {
+        {          
             if (connection == null)
                 throw new ArgumentNullException("connection must not be null");
 
@@ -354,9 +320,7 @@ namespace CrmEF
                 }
             }
         }
-
-
-
+        
         /// <summary>
         /// Creates a SqlParameter given a name, type, and direction
         /// </summary>
