@@ -49,7 +49,7 @@ namespace CrmAdo.VsPackage_IntegrationTests
 
                 //Validate package load
                 IVsPackage package;
-                Guid packageGuid = new Guid(CrmAdo.CrmAdo_VsPackage.GuidList.guidCrmAdo_VsPackagePkgString);
+                Guid packageGuid = new Guid(CrmAdo.DdexProvider.GuidList.guidCrmAdo_VsPackagePkgString);
                 Assert.IsTrue(0 == shellService.LoadPackage(ref packageGuid, out package));
                 Assert.IsNotNull(package, "Package failed to load");
 

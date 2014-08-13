@@ -5,7 +5,7 @@ using CrmAdo;
 
 namespace CrmAdo.DdexProvider
 {
-    class NpgsqlDataProviderRegistration : RegistrationAttribute
+    class CrmAdoDataProviderRegistration : RegistrationAttribute
     {
         public override void Register(RegistrationAttribute.RegistrationContext context)
         {
@@ -21,7 +21,7 @@ namespace CrmAdo.DdexProvider
             try
             {
                 providerKey = context.CreateKey(@"DataProviders\{" + GuidList.guidCrmAdo_DdexProviderDataProviderString + @"}");
-                providerKey.SetValue(null, ".NET Framework Data Provider for Dynamics Crm");
+                providerKey.SetValue(null, "Crm Ado .NET Framework Data Provider");
                 providerKey.SetValue("AssociatedSource", "{" + GuidList.guidCrmAdo_DdexProviderDataSourceString + "}");
                 providerKey.SetValue("Description", "Provider_Description, " + resourcesNamespace);
                 providerKey.SetValue("DisplayName", "Provider_DisplayName, " + resourcesNamespace);
@@ -40,19 +40,18 @@ namespace CrmAdo.DdexProvider
                 supportedObjectsKey.CreateSubkey(typeof(IDSRefBuilder).Name);
 
                 dataSourceInfoKey = supportedObjectsKey.CreateSubkey(typeof(IVsDataSourceInformation).Name);
-                dataSourceInfoKey.SetValue("SupportsAnsi92Sql", true);
-                dataSourceInfoKey.SetValue("SupportsQuotedIdentifierParts", true);
                 dataSourceInfoKey.SetValue("IdentifierOpenQuote", "[");
                 dataSourceInfoKey.SetValue("IdentifierCloseQuote", "]");
+                dataSourceInfoKey.SetValue("ParameterPrefix", "@");
+                dataSourceInfoKey.SetValue("ParameterPrefixInName", "True");
+                dataSourceInfoKey.SetValue("SchemaSeperator", "True");
+                dataSourceInfoKey.SetValue("SchemaSupported", "True");
+                dataSourceInfoKey.SetValue("SchemaSupportedInDml", "True");
                 dataSourceInfoKey.SetValue("ServerSeparator", ".");
-                dataSourceInfoKey.SetValue("CatalogSupported", true);
-                dataSourceInfoKey.SetValue("CatalogSupportedInDml", true);
-                dataSourceInfoKey.SetValue("SchemaSupported", true);
-                dataSourceInfoKey.SetValue("SchemaSupportedInDml", true);
-                dataSourceInfoKey.SetValue("ParameterPrefix", ".");
-                dataSourceInfoKey.SetValue("ParameterPrefixInName", true);
-
-
+                dataSourceInfoKey.SetValue("SupportsAnsi92Sql", "True");
+                dataSourceInfoKey.SetValue("SupportsQuotedIdentifierParts", "True");
+                //  dataSourceInfoKey.SetValue("CatalogSupportedInDml", "True");            
+                //  dataSourceInfoKey.SetValue("CatalogSupported", true);
                 dataSourceKey = context.CreateKey(@"DataSources\{" + GuidList.guidCrmAdo_DdexProviderDataSourceString + @"}");
                 dataSourceKey.SetValue(null, "Dynamics CRM (CrmAdo)");
                 dataSourceKey.SetValue("DefaultProvider", "{" + GuidList.guidCrmAdo_DdexProviderDataProviderString + "}");
@@ -62,7 +61,7 @@ namespace CrmAdo.DdexProvider
                 supportedProviderKey.SetValue("DisplayName", "Provider_DisplayName, " + resourcesNamespace);
             }
             finally
-            {   
+            {
                 if (supportedProviderKey != null)
                     providerKey.Close();
                 if (supportedProvidersKey != null)

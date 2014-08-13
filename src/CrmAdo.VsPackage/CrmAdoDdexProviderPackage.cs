@@ -27,6 +27,8 @@ namespace CrmAdo.DdexProvider
     // This attribute is used to register the information needed to show this package
     // in the Help/About dialog of Visual Studio.
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
+    [ProvideService(typeof(CrmAdoProviderObjectFactory), ServiceName = "CrmAdo Provider Object Factory")]
+    [CrmAdoDataProviderRegistration]
     [Guid(GuidList.guidCrmAdo_VsPackagePkgString)]
     public sealed class CrmAdoDdexProviderPackage : Package
     {
@@ -39,7 +41,7 @@ namespace CrmAdo.DdexProvider
         /// </summary>
         public CrmAdoDdexProviderPackage()
         {
-            Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", this.ToString()));
+            Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering Constructor() of: {0}", this.ToString()));
         }
 
 
@@ -54,7 +56,8 @@ namespace CrmAdo.DdexProvider
         /// </summary>
         protected override void Initialize()
         {
-            Debug.WriteLine (string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
+            Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
+            ((IServiceContainer)this).AddService(typeof(CrmAdoProviderObjectFactory), new CrmAdoProviderObjectFactory(), true);
             base.Initialize();
 
         }
