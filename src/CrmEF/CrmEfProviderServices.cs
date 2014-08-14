@@ -17,7 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace CrmEF
+namespace CrmAdo.EntityFramework
 {
     internal class CrmEfProviderServices : DbProviderServices
     {
@@ -30,7 +30,7 @@ namespace CrmEF
 
         protected override string GetDbProviderManifestToken(DbConnection connection)
         {
-            return "CrmEF";
+            return "CrmAdo";
         }
 
         protected override DbCommandDefinition CreateDbCommandDefinition(DbProviderManifest manifest, DbCommandTree commandTree)
@@ -54,7 +54,7 @@ namespace CrmEF
             CrmEfProviderManifest sampleManifest = (manifest as CrmEfProviderManifest);
             if (sampleManifest == null)
             {
-                throw new ArgumentException("The provider manifest given is not of type 'SampleProviderManifest'.");
+                throw new ArgumentException("The provider manifest given is not of type 'CrmEfProviderManifest'.");
             }
 
             //StoreVersion version = sampleManifest.Version;

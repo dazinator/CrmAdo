@@ -185,9 +185,9 @@
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
     </ProjectReference>
-    <ProjectReference Include="..\CrmEF\CrmEF.csproj">
+    <ProjectReference Include="..\CrmEF\CrmAdo.EntityFramework.csproj">
       <Project>{d9372b45-9334-4997-bf80-3f0383f7bb3c}</Project>
-      <Name>CrmEF</Name>
+      <Name>CrmAdo.EntityFramework</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

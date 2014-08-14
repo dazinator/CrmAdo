@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace CrmEF
+namespace CrmAdo.EntityFramework
 {
     internal sealed class CrmEfProviderManifest : DbXmlEnabledProviderManifest
     {
@@ -67,7 +67,7 @@ namespace CrmEF
         {
             get
             {
-                return "CrmEf";
+                return "CrmAdo";
             }
         }
 

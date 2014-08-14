@@ -7,8 +7,8 @@
     <ProjectGuid>{D9372B45-9334-4997-BF80-3F0383F7BB3C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CrmEF</RootNamespace>
-    <AssemblyName>CrmEF</AssemblyName>
+    <RootNamespace>CrmAdo.EntityFramework</RootNamespace>
+    <AssemblyName>CrmAdo.EntityFramework</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -52,7 +52,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CrmEfDbProviderFactory.cs" />
     <Compile Include="CrmEfProviderManifest.cs" />
     <Compile Include="CrmEfProviderServices.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

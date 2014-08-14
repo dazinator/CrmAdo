@@ -1,4 +1,4 @@
-﻿<Schema Namespace="CrmEF.Store" Provider="System.Data.DynamicsCrm.CrmAdo" ProviderManifestToken="CrmEF" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2006/04/edm/ssdl">
+﻿<Schema Namespace="CrmAdo.Store" Provider="System.Data.DynamicsCrm.CrmAdo" ProviderManifestToken="CrmAdo" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2006/04/edm/ssdl">
   <EntityContainer Name="Schema">
     <EntitySet Name="STables" EntityType="Self.Table">
       <DefiningQuery>

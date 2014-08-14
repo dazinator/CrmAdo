@@ -1,4 +1,4 @@
-﻿<ProviderManifest Namespace="CrmEf" xmlns="http://schemas.microsoft.com/ado/2006/04/edm/providermanifest">
+﻿<ProviderManifest Namespace="CrmAdo" xmlns="http://schemas.microsoft.com/ado/2006/04/edm/providermanifest">
   <Types>
     <Type Name="int" PrimitiveTypeKind="Int32">
     </Type>
