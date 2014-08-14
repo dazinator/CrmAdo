@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <DataViewSupport xmlns="http://schemas.microsoft.com/VisualStudio/2007/07/Data/DataViewSupport">
   <Views>
-    <View name="SQL Server Compact Simple">
-      <DisplayName>SQL Server Compact 4.0</DisplayName>
+    <View name="Dynamics Crm">
+      <DisplayName>CrmAdo Dynamics Crm</DisplayName>
       <ConnectionNode>
         <InitialDisplayName>{Root.Name}</InitialDisplayName>
         <Children>
@@ -17,9 +17,7 @@
               </Selection>
             </Children>
           </StaticNode>
-
         </Children>
-
       </ConnectionNode>
     </View>
   </Views>

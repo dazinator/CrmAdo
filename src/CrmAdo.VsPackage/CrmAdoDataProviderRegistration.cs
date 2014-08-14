@@ -76,12 +76,20 @@ namespace CrmAdo.DdexProvider
                     providerKey.Close();
 
             }
+
+            // Register provider in machine config.           
+            var factoryType = typeof(CrmDbProviderFactory);
+            InstallUtils.RegisterDataProviderInMachineConfig(CrmDbProviderFactory.Invariant, CrmDbProviderFactory.Name, CrmDbProviderFactory.Description, factoryType.FullName, factoryType.Assembly.FullName);
+            
         }
 
         public override void Unregister(RegistrationAttribute.RegistrationContext context)
         {
             context.RemoveKey(@"DataProviders\{" + GuidList.guidCrmAdo_DdexProviderDataProviderString + @"}");
             context.RemoveKey(@"DataSources\{" + GuidList.guidCrmAdo_DdexProviderDataSourceString + @"}");
+
+            // don't unregister provider as other things may be using it! :(
+            //WHY DOES DDEX HAVE TO BE THIS LAME AHHHHHHHHHHHHHH!
         }
     }
 }

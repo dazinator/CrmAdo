@@ -10,6 +10,8 @@ namespace CrmAdo
     {
 
         public const string Invariant = "System.Data.DynamicsCrm.CrmAdo";
+        public const string Name = "CrmAdo Data Provider";
+        public const string Description = "CrmAdo Data Provider for Microsoft Dynamics Crm 2013";
 
         /// <summary>
         /// Every provider factory must have an Instance public field

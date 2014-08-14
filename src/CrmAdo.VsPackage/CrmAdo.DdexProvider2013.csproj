@@ -139,6 +139,7 @@
     <Compile Include="CrmObjectTypes.cs" />
     <Compile Include="CrmSourceInformation.cs" />
     <Compile Include="Guids.cs" />
+    <Compile Include="InstallUtil.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -168,8 +169,10 @@
     <None Include="Key.snk" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="CrmObjectSupport.xml" />
-    <Resource Include="CrmViewSupport.xml" />
+    <EmbeddedResource Include="CrmObjectSupport.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrmViewSupport.xml" />
     <Content Include="Resources\Package.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -179,6 +182,12 @@
     <ProjectReference Include="..\CrmAdo\CrmAdo.csproj">
       <Project>{61d9051d-4c85-419f-97dc-d56d4a72c5e3}</Project>
       <Name>CrmAdo</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
+    </ProjectReference>
+    <ProjectReference Include="..\CrmEF\CrmEF.csproj">
+      <Project>{d9372b45-9334-4997-bf80-3f0383f7bb3c}</Project>
+      <Name>CrmEF</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

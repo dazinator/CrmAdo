@@ -7,7 +7,7 @@
         <Property name="Name"/>
       </Properties>
       <Services>
-        <Service type="IVsDataObjectSelector" implementationType="CrmAdo.Ddex.CrmObjectSelector" />
+        <Service type="IVsDataObjectSelector" implementationType="CrmAdo.DdexProvider.CrmObjectSelector" />
       </Services>
     </RootType>
 
