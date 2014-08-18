@@ -132,9 +132,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Support\BaseOrganisationRequestBuilderVisitorTest.cs" />
+    <Compile Include="Support\EfModel\Blog.cs" />
+    <Compile Include="Support\EntityFrameworkCodeFirstTestBase.cs" />
     <Compile Include="Tests\AdoTests\CrmConnectionStringBuilderTests.cs" />
     <Compile Include="Tests\DeleteTests\DeleteStatementTests.cs" />
     <Compile Include="Support\FakeContactMetadataProvider.cs" />
+    <Compile Include="Tests\EfTests\BasicTests.cs" />
     <Compile Include="Tests\SelectTests\SelectStatementTests.cs" />
     <Compile Include="Support\Utils.cs" />
     <Compile Include="Tests\UpdateTests\UpdateStatementTests.cs" />
