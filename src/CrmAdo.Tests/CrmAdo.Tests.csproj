@@ -98,9 +98,8 @@
     <Reference Include="Rhino.Mocks">
       <HintPath>..\..\lib\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
     </Reference>
-    <Reference Include="SQLGeneration, Version=2.5.0.0, Culture=neutral, PublicKeyToken=22ea15b5a3c0e6aa, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\SQLGeneration.DazinatorFork.2.5.3\lib\net40\SQLGeneration.dll</HintPath>
+    <Reference Include="SQLGeneration">
+      <HintPath>..\..\lib\SQLGeneration.DazinatorFork.2.5.4\lib\net40\SQLGeneration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -135,6 +134,7 @@
     <Compile Include="Support\EfModel\Blog.cs" />
     <Compile Include="Support\EntityFrameworkCodeFirstTestBase.cs" />
     <Compile Include="Tests\AdoTests\CrmConnectionStringBuilderTests.cs" />
+    <Compile Include="Tests\CreateTableTests\CreateTableStatementTests.cs" />
     <Compile Include="Tests\DeleteTests\DeleteStatementTests.cs" />
     <Compile Include="Support\FakeContactMetadataProvider.cs" />
     <Compile Include="Tests\EfTests\BasicTests.cs" />
@@ -204,6 +204,7 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

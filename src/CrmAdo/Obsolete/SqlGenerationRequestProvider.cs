@@ -82,6 +82,16 @@ namespace CrmAdo
                 return request;
             }
 
+            //var createCommandBuilder = sqlCommandBuilder as CreateBuilder;
+            //if (createCommandBuilder != null)
+            //{
+            //    GuardCreateBuilder(createCommandBuilder);
+            //    var entity = BuildEntityReferenceFromDelete(deleteCommandBuilder, command);
+            //    var request = new DeleteRequest();
+            //    request.Target = entity;
+            //    return request;
+            //}
+
             throw new NotSupportedException("Could not translate the command into the appropriate Organization Service Request Message");
 
         }

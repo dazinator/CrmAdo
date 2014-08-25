@@ -99,9 +99,8 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="SQLGeneration, Version=2.5.0.0, Culture=neutral, PublicKeyToken=22ea15b5a3c0e6aa, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\SQLGeneration.DazinatorFork.2.5.3\lib\net40\SQLGeneration.dll</HintPath>
+    <Reference Include="SQLGeneration">
+      <HintPath>..\..\lib\SQLGeneration.DazinatorFork.2.5.4\lib\net40\SQLGeneration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -184,6 +183,7 @@
     <Compile Include="SystemCommandParameters.cs" />
     <Compile Include="Util\EnumHelper.cs" />
     <Compile Include="Visitor\BaseOrganizationRequestBuilderVisitor.cs" />
+    <Compile Include="Visitor\CreateEntityBuilderVisitor.cs" />
     <Compile Include="Visitor\CreateRequestBuilderVisitor.cs" />
     <Compile Include="Visitor\DeleteRequestBuilderVisitor.cs" />
     <Compile Include="Visitor\OrganizationRequestBuilderVisitor.cs" />

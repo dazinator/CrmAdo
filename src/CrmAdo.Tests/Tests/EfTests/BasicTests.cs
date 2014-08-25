@@ -26,7 +26,7 @@ namespace CrmAdo.Tests.Tests.EfTests
         }
 
         [TestFixtureSetUp]
-        public override void TestFixtureSetup()
+        public void TestFixtureSetup()
         {
             using (var context = new BloggingContext(ConnectionString))
             {
@@ -40,7 +40,7 @@ namespace CrmAdo.Tests.Tests.EfTests
         /// Clean any previous entites before our test
         /// </summary>
         [SetUp]
-        protected override void SetUp()
+        protected void SetUp()
         {
             using (var context = new BloggingContext(ConnectionString))
             {

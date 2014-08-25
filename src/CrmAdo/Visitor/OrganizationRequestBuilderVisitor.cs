@@ -21,16 +21,16 @@ namespace CrmAdo.Visitor
         public OrganizationRequest OrganizationRequest { get; set; }
         public ICrmMetaDataProvider CrmMetadataProvider { get; set; }
         public DbParameterCollection Parameters { get; set; }
-        public IDynamicsAttributeTypeProvider TypeProvider { get; set; }    
+        public IDynamicsAttributeTypeProvider TypeProvider { get; set; }
 
         public OrganizationRequestBuilderVisitor(ICrmMetaDataProvider crmMetadataProvider, DbParameterCollection parameters, IDynamicsAttributeTypeProvider typeProvider)
         {
             CrmMetadataProvider = crmMetadataProvider;
             Parameters = parameters;
-            TypeProvider = typeProvider;        
+            TypeProvider = typeProvider;
         }
 
-        protected override void VisitSelect(SQLGeneration.Builders.SelectBuilder item)
+        protected override void VisitSelect(SelectBuilder item)
         {
             // Could use alternate builders like a fetch xml builder.
             var visitor = new RetrieveMultipleRequestBuilderVisitor(Parameters);
@@ -58,6 +58,14 @@ namespace CrmAdo.Visitor
         protected override void VisitDelete(DeleteBuilder item)
         {
             var visitor = new DeleteRequestBuilderVisitor(Parameters, CrmMetadataProvider, TypeProvider);
+            IVisitableBuilder visitable = item;
+            visitable.Accept(visitor);
+            OrganizationRequest = visitor.Request;
+        }
+
+        protected override void VisitCreate(CreateBuilder item)
+        {
+            var visitor = new CreateEntityRequestBuilderVisitor(Parameters, CrmMetadataProvider);
             IVisitableBuilder visitable = item;
             visitable.Accept(visitor);
             OrganizationRequest = visitor.Request;

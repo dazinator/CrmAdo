@@ -19,8 +19,7 @@ namespace CrmAdo.Dynamics.Metadata
             Attributes = new List<AttributeMetadata>();
         }
 
-
-        public EntityAttributeMetadataBuilder StringAttribute(string schemaName,  string displayName, string description,
+        public EntityAttributeMetadataBuilder StringAttribute(string schemaName, string displayName, string description,
                                                                AttributeRequiredLevel requiredLevel,
                                                                int maxLength, StringFormat format)
         {
@@ -82,6 +81,8 @@ namespace CrmAdo.Dynamics.Metadata
             this.Attributes.Add(dtAttribute);
             return this;
         }
+
+   
 
     }
 }
