@@ -1,0 +1,14 @@
+Add the following to the after build event of the CrmAdo project,
+and it will update all GAC dependencies.
+
+"%ProgramFiles%\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil.exe"  /i "$(TargetPath)"
+"%ProgramFiles%\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil.exe"  /i "$(TargetDir)Microsoft.Xrm.Sdk.dll"
+"%ProgramFiles%\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil.exe"  /i "$(TargetDir)Microsoft.Xrm.Client.dll"
+"%ProgramFiles%\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil.exe"  /i "$(TargetDir)Microsoft.Crm.Sdk.Proxy.dll"
+"%ProgramFiles%\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil.exe"  /i "$(TargetDir)SQLGeneration.dll"
+"%ProgramFiles%\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil.exe"  /i "$(TargetDir)Microsoft.IdentityModel.dll"
+
+
+To unregister an assembly from the gac use 
+
+"%ProgramFiles%\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil.exe" /u "CrmAdo"

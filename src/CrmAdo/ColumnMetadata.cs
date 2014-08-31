@@ -41,49 +41,11 @@ namespace CrmAdo
 
         public virtual string LogicalAttributeName { get { return AttributeMetadata.LogicalName; } }
 
-        public virtual string GetDataTypeName()
-        {
-            if (AttributeMetadata.AttributeType == null)
-            {
-                return string.Empty;
-            }
-            switch (AttributeMetadata.AttributeType)
-            {
-                case AttributeTypeCode.String:
-                case AttributeTypeCode.Memo:
-                    return "nvarchar";
-                case AttributeTypeCode.Lookup:
-                case AttributeTypeCode.Owner:
-                    return "uniqueidentifier";
-                case AttributeTypeCode.Virtual:
-                    if (this.LogicalAttributeName == "entityimage")
-                    {
-                        return "image";
-                    }
-                    return "nvarchar";
-                case AttributeTypeCode.Double:
-                    return "float";
-                case AttributeTypeCode.State:
-                case AttributeTypeCode.Status:
-                case AttributeTypeCode.Picklist:
-                    return "integer";
-                case AttributeTypeCode.Boolean:
-                    return "bit";
-                default:
-                    return AttributeMetadata.AttributeType.Value.ToString();
-            }
-        }
-
         public virtual AttributeTypeCode AttributeType()
         {
             if (AttributeMetadata.AttributeType != null) return AttributeMetadata.AttributeType.Value;
             return AttributeTypeCode.String;
-        }
-
-        public virtual Type GetFieldType()
-        {
-            return AttributeMetadata.GetCrmAgnosticType();
-        }
+        }   
 
         /// <summary>
         /// Compares the name that could include an alias to see if it matches the same logical name.
@@ -101,6 +63,16 @@ namespace CrmAdo
             {
                 return aliasedName.ToLower() == this.LogicalAttributeName;
             }
+        }
+
+        public virtual string GetSqlDataTypeName()
+        {
+            return this.AttributeMetadata.GetSqlDataTypeName();
+        }
+
+        public virtual Type GetFieldType()
+        {
+            return AttributeMetadata.GetCrmAgnosticType();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{31343D89-C6F5-4397-91EC-2DF4CCAA849B}"
 	ProjectSection(SolutionItems) = preProject
@@ -11,6 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{31343D
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{051242FC-6944-44A6-9C47-88C04DF0F75A}"
+	ProjectSection(SolutionItems) = preProject
+		After Build Add To GAC notes.txt = After Build Add To GAC notes.txt
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{6F14A947-1316-4CF7-ADD6-8F20A2BB453E}"
 	ProjectSection(SolutionItems) = preProject

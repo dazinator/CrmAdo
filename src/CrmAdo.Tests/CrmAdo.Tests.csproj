@@ -98,8 +98,9 @@
     <Reference Include="Rhino.Mocks">
       <HintPath>..\..\lib\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
     </Reference>
-    <Reference Include="SQLGeneration">
-      <HintPath>..\..\lib\SQLGeneration.DazinatorFork.2.5.4\lib\net40\SQLGeneration.dll</HintPath>
+    <Reference Include="SQLGeneration, Version=2.5.5.0, Culture=neutral, PublicKeyToken=22ea15b5a3c0e6aa, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\SQLGeneration.DazinatorFork.2.5.5\lib\net40\SQLGeneration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -134,6 +135,7 @@
     <Compile Include="Support\EfModel\Blog.cs" />
     <Compile Include="Support\EntityFrameworkCodeFirstTestBase.cs" />
     <Compile Include="Tests\AdoTests\CrmConnectionStringBuilderTests.cs" />
+    <Compile Include="Tests\AlterTableTests\AlterTableStatementTests.cs" />
     <Compile Include="Tests\CreateTableTests\CreateTableStatementTests.cs" />
     <Compile Include="Tests\DeleteTests\DeleteStatementTests.cs" />
     <Compile Include="Support\FakeContactMetadataProvider.cs" />
@@ -234,6 +236,7 @@
     <Copy Condition="Exists('$(DeployedConfig)')" SourceFiles="$(IntermediateOutputPath)$(TargetFileName).config" DestinationFiles="$(DeployedConfig)" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>xcopy /Q /Y "$(TargetDir)DynamicsCrmDataProvider.*" "$(ProjectDir)bin\"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

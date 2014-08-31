@@ -103,6 +103,48 @@ namespace CrmAdo.Dynamics.Metadata
             }
         }
 
+        /// <summary>
+        /// Gets the sql datatype name for the attribute type. 
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static string GetSqlDataTypeName(this AttributeMetadata metadata)
+        {
+            if (metadata.AttributeType == null)
+            {
+                return string.Empty;
+            }
+            switch (metadata.AttributeType)
+            {
+                case AttributeTypeCode.String:
+                case AttributeTypeCode.Memo:
+                    return "nvarchar";
+                case AttributeTypeCode.Lookup:
+                case AttributeTypeCode.Owner:
+                    return "uniqueidentifier";
+                case AttributeTypeCode.Virtual:
+                    if (metadata.GetType() == typeof(ImageAttributeMetadata))
+                    {
+                        return "image";
+                    }
+                    //if (metadata.LogicalAttributeName == "entityimage")
+                    //{
+
+                    //}
+                    return "nvarchar";
+                case AttributeTypeCode.Double:
+                    return "float";
+                case AttributeTypeCode.State:
+                case AttributeTypeCode.Status:
+                case AttributeTypeCode.Picklist:
+                    return "integer";
+                case AttributeTypeCode.Boolean:
+                    return "bit";
+                default:
+                    return metadata.AttributeType.Value.ToString();
+            }
+        }
+
 
     }
 }

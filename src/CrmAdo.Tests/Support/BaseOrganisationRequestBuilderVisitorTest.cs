@@ -3,6 +3,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using NUnit.Framework;
+using Rhino.Mocks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -62,6 +63,22 @@ namespace CrmAdo.Tests.Support
             return sqlFilterString;
         }
 
+        //private T GetRequest<T>(string sql) where T : OrganizationRequest
+        //{
+        //    // set up fake metadata provider.
+        //    // var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
+        //    // var fakeMetadata = GetFakeContactMetadata();
+        //    // fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
+          
+        //    //  fakeConn.Stub(a => a.MetadataProvider).Return(fakeMetadataProvider);
+
+        //    var fakeConn = MockRepository.GenerateMock<CrmDbConnection>();
+        //    var cmd = new CrmDbCommand(fakeConn);
+        //    cmd.CommandText = sql;
+        //    var request = GetOrganizationRequest<T>(cmd);
+        //    return request;
+
+        //}  
 
     }
 }

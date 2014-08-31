@@ -60,7 +60,7 @@ namespace CrmAdo.Visitor
             EntityBuilder = null;
         }
 
-        protected override void VisitTableDefinition(TableDefinition item)
+        protected override void VisitCreateTableDefinition(CreateTableDefinition item)
         {
             var name = item.Name;
             EntityBuilder = EntityConstruction.ConstructEntity(name);

@@ -118,7 +118,7 @@ namespace CrmAdo
                 row[SchemaTableColumn.ProviderType] = columnMetadata.AttributeType().ToString();
 
                 // some other optional columns..
-                row["DataTypeName"] = columnMetadata.GetDataTypeName();
+                row["DataTypeName"] = columnMetadata.GetSqlDataTypeName();
                 row[SchemaTableOptionalColumn.IsReadOnly] = !columnMetadata.AttributeMetadata.IsValidForUpdate.GetValueOrDefault() && !columnMetadata.AttributeMetadata.IsValidForCreate.GetValueOrDefault();
                 row["IsIdentity"] = columnMetadata.AttributeMetadata.IsPrimaryId;
                 row[SchemaTableOptionalColumn.IsAutoIncrement] = false;

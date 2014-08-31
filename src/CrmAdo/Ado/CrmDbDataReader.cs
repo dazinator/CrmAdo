@@ -166,7 +166,7 @@ namespace CrmAdo
         public override string GetDataTypeName(int ordinal)
         {
             // retrun the data type name e.g 'varchar'
-            return _Results.ColumnMetadata[ordinal].GetDataTypeName();
+            return _Results.ColumnMetadata[ordinal].GetSqlDataTypeName();
         }
 
         /// <summary>

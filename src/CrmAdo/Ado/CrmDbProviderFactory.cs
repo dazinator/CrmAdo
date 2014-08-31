@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace CrmAdo
 {
-    public partial class CrmDbProviderFactory : DbProviderFactory
+    public class CrmDbProviderFactory : DbProviderFactory
     {
 
         public const string Invariant = "System.Data.DynamicsCrm.CrmAdo";
