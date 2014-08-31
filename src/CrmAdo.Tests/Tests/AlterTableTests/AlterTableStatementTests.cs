@@ -427,7 +427,7 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.MaxValue, Is.EqualTo(DoubleAttributeMetadata.MaxSupportedValue));
             // attMeta.Precision
             Assert.That(attMeta.Precision, Is.EqualTo(minScale));
-            
+
         }
 
         [Test(Description = "Should support adding a new double attribute with precision.")]
@@ -572,31 +572,320 @@ namespace CrmAdo.Tests
 
         #region Lookup
 
+        [Test(Description = "Should support adding a new lookup attribute.")]
+        public void Can_Add_Lookup_Attribute()
+        {
+            // Arrange         
+            string entityName = "testentity";
+            string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
+
+            string referencedEntityName = "referencedentity";
+
+            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} UNIQUEIDENTIFIER REFERENCES {2};", entityName, newColumnName, referencedEntityName);
+
+            var request = GetOrganizationRequest<CreateOneToManyRequest>(commandText);
+
+            var attMetadata = request.Lookup;
+            var relationship = request.OneToManyRelationship;
+
+            Assert.IsNotNull(attMetadata);
+            Assert.IsNotNull(relationship);
+            Assert.That(attMetadata.EntityLogicalName, Is.EqualTo(entityName.ToLower()));
+            Assert.That(attMetadata, Is.AssignableTo(typeof(LookupAttributeMetadata)));
+
+            var attMeta = (LookupAttributeMetadata)attMetadata;
+
+            Assert.That(attMeta.AttributeType == AttributeTypeCode.Lookup);
+            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.LookupType);
+            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+
+            // Assert on relationship.
+            Assert.That(relationship.ReferencedEntity, Is.EqualTo(referencedEntityName.ToLower()));
+            Assert.That(relationship.ReferencingEntity, Is.EqualTo(entityName.ToLower()));
+            //   Assert.That(relationship.SchemaName, Is.EqualTo(entityName.ToLower())); // potentially use CONSTRAINT my_name to set the schemaname?
+
+            // assert on cascade config?
+            Assert.That(relationship.RelationshipType, Is.EqualTo(RelationshipType.OneToManyRelationship));
+            Assert.That(relationship.CascadeConfiguration, Is.Not.Null);
+
+            var cascade = relationship.CascadeConfiguration;
+
+            // By default we shouldn't have any cascaded actions because it would be dangerous to assume any,
+            // dynamics only allows an entity to have 1 relationship that has a cascading action on it. If more relationships are added,
+            // those new relationshops cannot have any cascading actions because its constrained to 1 relationship with cascading actions per entity.
+            // therefore we assume that when users add in new foreign keys (lookups) that there are no cascading relationships. Otherwise the 2nd one
+            // that is added would cause dynamics crm to throw an error.
+
+            Assert.That(cascade.Delete, Is.EqualTo(CascadeType.NoCascade));
+            Assert.That(cascade.Assign, Is.EqualTo(CascadeType.NoCascade));
+            Assert.That(cascade.Merge, Is.EqualTo(CascadeType.NoCascade));
+            Assert.That(cascade.Reparent, Is.EqualTo(CascadeType.NoCascade));
+            Assert.That(cascade.Share, Is.EqualTo(CascadeType.NoCascade));
+            Assert.That(cascade.Unshare, Is.EqualTo(CascadeType.NoCascade));
+           
+        }
 
         #endregion
 
         #region Memo
 
+        [Test(Description = "Should support adding a new memo attribute.")]
+        public void Can_Add_Memo_Attribute()
+        {
+            // Arrange         
+            string entityName = "testentity";
+            string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
+            //  int maxLength = MemoAttributeMetadata.MaxSupportedLength;
+
+            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} NVARCHAR(MAX)", entityName, newColumnName);
+
+            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+
+            var attMetadata = request.Attribute;
+
+            Assert.IsNotNull(attMetadata);
+            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+
+            Assert.That(attMetadata, Is.AssignableTo(typeof(MemoAttributeMetadata)));
+
+            var attMeta = (MemoAttributeMetadata)attMetadata;
+
+            Assert.That(attMeta.AttributeType == AttributeTypeCode.Memo);
+            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.MemoType);
+            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+            Assert.That(attMeta.MaxLength, Is.EqualTo(MemoAttributeMetadata.MaxSupportedLength));
+            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+
+        }
 
         #endregion
 
         #region Money
 
+        [Test(Description = "Should support adding a new money attribute.")]
+        public void Can_Add_Money_Attribute()
+        {
+            // Arrange         
+            string entityName = "testentity";
+            string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
+
+            // the max number of digits that can be stored in crm decimal field. = 12 + 10 == 22
+            int maxPrecision = MoneyAttributeMetadata.MaxSupportedValue.ToString().Length + MoneyAttributeMetadata.MaxSupportedPrecision;
+
+            // The max number of digits that can appear after the decimal point. = 10.
+            int maxScale = MoneyAttributeMetadata.MaxSupportedPrecision;
+
+            // The min number of digits that can appear after the decimal point. = 0.
+            int minScale = MoneyAttributeMetadata.MinSupportedPrecision;
+
+            // The default precision for a decimal field is the max precision, plus the minimum scale. = 12 + 0 = 12.
+            int defaultprecision = MoneyAttributeMetadata.MaxSupportedValue.ToString().Length + minScale;
+
+            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} MONEY", entityName, newColumnName);
+
+            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+
+            var attMetadata = request.Attribute;
+
+            Assert.IsNotNull(attMetadata);
+            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+
+            Assert.That(attMetadata, Is.AssignableTo(typeof(MoneyAttributeMetadata)));
+
+            var attMeta = (MoneyAttributeMetadata)attMetadata;
+
+            Assert.That(attMeta.AttributeType == AttributeTypeCode.Money);
+            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.MoneyType);
+            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+            Assert.That(attMeta.MinValue, Is.EqualTo(MoneyAttributeMetadata.MinSupportedValue));
+            Assert.That(attMeta.MaxValue, Is.EqualTo(MoneyAttributeMetadata.MaxSupportedValue));
+
+            //When the PrecisionSource is set to zero (0), the MoneyAttributeMetadata.Precision value is used.
+            //When the PrecisionSource is set to one (1), the Organization.PricingDecimalPrecision value is used.
+            //When the PrecisionSource is set to two (2), the TransactionCurrency.CurrencyPrecision value is used.
+
+            Assert.That(attMeta.PrecisionSource, Is.EqualTo(0));
+            Assert.That(attMeta.Precision, Is.EqualTo(MoneyAttributeMetadata.MinSupportedPrecision));
+
+        }
 
         #endregion
 
         #region Picklist
 
+        [Test(Description = "Should support adding a new picklist attribute that has a local option set.")]
+        public void Can_Add_Picklist_Attribute_With_Local_OptionSet()
+        {
+            // Arrange         
+            string entityName = "testentity";
+            string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
+
+            Dictionary<int, string> optionValues = new Dictionary<int, string>();
+            optionValues.Add(10000000, "Red");
+            optionValues.Add(10000001, "Green");
+            optionValues.Add(10000002, "Blue");
+
+            // Local option set tables are named by convention. entityName.AttributeName.options
+            // Global option set tables are named by convention. optionsetname.options
+            string optionSetTableName = string.Format("{0}.{1}.options", entityName, newColumnName);
+            string optionSetOptionsLabelName = string.Format("{0}.{1}.optionlabels", entityName, newColumnName);
+
+            var sqlBuilder = new StringBuilder();
+            string addPicklistAttributeCommandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} INT REFERENCES {2};", entityName, newColumnName, optionSetTableName);
+
+            // The sql necessary to create the picklist column. Now must provide options and option labels in same sql statement.
+            sqlBuilder.AppendLine(addPicklistAttributeCommandText);
+
+            // string createOptionSetTableCommandText = string.Format(@"CREATE TABLE {0}(optionvalue INT PRIMARY KEY);", optionSetTableName);         
+            // sqlBuilder.AppendLine(createOptionSetTableCommandText);
+
+            foreach (var item in optionValues)
+            {
+                // Adds an option value to the option set.
+                string insertOptionValueCommandText = string.Format(@"INSERT INTO {0}(optionvalue) VALUES({1});", optionSetTableName, item.Key);
+                sqlBuilder.AppendLine(insertOptionValueCommandText);
+
+                // Adds a few text labels for the particular option value to demonstrate that a single option can have multiple text labels associated with it.
+                // When LCID not specified, then default used.
+                string insertOptionLabelCommandText = string.Format(@"INSERT INTO {0}(optionvalue, labeltext) VALUES({1}, {2});", optionSetOptionsLabelName, item.Key, item.Value);
+                sqlBuilder.AppendLine(insertOptionLabelCommandText);
+                // Adding an australian localised label. LCID 3081
+                string insertAnotherLabelCommandText = string.Format(@"INSERT INTO {0}(optionvalue, labeltext, lcid) VALUES({1}, {2}, {3});", optionSetOptionsLabelName, item.Key, item.Value + "-anotherlabel", 3081);
+                sqlBuilder.AppendLine(insertAnotherLabelCommandText);
+            }
+
+
+            string commandText = sqlBuilder.ToString();
+            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+
+            var attMetadata = request.Attribute;
+
+            Assert.IsNotNull(attMetadata);
+            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+
+            Assert.That(attMetadata, Is.AssignableTo(typeof(PicklistAttributeMetadata)));
+
+            var attMeta = (PicklistAttributeMetadata)attMetadata;
+
+            Assert.That(attMeta.AttributeType == AttributeTypeCode.Picklist);
+            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.PicklistType);
+            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+            Assert.That(attMeta.OptionSet.OptionSetType, Is.EqualTo(OptionSetType.Picklist));
+            //  Assert.That(attMeta.DefaultValue, Is.EqualTo(int.MinValue));
+
+            Assert.That(attMeta.OptionSet, Is.Not.Null);
+            Assert.That(attMeta.OptionSet.Options, Is.Not.Null);
+            Assert.That(attMeta.OptionSet.Options.Count(), Is.EqualTo(optionValues.Count()));
+
+            for (int i = 0; i < optionValues.Count() - 1; i++)
+            {
+                var option = attMeta.OptionSet.Options[0];
+                var expectedOption = optionValues.ElementAt(i);
+                Assert.That(option.Value, Is.EqualTo(expectedOption.Key));
+                Assert.That(option.Label, Is.Not.Null);
+                Assert.That(option.Label.LocalizedLabels, Is.Not.Null);
+                Assert.That(option.Label.LocalizedLabels.Count(), Is.EqualTo(2));
+                Assert.That(option.Label.LocalizedLabels[0].Label, Is.EqualTo(expectedOption.Value));
+                Assert.That(option.Label.LocalizedLabels[1].Label, Is.EqualTo(expectedOption.Value + "-anotherlabel"));
+                Assert.That(option.Label.LocalizedLabels[1].LanguageCode, Is.EqualTo(3081));
+            }
+        }
+
+        [Test(Description = "Should support adding a new picklist attribute that has a local option set.")]
+        public void Can_Add_Picklist_Attribute_With_Local_OptionSet_And_Default_Value()
+        {
+            // Arrange         
+            string entityName = "testentity";
+            string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
+
+            Dictionary<int, string> optionValues = new Dictionary<int, string>();
+            optionValues.Add(10000000, "Red");
+            optionValues.Add(10000001, "Green");
+            optionValues.Add(10000002, "Blue");
+
+            int defaultValue = 10000000;
+
+            // Local option set tables are named by convention. entityName.AttributeName.options
+            // Global option set tables are named by convention. optionsetname.options
+            string optionSetTableName = string.Format("{0}.{1}.options", entityName, newColumnName);
+            string optionSetOptionsLabelName = string.Format("{0}.{1}.optionlabels", entityName, newColumnName);
+
+            var sqlBuilder = new StringBuilder();
+            string addPicklistAttributeCommandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} INT DEFAULT {3} REFERENCES {2};", entityName, newColumnName, optionSetTableName, defaultValue);
+
+            // The sql necessary to create the picklist column. Now must provide options and option labels in same sql statement.
+            sqlBuilder.AppendLine(addPicklistAttributeCommandText);
+
+            // string createOptionSetTableCommandText = string.Format(@"CREATE TABLE {0}(optionvalue INT PRIMARY KEY);", optionSetTableName);         
+            // sqlBuilder.AppendLine(createOptionSetTableCommandText);
+
+            foreach (var item in optionValues)
+            {
+                // Adds an option value to the option set.
+                string insertOptionValueCommandText = string.Format(@"INSERT INTO {0}(optionvalue) VALUES({1});", optionSetTableName, item.Key);
+                sqlBuilder.AppendLine(insertOptionValueCommandText);
+
+                // Adds a few text labels for the particular option value to demonstrate that a single option can have multiple text labels associated with it.
+                // When LCID not specified, then default used.
+                string insertOptionLabelCommandText = string.Format(@"INSERT INTO {0}(optionvalue, labeltext) VALUES({1}, {2});", optionSetOptionsLabelName, item.Key, item.Value);
+                sqlBuilder.AppendLine(insertOptionLabelCommandText);
+                // Adding an australian localised label. LCID 3081
+                string insertAnotherLabelCommandText = string.Format(@"INSERT INTO {0}(optionvalue, lcid, labeltext) VALUES({1}, {2}, {3});", optionSetOptionsLabelName, item.Key, 3081, item.Value + "-anotherlabel");
+                sqlBuilder.AppendLine(insertAnotherLabelCommandText);
+            }
+
+
+            string commandText = sqlBuilder.ToString();
+            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+
+            var attMetadata = request.Attribute;
+
+            Assert.IsNotNull(attMetadata);
+            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+
+            Assert.That(attMetadata, Is.AssignableTo(typeof(PicklistAttributeMetadata)));
+
+            var attMeta = (PicklistAttributeMetadata)attMetadata;
+
+            Assert.That(attMeta.AttributeType == AttributeTypeCode.Picklist);
+            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.PicklistType);
+            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+            Assert.That(attMeta.OptionSet.OptionSetType, Is.EqualTo(OptionSetType.Picklist));
+            Assert.That(attMeta.DefaultFormValue, Is.EqualTo(defaultValue));
+
+            Assert.That(attMeta.OptionSet, Is.Not.Null);
+            Assert.That(attMeta.OptionSet.Options, Is.Not.Null);
+            Assert.That(attMeta.OptionSet.Options.Count(), Is.EqualTo(optionValues.Count()));
+
+            for (int i = 0; i < optionValues.Count() - 1; i++)
+            {
+                var option = attMeta.OptionSet.Options[0];
+                var expectedOption = optionValues.ElementAt(i);
+                Assert.That(option.Value, Is.EqualTo(expectedOption.Key));
+                Assert.That(option.Label, Is.Not.Null);
+                Assert.That(option.Label.LocalizedLabels, Is.Not.Null);
+                Assert.That(option.Label.LocalizedLabels.Count(), Is.EqualTo(2));
+                Assert.That(option.Label.LocalizedLabels[0].Label, Is.EqualTo(expectedOption.Value));
+                Assert.That(option.Label.LocalizedLabels[1].Label, Is.EqualTo(expectedOption.Value + "-anotherlabel"));
+                Assert.That(option.Label.LocalizedLabels[1].LanguageCode, Is.EqualTo(3081));
+            }
+        }
 
         #endregion
 
         #region State
 
+        // Crm doesn't allow you to create state attributes.
 
         #endregion
 
         #region Status
 
+        // Crm doesn't allow you to create status attributes.
 
         #endregion
 
@@ -609,7 +898,7 @@ namespace CrmAdo.Tests
             string entityName = "testentity";
             string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
 
-            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} VARCHAR", entityName, newColumnName);
+            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} NVARCHAR", entityName, newColumnName);
 
             var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
@@ -626,7 +915,7 @@ namespace CrmAdo.Tests
             Assert.That(stringMeta.AttributeTypeName == AttributeTypeDisplayName.StringType);
             Assert.That(stringMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(stringMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-
+            Assert.That(stringMeta.MaxLength, Is.EqualTo(1));
         }
 
         [Test(Description = "Should support adding a new string attribute with a specified max size.")]
@@ -635,9 +924,9 @@ namespace CrmAdo.Tests
             // Arrange         
             string entityName = "testentity";
             string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
-            int maxLength = 100;
+            int maxLength = StringAttributeMetadata.MaxSupportedLength;
 
-            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} VARCHAR({2})", entityName, newColumnName, maxLength.ToString());
+            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} NVARCHAR({2})", entityName, newColumnName, maxLength.ToString());
 
             var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
@@ -655,7 +944,6 @@ namespace CrmAdo.Tests
             Assert.That(stringMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(stringMeta.MaxLength, Is.EqualTo(maxLength));
             Assert.That(stringMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-
         }
 
         #endregion
