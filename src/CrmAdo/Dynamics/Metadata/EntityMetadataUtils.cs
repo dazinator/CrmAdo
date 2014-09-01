@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Xml;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
+using System.Text;
 
 namespace CrmAdo.Dynamics.Metadata
 {
@@ -143,6 +144,127 @@ namespace CrmAdo.Dynamics.Metadata
                 default:
                     return metadata.AttributeType.Value.ToString();
             }
+        }
+
+        /// <summary>
+        /// Gets the sql precision for the crm decimal attribute. 
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static int MaxSupportedSqlPrecision(this DecimalAttributeMetadata metadata)
+        {
+            // = 12 + max scale of 10 = 22 in total.
+            int crmPrecision = Math.Max(DecimalAttributeMetadata.MinSupportedValue.ToString().Length, DecimalAttributeMetadata.MaxSupportedValue.ToString().Length);
+            return crmPrecision + DecimalAttributeMetadata.MaxSupportedPrecision;
+        }
+
+        /// <summary>
+        /// Gets the sql precision for the crm decimal attribute. 
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static bool IsSqlPrecisionSupported(this DecimalAttributeMetadata metadata, int precision, int scale)
+        {
+            if (precision < scale)
+            {
+                throw new ArgumentOutOfRangeException("precision must be equal to or greater than scale.");
+            }
+
+            if (scale < DecimalAttributeMetadata.MinSupportedPrecision || scale > DecimalAttributeMetadata.MaxSupportedPrecision)
+            {
+                return false;
+            }
+
+            // = 12
+            int crmMaxValueLengthWithoutPrecision = Math.Max(DecimalAttributeMetadata.MinSupportedValue.ToString().Length, DecimalAttributeMetadata.MaxSupportedValue.ToString().Length);
+            if (precision - scale > crmMaxValueLengthWithoutPrecision)
+            {
+                return false;
+            }
+            return true;
+
+        }
+
+        /// <summary>
+        /// Gets the default sql precision for the crm decimal attribute. 
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static int DefaultSqlPrecision(this DecimalAttributeMetadata metadata)
+        {
+            int precision = Math.Max(DecimalAttributeMetadata.MaxSupportedValue.ToString().Length, DecimalAttributeMetadata.MinSupportedValue.ToString().Length);
+            return precision + DefaultSqlScale(metadata);
+        }
+
+        /// <summary>
+        /// Gets the default sql scale for the crm decimal attribute. 
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static int DefaultSqlScale(this DecimalAttributeMetadata metadata)
+        {
+            int scale = DecimalAttributeMetadata.MinSupportedPrecision;
+            return scale;
+        }
+
+        /// <summary>
+        /// Sets the decimal size according to the sql precision and scale arguments. 
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static bool SetFromSqlPrecisionAndScale(this DecimalAttributeMetadata metadata, int precision, int scale)
+        {
+            if (precision < scale)
+            {
+                throw new ArgumentOutOfRangeException("precision must be equal to or greater than scale.");
+            }
+
+            if (scale < DecimalAttributeMetadata.MinSupportedPrecision || scale > DecimalAttributeMetadata.MaxSupportedPrecision)
+            {
+                throw new ArgumentOutOfRangeException("scale is not within min and max crm values.");
+            }
+
+            // = 12
+            int crmMaxValueLengthWithoutPrecision = Math.Max(DecimalAttributeMetadata.MinSupportedValue.ToString().Length, DecimalAttributeMetadata.MaxSupportedValue.ToString().Length);
+            if (precision - scale > crmMaxValueLengthWithoutPrecision)
+            {
+                throw new ArgumentOutOfRangeException("The precision is greater than the maximum value crm will allow.");
+            }
+
+            metadata.Precision = scale;
+
+            // need to set appropriate min and max values.
+            // If the precision is equal to the max precision allowed, then set min and max values allowed. 
+            if (precision == crmMaxValueLengthWithoutPrecision)
+            {
+                metadata.MinValue = (decimal)DecimalAttributeMetadata.MinSupportedValue;
+                metadata.MaxValue = (decimal)DecimalAttributeMetadata.MaxSupportedValue;
+            }
+            else
+            {
+                // the min value should be a series of 9's to the specified precision and scale.
+                var maxNumberBuilder = new StringBuilder();
+                for (int i = 0; i < precision - scale; i++)
+                {
+                    maxNumberBuilder.Append("9");
+                }
+                if (scale > 0)
+                {
+                    maxNumberBuilder.Append(".");
+                    for (int i = 0; i < scale; i++)
+                    {
+                        maxNumberBuilder.Append("9");
+                    }
+                }
+
+                var maxNumber = decimal.Parse(maxNumberBuilder.ToString());
+                metadata.MaxValue = maxNumber;
+                metadata.MinValue = -maxNumber;
+
+            }
+
+            return true;
+
         }
 
 

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace CrmAdo.Visitor
 {
     /// <summary>
@@ -66,6 +67,22 @@ namespace CrmAdo.Visitor
         protected override void VisitCreate(CreateBuilder item)
         {
             var visitor = new CreateEntityRequestBuilderVisitor(Parameters, CrmMetadataProvider);
+            IVisitableBuilder visitable = item;
+            visitable.Accept(visitor);
+            OrganizationRequest = visitor.Request;
+        }
+
+        protected override void VisitAlter(AlterBuilder item)
+        {
+            if(item.AlterObject != null)
+            {
+                item.AlterObject.Accept(this);
+            }           
+        }
+
+        protected override void VisitAlterTableDefinition(AlterTableDefinition item)
+        {
+            var visitor = new CreateAttributeRequestBuilderVisitor(Parameters, CrmMetadataProvider);
             IVisitableBuilder visitable = item;
             visitable.Accept(visitor);
             OrganizationRequest = visitor.Request;

@@ -27,7 +27,7 @@ namespace CrmAdo.Tests
             string entityName = "testentity";
             string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
 
-            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} BIT", entityName, newColumnName);
+            string commandText = string.Format(@"ALTER TABLE {0} ADD {1} BIT", entityName, newColumnName);
 
             var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
@@ -61,11 +61,16 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.OptionSet.FalseOption.Label, Is.Not.Null);
 
             // True and False Localised Labels should be specified.
-            Assert.That(attMeta.OptionSet.FalseOption.Label.UserLocalizedLabel, Is.Not.Null);
-            Assert.That(attMeta.OptionSet.TrueOption.Label.UserLocalizedLabel, Is.Not.Null);
+            Assert.That(attMeta.OptionSet.FalseOption.Label.LocalizedLabels, Is.Not.Null);
+            Assert.That(attMeta.OptionSet.TrueOption.Label.LocalizedLabels, Is.Not.Null);
 
+            Assert.That(attMeta.OptionSet.FalseOption.Label.LocalizedLabels, Is.Not.Empty);
+            Assert.That(attMeta.OptionSet.TrueOption.Label.LocalizedLabels, Is.Not.Empty);
+
+            var trueLabel = attMeta.OptionSet.TrueOption.Label.LocalizedLabels.First();
+            var falseLabel = attMeta.OptionSet.FalseOption.Label.LocalizedLabels.First();
             // True and False Localised Labels shouldn't be the same.
-            Assert.That(attMeta.OptionSet.FalseOption.Label.UserLocalizedLabel.Label, Is.Not.EqualTo(attMeta.OptionSet.TrueOption.Label.UserLocalizedLabel.Label));
+            Assert.That(trueLabel.Label, Is.Not.EqualTo(falseLabel.Label));
 
 
 
@@ -78,7 +83,7 @@ namespace CrmAdo.Tests
             string entityName = "testentity";
             string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
 
-            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} BIT DEFAULT 1", entityName, newColumnName);
+            string commandText = string.Format(@"ALTER TABLE {0} ADD {1} BIT DEFAULT 1", entityName, newColumnName);
 
             var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
@@ -107,16 +112,18 @@ namespace CrmAdo.Tests
             // True and False values shouldn't be the same.
             Assert.That(attMeta.OptionSet.FalseOption.Value, Is.Not.EqualTo(attMeta.OptionSet.TrueOption.Value));
 
-            // True and False Labels should be specified.
-            Assert.That(attMeta.OptionSet.TrueOption.Label, Is.Not.Null);
-            Assert.That(attMeta.OptionSet.FalseOption.Label, Is.Not.Null);
-
             // True and False Localised Labels should be specified.
-            Assert.That(attMeta.OptionSet.FalseOption.Label.UserLocalizedLabel, Is.Not.Null);
-            Assert.That(attMeta.OptionSet.TrueOption.Label.UserLocalizedLabel, Is.Not.Null);
+            Assert.That(attMeta.OptionSet.FalseOption.Label.LocalizedLabels, Is.Not.Null);
+            Assert.That(attMeta.OptionSet.TrueOption.Label.LocalizedLabels, Is.Not.Null);
 
+            Assert.That(attMeta.OptionSet.FalseOption.Label.LocalizedLabels, Is.Not.Empty);
+            Assert.That(attMeta.OptionSet.TrueOption.Label.LocalizedLabels, Is.Not.Empty);
+
+            var trueLabel = attMeta.OptionSet.TrueOption.Label.LocalizedLabels.First();
+            var falseLabel = attMeta.OptionSet.FalseOption.Label.LocalizedLabels.First();
             // True and False Localised Labels shouldn't be the same.
-            Assert.That(attMeta.OptionSet.FalseOption.Label.UserLocalizedLabel.Label, Is.Not.EqualTo(attMeta.OptionSet.TrueOption.Label.UserLocalizedLabel.Label));
+            Assert.That(trueLabel.Label, Is.Not.EqualTo(falseLabel.Label));
+
 
             Assert.That(attMeta.DefaultValue, Is.Not.Null);
             Assert.That(attMeta.DefaultValue, Is.EqualTo(true));
@@ -130,7 +137,7 @@ namespace CrmAdo.Tests
             string entityName = "testentity";
             string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
 
-            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} BIT DEFAULT 0", entityName, newColumnName);
+            string commandText = string.Format(@"ALTER TABLE {0} ADD {1} BIT DEFAULT 0", entityName, newColumnName);
 
             var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
@@ -159,16 +166,18 @@ namespace CrmAdo.Tests
             // True and False values shouldn't be the same.
             Assert.That(attMeta.OptionSet.FalseOption.Value, Is.Not.EqualTo(attMeta.OptionSet.TrueOption.Value));
 
-            // True and False Labels should be specified.
-            Assert.That(attMeta.OptionSet.TrueOption.Label, Is.Not.Null);
-            Assert.That(attMeta.OptionSet.FalseOption.Label, Is.Not.Null);
-
             // True and False Localised Labels should be specified.
-            Assert.That(attMeta.OptionSet.FalseOption.Label.UserLocalizedLabel, Is.Not.Null);
-            Assert.That(attMeta.OptionSet.TrueOption.Label.UserLocalizedLabel, Is.Not.Null);
+            Assert.That(attMeta.OptionSet.FalseOption.Label.LocalizedLabels, Is.Not.Null);
+            Assert.That(attMeta.OptionSet.TrueOption.Label.LocalizedLabels, Is.Not.Null);
 
+            Assert.That(attMeta.OptionSet.FalseOption.Label.LocalizedLabels, Is.Not.Empty);
+            Assert.That(attMeta.OptionSet.TrueOption.Label.LocalizedLabels, Is.Not.Empty);
+
+            var trueLabel = attMeta.OptionSet.TrueOption.Label.LocalizedLabels.First();
+            var falseLabel = attMeta.OptionSet.FalseOption.Label.LocalizedLabels.First();
             // True and False Localised Labels shouldn't be the same.
-            Assert.That(attMeta.OptionSet.FalseOption.Label.UserLocalizedLabel.Label, Is.Not.EqualTo(attMeta.OptionSet.TrueOption.Label.UserLocalizedLabel.Label));
+            Assert.That(trueLabel.Label, Is.Not.EqualTo(falseLabel.Label));
+
 
             Assert.That(attMeta.DefaultValue, Is.Not.Null);
             Assert.That(attMeta.DefaultValue, Is.EqualTo(false));
@@ -186,7 +195,7 @@ namespace CrmAdo.Tests
             string entityName = "testentity";
             string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
 
-            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} DATETIME", entityName, newColumnName);
+            string commandText = string.Format(@"ALTER TABLE {0} ADD {1} DATETIME", entityName, newColumnName);
 
             var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
@@ -215,7 +224,7 @@ namespace CrmAdo.Tests
             string entityName = "testentity";
             string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
 
-            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} DATE", entityName, newColumnName);
+            string commandText = string.Format(@"ALTER TABLE {0} ADD {1} DATE", entityName, newColumnName);
 
             var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
@@ -261,7 +270,7 @@ namespace CrmAdo.Tests
             int defaultprecision = DecimalAttributeMetadata.MaxSupportedValue.ToString().Length + minScale;
 
 
-            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} DECIMAL", entityName, newColumnName);
+            string commandText = string.Format(@"ALTER TABLE {0} ADD {1} DECIMAL", entityName, newColumnName);
 
             var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
@@ -301,7 +310,7 @@ namespace CrmAdo.Tests
 
             Console.WriteLine("Precision is " + precision);
 
-            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} DECIMAL({2})", entityName, newColumnName, precision);
+            string commandText = string.Format(@"ALTER TABLE {0} ADD {1} DECIMAL({2})", entityName, newColumnName, precision);
 
             var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
@@ -350,7 +359,7 @@ namespace CrmAdo.Tests
 
             Console.WriteLine("Precision is " + precision + ", scale is: " + scale);
 
-            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} DECIMAL({2},{3})", entityName, newColumnName, precision, scale);
+            string commandText = string.Format(@"ALTER TABLE {0} ADD {1} DECIMAL({2},{3})", entityName, newColumnName, precision, scale);
 
             var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
@@ -406,7 +415,7 @@ namespace CrmAdo.Tests
             // NEED TO SEE HOW DYNAMICS CRM STORES DOUBLE ATTRIBUTES.. CRM LETS YOU SPECIFY PRECISION AND SCALE, BUT FLOAT DATATYPE DOESNT.
             // SO PERHAPS FLOAT IS WRONG DATATYPE TO USE FOR DOUBLE ATTRIBUTES, PERHAPS NUMERIC(P,S) INSTEAD.
 
-            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} FLOAT", entityName, newColumnName);
+            string commandText = string.Format(@"ALTER TABLE {0} ADD {1} FLOAT", entityName, newColumnName);
 
             var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
@@ -448,7 +457,7 @@ namespace CrmAdo.Tests
 
             // NEED TO SEE HOW DYNAMICS CRM STORES DOUBLE ATTRIBUTES.. CRM LETS YOU SPECIFY PRECISION AND SCALE, BUT FLOAT DATATYPE DOESNT.
             // SO PERHAPS FLOAT IS WRONG DATATYPE TO USE FOR DOUBLE ATTRIBUTES, PERHAPS NUMERIC(P,S) INSTEAD.
-            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} FLOAT({2})", entityName, newColumnName, precision);
+            string commandText = string.Format(@"ALTER TABLE {0} ADD {1} FLOAT({2})", entityName, newColumnName, precision);
 
             var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
@@ -498,7 +507,7 @@ namespace CrmAdo.Tests
             Console.WriteLine("Precision is " + precision + ", scale is: " + scale);
             // NEED TO SEE HOW DYNAMICS CRM STORES DOUBLE ATTRIBUTES.. CRM LETS YOU SPECIFY PRECISION AND SCALE, BUT FLOAT DATATYPE DOESNT.
             // SO PERHAPS FLOAT IS WRONG DATATYPE TO USE FOR DOUBLE ATTRIBUTES, PERHAPS NUMERIC(P,S) INSTEAD.
-            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} FLOAT({2},{3})", entityName, newColumnName, precision, scale);
+            string commandText = string.Format(@"ALTER TABLE {0} ADD {1} FLOAT({2},{3})", entityName, newColumnName, precision, scale);
 
             var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
@@ -544,7 +553,7 @@ namespace CrmAdo.Tests
             string entityName = "testentity";
             string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
 
-            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} INT", entityName, newColumnName);
+            string commandText = string.Format(@"ALTER TABLE {0} ADD {1} INT", entityName, newColumnName);
 
             var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
@@ -581,7 +590,7 @@ namespace CrmAdo.Tests
 
             string referencedEntityName = "referencedentity";
 
-            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} UNIQUEIDENTIFIER REFERENCES {2};", entityName, newColumnName, referencedEntityName);
+            string commandText = string.Format(@"ALTER TABLE {0} ADD {1} UNIQUEIDENTIFIER REFERENCES {2};", entityName, newColumnName, referencedEntityName);
 
             var request = GetOrganizationRequest<CreateOneToManyRequest>(commandText);
 
@@ -623,7 +632,7 @@ namespace CrmAdo.Tests
             Assert.That(cascade.Reparent, Is.EqualTo(CascadeType.NoCascade));
             Assert.That(cascade.Share, Is.EqualTo(CascadeType.NoCascade));
             Assert.That(cascade.Unshare, Is.EqualTo(CascadeType.NoCascade));
-           
+
         }
 
         #endregion
@@ -638,7 +647,7 @@ namespace CrmAdo.Tests
             string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
             //  int maxLength = MemoAttributeMetadata.MaxSupportedLength;
 
-            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} NVARCHAR(MAX)", entityName, newColumnName);
+            string commandText = string.Format(@"ALTER TABLE {0} ADD {1} NVARCHAR(MAX)", entityName, newColumnName);
 
             var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
@@ -682,7 +691,7 @@ namespace CrmAdo.Tests
             // The default precision for a decimal field is the max precision, plus the minimum scale. = 12 + 0 = 12.
             int defaultprecision = MoneyAttributeMetadata.MaxSupportedValue.ToString().Length + minScale;
 
-            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} MONEY", entityName, newColumnName);
+            string commandText = string.Format(@"ALTER TABLE {0} ADD {1} MONEY", entityName, newColumnName);
 
             var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
@@ -733,7 +742,7 @@ namespace CrmAdo.Tests
             string optionSetOptionsLabelName = string.Format("{0}.{1}.optionlabels", entityName, newColumnName);
 
             var sqlBuilder = new StringBuilder();
-            string addPicklistAttributeCommandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} INT REFERENCES {2};", entityName, newColumnName, optionSetTableName);
+            string addPicklistAttributeCommandText = string.Format(@"ALTER TABLE {0} ADD {1} INT REFERENCES {2};", entityName, newColumnName, optionSetTableName);
 
             // The sql necessary to create the picklist column. Now must provide options and option labels in same sql statement.
             sqlBuilder.AppendLine(addPicklistAttributeCommandText);
@@ -741,20 +750,30 @@ namespace CrmAdo.Tests
             // string createOptionSetTableCommandText = string.Format(@"CREATE TABLE {0}(optionvalue INT PRIMARY KEY);", optionSetTableName);         
             // sqlBuilder.AppendLine(createOptionSetTableCommandText);
 
-            foreach (var item in optionValues)
-            {
-                // Adds an option value to the option set.
-                string insertOptionValueCommandText = string.Format(@"INSERT INTO {0}(optionvalue) VALUES({1});", optionSetTableName, item.Key);
-                sqlBuilder.AppendLine(insertOptionValueCommandText);
+            // NOT SURE WHTHER WE CAN CREATE THE ATTRIBUTE WITH EMPTY OPTION SET FIRST
+            // THEN DO InsertOptionValueRequest to insert option values later..
+            //InsertOptionValueRequest insertOptionValueRequest =
+            //    new InsertOptionValueRequest
+            //    {
+            //        AttributeLogicalName = "new_picklist",
+            //        EntityLogicalName = Contact.EntityLogicalName,
+            //        Label = new Label("New Picklist Label", _languageCode)
+            //    };
+          
+            //foreach (var item in optionValues)
+            //{
+            //    // Adds an option value to the option set.
+            //    string insertOptionValueCommandText = string.Format(@"INSERT INTO {0}(optionvalue) VALUES({1});", optionSetTableName, item.Key);
+            //    sqlBuilder.AppendLine(insertOptionValueCommandText);
 
-                // Adds a few text labels for the particular option value to demonstrate that a single option can have multiple text labels associated with it.
-                // When LCID not specified, then default used.
-                string insertOptionLabelCommandText = string.Format(@"INSERT INTO {0}(optionvalue, labeltext) VALUES({1}, {2});", optionSetOptionsLabelName, item.Key, item.Value);
-                sqlBuilder.AppendLine(insertOptionLabelCommandText);
-                // Adding an australian localised label. LCID 3081
-                string insertAnotherLabelCommandText = string.Format(@"INSERT INTO {0}(optionvalue, labeltext, lcid) VALUES({1}, {2}, {3});", optionSetOptionsLabelName, item.Key, item.Value + "-anotherlabel", 3081);
-                sqlBuilder.AppendLine(insertAnotherLabelCommandText);
-            }
+            //    // Adds a few text labels for the particular option value to demonstrate that a single option can have multiple text labels associated with it.
+            //    // When LCID not specified, then default used.
+            //    string insertOptionLabelCommandText = string.Format(@"INSERT INTO {0}(optionvalue, labeltext) VALUES({1}, {2});", optionSetOptionsLabelName, item.Key, item.Value);
+            //    sqlBuilder.AppendLine(insertOptionLabelCommandText);
+            //    // Adding an australian localised label. LCID 3081
+            //    string insertAnotherLabelCommandText = string.Format(@"INSERT INTO {0}(optionvalue, labeltext, lcid) VALUES({1}, {2}, {3});", optionSetOptionsLabelName, item.Key, item.Value + "-anotherlabel", 3081);
+            //    sqlBuilder.AppendLine(insertAnotherLabelCommandText);
+            //}
 
 
             string commandText = sqlBuilder.ToString();
@@ -773,29 +792,28 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.PicklistType);
             Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(attMeta.OptionSet.OptionSetType, Is.EqualTo(OptionSetType.Picklist));
-            //  Assert.That(attMeta.DefaultValue, Is.EqualTo(int.MinValue));
+      
+            //  Assert.That(attMeta.OptionSet.OptionSetType, Is.EqualTo(OptionSetType.Picklist));     
+            //Assert.That(attMeta.OptionSet, Is.Not.Null);
+            //Assert.That(attMeta.OptionSet.Options, Is.Not.Null);
+            //Assert.That(attMeta.OptionSet.Options.Count(), Is.EqualTo(optionValues.Count()));
 
-            Assert.That(attMeta.OptionSet, Is.Not.Null);
-            Assert.That(attMeta.OptionSet.Options, Is.Not.Null);
-            Assert.That(attMeta.OptionSet.Options.Count(), Is.EqualTo(optionValues.Count()));
-
-            for (int i = 0; i < optionValues.Count() - 1; i++)
-            {
-                var option = attMeta.OptionSet.Options[0];
-                var expectedOption = optionValues.ElementAt(i);
-                Assert.That(option.Value, Is.EqualTo(expectedOption.Key));
-                Assert.That(option.Label, Is.Not.Null);
-                Assert.That(option.Label.LocalizedLabels, Is.Not.Null);
-                Assert.That(option.Label.LocalizedLabels.Count(), Is.EqualTo(2));
-                Assert.That(option.Label.LocalizedLabels[0].Label, Is.EqualTo(expectedOption.Value));
-                Assert.That(option.Label.LocalizedLabels[1].Label, Is.EqualTo(expectedOption.Value + "-anotherlabel"));
-                Assert.That(option.Label.LocalizedLabels[1].LanguageCode, Is.EqualTo(3081));
-            }
+            //for (int i = 0; i < optionValues.Count() - 1; i++)
+            //{
+            //    var option = attMeta.OptionSet.Options[0];
+            //    var expectedOption = optionValues.ElementAt(i);
+            //    Assert.That(option.Value, Is.EqualTo(expectedOption.Key));
+            //    Assert.That(option.Label, Is.Not.Null);
+            //    Assert.That(option.Label.LocalizedLabels, Is.Not.Null);
+            //    Assert.That(option.Label.LocalizedLabels.Count(), Is.EqualTo(2));
+            //    Assert.That(option.Label.LocalizedLabels[0].Label, Is.EqualTo(expectedOption.Value));
+            //    Assert.That(option.Label.LocalizedLabels[1].Label, Is.EqualTo(expectedOption.Value + "-anotherlabel"));
+            //    Assert.That(option.Label.LocalizedLabels[1].LanguageCode, Is.EqualTo(3081));
+            //}
         }
 
-        [Test(Description = "Should support adding a new picklist attribute that has a local option set.")]
-        public void Can_Add_Picklist_Attribute_With_Local_OptionSet_And_Default_Value()
+        [Test(Description = "Should support adding a new picklist attribute that has a global option set and a default value.")]
+        public void Can_Add_Picklist_Attribute_With_Global_OptionSet_And_Default_Value()
         {
             // Arrange         
             string entityName = "testentity";
@@ -814,7 +832,7 @@ namespace CrmAdo.Tests
             string optionSetOptionsLabelName = string.Format("{0}.{1}.optionlabels", entityName, newColumnName);
 
             var sqlBuilder = new StringBuilder();
-            string addPicklistAttributeCommandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} INT DEFAULT {3} REFERENCES {2};", entityName, newColumnName, optionSetTableName, defaultValue);
+            string addPicklistAttributeCommandText = string.Format(@"ALTER TABLE {0} ADD {1} INT DEFAULT {3} REFERENCES {2};", entityName, newColumnName, optionSetTableName, defaultValue);
 
             // The sql necessary to create the picklist column. Now must provide options and option labels in same sql statement.
             sqlBuilder.AppendLine(addPicklistAttributeCommandText);
@@ -822,20 +840,20 @@ namespace CrmAdo.Tests
             // string createOptionSetTableCommandText = string.Format(@"CREATE TABLE {0}(optionvalue INT PRIMARY KEY);", optionSetTableName);         
             // sqlBuilder.AppendLine(createOptionSetTableCommandText);
 
-            foreach (var item in optionValues)
-            {
-                // Adds an option value to the option set.
-                string insertOptionValueCommandText = string.Format(@"INSERT INTO {0}(optionvalue) VALUES({1});", optionSetTableName, item.Key);
-                sqlBuilder.AppendLine(insertOptionValueCommandText);
+            //foreach (var item in optionValues)
+            //{
+            //    // Adds an option value to the option set.
+            //    string insertOptionValueCommandText = string.Format(@"INSERT INTO {0}(optionvalue) VALUES({1});", optionSetTableName, item.Key);
+            //    sqlBuilder.AppendLine(insertOptionValueCommandText);
 
-                // Adds a few text labels for the particular option value to demonstrate that a single option can have multiple text labels associated with it.
-                // When LCID not specified, then default used.
-                string insertOptionLabelCommandText = string.Format(@"INSERT INTO {0}(optionvalue, labeltext) VALUES({1}, {2});", optionSetOptionsLabelName, item.Key, item.Value);
-                sqlBuilder.AppendLine(insertOptionLabelCommandText);
-                // Adding an australian localised label. LCID 3081
-                string insertAnotherLabelCommandText = string.Format(@"INSERT INTO {0}(optionvalue, lcid, labeltext) VALUES({1}, {2}, {3});", optionSetOptionsLabelName, item.Key, 3081, item.Value + "-anotherlabel");
-                sqlBuilder.AppendLine(insertAnotherLabelCommandText);
-            }
+            //    // Adds a few text labels for the particular option value to demonstrate that a single option can have multiple text labels associated with it.
+            //    // When LCID not specified, then default used.
+            //    string insertOptionLabelCommandText = string.Format(@"INSERT INTO {0}(optionvalue, labeltext) VALUES({1}, {2});", optionSetOptionsLabelName, item.Key, item.Value);
+            //    sqlBuilder.AppendLine(insertOptionLabelCommandText);
+            //    // Adding an australian localised label. LCID 3081
+            //    string insertAnotherLabelCommandText = string.Format(@"INSERT INTO {0}(optionvalue, lcid, labeltext) VALUES({1}, {2}, {3});", optionSetOptionsLabelName, item.Key, 3081, item.Value + "-anotherlabel");
+            //    sqlBuilder.AppendLine(insertAnotherLabelCommandText);
+            //}
 
 
             string commandText = sqlBuilder.ToString();
@@ -854,25 +872,25 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.PicklistType);
             Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(attMeta.OptionSet.OptionSetType, Is.EqualTo(OptionSetType.Picklist));
+          //  Assert.That(attMeta.OptionSet.OptionSetType, Is.EqualTo(OptionSetType.Picklist));
             Assert.That(attMeta.DefaultFormValue, Is.EqualTo(defaultValue));
 
-            Assert.That(attMeta.OptionSet, Is.Not.Null);
-            Assert.That(attMeta.OptionSet.Options, Is.Not.Null);
-            Assert.That(attMeta.OptionSet.Options.Count(), Is.EqualTo(optionValues.Count()));
+            //Assert.That(attMeta.OptionSet, Is.Not.Null);
+            //Assert.That(attMeta.OptionSet.Options, Is.Not.Null);
+            //Assert.That(attMeta.OptionSet.Options.Count(), Is.EqualTo(optionValues.Count()));
 
-            for (int i = 0; i < optionValues.Count() - 1; i++)
-            {
-                var option = attMeta.OptionSet.Options[0];
-                var expectedOption = optionValues.ElementAt(i);
-                Assert.That(option.Value, Is.EqualTo(expectedOption.Key));
-                Assert.That(option.Label, Is.Not.Null);
-                Assert.That(option.Label.LocalizedLabels, Is.Not.Null);
-                Assert.That(option.Label.LocalizedLabels.Count(), Is.EqualTo(2));
-                Assert.That(option.Label.LocalizedLabels[0].Label, Is.EqualTo(expectedOption.Value));
-                Assert.That(option.Label.LocalizedLabels[1].Label, Is.EqualTo(expectedOption.Value + "-anotherlabel"));
-                Assert.That(option.Label.LocalizedLabels[1].LanguageCode, Is.EqualTo(3081));
-            }
+            //for (int i = 0; i < optionValues.Count() - 1; i++)
+            //{
+            //    var option = attMeta.OptionSet.Options[0];
+            //    var expectedOption = optionValues.ElementAt(i);
+            //    Assert.That(option.Value, Is.EqualTo(expectedOption.Key));
+            //    Assert.That(option.Label, Is.Not.Null);
+            //    Assert.That(option.Label.LocalizedLabels, Is.Not.Null);
+            //    Assert.That(option.Label.LocalizedLabels.Count(), Is.EqualTo(2));
+            //    Assert.That(option.Label.LocalizedLabels[0].Label, Is.EqualTo(expectedOption.Value));
+            //    Assert.That(option.Label.LocalizedLabels[1].Label, Is.EqualTo(expectedOption.Value + "-anotherlabel"));
+            //    Assert.That(option.Label.LocalizedLabels[1].LanguageCode, Is.EqualTo(3081));
+            //}
         }
 
         #endregion
@@ -898,7 +916,7 @@ namespace CrmAdo.Tests
             string entityName = "testentity";
             string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
 
-            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} NVARCHAR", entityName, newColumnName);
+            string commandText = string.Format(@"ALTER TABLE {0} ADD {1} NVARCHAR", entityName, newColumnName);
 
             var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
@@ -926,7 +944,7 @@ namespace CrmAdo.Tests
             string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
             int maxLength = StringAttributeMetadata.MaxSupportedLength;
 
-            string commandText = string.Format(@"ALTER TABLE {0} ADD COLUMN {1} NVARCHAR({2})", entityName, newColumnName, maxLength.ToString());
+            string commandText = string.Format(@"ALTER TABLE {0} ADD {1} NVARCHAR({2})", entityName, newColumnName, maxLength.ToString());
 
             var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 

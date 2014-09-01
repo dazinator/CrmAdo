@@ -185,6 +185,7 @@
     <Compile Include="Util\EnumHelper.cs" />
     <Compile Include="Visitor\BaseOrganizationRequestBuilderVisitor.cs" />
     <Compile Include="Visitor\CreateEntityBuilderVisitor.cs" />
+    <Compile Include="Visitor\CreateAttributeRequestBuilderVisitor.cs" />
     <Compile Include="Visitor\CreateRequestBuilderVisitor.cs" />
     <Compile Include="Visitor\DeleteRequestBuilderVisitor.cs" />
     <Compile Include="Visitor\OrganizationRequestBuilderVisitor.cs" />
