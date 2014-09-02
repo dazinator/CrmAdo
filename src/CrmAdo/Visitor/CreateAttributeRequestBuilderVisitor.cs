@@ -206,7 +206,7 @@ namespace CrmAdo.Visitor
                                 CurrentNumericLiteralValue = null;
                             }
                             scale = sqlScale.Value;
-                        }                       
+                        }
                     }
 
                     decimalMetadata.SetFromSqlPrecisionAndScale(precision, scale);
@@ -229,8 +229,59 @@ namespace CrmAdo.Visitor
 
                     break;
                 case "FLOAT":
-                    throw new NotImplementedException();
-                // break;
+
+                    // memo
+                    createAttRequest = new CreateAttributeRequest();
+                    //DateTimeFormat dtFormat = DateTimeFormat.DateOnly;
+                    var doubleAttribute = new DoubleAttributeMetadata();
+                    CurrentAttribute = doubleAttribute;
+                    createAttRequest.Attribute = CurrentAttribute;
+                    createAttRequest.EntityName = this.AlterTableName.ToLower();
+
+                    int doublePrecision = doubleAttribute.DefaultSqlPrecision();
+                    int doubleScale = doubleAttribute.DefaultSqlScale();
+
+
+                    if (item.Arguments != null && item.Arguments.Any())
+                    {
+                        // first is scale, second is precision.
+                        var argsCount = item.Arguments.Count();
+                        if (argsCount > 2)
+                        {
+                            throw new InvalidOperationException("Datatype can have a maximum of 2 size arguments.");
+                        }
+
+                        if (argsCount >= 1)
+                        {
+                            var sqlPrecisionArg = item.Arguments.First();
+                            ((IVisitableBuilder)sqlPrecisionArg).Accept(this);
+                            if (CurrentNumericLiteralValue != null)
+                            {
+                                doublePrecision = Convert.ToInt32(CurrentNumericLiteralValue);
+                                CurrentNumericLiteralValue = null;
+                            }
+
+                        }
+
+                        if (argsCount >= 2)
+                        {
+                            int? sqlScale = null;
+                            var sqlScaleArg = item.Arguments.Skip(1).Take(1).Single();
+                            ((IVisitableBuilder)sqlScaleArg).Accept(this);
+                            if (CurrentNumericLiteralValue != null)
+                            {
+                                sqlScale = Convert.ToInt32(CurrentNumericLiteralValue);
+                                CurrentNumericLiteralValue = null;
+                            }
+                            doubleScale = sqlScale.Value;
+                        }
+                    }
+
+
+                    doubleAttribute.SetFromSqlPrecisionAndScale(doublePrecision, doubleScale);
+
+                    break;
+
                 case "INT":
 
                     var firstForeignKey = FindFirstForeignKeyConstraint();
@@ -265,9 +316,12 @@ namespace CrmAdo.Visitor
                     createOneToManyRequest.OneToManyRelationship = oneToManyRelationship;
 
                     oneToManyRelationship.ReferencedEntity = fkConstraint.ReferencedTable.Name.ToLower();
-                    oneToManyRelationship.ReferencedAttribute = fkConstraint.ReferencedColumn.ToLower();
+                    if(!string.IsNullOrWhiteSpace(fkConstraint.ReferencedColumn))
+                    {
+                        oneToManyRelationship.ReferencedAttribute = fkConstraint.ReferencedColumn.ToLower();
+                    }                  
 
-                    oneToManyRelationship.ReferencedEntity = this.AlterTableName.ToLower();
+                    oneToManyRelationship.ReferencingEntity = this.AlterTableName.ToLower();
                     oneToManyRelationship.ReferencingAttribute = this.CurrentColumnDefinition.Name.ToLower();
 
                     oneToManyRelationship.CascadeConfiguration = new CascadeConfiguration();
@@ -294,7 +348,8 @@ namespace CrmAdo.Visitor
                         oneToManyRelationship.SchemaName = fkConstraint.ConstraintName;
                     }
 
-                    var lookupAtt = new LookupAttributeMetadata();
+                    var lookupAtt = new LookupAttributeMetadata();                  
+                   // lookupAtt.EntityLogicalName = this.AlterTableName.ToLower();
                     createOneToManyRequest.Lookup = lookupAtt;
                     this.CurrentAttribute = lookupAtt;
                     //OneToManyRelationship =
@@ -335,14 +390,96 @@ namespace CrmAdo.Visitor
                     if (item.HasMax)
                     {
                         // memo
-                        throw new NotImplementedException("MEMO");
+                        createAttRequest = new CreateAttributeRequest();
+                        //DateTimeFormat dtFormat = DateTimeFormat.DateOnly;
+                        var memoAttribute = new MemoAttributeMetadata();
+                        CurrentAttribute = memoAttribute;
+                        createAttRequest.Attribute = CurrentAttribute;
+                        createAttRequest.EntityName = this.AlterTableName.ToLower();
+                        memoAttribute.MaxLength = MemoAttributeMetadata.MaxSupportedLength;
+                        break;
+                        //  throw new NotImplementedException("MEMO");
                     }
-                    throw new NotImplementedException("STRING");
+                    createAttRequest = new CreateAttributeRequest();
+                    //DateTimeFormat dtFormat = DateTimeFormat.DateOnly;
+                    var stringAttribute = new StringAttributeMetadata();
+                    CurrentAttribute = stringAttribute;
+                    createAttRequest.Attribute = CurrentAttribute;
+                    createAttRequest.EntityName = this.AlterTableName.ToLower();
 
+
+                    int maxLength = 1; // default string max length 1.
+                    if (item.Arguments != null && item.Arguments.Any())
+                    {
+                        // first is scale, second is precision.
+
+                        var argsCount = item.Arguments.Count();
+                        if (argsCount > 1)
+                        {
+                            throw new InvalidOperationException("Datatype can have a maximum of 1 size arguments.");
+                        }
+
+                        var maxLengthArg = item.Arguments.First();
+                        ((IVisitableBuilder)maxLengthArg).Accept(this);
+                        if (CurrentNumericLiteralValue != null)
+                        {
+                            maxLength = Convert.ToInt32(CurrentNumericLiteralValue);
+                            CurrentNumericLiteralValue = null;
+                        }
+                    }
+                    stringAttribute.MaxLength = maxLength;
                     break;
                 case "MONEY":
-                    throw new NotImplementedException("MONEY");
+
+                    createAttRequest = new CreateAttributeRequest();
+                    //DateTimeFormat dtFormat = DateTimeFormat.DateOnly;
+                    var moneyAttribute = new MoneyAttributeMetadata();
+                    CurrentAttribute = moneyAttribute;
+                    createAttRequest.Attribute = CurrentAttribute;
+                    createAttRequest.EntityName = this.AlterTableName.ToLower();
+
+                    int moneyPrecision = moneyAttribute.DefaultSqlPrecision();
+                    int moneyScale = moneyAttribute.DefaultSqlScale();
+
+                    if (item.Arguments != null && item.Arguments.Any())
+                    {
+                        // first is scale, second is precision.
+                        var argsCount = item.Arguments.Count();
+                        if (argsCount > 2)
+                        {
+                            throw new InvalidOperationException("Datatype can have a maximum of 2 size arguments.");
+                        }
+
+                        if (argsCount >= 1)
+                        {
+                            var sqlPrecisionArg = item.Arguments.First();
+                            ((IVisitableBuilder)sqlPrecisionArg).Accept(this);
+                            if (CurrentNumericLiteralValue != null)
+                            {
+                                moneyPrecision = Convert.ToInt32(CurrentNumericLiteralValue);
+                                CurrentNumericLiteralValue = null;
+                            }
+
+                        }
+
+                        if (argsCount >= 2)
+                        {
+                            int? sqlScale = null;
+                            var sqlScaleArg = item.Arguments.Skip(1).Take(1).Single();
+                            ((IVisitableBuilder)sqlScaleArg).Accept(this);
+                            if (CurrentNumericLiteralValue != null)
+                            {
+                                sqlScale = Convert.ToInt32(CurrentNumericLiteralValue);
+                                CurrentNumericLiteralValue = null;
+                            }
+                            moneyScale = sqlScale.Value;
+                        }
+                    }
+
+                    moneyAttribute.SetFromSqlPrecisionAndScale(moneyPrecision, moneyScale);
+
                     break;
+
                 default:
                     throw new NotSupportedException("DataType: " + item.Name + " is not supported.");
             }
@@ -401,6 +538,17 @@ namespace CrmAdo.Visitor
                 this.FilterForForeignKeyConstraint = false;
             }
             return null;
+        }
+
+        protected override void VisitForeignKeyConstraint(ForeignKeyConstraint item)
+        {
+            if (this.FilterForForeignKeyConstraint)
+            {
+                this.CurrentForeignKeyConstraint = item;
+                this.FilterForForeignKeyConstraint = false;
+                return;
+            }
+            base.VisitForeignKeyConstraint(item);
         }
 
         protected override void VisitNumericLiteral(NumericLiteral item)

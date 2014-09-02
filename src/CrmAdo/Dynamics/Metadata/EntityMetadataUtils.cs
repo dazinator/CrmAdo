@@ -15,8 +15,6 @@ namespace CrmAdo.Dynamics.Metadata
     public static class EntityMetadataUtils
     {
 
-
-
         /// <summary>Serialize metadata</summary>
         /// <param name="metaData">Metadata to serialize</param>
         /// <param name="formatting">Formatting, determines if indentation and line feeds are used in the file</param>
@@ -151,6 +149,8 @@ namespace CrmAdo.Dynamics.Metadata
             }
         }
 
+        #region Decimal
+
         /// <summary>
         /// Gets the sql precision for the crm decimal attribute. 
         /// </summary>
@@ -191,7 +191,6 @@ namespace CrmAdo.Dynamics.Metadata
             return true;
 
         }
-
      
         /// <summary>
         /// Gets the default sql precision for the crm decimal attribute. 
@@ -275,6 +274,254 @@ namespace CrmAdo.Dynamics.Metadata
 
         }
 
+        #endregion
 
+        #region Money
+
+        /// <summary>
+        /// Gets the sql precision for the crm money attribute. 
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static int MaxSupportedSqlPrecision(this MoneyAttributeMetadata metadata)
+        {           
+            var crmPrecision = Math.Max(Math.Truncate(Math.Abs(MoneyAttributeMetadata.MaxSupportedValue)).ToString().Length, Math.Truncate(Math.Abs(MoneyAttributeMetadata.MinSupportedValue)).ToString().Length);
+            return crmPrecision + MoneyAttributeMetadata.MaxSupportedPrecision;
+        }
+
+        /// <summary>
+        /// Gets the sql precision for the crm money attribute. 
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static bool IsSqlPrecisionSupported(this MoneyAttributeMetadata metadata, int precision, int scale)
+        {
+            if (precision < scale)
+            {
+                throw new ArgumentOutOfRangeException("precision must be equal to or greater than scale.");
+            }
+
+            if (scale < MoneyAttributeMetadata.MinSupportedPrecision || scale > MoneyAttributeMetadata.MaxSupportedPrecision)
+            {
+                return false;
+            }
+            int crmMaxValueLengthWithoutPrecision = Math.Max(MoneyAttributeMetadata.MinSupportedValue.ToString().Length, MoneyAttributeMetadata.MaxSupportedValue.ToString().Length);
+            if (precision - scale > crmMaxValueLengthWithoutPrecision)
+            {
+                return false;
+            }
+            return true;
+
+        }
+
+        /// <summary>
+        /// Gets the default sql precision for the crm money attribute. 
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static int DefaultSqlPrecision(this MoneyAttributeMetadata metadata)
+        {
+            var precision = Math.Max(Math.Truncate(Math.Abs(MoneyAttributeMetadata.MaxSupportedValue)).ToString().Length, Math.Truncate(Math.Abs(MoneyAttributeMetadata.MinSupportedValue)).ToString().Length);
+            return precision + DefaultSqlScale(metadata);
+        }
+
+        /// <summary>
+        /// Gets the default sql scale for the crm money attribute. 
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static int DefaultSqlScale(this MoneyAttributeMetadata metadata)
+        {
+            int scale = MoneyAttributeMetadata.MinSupportedPrecision;
+            return scale;
+        }
+
+        /// <summary>
+        /// Sets the money max size and max and min values, according to the specified sql precision and scale arguments. 
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static bool SetFromSqlPrecisionAndScale(this MoneyAttributeMetadata metadata, int precision, int scale)
+        {
+            if (precision < scale)
+            {
+                throw new ArgumentOutOfRangeException("precision must be equal to or greater than scale.");
+            }
+
+            if (scale < MoneyAttributeMetadata.MinSupportedPrecision || scale > MoneyAttributeMetadata.MaxSupportedPrecision)
+            {
+                throw new ArgumentOutOfRangeException("scale is not within min and max crm values.");
+            }
+          
+            var crmMaxValueLengthWithoutPrecision = Math.Max(Math.Truncate(Math.Abs(MoneyAttributeMetadata.MaxSupportedValue)).ToString().Length, Math.Truncate(Math.Abs(MoneyAttributeMetadata.MinSupportedValue)).ToString().Length);
+            if (precision - scale > crmMaxValueLengthWithoutPrecision)
+            {
+                throw new ArgumentOutOfRangeException("The precision is greater than the maximum value crm will allow.");
+            }
+
+            metadata.Precision = scale;
+
+            // need to set appropriate min and max values.
+            // If the precision is equal to the max precision allowed, then set min and max values allowed. 
+            if (precision == crmMaxValueLengthWithoutPrecision)
+            {
+                metadata.MinValue = (double)MoneyAttributeMetadata.MinSupportedValue;
+                metadata.MaxValue = (double)MoneyAttributeMetadata.MaxSupportedValue;
+            }
+            else
+            {
+                // the min value should be a series of 9's to the specified precision and scale.
+                var maxNumberBuilder = new StringBuilder();
+                for (int i = 0; i < precision - scale; i++)
+                {
+                    maxNumberBuilder.Append("9");
+                }
+                if (scale > 0)
+                {
+                    maxNumberBuilder.Append(".");
+                    for (int i = 0; i < scale; i++)
+                    {
+                        maxNumberBuilder.Append("9");
+                    }
+                }
+
+                var maxNumber = double.Parse(maxNumberBuilder.ToString());
+                metadata.MaxValue = maxNumber;
+                metadata.MinValue = -maxNumber;
+            }
+
+            // finallty, as we are setting precision and scale explicitly, the precision source should be set to honour our precision.
+            //When the PrecisionSource is set to zero (0), the MoneyAttributeMetadata.Precision value is used.
+            //When the PrecisionSource is set to one (1), the Organization.PricingDecimalPrecision value is used.
+            //When the PrecisionSource is set to two (2), the TransactionCurrency.CurrencyPrecision value is used.
+            metadata.PrecisionSource = 0;
+
+            return true;
+
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Gets the sql precision for the crm double attribute. 
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static int MaxSupportedSqlPrecision(this DoubleAttributeMetadata metadata)
+        {
+            var crmPrecision = Math.Max(Math.Truncate(Math.Abs(DoubleAttributeMetadata.MaxSupportedValue)).ToString().Length, Math.Truncate(Math.Abs(DoubleAttributeMetadata.MinSupportedValue)).ToString().Length);
+            return crmPrecision + DoubleAttributeMetadata.MaxSupportedPrecision;
+        }
+
+        /// <summary>
+        /// Gets the sql precision for the crm double attribute. 
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static bool IsSqlPrecisionSupported(this DoubleAttributeMetadata metadata, int precision, int scale)
+        {
+            if (precision < scale)
+            {
+                throw new ArgumentOutOfRangeException("precision must be equal to or greater than scale.");
+            }
+
+            if (scale < DoubleAttributeMetadata.MinSupportedPrecision || scale > DoubleAttributeMetadata.MaxSupportedPrecision)
+            {
+                return false;
+            }
+            int crmMaxValueLengthWithoutPrecision = Math.Max(DoubleAttributeMetadata.MinSupportedValue.ToString().Length, DoubleAttributeMetadata.MaxSupportedValue.ToString().Length);
+            if (precision - scale > crmMaxValueLengthWithoutPrecision)
+            {
+                return false;
+            }
+            return true;
+
+        }
+
+        /// <summary>
+        /// Gets the default sql precision for the crm double attribute. 
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static int DefaultSqlPrecision(this DoubleAttributeMetadata metadata)
+        {
+            var precision = Math.Max(Math.Truncate(Math.Abs(DoubleAttributeMetadata.MaxSupportedValue)).ToString().Length, Math.Truncate(Math.Abs(DoubleAttributeMetadata.MinSupportedValue)).ToString().Length);
+            return precision + DefaultSqlScale(metadata);
+        }
+
+        /// <summary>
+        /// Gets the default sql scale for the crm double attribute. 
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static int DefaultSqlScale(this DoubleAttributeMetadata metadata)
+        {
+            int scale = DoubleAttributeMetadata.MinSupportedPrecision;
+            return scale;
+        }
+
+        /// <summary>
+        /// Sets the double max size and max and min values, according to the specified sql precision and scale arguments. 
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public static bool SetFromSqlPrecisionAndScale(this DoubleAttributeMetadata metadata, int precision, int scale)
+        {
+            if (precision < scale)
+            {
+                throw new ArgumentOutOfRangeException("precision must be equal to or greater than scale.");
+            }
+
+            if (scale < DoubleAttributeMetadata.MinSupportedPrecision || scale > DoubleAttributeMetadata.MaxSupportedPrecision)
+            {
+                throw new ArgumentOutOfRangeException("scale is not within min and max crm values.");
+            }
+
+            var crmMaxValueLengthWithoutPrecision = Math.Max(Math.Truncate(Math.Abs(DoubleAttributeMetadata.MaxSupportedValue)).ToString().Length, Math.Truncate(Math.Abs(DoubleAttributeMetadata.MinSupportedValue)).ToString().Length);
+            if (precision - scale > crmMaxValueLengthWithoutPrecision)
+            {
+                throw new ArgumentOutOfRangeException("The precision is greater than the maximum value crm will allow.");
+            }
+
+            metadata.Precision = scale;
+
+            // need to set appropriate min and max values.
+            // If the precision is equal to the max precision allowed, then set min and max values allowed. 
+            if (precision == crmMaxValueLengthWithoutPrecision)
+            {
+                metadata.MinValue = (double)DoubleAttributeMetadata.MinSupportedValue;
+                metadata.MaxValue = (double)DoubleAttributeMetadata.MaxSupportedValue;
+            }
+            else
+            {
+                // the min value should be a series of 9's to the specified precision and scale.
+                var maxNumberBuilder = new StringBuilder();
+                for (int i = 0; i < precision - scale; i++)
+                {
+                    maxNumberBuilder.Append("9");
+                }
+                if (scale > 0)
+                {
+                    maxNumberBuilder.Append(".");
+                    for (int i = 0; i < scale; i++)
+                    {
+                        maxNumberBuilder.Append("9");
+                    }
+                }
+
+                var maxNumber = double.Parse(maxNumberBuilder.ToString());
+                metadata.MaxValue = maxNumber;
+                metadata.MinValue = -maxNumber;
+            }          
+
+            return true;
+
+        }
+
+        #region
+
+
+
+        #endregion
     }
 }

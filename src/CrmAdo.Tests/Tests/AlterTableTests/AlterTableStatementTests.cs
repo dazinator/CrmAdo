@@ -380,10 +380,10 @@ namespace CrmAdo.Tests
             // we should have a default min and max value that is not greater in length than the precision we specified. 
             Assert.That(attMeta.MinValue, Is.Not.Null);
             Assert.That(attMeta.MaxValue, Is.Not.Null);
-            Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Replace(".","").Length, Is.EqualTo(precision));
-            Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Replace(".","").Length, Is.EqualTo(precision));
+            Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
+            Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
 
-         
+
 
             // What dynamics sdk refers to as the 'precision' here is actually what we refer to as the 'scale' - the number of digits allowed after the decimal point.
             // as we speficied a scale this should equal that.
@@ -448,8 +448,6 @@ namespace CrmAdo.Tests
             string entityName = "testentity";
             string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
 
-            // the max number of digits that can be stored in crm decimal field. = 12 + 10 == 22
-            // without specifying scale, the max number of digits is therefore 12.
             int maxCrmPrecisionValue = DoubleAttributeMetadata.MaxSupportedValue.ToString().Length;
 
             // Lets create a decimal field with random precision between 1 and 12.
@@ -480,8 +478,11 @@ namespace CrmAdo.Tests
             // we should have a default min and max value that is not greater in length that the precision we have specified. 
             Assert.That(attMeta.MinValue, Is.Not.Null);
             Assert.That(attMeta.MaxValue, Is.Not.Null);
-            Assert.That(attMeta.MinValue.ToString().Length, Is.EqualTo(precision));
-            Assert.That(attMeta.MaxValue.ToString().Length, Is.EqualTo(precision));
+
+            Assert.That(attMeta.MinValue, Is.Not.Null);
+            Assert.That(attMeta.MaxValue, Is.Not.Null);
+            Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Length, Is.EqualTo(precision));
+            Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Length, Is.EqualTo(precision));
 
             // What dynamics sdk refers to as the 'precision' here is actually what we refer to as the 'scale' - the number of digits allowed after the decimal point.
             // as we never speficied a scale this should default to 0.
@@ -496,17 +497,14 @@ namespace CrmAdo.Tests
             string entityName = "testentity";
             string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
 
-            // the max number of digits that can be stored in crm decimal field. = 12 + 10 == 22
 
             int maxCrmPrecisionValue = DoubleAttributeMetadata.MaxSupportedValue.ToString().Length;
-
             // Create random scale between min and max allowed.
             int scale = new Random().Next(DoubleAttributeMetadata.MinSupportedPrecision, DoubleAttributeMetadata.MaxSupportedPrecision);
-
-            // Create a decimal field precision between 1 + s and 12 + s.
             int precision = new Random().Next(0 + scale, maxCrmPrecisionValue + scale);
 
             Console.WriteLine("Precision is " + precision + ", scale is: " + scale);
+
             // NEED TO SEE HOW DYNAMICS CRM STORES DOUBLE ATTRIBUTES.. CRM LETS YOU SPECIFY PRECISION AND SCALE, BUT FLOAT DATATYPE DOESNT.
             // SO PERHAPS FLOAT IS WRONG DATATYPE TO USE FOR DOUBLE ATTRIBUTES, PERHAPS NUMERIC(P,S) INSTEAD.
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} FLOAT({2},{3})", entityName, newColumnName, precision, scale);
@@ -530,8 +528,8 @@ namespace CrmAdo.Tests
             // we should have a default min and max value that is not greater in length than the precision we specified. 
             Assert.That(attMeta.MinValue, Is.Not.Null);
             Assert.That(attMeta.MaxValue, Is.Not.Null);
-            Assert.That(attMeta.MinValue.ToString().Length, Is.EqualTo(precision));
-            Assert.That(attMeta.MaxValue.ToString().Length, Is.EqualTo(precision));
+            Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
+            Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
 
             // What dynamics sdk refers to as the 'precision' here is actually what we refer to as the 'scale' - the number of digits allowed after the decimal point.
             // as we speficied a scale this should equal that.
@@ -601,7 +599,7 @@ namespace CrmAdo.Tests
 
             Assert.IsNotNull(attMetadata);
             Assert.IsNotNull(relationship);
-            Assert.That(attMetadata.EntityLogicalName, Is.EqualTo(entityName.ToLower()));
+            //  Assert.That(attMetadata.EntityLogicalName, Is.EqualTo(entityName.ToLower()));
             Assert.That(attMetadata, Is.AssignableTo(typeof(LookupAttributeMetadata)));
 
             var attMeta = (LookupAttributeMetadata)attMetadata;
@@ -722,6 +720,53 @@ namespace CrmAdo.Tests
 
         }
 
+        [Test(Description = "Should support adding a new money attribute with precision.")]
+        public void Can_Add_Money_With_Precision()
+        {
+            // Arrange         
+            string entityName = "testentity";
+            string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
+
+            int maxCrmPrecisionValue = MoneyAttributeMetadata.MaxSupportedValue.ToString().Length;
+
+            // Lets create a decimal field with random precision between 1 and 12.
+            int precision = new Random().Next(1, maxCrmPrecisionValue);
+
+            Console.WriteLine("Precision is " + precision);
+
+            string commandText = string.Format(@"ALTER TABLE {0} ADD {1} MONEY({2})", entityName, newColumnName, precision);
+
+            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+
+            var attMetadata = request.Attribute;
+
+            Assert.IsNotNull(attMetadata);
+            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+
+            Assert.That(attMetadata, Is.AssignableTo(typeof(MoneyAttributeMetadata)));
+
+            var attMeta = (MoneyAttributeMetadata)attMetadata;
+
+            Assert.That(attMeta.AttributeType == AttributeTypeCode.Money);
+            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.MoneyType);
+            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+
+            Assert.That(attMeta.MinValue, Is.Not.Null);
+            Assert.That(attMeta.MaxValue, Is.Not.Null);
+            Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Length, Is.EqualTo(precision));
+            Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Length, Is.EqualTo(precision));
+
+
+
+            //When the PrecisionSource is set to zero (0), the MoneyAttributeMetadata.Precision value is used.
+            //When the PrecisionSource is set to one (1), the Organization.PricingDecimalPrecision value is used.
+            //When the PrecisionSource is set to two (2), the TransactionCurrency.CurrencyPrecision value is used.
+            Assert.That(attMeta.PrecisionSource, Is.EqualTo(0));
+            Assert.That(attMeta.Precision, Is.EqualTo(MoneyAttributeMetadata.MinSupportedPrecision));
+
+        }
+
         #endregion
 
         #region Picklist
@@ -761,7 +806,7 @@ namespace CrmAdo.Tests
             //        EntityLogicalName = Contact.EntityLogicalName,
             //        Label = new Label("New Picklist Label", _languageCode)
             //    };
-          
+
             //foreach (var item in optionValues)
             //{
             //    // Adds an option value to the option set.
@@ -794,7 +839,7 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.PicklistType);
             Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-      
+
             //  Assert.That(attMeta.OptionSet.OptionSetType, Is.EqualTo(OptionSetType.Picklist));     
             //Assert.That(attMeta.OptionSet, Is.Not.Null);
             //Assert.That(attMeta.OptionSet.Options, Is.Not.Null);
@@ -874,7 +919,7 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.PicklistType);
             Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-          //  Assert.That(attMeta.OptionSet.OptionSetType, Is.EqualTo(OptionSetType.Picklist));
+            //  Assert.That(attMeta.OptionSet.OptionSetType, Is.EqualTo(OptionSetType.Picklist));
             Assert.That(attMeta.DefaultFormValue, Is.EqualTo(defaultValue));
 
             //Assert.That(attMeta.OptionSet, Is.Not.Null);
