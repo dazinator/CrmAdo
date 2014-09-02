@@ -44,13 +44,14 @@ namespace CrmAdo.Visitor
         private ColumnDefinition CurrentColumnDefinition { get; set; }
         private ForeignKeyConstraint CurrentForeignKeyConstraint { get; set; }
         private CascadeConfiguration CurrentCascadeConfiguration { get; set; }
+        private bool? CurrentDefaultBooleanAttributeValue { get; set; }
 
         private double? CurrentNumericLiteralValue { get; set; }
         private bool? HasConstraints { get; set; }
 
         private string AlterTableName { get; set; }
 
-        #region Visit Methods       
+        #region Visit Methods
 
         protected override void VisitAlterTableDefinition(AlterTableDefinition item)
         {
@@ -91,8 +92,13 @@ namespace CrmAdo.Visitor
             if (item.Default != null)
             {
                 ((IVisitableBuilder)item.Default).Accept(this);
+                if (this.CurrentAttribute.AttributeType.Value == AttributeTypeCode.Boolean)
+                {
+                    var boolAtt = (BooleanAttributeMetadata)this.CurrentAttribute;
+                    boolAtt.DefaultValue = this.CurrentDefaultBooleanAttributeValue;
+                    this.CurrentDefaultBooleanAttributeValue = null;
+                }
             }
-
         }
 
         protected override void VisitDataType(DataType item)
@@ -110,7 +116,8 @@ namespace CrmAdo.Visitor
                             new OptionMetadata(new Label("True", languageCode), 1),
                             new OptionMetadata(new Label("False", languageCode), 0)
                             );
-                    CurrentAttribute = new BooleanAttributeMetadata(optionSet);
+                    var boolAttribute = new BooleanAttributeMetadata(optionSet);
+                    CurrentAttribute = boolAttribute;
                     createAttRequest.Attribute = CurrentAttribute;
                     createAttRequest.EntityName = this.AlterTableName.ToLower();
 
@@ -164,6 +171,9 @@ namespace CrmAdo.Visitor
                     CurrentAttribute = decimalMetadata;
                     createAttRequest.Attribute = CurrentAttribute;
 
+                    int precision = decimalMetadata.DefaultSqlPrecision();
+                    int scale = decimalMetadata.DefaultSqlScale();
+
                     if (item.Arguments != null && item.Arguments.Any())
                     {
                         // first is scale, second is precision.
@@ -173,8 +183,6 @@ namespace CrmAdo.Visitor
                             throw new InvalidOperationException("Datatype can have a maximum of 2 size arguments.");
                         }
 
-                        int precision = decimalMetadata.DefaultSqlPrecision();
-                        int scale = decimalMetadata.DefaultSqlScale();
                         if (argsCount >= 1)
                         {
                             var sqlPrecisionArg = item.Arguments.First();
@@ -190,7 +198,7 @@ namespace CrmAdo.Visitor
                         if (argsCount >= 2)
                         {
                             int? sqlScale = null;
-                            var sqlScaleArg = item.Arguments.Skip(1).Take(1);
+                            var sqlScaleArg = item.Arguments.Skip(1).Take(1).Single();
                             ((IVisitableBuilder)sqlScaleArg).Accept(this);
                             if (CurrentNumericLiteralValue != null)
                             {
@@ -198,11 +206,10 @@ namespace CrmAdo.Visitor
                                 CurrentNumericLiteralValue = null;
                             }
                             scale = sqlScale.Value;
-                        }
-
-                        decimalMetadata.SetFromSqlPrecisionAndScale(precision, scale);
+                        }                       
                     }
 
+                    decimalMetadata.SetFromSqlPrecisionAndScale(precision, scale);
                     //int languageCode = 1033;
                     //var att = new DecimalAttributeMetadata()
                     //{
@@ -348,6 +355,32 @@ namespace CrmAdo.Visitor
             {
                 this.Request = createOneToManyRequest;
             }
+        }
+
+        protected override void VisitDefaultConstraint(DefaultConstraint item)
+        {
+            if (item.Value != null)
+            {
+                int? defaultVal = null;
+                ((IVisitableBuilder)item.Value).Accept(this);
+                if (CurrentNumericLiteralValue != null)
+                {
+                    defaultVal = Convert.ToInt32(CurrentNumericLiteralValue);
+                    CurrentNumericLiteralValue = null;
+                }
+                if (defaultVal.HasValue)
+                {
+                    if (defaultVal == 1)
+                    {
+                        CurrentDefaultBooleanAttributeValue = true;
+                    }
+                    else if (defaultVal == 0)
+                    {
+                        CurrentDefaultBooleanAttributeValue = false;
+                    }
+                }
+            }
+            base.VisitDefaultConstraint(item);
         }
 
         private ForeignKeyConstraint FindFirstForeignKeyConstraint()

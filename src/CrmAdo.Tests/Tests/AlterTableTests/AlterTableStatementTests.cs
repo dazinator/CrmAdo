@@ -331,8 +331,8 @@ namespace CrmAdo.Tests
             // we should have a default min and max value that is not greater in length that the precision we have specified. 
             Assert.That(attMeta.MinValue, Is.Not.Null);
             Assert.That(attMeta.MaxValue, Is.Not.Null);
-            Assert.That(attMeta.MinValue.ToString().Length, Is.EqualTo(precision));
-            Assert.That(attMeta.MaxValue.ToString().Length, Is.EqualTo(precision));
+            Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Length, Is.EqualTo(precision));
+            Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Length, Is.EqualTo(precision));
 
             // What dynamics sdk refers to as the 'precision' here is actually what we refer to as the 'scale' - the number of digits allowed after the decimal point.
             // as we never speficied a scale this should default to 0.
@@ -380,8 +380,10 @@ namespace CrmAdo.Tests
             // we should have a default min and max value that is not greater in length than the precision we specified. 
             Assert.That(attMeta.MinValue, Is.Not.Null);
             Assert.That(attMeta.MaxValue, Is.Not.Null);
-            Assert.That(attMeta.MinValue.ToString().Length, Is.EqualTo(precision));
-            Assert.That(attMeta.MaxValue.ToString().Length, Is.EqualTo(precision));
+            Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Replace(".","").Length, Is.EqualTo(precision));
+            Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Replace(".","").Length, Is.EqualTo(precision));
+
+         
 
             // What dynamics sdk refers to as the 'precision' here is actually what we refer to as the 'scale' - the number of digits allowed after the decimal point.
             // as we speficied a scale this should equal that.

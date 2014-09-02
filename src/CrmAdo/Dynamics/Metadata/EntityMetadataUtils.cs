@@ -10,8 +10,13 @@ using System.Text;
 
 namespace CrmAdo.Dynamics.Metadata
 {
+    
+
     public static class EntityMetadataUtils
     {
+
+
+
         /// <summary>Serialize metadata</summary>
         /// <param name="metaData">Metadata to serialize</param>
         /// <param name="formatting">Formatting, determines if indentation and line feeds are used in the file</param>
@@ -153,8 +158,10 @@ namespace CrmAdo.Dynamics.Metadata
         /// <returns></returns>
         public static int MaxSupportedSqlPrecision(this DecimalAttributeMetadata metadata)
         {
-            // = 12 + max scale of 10 = 22 in total.
-            int crmPrecision = Math.Max(DecimalAttributeMetadata.MinSupportedValue.ToString().Length, DecimalAttributeMetadata.MaxSupportedValue.ToString().Length);
+            // = 12 + max scale of 10 = 22 in total.      
+           var crmPrecision = Math.Max(Math.Truncate(Math.Abs(DecimalAttributeMetadata.MaxSupportedValue)).ToString().Length, Math.Truncate(Math.Abs(DecimalAttributeMetadata.MinSupportedValue)).ToString().Length);
+
+          //  int crmPrecision = Math.Max(Math.Truncate(DecimalAttributeMetadata.MaxSupportedValue).ToString().Length, Math.Truncate(DecimalAttributeMetadata.MinSupportedValue).ToString().Length);
             return crmPrecision + DecimalAttributeMetadata.MaxSupportedPrecision;
         }
 
@@ -185,6 +192,7 @@ namespace CrmAdo.Dynamics.Metadata
 
         }
 
+     
         /// <summary>
         /// Gets the default sql precision for the crm decimal attribute. 
         /// </summary>
@@ -192,7 +200,7 @@ namespace CrmAdo.Dynamics.Metadata
         /// <returns></returns>
         public static int DefaultSqlPrecision(this DecimalAttributeMetadata metadata)
         {
-            int precision = Math.Max(DecimalAttributeMetadata.MaxSupportedValue.ToString().Length, DecimalAttributeMetadata.MinSupportedValue.ToString().Length);
+            var precision = Math.Max(Math.Truncate(Math.Abs(DecimalAttributeMetadata.MaxSupportedValue)).ToString().Length, Math.Truncate(Math.Abs(DecimalAttributeMetadata.MinSupportedValue)).ToString().Length);
             return precision + DefaultSqlScale(metadata);
         }
 
@@ -225,7 +233,7 @@ namespace CrmAdo.Dynamics.Metadata
             }
 
             // = 12
-            int crmMaxValueLengthWithoutPrecision = Math.Max(DecimalAttributeMetadata.MinSupportedValue.ToString().Length, DecimalAttributeMetadata.MaxSupportedValue.ToString().Length);
+            var crmMaxValueLengthWithoutPrecision = Math.Max(Math.Truncate(Math.Abs(DecimalAttributeMetadata.MaxSupportedValue)).ToString().Length, Math.Truncate(Math.Abs(DecimalAttributeMetadata.MinSupportedValue)).ToString().Length);
             if (precision - scale > crmMaxValueLengthWithoutPrecision)
             {
                 throw new ArgumentOutOfRangeException("The precision is greater than the maximum value crm will allow.");
