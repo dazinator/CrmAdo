@@ -329,7 +329,6 @@ namespace CrmAdo.IntegrationTests
 
         }
 
-
         [Category("Experimentation")]
         [Test]
         [TestCase(TestName = "Experiment for min active row version")]
@@ -372,51 +371,7 @@ namespace CrmAdo.IntegrationTests
                 thread.Join();
             }
 
-        }
-
-        [Category("Experimentation")]
-        [Test]
-        [TestCase(TestName = "Experiment for min active row version")]
-        public void Experiment_For_Version_Number()
-        {
-            // var sql = string.Format("Select C.firstname, C.lastname From contact Where firstname Like '%ax%' ");
-
-
-            // now keep querying for min active row version..
-            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
-            var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
-                                                         new CrmClientCredentialsProvider());
-
-            var orgService = serviceProvider.GetOrganisationService();
-            using (orgService as IDisposable)
-            {
-                var accounts = orgService.RetrieveMultiple(new QueryExpression("account") { ColumnSet = new ColumnSet("versionnumber", "name") });
-                foreach (var a in accounts.Entities)
-                {
-                    // 621ae9e6-3fb1-e311-9caa-d89d6764506c is 369649
-                    Console.WriteLine(a.Id + " version number is: " + a["versionnumber"]);
-                }
-
-                var id = Guid.Parse("621ae9e6-3fb1-e311-9caa-d89d6764506c");
-                var acc = orgService.Retrieve("account", id, new ColumnSet("versionnumber", "name"));
-
-                Console.WriteLine("version number is: " + acc["versionnumber"]);
-
-                acc["name"] = acc["name"] + "a";
-                orgService.Update(acc);
-
-                Console.WriteLine("version number immediately following update: " + acc["versionnumber"]);
-
-                acc = orgService.Retrieve("account", id, new ColumnSet("versionnumber", "name"));
-                Console.WriteLine("version number requeried after update: " + acc["versionnumber"]);
-
-            }
-
-
-
-
-        }
-
+        }      
 
         [Category("Experimentation")]
         [Test]
@@ -667,33 +622,8 @@ namespace CrmAdo.IntegrationTests
 
 
 
-        }
-
-
-        //
-        [Category("Experimentation")]
-        [Test]
-        [TestCase(TestName = "Experiment for row version of particular entity")]
-        public void Experiment_For_Row_Version_oF_Entity()
-        {
-            // var sql = string.Format("Select C.firstname, C.lastname From contact Where firstname Like '%ax%' ");
-
-
-            // now keep querying for min active row version..
-            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
-            var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
-                                                         new CrmClientCredentialsProvider());
-
-            var orgService = serviceProvider.GetOrganisationService();
-            using (orgService as IDisposable)
-            {
-                var entId = Guid.Parse("cfbc27e7-46a3-459c-992f-daa6c51d49f4");
-                var ent = orgService.Retrieve("new_synctest", entId, new ColumnSet("versionnumber", "new_name"));
-                Console.WriteLine(ent.Id + " version number is: " + ent["versionnumber"]);
-            }
-
-        }
-
+        }      
+       
 
         private void DoSomeWork(object o)
         {

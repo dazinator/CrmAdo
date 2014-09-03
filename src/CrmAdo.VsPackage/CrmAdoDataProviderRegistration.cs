@@ -61,17 +61,18 @@ namespace CrmAdo.DdexProvider
                 supportedProviderKey.SetValue("DisplayName", "Provider_DisplayName, " + resourcesNamespace);
             }
             finally
-            {
+            {           
+
                 if (supportedProviderKey != null)
-                    providerKey.Close();
+                    supportedProviderKey.Close();
                 if (supportedProvidersKey != null)
-                    providerKey.Close();
+                    supportedProvidersKey.Close();
                 if (dataSourceKey != null)
-                    providerKey.Close();
+                    dataSourceKey.Close();
                 if (dataSourceInfoKey != null)
-                    providerKey.Close();
+                    dataSourceInfoKey.Close();
                 if (supportedObjectsKey != null)
-                    providerKey.Close();
+                    supportedObjectsKey.Close();
                 if (providerKey != null)
                     providerKey.Close();
 

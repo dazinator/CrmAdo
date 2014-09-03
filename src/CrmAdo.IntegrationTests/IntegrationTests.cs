@@ -15,6 +15,56 @@ namespace CrmAdo.IntegrationTests
     [TestFixture()]
     public class IntegrationTests
     {
+
+        [TestFixtureSetUp]
+        public void TestDataSetup()
+        {
+
+            CleanUp();
+
+            var sqlFormatString = "INSERT INTO CONTACT (contactid, firstname, lastname) VALUES('{0}', '{1}', '{2}')";
+            var insertAlbertEinstenSql = string.Format(sqlFormatString, Guid.Parse("21476b89-41b1-e311-9351-6c3be5be9f98"), "Albert", "Einstein");
+
+            ExecuteReader(insertAlbertEinstenSql, 1);
+
+            var insertMaxPlanck = string.Format(sqlFormatString, Guid.Parse("5f90afbb-41b1-e311-9351-6c3be5be9f98"), "Max", "Planck");
+            ExecuteReader(insertMaxPlanck, 1);
+
+            var insertGalileo = string.Format(sqlFormatString, Guid.Parse("6f90afbb-51b1-e311-9351-6c3ce5be9f93"), "Galileo", "Galilei");
+            ExecuteReader(insertGalileo, 1);
+
+
+
+
+        }
+
+        private void ExecuteReader(string sql, int assertResultCount)
+        {
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var command = conn.CreateCommand();
+
+                Console.WriteLine("Executing sql command: " + sql);
+                command.CommandText = sql;
+                //   command.CommandType = CommandType.Text;
+
+                using (var reader = command.ExecuteReader())
+                {
+                    int resultCount = 0;
+                    foreach (var result in reader)
+                    {
+                        resultCount++;
+                        //   var contactId = (Guid)reader["contactid"];
+                        // Console.WriteLine(string.Format("{0}", contactId));
+                    }
+                    Assert.That(resultCount, Is.EqualTo(assertResultCount));
+                }
+            }
+        }
+
         // NOTE: THESE TESTS REQUIRE A CONNECTION STRING TO BE SET IN THE CONFIG FILE, WITH A NAME OF 'CrmOrganisation'
         // ============================================================================================================
         [Category("Integration")]
@@ -241,8 +291,62 @@ namespace CrmAdo.IntegrationTests
 
         }
 
+        [TestFixtureTearDown]
+        public void CleanUp()
+        {
+            var sqlFormatString = "DELETE FROM CONTACT WHERE contactid = '{0}'";
+            var deleteAlbertEinstenSql = string.Format(sqlFormatString, Guid.Parse("21476b89-41b1-e311-9351-6c3be5be9f98"));
+
+            try
+            {
+                ExecuteNonQuery(deleteAlbertEinstenSql, 1);
+            }
+            catch (Exception e)
+            {
+                // throw;
+            }
 
 
+            var deleteMaxPlanck = string.Format(sqlFormatString, Guid.Parse("5f90afbb-41b1-e311-9351-6c3be5be9f98"));
+            try
+            {
+                ExecuteNonQuery(deleteMaxPlanck, 1);
+            }
+            catch (Exception e)
+            {
+                // throw;
+            }
+
+            var deleteGalileo = string.Format(sqlFormatString, Guid.Parse("6f90afbb-51b1-e311-9351-6c3ce5be9f93"));
+            try
+            {
+                ExecuteNonQuery(deleteGalileo, 1);
+            }
+            catch (Exception e)
+            {
+                // throw;
+            }
+        }
+
+        private void ExecuteNonQuery(string sql, int assertResultt)
+        {
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var command = conn.CreateCommand();
+
+                Console.WriteLine("Executing sql command: " + sql);
+                command.CommandText = sql;
+                //   command.CommandType = CommandType.Text;
+
+                var result = command.ExecuteNonQuery();
+
+                Assert.That(result, Is.EqualTo(assertResultt));
+
+            }
+        }
 
 
     }

@@ -24,7 +24,7 @@ namespace CrmAdo
 
         public bool HasResults()
         {
-            return Results.Entities != null && Results.Entities.Any();
+            return Results != null && Results.Entities != null && Results.Entities.Any();
         }
 
         public int ResultCount()
