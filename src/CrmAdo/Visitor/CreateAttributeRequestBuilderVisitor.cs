@@ -296,7 +296,7 @@ namespace CrmAdo.Visitor
             else
             {
                 // generate schema name.
-                oneToManyRelationship.SchemaName = string.Format("{0}_{1}", referencingAttributeName, oneToManyRelationship.ReferencedEntity);
+                oneToManyRelationship.SchemaName = string.Format("{0}_{1}_{2}", oneToManyRelationship.ReferencedEntity, oneToManyRelationship.ReferencingEntity, referencingAttributeName);
                 //   throw new NotSupportedException("You must specify a constraint name for the foregin key constraint. This should be prefixed with the crm publisher prefix, e.g 'new_entity1_entity2'");
             }
             return oneToManyRelationship;
