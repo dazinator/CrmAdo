@@ -42,7 +42,7 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.BooleanType);
             Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(attMeta.DisplayName, Is.Not.Null);
-            Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+            // Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
             //  Assert.That(attMeta.DefaultValue, Is.EqualTo(int.MinValue));
@@ -101,6 +101,9 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.BooleanType);
             Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+            Assert.That(attMeta.DisplayName, Is.Not.Null);
+            //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+
             //  Assert.That(attMeta.DefaultValue, Is.EqualTo(int.MinValue));
             // CrmAdo should create a default yes / no option set, whihc should be able to be altered later if desired. 
             Assert.That(attMeta.OptionSet, Is.Not.Null);
@@ -155,6 +158,8 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.BooleanType);
             Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+            Assert.That(attMeta.DisplayName, Is.Not.Null);
+            //    Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
             //  Assert.That(attMeta.DefaultValue, Is.EqualTo(int.MinValue));
             // CrmAdo should create a default yes / no option set, whihc should be able to be altered later if desired. 
             Assert.That(attMeta.OptionSet, Is.Not.Null);
@@ -214,6 +219,8 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
             Assert.That(attMeta.Format == DateTimeFormat.DateAndTime);
+            Assert.That(attMeta.DisplayName, Is.Not.Null);
+            //  Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
 
         }
@@ -243,6 +250,8 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
             Assert.That(attMeta.Format == DateTimeFormat.DateOnly);
+            Assert.That(attMeta.DisplayName, Is.Not.Null);
+            //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
 
         }
@@ -290,6 +299,8 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
             Assert.That(attMeta.MinValue, Is.EqualTo(DecimalAttributeMetadata.MinSupportedValue));
             Assert.That(attMeta.MaxValue, Is.EqualTo(DecimalAttributeMetadata.MaxSupportedValue));
+            Assert.That(attMeta.DisplayName, Is.Not.Null);
+            //  Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
             // attMeta.Precision
             Assert.That(attMeta.Precision, Is.EqualTo(minScale));
 
@@ -328,6 +339,8 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DecimalType);
             Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+            Assert.That(attMeta.DisplayName, Is.Not.Null);
+            //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
             // we should have a default min and max value that is not greater in length that the precision we have specified. 
             Assert.That(attMeta.MinValue, Is.Not.Null);
@@ -377,6 +390,8 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DecimalType);
             Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+            Assert.That(attMeta.DisplayName, Is.Not.Null);
+            // Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
             // we should have a default min and max value that is not greater in length than the precision we specified. 
             Assert.That(attMeta.MinValue, Is.Not.Null);
@@ -437,6 +452,8 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
             Assert.That(attMeta.MinValue, Is.EqualTo(DoubleAttributeMetadata.MinSupportedValue));
             Assert.That(attMeta.MaxValue, Is.EqualTo(DoubleAttributeMetadata.MaxSupportedValue));
+            Assert.That(attMeta.DisplayName, Is.Not.Null);
+            //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
             // attMeta.Precision
             Assert.That(attMeta.Precision, Is.EqualTo(minScale));
 
@@ -475,6 +492,8 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DoubleType);
             Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+            Assert.That(attMeta.DisplayName, Is.Not.Null);
+            //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
             // we should have a default min and max value that is not greater in length that the precision we have specified. 
             Assert.That(attMeta.MinValue, Is.Not.Null);
@@ -525,6 +544,8 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DoubleType);
             Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+            Assert.That(attMeta.DisplayName, Is.Not.Null);
+            //     Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
             // we should have a default min and max value that is not greater in length than the precision we specified. 
             Assert.That(attMeta.MinValue, Is.Not.Null);
@@ -573,7 +594,10 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
             Assert.That(attMeta.MinValue, Is.EqualTo(int.MinValue));
             Assert.That(attMeta.MaxValue, Is.EqualTo(int.MaxValue));
-            attMeta.Format = IntegerFormat.None;
+            Assert.That(attMeta.Format, Is.EqualTo(IntegerFormat.None));
+            Assert.That(attMeta.DisplayName, Is.Not.Null);
+            //    Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+
 
 
         }
@@ -609,6 +633,8 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.LookupType);
             Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+            Assert.That(attMeta.DisplayName, Is.Not.Null);
+            //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
             // Assert on relationship.
             Assert.That(relationship.ReferencedEntity, Is.EqualTo(referencedEntityName.ToLower()));
@@ -618,6 +644,8 @@ namespace CrmAdo.Tests
             // assert on cascade config?
             Assert.That(relationship.RelationshipType, Is.EqualTo(RelationshipType.OneToManyRelationship));
             Assert.That(relationship.CascadeConfiguration, Is.Not.Null);
+            Assert.That(relationship.SchemaName, Is.Not.Null);
+            Assert.That(relationship.SchemaName, Is.StringStarting(newColumnName));
 
             var cascade = relationship.CascadeConfiguration;
 
@@ -627,7 +655,7 @@ namespace CrmAdo.Tests
             // therefore we assume that when users add in new foreign keys (lookups) that there are no cascading relationships. Otherwise the 2nd one
             // that is added would cause dynamics crm to throw an error.
 
-            Assert.That(cascade.Delete, Is.EqualTo(CascadeType.NoCascade));
+            Assert.That(cascade.Delete, Is.EqualTo(CascadeType.Restrict));
             Assert.That(cascade.Assign, Is.EqualTo(CascadeType.NoCascade));
             Assert.That(cascade.Merge, Is.EqualTo(CascadeType.NoCascade));
             Assert.That(cascade.Reparent, Is.EqualTo(CascadeType.NoCascade));
@@ -666,6 +694,8 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(attMeta.MaxLength, Is.EqualTo(MemoAttributeMetadata.MaxSupportedLength));
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+            Assert.That(attMeta.DisplayName, Is.Not.Null);
+            //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
         }
 
@@ -709,9 +739,11 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.MoneyType);
             Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+
             Assert.That(attMeta.MinValue, Is.EqualTo(MoneyAttributeMetadata.MinSupportedValue));
             Assert.That(attMeta.MaxValue, Is.EqualTo(MoneyAttributeMetadata.MaxSupportedValue));
-
+            Assert.That(attMeta.DisplayName, Is.Not.Null);
+            //     Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
             //When the PrecisionSource is set to zero (0), the MoneyAttributeMetadata.Precision value is used.
             //When the PrecisionSource is set to one (1), the Organization.PricingDecimalPrecision value is used.
             //When the PrecisionSource is set to two (2), the TransactionCurrency.CurrencyPrecision value is used.
@@ -752,11 +784,17 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.MoneyType);
             Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+            Assert.That(attMeta.DisplayName, Is.Not.Null);
+            //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
             Assert.That(attMeta.MinValue, Is.Not.Null);
             Assert.That(attMeta.MaxValue, Is.Not.Null);
-            Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Length, Is.EqualTo(precision));
-            Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Length, Is.EqualTo(precision));
+
+            Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
+            Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
+
+            //Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Length, Is.EqualTo(precision));
+            //Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Length, Is.EqualTo(precision));
 
 
 
@@ -765,6 +803,62 @@ namespace CrmAdo.Tests
             //When the PrecisionSource is set to two (2), the TransactionCurrency.CurrencyPrecision value is used.
             Assert.That(attMeta.PrecisionSource, Is.EqualTo(0));
             Assert.That(attMeta.Precision, Is.EqualTo(MoneyAttributeMetadata.MinSupportedPrecision));
+
+        }
+
+        [Test(Description = "Should support adding a new money attribute with precision and scale.")]
+        public void Can_Add_Money_With_Precision_And_Scale()
+        {
+            // Arrange         
+            string entityName = "testentity";
+            string newColumnName = "newcol" + DateTime.UtcNow.Ticks.ToString();
+
+            int maxCrmPrecisionValue = MoneyAttributeMetadata.MaxSupportedValue.ToString().Length;
+
+            // Lets create a decimal field with random precision between 1 and 12.
+            int precision = new Random().Next(1, maxCrmPrecisionValue);
+            // Create random scale between min and max allowed.
+            int scale = new Random().Next(MoneyAttributeMetadata.MinSupportedPrecision, MoneyAttributeMetadata.MaxSupportedPrecision);
+
+
+            Console.WriteLine("Precision is " + precision);
+
+            string commandText = string.Format(@"ALTER TABLE {0} ADD {1} MONEY({2},{3})", entityName, newColumnName, precision, scale);
+
+            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+
+            var attMetadata = request.Attribute;
+
+            Assert.IsNotNull(attMetadata);
+            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+
+            Assert.That(attMetadata, Is.AssignableTo(typeof(MoneyAttributeMetadata)));
+
+            var attMeta = (MoneyAttributeMetadata)attMetadata;
+
+            Assert.That(attMeta.AttributeType == AttributeTypeCode.Money);
+            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.MoneyType);
+            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+            Assert.That(attMeta.DisplayName, Is.Not.Null);
+            //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+
+            Assert.That(attMeta.MinValue, Is.Not.Null);
+            Assert.That(attMeta.MaxValue, Is.Not.Null);
+
+            Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
+            Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
+
+            //Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Length, Is.EqualTo(precision));
+            //Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Length, Is.EqualTo(precision));
+
+
+
+            //When the PrecisionSource is set to zero (0), the MoneyAttributeMetadata.Precision value is used.
+            //When the PrecisionSource is set to one (1), the Organization.PricingDecimalPrecision value is used.
+            //When the PrecisionSource is set to two (2), the TransactionCurrency.CurrencyPrecision value is used.
+            Assert.That(attMeta.PrecisionSource, Is.EqualTo(0));
+            Assert.That(attMeta.Precision, Is.EqualTo(scale));
 
         }
 
@@ -840,6 +934,8 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.PicklistType);
             Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+            Assert.That(attMeta.DisplayName, Is.Not.Null);
+            //    Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
             //  Assert.That(attMeta.OptionSet.OptionSetType, Is.EqualTo(OptionSetType.Picklist));     
             //Assert.That(attMeta.OptionSet, Is.Not.Null);
@@ -922,6 +1018,8 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
             //  Assert.That(attMeta.OptionSet.OptionSetType, Is.EqualTo(OptionSetType.Picklist));
             Assert.That(attMeta.DefaultFormValue, Is.EqualTo(defaultValue));
+            Assert.That(attMeta.DisplayName, Is.Not.Null);
+            //    Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
             //Assert.That(attMeta.OptionSet, Is.Not.Null);
             //Assert.That(attMeta.OptionSet.Options, Is.Not.Null);
@@ -982,6 +1080,8 @@ namespace CrmAdo.Tests
             Assert.That(stringMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(stringMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
             Assert.That(stringMeta.MaxLength, Is.EqualTo(1));
+            Assert.That(stringMeta.DisplayName, Is.Not.Null);
+            // Assert.That(stringMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
         }
 
         [Test(Description = "Should support adding a new string attribute with a specified max size.")]
@@ -1010,6 +1110,8 @@ namespace CrmAdo.Tests
             Assert.That(stringMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
             Assert.That(stringMeta.MaxLength, Is.EqualTo(maxLength));
             Assert.That(stringMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+            Assert.That(stringMeta.DisplayName, Is.Not.Null);
+            //     Assert.That(stringMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
         }
 
         #endregion

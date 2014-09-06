@@ -153,11 +153,12 @@ namespace CrmAdo.Visitor
                     throw new NotSupportedException("DataType: " + item.Name + " is not supported.");
             }
 
-            string attributeSchemaName = item.Name;          
+            string attributeSchemaName = item.Name;
+            string attributeLogicalName = attributeSchemaName.ToLower();
             attMetadata.SchemaName = attributeSchemaName;
-            attMetadata.LogicalName = attributeSchemaName.ToLower();
+            attMetadata.LogicalName = attributeLogicalName;
             attMetadata.RequiredLevel = new AttributeRequiredLevelManagedProperty(AttributeRequiredLevel.None);
-
+            attMetadata.DisplayName = new Label(attributeSchemaName, DefaultLanguageCode);
             // If this is a one to many attribute the request is a create one to many request.
             if (relationship != null)
             {
@@ -265,14 +266,14 @@ namespace CrmAdo.Visitor
             {
                 oneToManyRelationship.ReferencedAttribute = fkConstraint.ReferencedColumn.ToLower();
             }
-
+            var referencingAttributeName = this.CurrentColumnDefinition.Name.ToLower();
             oneToManyRelationship.ReferencingEntity = this.AlterTableName.ToLower();
-            oneToManyRelationship.ReferencingAttribute = this.CurrentColumnDefinition.Name.ToLower();
+            // oneToManyRelationship.ReferencingAttribute = this.CurrentColumnDefinition.Name.ToLower();
 
             oneToManyRelationship.CascadeConfiguration = new CascadeConfiguration();
 
             oneToManyRelationship.CascadeConfiguration.Assign = CascadeType.NoCascade;
-            oneToManyRelationship.CascadeConfiguration.Delete = CascadeType.NoCascade;
+            oneToManyRelationship.CascadeConfiguration.Delete = CascadeType.Restrict;
             oneToManyRelationship.CascadeConfiguration.Merge = CascadeType.NoCascade;
             oneToManyRelationship.CascadeConfiguration.Reparent = CascadeType.NoCascade;
             oneToManyRelationship.CascadeConfiguration.Share = CascadeType.NoCascade;
@@ -292,6 +293,12 @@ namespace CrmAdo.Visitor
             {
                 oneToManyRelationship.SchemaName = fkConstraint.ConstraintName;
             }
+            else
+            {
+                // generate schema name.
+                oneToManyRelationship.SchemaName = string.Format("{0}_{1}", referencingAttributeName, oneToManyRelationship.ReferencedEntity);
+                //   throw new NotSupportedException("You must specify a constraint name for the foregin key constraint. This should be prefixed with the crm publisher prefix, e.g 'new_entity1_entity2'");
+            }
             return oneToManyRelationship;
         }
 
@@ -306,6 +313,7 @@ namespace CrmAdo.Visitor
         private LookupAttributeMetadata BuildCreateLookupAttribute()
         {
             var lookupAtt = new LookupAttributeMetadata();
+
             return lookupAtt;
         }
 
@@ -315,6 +323,7 @@ namespace CrmAdo.Visitor
             var intAttribute = new IntegerAttributeMetadata();
             intAttribute.MaxValue = int.MaxValue;
             intAttribute.MinValue = int.MinValue;
+            intAttribute.Format = IntegerFormat.None;
             return intAttribute;
         }
 
