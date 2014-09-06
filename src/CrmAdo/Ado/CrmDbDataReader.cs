@@ -122,7 +122,10 @@ namespace CrmAdo
 
         public override int FieldCount
         {
-            get { return _Results.ColumnMetadata.Count; }
+            get
+            {
+                return _Results.ColumnMetadata.Count;
+            }
         }
 
         public override string GetName(int ordinal)
@@ -241,7 +244,7 @@ namespace CrmAdo
                 default:
                     return val;
             }
-          
+
         }
 
         public T GetValue<T>(int ordinal)

@@ -11,6 +11,7 @@ using CrmAdo.Dynamics.Metadata;
 using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
+using CrmAdo.Core;
 
 namespace CrmAdo.Visitor
 {
@@ -22,7 +23,9 @@ namespace CrmAdo.Visitor
 
         public const int NameMaxLength = 4000;
         public const int DefaultNameMaxLength = 200;
+        public ICrmMetadataNamingProvider _SchemaNameProvider;
 
+        private CrmMetadataNamingConvention _NamingConvention;
 
         public CreateEntityRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider)
             : this(null, metadataProvider)
@@ -31,10 +34,18 @@ namespace CrmAdo.Visitor
         }
 
         public CreateEntityRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider)
+            : this(parameters, metadataProvider, new CrmAdoCrmMetadataNamingProvider())
+        {
+
+        }
+
+        public CreateEntityRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider, ICrmMetadataNamingProvider schemaNameProvider)
         {
             Request = new CreateEntityRequest();
             Parameters = parameters;
             MetadataProvider = metadataProvider;
+            _SchemaNameProvider = schemaNameProvider;
+            _NamingConvention = schemaNameProvider.GetAttributeNamingConvention();
         }
 
         public CreateEntityRequest Request { get; set; }
@@ -62,8 +73,13 @@ namespace CrmAdo.Visitor
 
         protected override void VisitCreateTableDefinition(CreateTableDefinition item)
         {
-            var name = item.Name;
-            EntityBuilder = EntityConstruction.ConstructEntity(name);
+
+            var entityName = _NamingConvention.GetEntityLogicalName(item.Name);
+          
+            EntityBuilder = EntityConstruction.ConstructEntity(entityName);
+            EntityBuilder.SchemaName(_NamingConvention.GetEntitySchemaName(entityName))
+                         .DisplayName(_NamingConvention.GetEntityDisplayName(entityName))
+                         .DisplayCollectionName(_NamingConvention.GetEntityDisplayCollectionName(entityName));
 
             if (item.Columns != null && item.Columns.Any())
             {
@@ -142,12 +158,12 @@ namespace CrmAdo.Visitor
             {
                 if (!HasFoundPrimaryKey)
                 {
-                    throw new NotSupportedException(string.Format("The Column '{0}' must have a PRIMARY KEY constraint."));
+                    throw new NotSupportedException(string.Format("Column: '{0}' must have a PRIMARY KEY constraint.", columnName));
                 }
 
                 // we found id column.
-                var expectedColumnName = EntityBuilder.Entity.LogicalName + "id";
-                if (item.Name.ToLower() != expectedColumnName)
+                var expectedColumnName = _NamingConvention.GetEntityIdAttributeLogicalName(EntityBuilder.Entity.LogicalName);
+                if (columnName.ToLower() != expectedColumnName)
                 {
                     throw new NotSupportedException(string.Format("As the Column '{0}' is the primary key column it should be named {1}. This is a requirement of dynamics CRM.", item.Name, expectedColumnName));
                 }
@@ -161,7 +177,13 @@ namespace CrmAdo.Visitor
                 {
                     throw new InvalidOperationException(string.Format("Column: {0}, Unable to establish column size.", item.Name));
                 }
-                EntityBuilder.WithPrimaryAttribute(item.Name, item.Name, item.Name, attRequiredLevel, this.ColumnSize.Value, StringFormat.Text);
+
+
+                var schemaName = _NamingConvention.GetAttributeSchemaName(item.Name);
+                var displayName = _NamingConvention.GetAttributeDisplayName(item.Name);
+                var description = _NamingConvention.GetAttributeDescription(item.Name);
+
+                EntityBuilder.WithPrimaryAttribute(schemaName, displayName, description, attRequiredLevel, this.ColumnSize.Value, StringFormat.Text);
                 HasFoundNameColumn = true;
                 IsVisitingCandidateNameColumn = false;
             }

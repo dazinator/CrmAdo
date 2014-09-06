@@ -93,6 +93,12 @@ namespace CrmAdo.Dynamics.Metadata
             return this;
         }
 
+        public EntityMetadataBuilder SchemaName(string schemaname)
+        {
+            this.Entity.SchemaName = schemaname;
+            return this;
+        }
+
     }
 
     //public interface ICrmUpdater

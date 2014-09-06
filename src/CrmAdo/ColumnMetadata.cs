@@ -31,6 +31,7 @@ namespace CrmAdo
             }
         }
 
+        [Obsolete("Need to decouple AttributeMetadata")]
         public virtual AttributeMetadata AttributeMetadata { get; set; }
 
         public string EntityAlias { get; set; }

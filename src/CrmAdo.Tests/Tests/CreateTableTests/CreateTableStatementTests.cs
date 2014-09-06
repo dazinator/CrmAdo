@@ -12,7 +12,7 @@ using CrmAdo.Tests.Support;
 
 namespace CrmAdo.Tests
 {
-    [Obsolete]
+    
     [Category("Create Table Statement")]
     [TestFixture()]
     public class CreateTableStatementTests : BaseOrganisationRequestBuilderVisitorTest
@@ -27,25 +27,35 @@ namespace CrmAdo.Tests
             // You cannot include any other columns in the create statement.
 
             // The table must then be "altered" to add in your additional custom columns.
-            string entityName = "testentity";
-            string idAttName = string.Format("{0}id", entityName);
+            string entityName = Core.CrmAdoCrmMetadataNamingProvider.Instance.GetEntityLogicalName("testentity");
+            string entitySchemaName = Core.CrmAdoCrmMetadataNamingProvider.Instance.GetEntitySchemaName(entityName);
+            string idAttName = Core.CrmAdoCrmMetadataNamingProvider.Instance.GetEntityIdAttributeLogicalName(entityName);
+       
             string nameAttName = "name";
+            string nameAttSchemaName = Core.CrmAdoCrmMetadataNamingProvider.Instance.GetAttributeSchemaName(nameAttName);
+            string nameAttDisplayName = Core.CrmAdoCrmMetadataNamingProvider.Instance.GetAttributeDisplayName(nameAttName);
+            // string publisherPrefix = Core.CrmMetadataNamingConvention.DefaultSchemaPrefix;
 
             string commandText = string.Format(@"CREATE TABLE {0}({1} UNIQUEIDENTIFIER PRIMARY KEY, {2} VARCHAR)", entityName, idAttName, nameAttName);
 
             var request = GetCreateEntityRequest(commandText);
-
             var entMetadata = request.Entity;
 
             Assert.IsNotNull(entMetadata);
-            Assert.That(entMetadata.LogicalName, Is.EqualTo(entityName.ToLower()));
+            Assert.That(entMetadata.LogicalName, Is.EqualTo(entityName));
+            Assert.That(entMetadata.SchemaName, Is.EqualTo(entitySchemaName));
+            // Assert.That(entMetadata.DisplayName., Is.EqualTo(entityName.ToLower()));       
+
 
             // var idAtt = entMetadata.PrimaryIdAttribute;
             //  Assert.That(idAtt, Is.EqualTo(idAttName));
 
             var nameAtt = request.PrimaryAttribute;
             Assert.IsNotNull(nameAtt);
-            Assert.That(nameAtt.LogicalName, Is.EqualTo(nameAttName.ToLower()));
+            Assert.That(nameAtt.LogicalName, Is.EqualTo(nameAttSchemaName));
+            Assert.That(nameAtt.SchemaName, Is.EqualTo(nameAttSchemaName));
+          //  Assert.That(nameAtt.DisplayName.la, Is.EqualTo(nameAttDisplayName));
+
         }
 
 

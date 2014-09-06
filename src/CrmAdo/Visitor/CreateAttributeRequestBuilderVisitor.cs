@@ -45,6 +45,7 @@ namespace CrmAdo.Visitor
         private ForeignKeyConstraint CurrentForeignKeyConstraint { get; set; }
         private CascadeConfiguration CurrentCascadeConfiguration { get; set; }
         private bool? CurrentDefaultBooleanAttributeValue { get; set; }
+        private int DefaultLanguageCode = 1033;
 
         private double? CurrentNumericLiteralValue { get; set; }
         private bool? HasConstraints { get; set; }
@@ -83,415 +84,373 @@ namespace CrmAdo.Visitor
                 throw new InvalidOperationException("You must specify a datatype.");
             }
 
-            ((IVisitableBuilder)item.DataType).Accept(this);
-
-            this.CurrentAttribute.LogicalName = item.Name.ToLower();
-            this.CurrentAttribute.SchemaName = item.Name;
-            this.CurrentAttribute.RequiredLevel = new AttributeRequiredLevelManagedProperty(AttributeRequiredLevel.None);
-
-            if (item.Default != null)
-            {
-                ((IVisitableBuilder)item.Default).Accept(this);
-                if (this.CurrentAttribute.AttributeType.Value == AttributeTypeCode.Boolean)
-                {
-                    var boolAtt = (BooleanAttributeMetadata)this.CurrentAttribute;
-                    boolAtt.DefaultValue = this.CurrentDefaultBooleanAttributeValue;
-                    this.CurrentDefaultBooleanAttributeValue = null;
-                }
-            }
+            string entityLogicalName = this.AlterTableName.ToLower();
+            this.Request = BuildCreateRequest(entityLogicalName, item);
         }
 
-        protected override void VisitDataType(DataType item)
+        protected OrganizationRequest BuildCreateRequest(string entitySchemaName, ColumnDefinition item)
         {
-            int languageCode = 1033;
-            CreateAttributeRequest createAttRequest = null;
-            CreateOneToManyRequest createOneToManyRequest = null;
+            if (item.DataType == null)
+            {
+                throw new InvalidOperationException("You must specify a datatype.");
+            }
 
-            switch (item.Name.ToUpper())
+            OrganizationRequest result = null;
+            AttributeMetadata attMetadata = null;
+            ForeignKeyConstraint fkConstraint = null;
+            OneToManyRelationshipMetadata relationship = null;
+
+            switch (item.DataType.Name.ToUpper())
             {
                 case "BIT":
-                    // Create a boolean attribute
-                    createAttRequest = new CreateAttributeRequest();
-                    var optionSet = new BooleanOptionSetMetadata(
-                            new OptionMetadata(new Label("True", languageCode), 1),
-                            new OptionMetadata(new Label("False", languageCode), 0)
-                            );
-                    var boolAttribute = new BooleanAttributeMetadata(optionSet);
-                    CurrentAttribute = boolAttribute;
-                    createAttRequest.Attribute = CurrentAttribute;
-                    createAttRequest.EntityName = this.AlterTableName.ToLower();
-
-                    //var boolAttribute = new BooleanAttributeMetadata()
-                    //{
-                    //    // Set base properties
-                    //    SchemaName = schemaName,
-                    //    DisplayName = new Label(displayName, languageCode),
-                    //    RequiredLevel = new AttributeRequiredLevelManagedProperty(AttributeRequiredLevel.None),
-                    //    Description = new Label(description, languageCode),
-                    //    // Set extended properties
-                    //    OptionSet = 
-                    //};
-                    //this.Request.Attribute = boolAttribute;
-
+                    attMetadata = BuildCreateBooleanAttribute();
                     break;
                 case "DATE":
-
-                    // Create a date time attribute
-                    createAttRequest = new CreateAttributeRequest();
-                    DateTimeFormat dtFormat = DateTimeFormat.DateOnly;
-                    CurrentAttribute = new DateTimeAttributeMetadata(dtFormat);
-                    createAttRequest.Attribute = CurrentAttribute;
-                    createAttRequest.EntityName = this.AlterTableName.ToLower();
-                    //{
-                    //    // Set base properties
-                    //    SchemaName = schemaName,
-                    //    DisplayName = new Label(displayName, languageCode),
-                    //    RequiredLevel = new AttributeRequiredLevelManagedProperty(requiredLevel),
-                    //    Description = new Label(description, languageCode),
-                    //    // Set extended properties
-                    //    Format = format,
-                    //    ImeMode = imeMode
-                    //};
-
+                    attMetadata = BuildCreateDateAttribute();
                     break;
                 case "DATETIME":
-                    createAttRequest = new CreateAttributeRequest();
-                    createAttRequest.EntityName = this.AlterTableName.ToLower();
-                    DateTimeFormat dateTimeFormat = DateTimeFormat.DateAndTime;
-                    CurrentAttribute = new DateTimeAttributeMetadata(dateTimeFormat);
-                    createAttRequest.Attribute = CurrentAttribute;
+                    attMetadata = BuildCreateDateTimeAttribute();
                     break;
                 case "DECIMAL":
-
-                    // Define the primary attribute for the entity
-                    // Create a integer attribute	
-                    createAttRequest = new CreateAttributeRequest();
-                    createAttRequest.EntityName = this.AlterTableName.ToLower();
-                    var decimalMetadata = new DecimalAttributeMetadata();
-                    CurrentAttribute = decimalMetadata;
-                    createAttRequest.Attribute = CurrentAttribute;
-
-                    int precision = decimalMetadata.DefaultSqlPrecision();
-                    int scale = decimalMetadata.DefaultSqlScale();
-
-                    if (item.Arguments != null && item.Arguments.Any())
-                    {
-                        // first is scale, second is precision.
-                        var argsCount = item.Arguments.Count();
-                        if (argsCount > 2)
-                        {
-                            throw new InvalidOperationException("Datatype can have a maximum of 2 size arguments.");
-                        }
-
-                        if (argsCount >= 1)
-                        {
-                            var sqlPrecisionArg = item.Arguments.First();
-                            ((IVisitableBuilder)sqlPrecisionArg).Accept(this);
-                            if (CurrentNumericLiteralValue != null)
-                            {
-                                precision = Convert.ToInt32(CurrentNumericLiteralValue);
-                                CurrentNumericLiteralValue = null;
-                            }
-
-                        }
-
-                        if (argsCount >= 2)
-                        {
-                            int? sqlScale = null;
-                            var sqlScaleArg = item.Arguments.Skip(1).Take(1).Single();
-                            ((IVisitableBuilder)sqlScaleArg).Accept(this);
-                            if (CurrentNumericLiteralValue != null)
-                            {
-                                sqlScale = Convert.ToInt32(CurrentNumericLiteralValue);
-                                CurrentNumericLiteralValue = null;
-                            }
-                            scale = sqlScale.Value;
-                        }
-                    }
-
-                    decimalMetadata.SetFromSqlPrecisionAndScale(precision, scale);
-                    //int languageCode = 1033;
-                    //var att = new DecimalAttributeMetadata()
-                    //{
-                    //    // Set base properties
-                    //    SchemaName = schemaName,
-                    //    DisplayName = new Label(schemaName, languageCode),
-                    //    RequiredLevel = new AttributeRequiredLevelManagedProperty(requiredLevel),
-                    //    Description = new Label(description, languageCode),
-                    //    // Set extended properties
-                    //    Precision = precision,
-                    //    MaxValue = max,
-                    //    MinValue = min
-                    //};
-
-                    //this.Attributes.Add(att);
-                    //return this;
-
+                    attMetadata = BuildCreateDecimalAttribute();
                     break;
                 case "FLOAT":
-
-                    // memo
-                    createAttRequest = new CreateAttributeRequest();
-                    //DateTimeFormat dtFormat = DateTimeFormat.DateOnly;
-                    var doubleAttribute = new DoubleAttributeMetadata();
-                    CurrentAttribute = doubleAttribute;
-                    createAttRequest.Attribute = CurrentAttribute;
-                    createAttRequest.EntityName = this.AlterTableName.ToLower();
-
-                    int doublePrecision = doubleAttribute.DefaultSqlPrecision();
-                    int doubleScale = doubleAttribute.DefaultSqlScale();
-
-
-                    if (item.Arguments != null && item.Arguments.Any())
-                    {
-                        // first is scale, second is precision.
-                        var argsCount = item.Arguments.Count();
-                        if (argsCount > 2)
-                        {
-                            throw new InvalidOperationException("Datatype can have a maximum of 2 size arguments.");
-                        }
-
-                        if (argsCount >= 1)
-                        {
-                            var sqlPrecisionArg = item.Arguments.First();
-                            ((IVisitableBuilder)sqlPrecisionArg).Accept(this);
-                            if (CurrentNumericLiteralValue != null)
-                            {
-                                doublePrecision = Convert.ToInt32(CurrentNumericLiteralValue);
-                                CurrentNumericLiteralValue = null;
-                            }
-
-                        }
-
-                        if (argsCount >= 2)
-                        {
-                            int? sqlScale = null;
-                            var sqlScaleArg = item.Arguments.Skip(1).Take(1).Single();
-                            ((IVisitableBuilder)sqlScaleArg).Accept(this);
-                            if (CurrentNumericLiteralValue != null)
-                            {
-                                sqlScale = Convert.ToInt32(CurrentNumericLiteralValue);
-                                CurrentNumericLiteralValue = null;
-                            }
-                            doubleScale = sqlScale.Value;
-                        }
-                    }
-
-
-                    doubleAttribute.SetFromSqlPrecisionAndScale(doublePrecision, doubleScale);
-
+                    attMetadata = BuildCreateFloatAttribute();
                     break;
-
                 case "INT":
-
-                    var firstForeignKey = FindFirstForeignKeyConstraint();
-                    if (firstForeignKey != null)
+                    fkConstraint = FindFirstForeignKeyConstraint();
+                    if (fkConstraint != null)
                     {
                         // must be a picklist
-                        throw new NotImplementedException();
+                        attMetadata = BuildCreatePicklistAttribute();
+                        break;
                     }
-
-                    // Must be an integer attribute.
-                    createAttRequest = new CreateAttributeRequest();
-                    createAttRequest.EntityName = this.AlterTableName.ToLower();
-                    var intAttribute = new IntegerAttributeMetadata();
-                    CurrentAttribute = intAttribute;
-                    createAttRequest.Attribute = CurrentAttribute;
-                    intAttribute.MaxValue = int.MaxValue;
-                    intAttribute.MinValue = int.MinValue;
-
+                    attMetadata = BuildCreateIntAttribute();
                     break;
                 case "UNIQUEIDENTIFIER":
-
                     // If this is a unique identifier that has a foreign key constriant then it is a lookup.
-                    createOneToManyRequest = new CreateOneToManyRequest();
-
-                    var fkConstraint = FindFirstForeignKeyConstraint();
+                    fkConstraint = FindFirstForeignKeyConstraint();
                     if (fkConstraint == null)
                     {
                         throw new NotSupportedException("Crm does not allow creation of GUID columns. If you meant to create a lookup column you must include a foreign key constraint to an options table.");
                     }
-
-                    var oneToManyRelationship = new OneToManyRelationshipMetadata();
-                    createOneToManyRequest.OneToManyRelationship = oneToManyRelationship;
-
-                    oneToManyRelationship.ReferencedEntity = fkConstraint.ReferencedTable.Name.ToLower();
-                    if(!string.IsNullOrWhiteSpace(fkConstraint.ReferencedColumn))
-                    {
-                        oneToManyRelationship.ReferencedAttribute = fkConstraint.ReferencedColumn.ToLower();
-                    }                  
-
-                    oneToManyRelationship.ReferencingEntity = this.AlterTableName.ToLower();
-                    oneToManyRelationship.ReferencingAttribute = this.CurrentColumnDefinition.Name.ToLower();
-
-                    oneToManyRelationship.CascadeConfiguration = new CascadeConfiguration();
-
-                    oneToManyRelationship.CascadeConfiguration.Assign = CascadeType.NoCascade;
-                    oneToManyRelationship.CascadeConfiguration.Delete = CascadeType.NoCascade;
-                    oneToManyRelationship.CascadeConfiguration.Merge = CascadeType.NoCascade;
-                    oneToManyRelationship.CascadeConfiguration.Reparent = CascadeType.NoCascade;
-                    oneToManyRelationship.CascadeConfiguration.Share = CascadeType.NoCascade;
-                    oneToManyRelationship.CascadeConfiguration.Unshare = CascadeType.NoCascade;
-
-                    this.CurrentCascadeConfiguration = oneToManyRelationship.CascadeConfiguration;
-                    if (fkConstraint.OnDeleteAction != null)
-                    {
-                        fkConstraint.OnDeleteAction.Accept(this);
-                    }
-                    if (fkConstraint.OnUpdateAction != null)
-                    {
-                        fkConstraint.OnUpdateAction.Accept(this);
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(fkConstraint.ConstraintName))
-                    {
-                        oneToManyRelationship.SchemaName = fkConstraint.ConstraintName;
-                    }
-
-                    var lookupAtt = new LookupAttributeMetadata();                  
-                   // lookupAtt.EntityLogicalName = this.AlterTableName.ToLower();
-                    createOneToManyRequest.Lookup = lookupAtt;
-                    this.CurrentAttribute = lookupAtt;
-                    //OneToManyRelationship =
-                    //        new OneToManyRelationshipMetadata
-                    //        {
-                    //            ReferencedEntity = "account",
-                    //            ReferencingEntity = "campaign",
-                    //            SchemaName = "new_account_campaign",
-                    //            AssociatedMenuConfiguration = new AssociatedMenuConfiguration
-                    //            {
-                    //                Behavior = AssociatedMenuBehavior.UseLabel,
-                    //                Group = AssociatedMenuGroup.Details,
-                    //                Label = new Label("Account", 1033),
-                    //                Order = 10000
-                    //            },
-                    //            CascadeConfiguration = new CascadeConfiguration
-                    //            {
-                    //                Assign = CascadeType.NoCascade,
-                    //                Delete = CascadeType.RemoveLink,
-                    //                Merge = CascadeType.NoCascade,
-                    //                Reparent = CascadeType.NoCascade,
-                    //                Share = CascadeType.NoCascade,
-                    //                Unshare = CascadeType.NoCascade
-                    //            }
-                    //        },
-                    //Lookup = new LookupAttributeMetadata
-                    //{
-                    //    SchemaName = "new_parent_accountid",
-                    //    DisplayName = new Label("Account Lookup", 1033),
-                    //    RequiredLevel = new AttributeRequiredLevelManagedProperty(AttributeRequiredLevel.None),
-                    //    Description = new Label("Sample Lookup", 1033)
-                    //}
-
-
+                    relationship = BuildOneToManyRelationshipMetadata(fkConstraint);
+                    var lookup = BuildCreateLookupAttribute();
+                    attMetadata = lookup;
                     break;
                 case "NVARCHAR":
-
-                    if (item.HasMax)
+                    if (item.DataType.HasMax)
                     {
-                        // memo
-                        createAttRequest = new CreateAttributeRequest();
-                        //DateTimeFormat dtFormat = DateTimeFormat.DateOnly;
-                        var memoAttribute = new MemoAttributeMetadata();
-                        CurrentAttribute = memoAttribute;
-                        createAttRequest.Attribute = CurrentAttribute;
-                        createAttRequest.EntityName = this.AlterTableName.ToLower();
-                        memoAttribute.MaxLength = MemoAttributeMetadata.MaxSupportedLength;
+                        attMetadata = BuildCreateMemoAttribute();
                         break;
-                        //  throw new NotImplementedException("MEMO");
                     }
-                    createAttRequest = new CreateAttributeRequest();
-                    //DateTimeFormat dtFormat = DateTimeFormat.DateOnly;
-                    var stringAttribute = new StringAttributeMetadata();
-                    CurrentAttribute = stringAttribute;
-                    createAttRequest.Attribute = CurrentAttribute;
-                    createAttRequest.EntityName = this.AlterTableName.ToLower();
-
-
-                    int maxLength = 1; // default string max length 1.
-                    if (item.Arguments != null && item.Arguments.Any())
-                    {
-                        // first is scale, second is precision.
-
-                        var argsCount = item.Arguments.Count();
-                        if (argsCount > 1)
-                        {
-                            throw new InvalidOperationException("Datatype can have a maximum of 1 size arguments.");
-                        }
-
-                        var maxLengthArg = item.Arguments.First();
-                        ((IVisitableBuilder)maxLengthArg).Accept(this);
-                        if (CurrentNumericLiteralValue != null)
-                        {
-                            maxLength = Convert.ToInt32(CurrentNumericLiteralValue);
-                            CurrentNumericLiteralValue = null;
-                        }
-                    }
-                    stringAttribute.MaxLength = maxLength;
+                    attMetadata = BuildCreateStringAttribute();
                     break;
                 case "MONEY":
-
-                    createAttRequest = new CreateAttributeRequest();
-                    //DateTimeFormat dtFormat = DateTimeFormat.DateOnly;
-                    var moneyAttribute = new MoneyAttributeMetadata();
-                    CurrentAttribute = moneyAttribute;
-                    createAttRequest.Attribute = CurrentAttribute;
-                    createAttRequest.EntityName = this.AlterTableName.ToLower();
-
-                    int moneyPrecision = moneyAttribute.DefaultSqlPrecision();
-                    int moneyScale = moneyAttribute.DefaultSqlScale();
-
-                    if (item.Arguments != null && item.Arguments.Any())
-                    {
-                        // first is scale, second is precision.
-                        var argsCount = item.Arguments.Count();
-                        if (argsCount > 2)
-                        {
-                            throw new InvalidOperationException("Datatype can have a maximum of 2 size arguments.");
-                        }
-
-                        if (argsCount >= 1)
-                        {
-                            var sqlPrecisionArg = item.Arguments.First();
-                            ((IVisitableBuilder)sqlPrecisionArg).Accept(this);
-                            if (CurrentNumericLiteralValue != null)
-                            {
-                                moneyPrecision = Convert.ToInt32(CurrentNumericLiteralValue);
-                                CurrentNumericLiteralValue = null;
-                            }
-
-                        }
-
-                        if (argsCount >= 2)
-                        {
-                            int? sqlScale = null;
-                            var sqlScaleArg = item.Arguments.Skip(1).Take(1).Single();
-                            ((IVisitableBuilder)sqlScaleArg).Accept(this);
-                            if (CurrentNumericLiteralValue != null)
-                            {
-                                sqlScale = Convert.ToInt32(CurrentNumericLiteralValue);
-                                CurrentNumericLiteralValue = null;
-                            }
-                            moneyScale = sqlScale.Value;
-                        }
-                    }
-
-                    moneyAttribute.SetFromSqlPrecisionAndScale(moneyPrecision, moneyScale);
-
+                    attMetadata = BuildCreateMoneyAttribute();
                     break;
-
                 default:
                     throw new NotSupportedException("DataType: " + item.Name + " is not supported.");
             }
 
-            if (createAttRequest != null)
+            string attributeSchemaName = item.Name;          
+            attMetadata.SchemaName = attributeSchemaName;
+            attMetadata.LogicalName = attributeSchemaName.ToLower();
+            attMetadata.RequiredLevel = new AttributeRequiredLevelManagedProperty(AttributeRequiredLevel.None);
+
+            // If this is a one to many attribute the request is a create one to many request.
+            if (relationship != null)
             {
-                this.Request = createAttRequest;
+                result = BuildCreateOneToManyRequest(relationship, (LookupAttributeMetadata)attMetadata);
+                return result;
             }
-            else if (createOneToManyRequest != null)
+            var entityLogicalName = entitySchemaName.ToLower();
+            result = BuildCreateAttributeRequest(entityLogicalName, attMetadata);
+            return result;
+        }
+
+        private MoneyAttributeMetadata BuildCreateMoneyAttribute()
+        {
+
+            //DateTimeFormat dtFormat = DateTimeFormat.DateOnly;
+            var moneyAttribute = new MoneyAttributeMetadata();
+            int moneyPrecision = moneyAttribute.DefaultSqlPrecision();
+            int moneyScale = moneyAttribute.DefaultSqlScale();
+            var dataType = this.CurrentColumnDefinition.DataType;
+
+            if (dataType.Arguments != null && dataType.Arguments.Any())
             {
-                this.Request = createOneToManyRequest;
+                // first is scale, second is precision.
+                var argsCount = dataType.Arguments.Count();
+                if (argsCount > 2)
+                {
+                    throw new InvalidOperationException("Datatype can have a maximum of 2 size arguments.");
+                }
+
+                if (argsCount >= 1)
+                {
+                    var sqlPrecisionArg = dataType.Arguments.First();
+                    ((IVisitableBuilder)sqlPrecisionArg).Accept(this);
+                    if (CurrentNumericLiteralValue != null)
+                    {
+                        moneyPrecision = Convert.ToInt32(CurrentNumericLiteralValue);
+                        CurrentNumericLiteralValue = null;
+                    }
+
+                }
+
+                if (argsCount >= 2)
+                {
+                    int? sqlScale = null;
+                    var sqlScaleArg = dataType.Arguments.Skip(1).Take(1).Single();
+                    ((IVisitableBuilder)sqlScaleArg).Accept(this);
+                    if (CurrentNumericLiteralValue != null)
+                    {
+                        sqlScale = Convert.ToInt32(CurrentNumericLiteralValue);
+                        CurrentNumericLiteralValue = null;
+                    }
+                    moneyScale = sqlScale.Value;
+                }
             }
+
+            moneyAttribute.SetFromSqlPrecisionAndScale(moneyPrecision, moneyScale);
+            return moneyAttribute;
+
+        }
+
+        private StringAttributeMetadata BuildCreateStringAttribute()
+        {
+            // var createAttRequest = new CreateAttributeRequest();
+            //DateTimeFormat dtFormat = DateTimeFormat.DateOnly;
+            var stringAttribute = new StringAttributeMetadata();
+            var dataType = this.CurrentColumnDefinition.DataType;
+            int maxLength = 1; // default string max length 1.
+            if (dataType.Arguments != null && dataType.Arguments.Any())
+            {
+                // first is scale, second is precision.
+
+                var argsCount = dataType.Arguments.Count();
+                if (argsCount > 1)
+                {
+                    throw new InvalidOperationException("Datatype can have a maximum of 1 size arguments.");
+                }
+
+                var maxLengthArg = dataType.Arguments.First();
+                ((IVisitableBuilder)maxLengthArg).Accept(this);
+                if (CurrentNumericLiteralValue != null)
+                {
+                    maxLength = Convert.ToInt32(CurrentNumericLiteralValue);
+                    CurrentNumericLiteralValue = null;
+                }
+            }
+            stringAttribute.MaxLength = maxLength;
+            return stringAttribute;
+
+        }
+
+        private MemoAttributeMetadata BuildCreateMemoAttribute()
+        {
+            //DateTimeFormat dtFormat = DateTimeFormat.DateOnly;
+            var memoAttribute = new MemoAttributeMetadata();
+            memoAttribute.MaxLength = MemoAttributeMetadata.MaxSupportedLength;
+            return memoAttribute;
+        }
+
+        private OneToManyRelationshipMetadata BuildOneToManyRelationshipMetadata(ForeignKeyConstraint fkConstraint)
+        {
+
+            var oneToManyRelationship = new OneToManyRelationshipMetadata();
+            oneToManyRelationship.ReferencedEntity = fkConstraint.ReferencedTable.Name.ToLower();
+            if (!string.IsNullOrWhiteSpace(fkConstraint.ReferencedColumn))
+            {
+                oneToManyRelationship.ReferencedAttribute = fkConstraint.ReferencedColumn.ToLower();
+            }
+
+            oneToManyRelationship.ReferencingEntity = this.AlterTableName.ToLower();
+            oneToManyRelationship.ReferencingAttribute = this.CurrentColumnDefinition.Name.ToLower();
+
+            oneToManyRelationship.CascadeConfiguration = new CascadeConfiguration();
+
+            oneToManyRelationship.CascadeConfiguration.Assign = CascadeType.NoCascade;
+            oneToManyRelationship.CascadeConfiguration.Delete = CascadeType.NoCascade;
+            oneToManyRelationship.CascadeConfiguration.Merge = CascadeType.NoCascade;
+            oneToManyRelationship.CascadeConfiguration.Reparent = CascadeType.NoCascade;
+            oneToManyRelationship.CascadeConfiguration.Share = CascadeType.NoCascade;
+            oneToManyRelationship.CascadeConfiguration.Unshare = CascadeType.NoCascade;
+
+            this.CurrentCascadeConfiguration = oneToManyRelationship.CascadeConfiguration;
+            if (fkConstraint.OnDeleteAction != null)
+            {
+                fkConstraint.OnDeleteAction.Accept(this);
+            }
+            if (fkConstraint.OnUpdateAction != null)
+            {
+                fkConstraint.OnUpdateAction.Accept(this);
+            }
+
+            if (!string.IsNullOrWhiteSpace(fkConstraint.ConstraintName))
+            {
+                oneToManyRelationship.SchemaName = fkConstraint.ConstraintName;
+            }
+            return oneToManyRelationship;
+        }
+
+        private CreateOneToManyRequest BuildCreateOneToManyRequest(OneToManyRelationshipMetadata relationship, LookupAttributeMetadata lookup)
+        {
+            var createOneToManyRequest = new CreateOneToManyRequest();
+            createOneToManyRequest.OneToManyRelationship = relationship;
+            createOneToManyRequest.Lookup = lookup;
+            return createOneToManyRequest;
+        }
+
+        private LookupAttributeMetadata BuildCreateLookupAttribute()
+        {
+            var lookupAtt = new LookupAttributeMetadata();
+            return lookupAtt;
+        }
+
+        private IntegerAttributeMetadata BuildCreateIntAttribute()
+        {
+            // Must be an integer attribute.        
+            var intAttribute = new IntegerAttributeMetadata();
+            intAttribute.MaxValue = int.MaxValue;
+            intAttribute.MinValue = int.MinValue;
+            return intAttribute;
+        }
+
+        private PicklistAttributeMetadata BuildCreatePicklistAttribute()
+        {
+            throw new NotImplementedException();
+        }
+
+        private DoubleAttributeMetadata BuildCreateFloatAttribute()
+        {
+            var doubleAttribute = new DoubleAttributeMetadata();
+            int doublePrecision = doubleAttribute.DefaultSqlPrecision();
+            int doubleScale = doubleAttribute.DefaultSqlScale();
+            var dataType = this.CurrentColumnDefinition.DataType;
+
+            if (dataType.Arguments != null && dataType.Arguments.Any())
+            {
+                // first is scale, second is precision.
+                var argsCount = dataType.Arguments.Count();
+                if (argsCount > 2)
+                {
+                    throw new InvalidOperationException("Datatype can have a maximum of 2 size arguments.");
+                }
+
+                if (argsCount >= 1)
+                {
+                    var sqlPrecisionArg = dataType.Arguments.First();
+                    ((IVisitableBuilder)sqlPrecisionArg).Accept(this);
+                    if (CurrentNumericLiteralValue != null)
+                    {
+                        doublePrecision = Convert.ToInt32(CurrentNumericLiteralValue);
+                        CurrentNumericLiteralValue = null;
+                    }
+
+                }
+
+                if (argsCount >= 2)
+                {
+                    int? sqlScale = null;
+                    var sqlScaleArg = dataType.Arguments.Skip(1).Take(1).Single();
+                    ((IVisitableBuilder)sqlScaleArg).Accept(this);
+                    if (CurrentNumericLiteralValue != null)
+                    {
+                        sqlScale = Convert.ToInt32(CurrentNumericLiteralValue);
+                        CurrentNumericLiteralValue = null;
+                    }
+                    doubleScale = sqlScale.Value;
+                }
+            }
+
+            doubleAttribute.SetFromSqlPrecisionAndScale(doublePrecision, doubleScale);
+            return doubleAttribute;
+        }
+
+        private DecimalAttributeMetadata BuildCreateDecimalAttribute()
+        {
+            var decimalMetadata = new DecimalAttributeMetadata();
+            int precision = decimalMetadata.DefaultSqlPrecision();
+            int scale = decimalMetadata.DefaultSqlScale();
+            var dataType = this.CurrentColumnDefinition.DataType;
+            if (dataType.Arguments != null && dataType.Arguments.Any())
+            {
+                // first is scale, second is precision.
+                var argsCount = dataType.Arguments.Count();
+                if (argsCount > 2)
+                {
+                    throw new InvalidOperationException("Datatype can have a maximum of 2 size arguments.");
+                }
+
+                if (argsCount >= 1)
+                {
+                    var sqlPrecisionArg = dataType.Arguments.First();
+                    ((IVisitableBuilder)sqlPrecisionArg).Accept(this);
+                    if (CurrentNumericLiteralValue != null)
+                    {
+                        precision = Convert.ToInt32(CurrentNumericLiteralValue);
+                        CurrentNumericLiteralValue = null;
+                    }
+                }
+
+                if (argsCount >= 2)
+                {
+                    int? sqlScale = null;
+                    var sqlScaleArg = dataType.Arguments.Skip(1).Take(1).Single();
+                    ((IVisitableBuilder)sqlScaleArg).Accept(this);
+                    if (CurrentNumericLiteralValue != null)
+                    {
+                        sqlScale = Convert.ToInt32(CurrentNumericLiteralValue);
+                        CurrentNumericLiteralValue = null;
+                    }
+                    scale = sqlScale.Value;
+                }
+            }
+
+            decimalMetadata.SetFromSqlPrecisionAndScale(precision, scale);
+            return decimalMetadata;
+        }
+
+        private DateTimeAttributeMetadata BuildCreateDateTimeAttribute()
+        {
+            DateTimeFormat dateTimeFormat = DateTimeFormat.DateAndTime;
+            var att = new DateTimeAttributeMetadata(dateTimeFormat);
+            return att;
+        }
+
+        private DateTimeAttributeMetadata BuildCreateDateAttribute()
+        {
+            DateTimeFormat dtFormat = DateTimeFormat.DateOnly;
+            var att = new DateTimeAttributeMetadata(dtFormat);
+            return att;
+        }
+
+        private BooleanAttributeMetadata BuildCreateBooleanAttribute()
+        {
+            var optionSet = new BooleanOptionSetMetadata(
+                    new OptionMetadata(new Label("True", DefaultLanguageCode), 1),
+                    new OptionMetadata(new Label("False", DefaultLanguageCode), 0)
+                    );
+            var boolAttribute = new BooleanAttributeMetadata(optionSet);
+
+            // Set default value.
+            if (this.CurrentColumnDefinition.Default != null)
+            {
+                ((IVisitableBuilder)this.CurrentColumnDefinition.Default).Accept(this);
+                boolAttribute.DefaultValue = this.CurrentDefaultBooleanAttributeValue;
+                this.CurrentDefaultBooleanAttributeValue = null;
+            }
+            return boolAttribute;
+        }
+
+        private CreateAttributeRequest BuildCreateAttributeRequest(string entityLogicalName, AttributeMetadata attributeMetadata)
+        {
+            var createAttRequest = new CreateAttributeRequest();
+            createAttRequest.EntityName = entityLogicalName;
+            createAttRequest.Attribute = attributeMetadata;
+            return createAttRequest;
         }
 
         protected override void VisitDefaultConstraint(DefaultConstraint item)
@@ -568,7 +527,6 @@ namespace CrmAdo.Visitor
             var param = Parameters[paramName];
             return param.Value;
         }
-
 
         public bool FilterForForeignKeyConstraint { get; set; }
 

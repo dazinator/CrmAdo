@@ -7,6 +7,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using CrmAdo.Visitor;
+using Microsoft.Xrm.Sdk.Metadata;
 
 namespace CrmAdo
 {
@@ -141,7 +142,7 @@ namespace CrmAdo
             var response = orgService.Execute(deleteRequest);
             AssignResponseParameter(command, response);
             var resultSet = new EntityResultSet(command, deleteRequest);
-            //var delResponse = response as DeleteResponse;
+            var delResponse = response as DeleteResponse;
             //if (delResponse != null)
             //{
             //    var result = delResponse.Results;
@@ -215,6 +216,87 @@ namespace CrmAdo
             return resultSet;
         }
 
+        private EntityResultSet ProcessCreateEntityRequest(CrmDbCommand command, CreateEntityRequest createEntityRequest)
+        {
+            var orgService = command.CrmDbConnection.OrganizationService;
+            var response = orgService.Execute(createEntityRequest);
+            var resultSet = new EntityResultSet(command, createEntityRequest);
+            var createResponse = response as CreateEntityResponse;
+            if (createResponse != null)
+            {
+                AssignResponseParameter(command, response);
+                // for execute reader and execute scalar purposes, we provide a result that just ahs the newly created id of the entity.
+                var result = new Entity("entitymetadata");
+                var idattname = string.Format("entitymetadataid");
+
+                result[idattname] = createResponse.EntityId;
+                result.Id = createResponse.EntityId;
+                result["primaryattributeid"] = createResponse.AttributeId;
+
+                resultSet.Results = new EntityCollection(new List<Entity>(new Entity[] { result }));
+
+                //var columns = new List<ColumnMetadata>();
+                //var col = new ColumnMetadata(null);
+               
+
+                //col.ColumnName = "primaryattributeid";
+                //col.LogicalAttributeName = "primaryattributeid";
+
+                // We populate metadata regarding the columns in the results. In this case its just the id attribute column for the inserted record.
+                //if (_MetadataProvider != null)
+                //{
+                //    var columns = new List<ColumnMetadata>();
+                //    var entityMeta = _MetadataProvider.GetEntityMetadata("");
+                //    columns.AddRange((from c in entityMeta.Attributes
+                //                      join s in result.Attributes.Select(a => a.Key)
+                //                          on c.LogicalName equals s
+                //                      select new ColumnMetadata(c)).Reverse());
+                //    resultSet.ColumnMetadata = columns;
+                //}
+
+            }
+            return resultSet;
+        }
+
+        private object ProcessCreateOnetoManyRequest(CrmDbCommand command, CreateOneToManyRequest createOneToManyRequest)
+        {
+            var orgService = command.CrmDbConnection.OrganizationService;
+            var response = orgService.Execute(createOneToManyRequest);
+            var resultSet = new EntityResultSet(command, createOneToManyRequest);
+            var createResponse = response as CreateOneToManyResponse;
+            if (createResponse != null)
+            {
+                AssignResponseParameter(command, response);
+                // for execute reader and execute scalar purposes, we provide a result that just ahs the newly created id of the entity.
+                var result = new Entity("attributemetadata");
+                var idattname = string.Format("attributemetadataid");
+                result[idattname] = createResponse.AttributeId;
+                result.Id = createResponse.AttributeId;
+                result["relationshipid"] = createResponse.RelationshipId;              
+                resultSet.Results = new EntityCollection(new List<Entity>(new Entity[] { result }));
+            }
+            return resultSet;
+        }
+
+        private object ProcessCreateAttributeRequest(CrmDbCommand command, CreateAttributeRequest createAttributeRequest)
+        {         
+            var orgService = command.CrmDbConnection.OrganizationService;
+            var response = orgService.Execute(createAttributeRequest);
+            var resultSet = new EntityResultSet(command, createAttributeRequest);
+            var createResponse = response as CreateAttributeResponse;
+            if (createResponse != null)
+            {
+                AssignResponseParameter(command, response);              
+                // for execute reader and execute scalar purposes, we provide a result that just ahs the newly created id of the entity.
+                var result = new Entity("attributemetadata");
+                var idattname = string.Format("attributemetadataid");
+                result[idattname] = createResponse.AttributeId;
+                result.Id = createResponse.AttributeId;
+                resultSet.Results = new EntityCollection(new List<Entity>(new Entity[] { result }));
+            }
+            return resultSet;
+        }
+
         #region Metadata
 
         private void PopulateMetadata(EntityResultSet resultSet, QueryExpression queryExpression)
@@ -239,7 +321,8 @@ namespace CrmAdo
             var entMeta = entityMetadata[query.EntityName];
             if (query.ColumnSet.AllColumns)
             {
-                columns.AddRange((from c in entMeta.Attributes orderby c.LogicalName select new ColumnMetadata(c)));}
+                columns.AddRange((from c in entMeta.Attributes orderby c.LogicalName select new ColumnMetadata(c)));
+            }
             else
             {
                 columns.AddRange((from s in query.ColumnSet.Columns
@@ -268,7 +351,7 @@ namespace CrmAdo
             var entMeta = entityMetadata[linkEntity.LinkToEntityName];
             if (linkEntity.Columns.AllColumns)
             {
-                  columns.AddRange((from c in entMeta.Attributes orderby c.LogicalName select new ColumnMetadata(c, linkEntity.EntityAlias)));
+                columns.AddRange((from c in entMeta.Attributes orderby c.LogicalName select new ColumnMetadata(c, linkEntity.EntityAlias)));
                 //columns.AddRange((from c in entMeta.Attributes select new ColumnMetadata(c, linkEntity.EntityAlias)).Reverse());
             }
             else
@@ -331,11 +414,36 @@ namespace CrmAdo
                 return results.ResultCount();
             }
 
+            var createEntityRequest = request as CreateEntityRequest;
+            if (createEntityRequest != null)
+            {
+                var results = ProcessCreateEntityRequest(command, createEntityRequest);
+                return -1;
+            }
+
+            var createAttributeRequest = request as CreateAttributeRequest;
+            if (createAttributeRequest != null)
+            {
+                var results = ProcessCreateAttributeRequest(command, createAttributeRequest);
+                return -1;
+            }
+
+            var createOneToManyRequest = request as CreateOneToManyRequest;
+            if (createOneToManyRequest != null)
+            {
+                var results = ProcessCreateOnetoManyRequest(command, createOneToManyRequest);
+                return -1;
+            }
+
             // we don't yet support any DDL.
             throw new NotSupportedException();
 
             // return -1;
         }
+
+       
+
+
 
 
     }

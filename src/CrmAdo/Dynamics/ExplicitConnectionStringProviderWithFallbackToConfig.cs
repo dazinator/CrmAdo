@@ -13,9 +13,9 @@ namespace CrmAdo.Dynamics
     public class ExplicitConnectionStringProviderWithFallbackToConfig : CrmConnectionProvider
     {
 
-        public const string DeploymentConnectionStringKey = "CrmDeploymentService";
-        public const string DiscoveryConnectionStringKey = "CrmDiscoveryService";
-        public const string OrgConnectionStringKey = "CrmOrganisationService";
+        public const string DeploymentConnectionStringKey = "CrmDeployment";
+        public const string DiscoveryConnectionStringKey = "CrmDiscovery";
+        public const string OrgConnectionStringKey = "CrmOrganisation";
 
         public override CrmConnection GetOrganisationServiceConnection()
         {

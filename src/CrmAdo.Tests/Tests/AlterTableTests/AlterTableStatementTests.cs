@@ -12,8 +12,6 @@ using System.Threading.Tasks;
 
 namespace CrmAdo.Tests
 {
-
-    [Obsolete]
     [Category("Alter Table Statement")]
     [TestFixture()]
     public class AlterTableStatementTests : BaseOrganisationRequestBuilderVisitorTest
@@ -43,6 +41,9 @@ namespace CrmAdo.Tests
             Assert.That(attMeta.AttributeType == AttributeTypeCode.Boolean);
             Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.BooleanType);
             Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+            Assert.That(attMeta.DisplayName, Is.Not.Null);
+            Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+
             Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
             //  Assert.That(attMeta.DefaultValue, Is.EqualTo(int.MinValue));
             // CrmAdo should create a default yes / no option set, whihc should be able to be altered later if desired. 

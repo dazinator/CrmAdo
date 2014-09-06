@@ -4,6 +4,7 @@ using NUnit.Framework;
 namespace CrmAdo.Tests
 {
     [TestFixture]
+    [Category("Unit Test")]
     public abstract class BaseTest<TTestSubject>
     {
         protected virtual TTestSubject CreateTestSubject()

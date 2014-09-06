@@ -182,6 +182,7 @@
     <Compile Include="Core\ICrmRequestProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SystemCommandParameters.cs" />
+    <Compile Include="Core\ISchemaNameProvider.cs" />
     <Compile Include="Util\EnumHelper.cs" />
     <Compile Include="Visitor\BaseOrganizationRequestBuilderVisitor.cs" />
     <Compile Include="Visitor\CreateEntityBuilderVisitor.cs" />

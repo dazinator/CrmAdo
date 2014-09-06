@@ -27,6 +27,11 @@ namespace CrmAdo
             return Results != null && Results.Entities != null && Results.Entities.Any();
         }
 
+        public bool HasColumnMetadata()
+        {
+            return ColumnMetadata != null && ColumnMetadata.Any();
+        }
+
         public int ResultCount()
         {
             if (HasResults())

@@ -13,7 +13,7 @@ using NUnit.Framework;
 namespace CrmAdo.IntegrationTests
 {
     [TestFixture()]
-    public class IntegrationTests
+    public class IntegrationTests : BaseTest
     {
 
         [TestFixtureSetUp]
@@ -38,36 +38,9 @@ namespace CrmAdo.IntegrationTests
 
         }
 
-        private void ExecuteReader(string sql, int assertResultCount)
-        {
-
-            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
-            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
-            {
-                conn.Open();
-                var command = conn.CreateCommand();
-
-                Console.WriteLine("Executing sql command: " + sql);
-                command.CommandText = sql;
-                //   command.CommandType = CommandType.Text;
-
-                using (var reader = command.ExecuteReader())
-                {
-                    int resultCount = 0;
-                    foreach (var result in reader)
-                    {
-                        resultCount++;
-                        //   var contactId = (Guid)reader["contactid"];
-                        // Console.WriteLine(string.Format("{0}", contactId));
-                    }
-                    Assert.That(resultCount, Is.EqualTo(assertResultCount));
-                }
-            }
-        }
-
         // NOTE: THESE TESTS REQUIRE A CONNECTION STRING TO BE SET IN THE CONFIG FILE, WITH A NAME OF 'CrmOrganisation'
         // ============================================================================================================
-        [Category("Integration")]
+
         [Test(Description = "Integration tests that perform a variety of select queries against CRM.")]
         [TestCase("=", "Some Guy", "{0} {1} '{2}'", TestName = "Should Support Equals a String Constant")]
         [TestCase("<>", "Donald", "{0} {1} '{2}'", TestName = "Should Support Not Equals a String Constant")]
@@ -141,7 +114,7 @@ namespace CrmAdo.IntegrationTests
 
         }
 
-        [Category("Integration")]
+
         [Test(Description = "Integration tests that gets metadata from crm.")]
         public void Should_Get_Changed_Metadata()
         {
@@ -173,7 +146,7 @@ namespace CrmAdo.IntegrationTests
             Assert.That(contactMetadata.Attributes.FirstOrDefault(a => a.LogicalName == "lastname"), Is.Not.Null);
         }
 
-        [Category("Integration")]
+
         [Test]
         [TestCase("INNER")]
         [TestCase("LEFT")]
@@ -228,7 +201,7 @@ namespace CrmAdo.IntegrationTests
 
         }
 
-        [Category("Integration")]
+
         [TestCase("INNER", "((C.firstname = 'Albert' AND C.lastname = 'Einstein') OR (C.lastname = 'Planck' AND C.firstname = 'Max')) AND (C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", 2, TestName = "Should be able to chain filter groups in parenthesis using AND as well as OR conjunctions")]
         [TestCase("INNER", "(C.firstname = 'Albert' AND C.lastname = 'Einstein') OR (C.lastname = 'Planck' AND C.firstname = 'Max') OR (C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", 4, TestName = "Should be able to chain mutiple filter groups in parenthesis using an OR conjunction")]
         [TestCase("INNER", "C.firstname = 'Albert' AND (C.lastname = 'Einstein' AND C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", 2, TestName = "Should be able to chain an AND conjunction with a nested filter group containing an AND conjunction")]
@@ -314,7 +287,7 @@ namespace CrmAdo.IntegrationTests
             }
             catch (Exception e)
             {
-                // throw;
+                Console.WriteLine(e.Message);
             }
 
             var deleteGalileo = string.Format(sqlFormatString, Guid.Parse("6f90afbb-51b1-e311-9351-6c3ce5be9f93"));
@@ -324,27 +297,7 @@ namespace CrmAdo.IntegrationTests
             }
             catch (Exception e)
             {
-                // throw;
-            }
-        }
-
-        private void ExecuteNonQuery(string sql, int assertResultt)
-        {
-
-            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
-            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
-            {
-                conn.Open();
-                var command = conn.CreateCommand();
-
-                Console.WriteLine("Executing sql command: " + sql);
-                command.CommandText = sql;
-                //   command.CommandType = CommandType.Text;
-
-                var result = command.ExecuteNonQuery();
-
-                Assert.That(result, Is.EqualTo(assertResultt));
-
+                Console.WriteLine(e.Message);
             }
         }
 

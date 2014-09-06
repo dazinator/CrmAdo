@@ -14,7 +14,7 @@ using NUnit.Framework;
 namespace CrmAdo.IntegrationTests
 {
     [TestFixture()]
-    public class InsertIntegrationTests
+    public class InsertIntegrationTests : BaseTest
     {
         private List<Guid> _NewContactIds;
 
@@ -33,7 +33,7 @@ namespace CrmAdo.IntegrationTests
 
         // NOTE: THESE TESTS REQUIRE A CONNECTION STRING TO BE SET IN THE CONFIG FILE, WITH A NAME OF 'CrmOrganisation'
         // ============================================================================================================
-        [Category("Integration")]
+      
         [Category("Insert Statement")]
         [Test(Description = "Integration tests that inserts a new contact into Dynamics CRM contacts.")]
         [TestCase("INSERT INTO contact (firstname, lastname) Values('{0}','{1}')")]
@@ -68,7 +68,7 @@ namespace CrmAdo.IntegrationTests
         }
 
 
-        [Category("Integration")]
+   
         [Category("Insert Statement")]
         [Category("Performance")]
         [Test(Description = "Integration tests that inserts 1000 contacts into Dynamics CRM.")]
@@ -100,7 +100,7 @@ namespace CrmAdo.IntegrationTests
         }
 
 
-        [Category("Integration")]
+   
         [Category("Select Statement")]
         [Category("Performance")]
         [TestCase(-1, Description = "Can select all contacts")]

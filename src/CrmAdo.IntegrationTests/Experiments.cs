@@ -15,7 +15,8 @@ using NUnit.Framework;
 namespace CrmAdo.IntegrationTests
 {
     [TestFixture()]
-    public class Experiments
+    [Category("Experimental")]
+    public class Experiments : BaseTest
     {
         [Category("Experimentation")]
         [Test]
@@ -371,7 +372,7 @@ namespace CrmAdo.IntegrationTests
                 thread.Join();
             }
 
-        }      
+        }
 
         [Category("Experimentation")]
         [Test]
@@ -622,8 +623,67 @@ namespace CrmAdo.IntegrationTests
 
 
 
-        }      
-       
+        }
+
+
+        [Category("Experimentation")]
+        [Test]
+        [TestCase(TestName = "Experiment for creating publisher")]
+        public void Experiment_For_Creating_Publisher()
+        {
+
+            ////Define a new publisher
+            //Publisher _crmSdkPublisher = new Publisher
+            //{
+            //    UniqueName = "sdksamples",
+            //    FriendlyName = "Microsoft CRM SDK Samples",
+            //    SupportingWebsiteUrl = "http://msdn.microsoft.com/en-us/dynamics/crm/default.aspx",
+            //    CustomizationPrefix = "sample",
+            //    EMailAddress = "someone@microsoft.com",
+            //    Description = "This publisher was created with samples from the Microsoft Dynamics CRM SDK"
+
+            //};
+
+
+            // var sql = string.Format("Select C.firstname, C.lastname From contact Where firstname Like '%ax%' ");
+            var sqlFormatString = @"INSERT INTO Publisher (UniqueName,FriendlyName,SupportingWebsiteUrl,CustomizationPrefix,EMailAddress,Description) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}');";
+            var sql = string.Format(sqlFormatString, "CrmAdo", "Crm Ado", @"http://dazinator.github.io/CrmAdo/", "crmado", "darrell.tunnell@googlemail.com", "crm ado publisher");
+
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var command = conn.CreateCommand();
+
+                Console.WriteLine("Executing command " + sql);
+                command.CommandText = sql;
+                //   command.CommandType = CommandType.Text;
+                using (var reader = command.ExecuteReader())
+                {
+                    int resultCount = 0;
+                    foreach (var result in reader)
+                    {
+                        resultCount++;
+                        var publisherid = (Guid)reader["publisherid"];
+                        // var versionNumber = (long)reader[3];
+                        Console.WriteLine(string.Format("{0}", publisherid));
+                    }
+                    //while (reader.Read())
+                    //{
+
+                    //}
+                    Console.WriteLine("There were " + resultCount + " results..");
+                }
+            }
+
+
+
+
+
+
+        }
+
 
         private void DoSomeWork(object o)
         {
