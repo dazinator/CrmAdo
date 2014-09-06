@@ -55,7 +55,7 @@ namespace CrmAdo.IntegrationTests
             //  string attributeSchemaName = "boolField";
             string lookupToEntity = "contact";
             var sql = string.Format(sqlFormatString, TestEntityName, DefaultPublisherPrefix, lookupToEntity);
-            Console.WriteLine(sql);
+          //  Console.WriteLine(sql);
 
             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
             using (var conn = new CrmDbConnection(connectionString.ConnectionString))
@@ -63,7 +63,7 @@ namespace CrmAdo.IntegrationTests
                 conn.Open();
                 var command = conn.CreateCommand();
 
-                Console.WriteLine("Executing command " + sql);
+             //   Console.WriteLine("Executing command " + sql);
                 command.CommandText = sql;
                 //   command.CommandType = CommandType.Text;
                 base.ExecuteNonQuery(sql, -1);
