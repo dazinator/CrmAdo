@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Globalization;
 using Microsoft.Xrm.Sdk.Metadata;
+using CrmAdo.Dynamics.Metadata;
 
 namespace CrmAdo
 {
@@ -53,7 +54,7 @@ namespace CrmAdo
             {
                 var row = schemaTable.Rows.Add();
                 var attMeta = columnMetadata.AttributeMetadata;
-                row[SchemaTableColumn.AllowDBNull] = !attMeta.IsPrimaryId.GetValueOrDefault();
+                row[SchemaTableColumn.AllowDBNull] = !attMeta.IsPrimaryId;
                 row[SchemaTableColumn.BaseColumnName] = attMeta.LogicalName;
                 row[SchemaTableColumn.BaseSchemaName] = null;
                 row[SchemaTableColumn.BaseTableName] = attMeta.EntityLogicalName;
@@ -62,7 +63,7 @@ namespace CrmAdo
 
                 // set column size
                 row[SchemaTableColumn.ColumnSize] = int.MaxValue;
-                row[SchemaTableColumn.DataType] = columnMetadata.GetFieldType();
+                row[SchemaTableColumn.DataType] = attMeta.GetFieldType();
                 row[SchemaTableColumn.IsAliased] = columnMetadata.HasAlias;
                 row[SchemaTableColumn.IsExpression] = false;
                 row[SchemaTableColumn.IsKey] = false; //for multi part keys // columnMetadata.AttributeMetadata.IsPrimaryId;
@@ -70,57 +71,21 @@ namespace CrmAdo
                 // only id must be unique.
 
                 row[SchemaTableColumn.IsUnique] = false;  //for timestamp columns only. //columnMetadata.AttributeMetadata.IsPrimaryId;
-                row[SchemaTableColumn.NonVersionedProviderType] = (int)columnMetadata.AttributeType();
-                switch (columnMetadata.AttributeMetadata.AttributeType.GetValueOrDefault())
+                row[SchemaTableColumn.NonVersionedProviderType] = (int)attMeta.AttributeType;
+
+                var haveMinAndMax = attMeta as IHaveMinMaxAndScaleValues;
+                if (haveMinAndMax != null)
                 {
-                    case AttributeTypeCode.Decimal:
-                        var decimalMeta = (DecimalAttributeMetadata)columnMetadata.AttributeMetadata;
-                        var decimalPrecision = Math.Max(decimalMeta.MinValue.ToString().Length, decimalMeta.MaxValue.ToString().Length) + decimalMeta.Precision;
-                        row[SchemaTableColumn.NumericPrecision] = decimalPrecision;
-                        row[SchemaTableColumn.NumericScale] = decimalMeta.Precision; // dynamics uses the term precision in its metadata to refer to the number of decimal places - which is actually the "scale"!
-                        break;
-                    case AttributeTypeCode.Double:
-                        var doubleMeta = (DoubleAttributeMetadata)columnMetadata.AttributeMetadata;
-                        var doublePrecision = Math.Max(doubleMeta.MinValue.ToString().Length, doubleMeta.MaxValue.ToString().Length) + doubleMeta.Precision;
-                        row[SchemaTableColumn.NumericPrecision] = doublePrecision;
-                        row[SchemaTableColumn.NumericScale] = doubleMeta.Precision; // dynamics uses the term precision in its metadata to refer to the number of decimal places - which is actually the "scale"!
-                        break;
-                    case AttributeTypeCode.Money:
-                        var moneyMeta = (MoneyAttributeMetadata)columnMetadata.AttributeMetadata;
-                        int moneyPrecision = 18;
-                        int moneyScale = 2;
-                        switch (moneyMeta.PrecisionSource.GetValueOrDefault())
-                        {
-                            // When the precision is set to zero (0), the MoneyAttributeMetadata.Precision value is used.
-
-                            case 0:
-                                moneyPrecision = Math.Max(moneyMeta.MinValue.ToString().Length, moneyMeta.MaxValue.ToString().Length) + moneyMeta.Precision.GetValueOrDefault();
-                                moneyScale = moneyMeta.Precision.GetValueOrDefault();
-                                break;
-                            // When the precision is set to one (1), the Organization.PricingDecimalPrecision value is used.
-                            case 1:
-                                // todo need to support grabbing this info from the organization. For now just always using metadata.
-                                moneyPrecision = Math.Max(moneyMeta.MinValue.ToString().Length, moneyMeta.MaxValue.ToString().Length) + moneyMeta.Precision.GetValueOrDefault();
-                                moneyScale = moneyMeta.Precision.GetValueOrDefault();
-                                break;
-                            // When the precision is set to two (2), the TransactionCurrency.CurrencyPrecision value is used.
-                            case 2:
-                                // todo: need to grab this information from the transaction currency itself..!
-                                moneyPrecision = Math.Max(moneyMeta.MinValue.ToString().Length, moneyMeta.MaxValue.ToString().Length) + moneyMeta.Precision.GetValueOrDefault();
-                                moneyScale = moneyMeta.Precision.GetValueOrDefault();
-                                break;
-                        }
-
-                        row[SchemaTableColumn.NumericPrecision] = moneyPrecision;
-                        row[SchemaTableColumn.NumericScale] = moneyScale;
-                        break;
+                    row[SchemaTableColumn.NumericPrecision] = haveMinAndMax.GetNumericPrecision();
+                    row[SchemaTableColumn.NumericScale] = haveMinAndMax.GetNumericScale(); // dynamics uses the term precision in its metadata to refer to the number of decimal places - which is actually the "scale"!
                 }
-                row[SchemaTableColumn.ProviderType] = columnMetadata.AttributeType().ToString();
+              
+                row[SchemaTableColumn.ProviderType] = attMeta.AttributeType.ToString();
 
                 // some other optional columns..
-                row["DataTypeName"] = columnMetadata.GetSqlDataTypeName();
+                row["DataTypeName"] = attMeta.GetSqlDataTypeName();
                 row[SchemaTableOptionalColumn.IsReadOnly] = !columnMetadata.AttributeMetadata.IsValidForUpdate.GetValueOrDefault() && !columnMetadata.AttributeMetadata.IsValidForCreate.GetValueOrDefault();
-                row["IsIdentity"] = columnMetadata.AttributeMetadata.IsPrimaryId;
+                row["IsIdentity"] = attMeta.IsPrimaryId;
                 row[SchemaTableOptionalColumn.IsAutoIncrement] = false;
                 // row[SchemaTableOptionalColumn.IsRowVersion] = false;
                 // row[SchemaTableOptionalColumn.IsHidden] = false;

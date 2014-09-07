@@ -237,7 +237,7 @@ namespace CrmAdo
 
                 //var columns = new List<ColumnMetadata>();
                 //var col = new ColumnMetadata(null);
-               
+
 
                 //col.ColumnName = "primaryattributeid";
                 //col.LogicalAttributeName = "primaryattributeid";
@@ -272,21 +272,21 @@ namespace CrmAdo
                 var idattname = string.Format("attributemetadataid");
                 result[idattname] = createResponse.AttributeId;
                 result.Id = createResponse.AttributeId;
-                result["relationshipid"] = createResponse.RelationshipId;              
+                result["relationshipid"] = createResponse.RelationshipId;
                 resultSet.Results = new EntityCollection(new List<Entity>(new Entity[] { result }));
             }
             return resultSet;
         }
 
         private object ProcessCreateAttributeRequest(CrmDbCommand command, CreateAttributeRequest createAttributeRequest)
-        {         
+        {
             var orgService = command.CrmDbConnection.OrganizationService;
             var response = orgService.Execute(createAttributeRequest);
             var resultSet = new EntityResultSet(command, createAttributeRequest);
             var createResponse = response as CreateAttributeResponse;
             if (createResponse != null)
             {
-                AssignResponseParameter(command, response);              
+                AssignResponseParameter(command, response);
                 // for execute reader and execute scalar purposes, we provide a result that just ahs the newly created id of the entity.
                 var result = new Entity("attributemetadata");
                 var idattname = string.Format("attributemetadataid");
@@ -441,7 +441,7 @@ namespace CrmAdo
             // return -1;
         }
 
-       
+
 
 
 

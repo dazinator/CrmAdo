@@ -152,6 +152,12 @@
     <Compile Include="Dynamics\IDynamicsAttributeTypeProvider.cs" />
     <Compile Include="Dynamics\DynamicsAttributeTypeProvider.cs" />
     <Compile Include="Core\ISchemaTableProvider.cs" />
+    <Compile Include="Dynamics\Metadata\DecimalAttributeInfo.cs" />
+    <Compile Include="Dynamics\Metadata\DoubleAttributeInfo.cs" />
+    <Compile Include="Dynamics\Metadata\AttributeInfo.cs" />
+    <Compile Include="Dynamics\Metadata\IHaveMinMaxAndScaleValues.cs" />
+    <Compile Include="Dynamics\Metadata\MetadataConverter.cs" />
+    <Compile Include="Dynamics\Metadata\MoneyAttributeInfo.cs" />
     <Compile Include="SchemaTableProvider.cs" />
     <Compile Include="Obsolete\SqlGenerationRequestProvider.cs" />
     <Compile Include="DataReaderExtensions.cs" />
@@ -200,6 +206,7 @@
     <None Include="Key.pfx" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\Build.targets" />
   <PropertyGroup>

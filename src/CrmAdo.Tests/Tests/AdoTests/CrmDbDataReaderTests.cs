@@ -37,8 +37,9 @@ namespace CrmAdo.Tests
             var conn = MockRepository.GenerateMock<CrmDbConnection>();
             var results = new EntityResultSet(null, null);
             results.ColumnMetadata = new List<ColumnMetadata>();
-            var firstName = MockRepository.GenerateMock<AttributeMetadata>();
-            var lastname = MockRepository.GenerateMock<AttributeMetadata>();
+
+            var firstName = MockRepository.GenerateMock<AttributeInfo>();
+            var lastname = MockRepository.GenerateMock<AttributeInfo>();
             var firstNameC = new ColumnMetadata(firstName);
             var lastnameC = new ColumnMetadata(lastname);
 
@@ -64,15 +65,23 @@ namespace CrmAdo.Tests
             //   var firstName = new AttributeMetadata();
             //  var lastname = new AttributeMetadata();
 
-            var firstNameC = MockRepository.GenerateMock<ColumnMetadata>();
-            firstNameC.Stub(a => a.ColumnName).Return("firstname");
-            firstNameC.Stub(a => a.GetSqlDataTypeName()).Return("string");
-            firstNameC.Stub(a => a.AttributeType()).Return(AttributeTypeCode.String);
+            var firstNameAttInfo = new AttributeInfo();
+            firstNameAttInfo.AttributeType = AttributeTypeCode.String;
+            firstNameAttInfo.LogicalName = "firstname";
+            var firstNameC = new ColumnMetadata(firstNameAttInfo);
 
-            var lastnameC = MockRepository.GenerateMock<ColumnMetadata>();
-            lastnameC.Stub(a => a.ColumnName).Return("lastname");
-            lastnameC.Stub(a => a.GetSqlDataTypeName()).Return("string");
-            lastnameC.Stub(a => a.AttributeType()).Return(AttributeTypeCode.String);
+           // firstNameC.Stub(a => a.AttributeMetadata.GetSqlDataTypeName()).Return("string");
+           // firstNameC.Stub(a => a.AttributeMetadata.AttributeType).Return(AttributeTypeCode.String);
+
+            var lastNameAttInfo = new AttributeInfo();
+            lastNameAttInfo.AttributeType = AttributeTypeCode.String;
+            lastNameAttInfo.LogicalName = "lastname";
+            var lastnameC = new ColumnMetadata(lastNameAttInfo);
+
+            //var lastnameC = MockRepository.GenerateMock<ColumnMetadata>();
+            //lastnameC.Stub(a => a.ColumnName).Return("lastname");
+            //lastnameC.Stub(a => a.AttributeMetadata.GetSqlDataTypeName()).Return("string");
+            //lastnameC.Stub(a => a.AttributeMetadata.AttributeType).Return(AttributeTypeCode.String);
             //  lastnameC.AttributeMetadata
 
             // var firstName = MockRepository.GenerateMock<AttributeMetadata>();
@@ -123,20 +132,20 @@ namespace CrmAdo.Tests
 
             results.ColumnMetadata.Add(contactIdColumnMetadata);
             results.ColumnMetadata.Add(firstNameColumnMetadata);
-           
+
             results.Results = new EntityCollection(new List<Entity>());
-            
+
             //var result = new Entity("contact");
             //result.Id = Guid.NewGuid();
             //result["firstname"] = "joe";
             //result["lastname"] = "schmoe";
             //results.Results.Entities.Add(result);
             var subject = CreateTestSubject(results, conn);
-          
+
             var schema = subject.GetSchemaTable();
 
 
-           
+
 
 
 

@@ -10,8 +10,6 @@ using System.Text;
 
 namespace CrmAdo.Dynamics.Metadata
 {
-    
-
     public static class EntityMetadataUtils
     {
 
@@ -56,9 +54,9 @@ namespace CrmAdo.Dynamics.Metadata
         /// </summary>
         /// <param name="metadata"></param>
         /// <returns></returns>
-        public static Type GetCrmAgnosticType(this AttributeMetadata metadata)
+        public static Type GetCrmAgnosticType(this AttributeTypeCode attType)
         {
-            switch (metadata.AttributeType.GetValueOrDefault())
+            switch (attType)
             {
                 case AttributeTypeCode.BigInt:
                     return typeof(long);
@@ -112,13 +110,9 @@ namespace CrmAdo.Dynamics.Metadata
         /// </summary>
         /// <param name="metadata"></param>
         /// <returns></returns>
-        public static string GetSqlDataTypeName(this AttributeMetadata metadata)
+        public static string GetSqlDataTypeName(this AttributeTypeCode attType, AttributeTypeDisplayName attTypeDisplayName)
         {
-            if (metadata.AttributeType == null)
-            {
-                return string.Empty;
-            }
-            switch (metadata.AttributeType)
+            switch (attType)
             {
                 case AttributeTypeCode.String:
                 case AttributeTypeCode.Memo:
@@ -127,14 +121,10 @@ namespace CrmAdo.Dynamics.Metadata
                 case AttributeTypeCode.Owner:
                     return "uniqueidentifier";
                 case AttributeTypeCode.Virtual:
-                    if (metadata.GetType() == typeof(ImageAttributeMetadata))
+                    if (attTypeDisplayName != null && attTypeDisplayName.Value == AttributeTypeDisplayName.ImageType.Value)
                     {
                         return "image";
                     }
-                    //if (metadata.LogicalAttributeName == "entityimage")
-                    //{
-
-                    //}
                     return "nvarchar";
                 case AttributeTypeCode.Double:
                     return "float";
@@ -145,7 +135,7 @@ namespace CrmAdo.Dynamics.Metadata
                 case AttributeTypeCode.Boolean:
                     return "bit";
                 default:
-                    return metadata.AttributeType.Value.ToString();
+                    return attType.ToString();
             }
         }
 
@@ -159,9 +149,9 @@ namespace CrmAdo.Dynamics.Metadata
         public static int MaxSupportedSqlPrecision(this DecimalAttributeMetadata metadata)
         {
             // = 12 + max scale of 10 = 22 in total.      
-           var crmPrecision = Math.Max(Math.Truncate(Math.Abs(DecimalAttributeMetadata.MaxSupportedValue)).ToString().Length, Math.Truncate(Math.Abs(DecimalAttributeMetadata.MinSupportedValue)).ToString().Length);
+            var crmPrecision = Math.Max(Math.Truncate(Math.Abs(DecimalAttributeMetadata.MaxSupportedValue)).ToString().Length, Math.Truncate(Math.Abs(DecimalAttributeMetadata.MinSupportedValue)).ToString().Length);
 
-          //  int crmPrecision = Math.Max(Math.Truncate(DecimalAttributeMetadata.MaxSupportedValue).ToString().Length, Math.Truncate(DecimalAttributeMetadata.MinSupportedValue).ToString().Length);
+            //  int crmPrecision = Math.Max(Math.Truncate(DecimalAttributeMetadata.MaxSupportedValue).ToString().Length, Math.Truncate(DecimalAttributeMetadata.MinSupportedValue).ToString().Length);
             return crmPrecision + DecimalAttributeMetadata.MaxSupportedPrecision;
         }
 
@@ -191,7 +181,7 @@ namespace CrmAdo.Dynamics.Metadata
             return true;
 
         }
-     
+
         /// <summary>
         /// Gets the default sql precision for the crm decimal attribute. 
         /// </summary>
@@ -284,7 +274,7 @@ namespace CrmAdo.Dynamics.Metadata
         /// <param name="metadata"></param>
         /// <returns></returns>
         public static int MaxSupportedSqlPrecision(this MoneyAttributeMetadata metadata)
-        {           
+        {
             var crmPrecision = Math.Max(Math.Truncate(Math.Abs(MoneyAttributeMetadata.MaxSupportedValue)).ToString().Length, Math.Truncate(Math.Abs(MoneyAttributeMetadata.MinSupportedValue)).ToString().Length);
             return crmPrecision + MoneyAttributeMetadata.MaxSupportedPrecision;
         }
@@ -352,7 +342,7 @@ namespace CrmAdo.Dynamics.Metadata
             {
                 throw new ArgumentOutOfRangeException("scale is not within min and max crm values.");
             }
-          
+
             var crmMaxValueLengthWithoutPrecision = Math.Max(Math.Truncate(Math.Abs(MoneyAttributeMetadata.MaxSupportedValue)).ToString().Length, Math.Truncate(Math.Abs(MoneyAttributeMetadata.MinSupportedValue)).ToString().Length);
             if (precision - scale > crmMaxValueLengthWithoutPrecision)
             {
@@ -401,6 +391,8 @@ namespace CrmAdo.Dynamics.Metadata
         }
 
         #endregion
+
+        #region Double
 
         /// <summary>
         /// Gets the sql precision for the crm double attribute. 
@@ -512,16 +504,13 @@ namespace CrmAdo.Dynamics.Metadata
                 var maxNumber = double.Parse(maxNumberBuilder.ToString());
                 metadata.MaxValue = maxNumber;
                 metadata.MinValue = -maxNumber;
-            }          
+            }
 
             return true;
 
         }
 
-        #region
-
-
-
-        #endregion
+        #endregion      
+       
     }
 }

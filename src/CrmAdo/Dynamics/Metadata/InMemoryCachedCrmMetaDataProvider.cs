@@ -13,10 +13,12 @@ namespace CrmAdo.Dynamics.Metadata
         private static readonly ConcurrentDictionary<string, CrmEntityMetadata> _Metadata = new ConcurrentDictionary<string, CrmEntityMetadata>();
 
         private IEntityMetadataRepository _repository;
+        private MetadataConverter _metadataConverter;
 
         public InMemoryCachedCrmMetaDataProvider(IEntityMetadataRepository repository)
         {
             _repository = repository;
+            this._metadataConverter = new MetadataConverter();
         }
 
         /// <summary>
@@ -33,7 +35,7 @@ namespace CrmAdo.Dynamics.Metadata
                 var entMeta = metadata.EntityMetadata[0];
                 var result = new CrmEntityMetadata()
                     {
-                        Attributes = entMeta.Attributes.ToList(),
+                        Attributes = _metadataConverter.ConvertAttributeInfoList(entMeta.Attributes),
                         EntityName = entityName,
                         Timestamp = metadata.ServerVersionStamp
                     };
@@ -42,7 +44,8 @@ namespace CrmAdo.Dynamics.Metadata
 
             return changes;
         }
-     
+
+
 
         /// <summary>
         /// Ensures the metadata is refreshed and uptodate and returns it.
@@ -59,7 +62,7 @@ namespace CrmAdo.Dynamics.Metadata
                     var entMeta = metadata.EntityMetadata[0];
                     var crment = new CrmEntityMetadata()
                         {
-                            Attributes = entMeta.Attributes.ToList(),
+                            Attributes = _metadataConverter.ConvertAttributeInfoList(entMeta.Attributes),
                             EntityName = entityName,
                             Timestamp = metadata.ServerVersionStamp
                         };
@@ -73,7 +76,7 @@ namespace CrmAdo.Dynamics.Metadata
                 return result;
             }
             // refresh the metadata
-            // it was present in the cache, so get check for changes and update if required before returning.
+            // it was present in the cache, so check for any changes and update if required before returning.
             Debug.WriteLine("Refreshing metadata for entity: " + entityName, "Metadata");
             var changes = _repository.GetChanges(entityName, result.Timestamp);
             // update existing metadata..
@@ -94,20 +97,22 @@ namespace CrmAdo.Dynamics.Metadata
                 // var deletedFields = latestEntityMetadataResponse.DeletedMetadata.Where(att => att.HasChanged.GetValueOrDefault()).ToList();
 
             }
-            
+
             // Loop through all metadata items, and add missing change units.
             bool hasSchemaChanges = (modifiedFields != null && modifiedFields.Any()) || (deletedFields != null && deletedFields.Any());
             if (hasSchemaChanges)
             {
                 Debug.WriteLine("Updating metadata for entity: " + entityName, "Metadata");
-                result.Refresh(modifiedFields, deletedFields);
+                var modifiedAttInfoList = _metadataConverter.ConvertAttributeInfoList(modifiedFields);
+                result.Refresh(modifiedAttInfoList, deletedFields);
             }
 
             return result;
         }
 
-      
     }
+
+   
 
 
 }

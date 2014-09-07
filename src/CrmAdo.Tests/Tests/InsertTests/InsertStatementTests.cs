@@ -24,11 +24,11 @@ namespace CrmAdo.Tests
             var sql = "INSERT INTO contact (contactid, firstname, lastname) VALUES ('9bf20a16-6034-48e2-80b4-8349bb80c3e2','billy','bob')";
          
             // set up fake metadata provider.
-            var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
-            var fakeMetadata = GetFakeContactMetadata();
-            fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
+           // var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
+          //  var fakeMetadata = GetFakeContactMetadata();
+          //  fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
             var fakeConn = MockRepository.GenerateMock<CrmDbConnection>();
-            fakeConn.Stub(a => a.MetadataProvider).Return(fakeMetadataProvider);
+            fakeConn.Stub(a => a.MetadataProvider).Return(new FakeContactMetadataProvider());
 
             var cmd = new CrmDbCommand(fakeConn);
             cmd.CommandText = sql;
@@ -172,11 +172,11 @@ namespace CrmAdo.Tests
             var sql = string.Format("INSERT INTO contact (contactid) VALUES ('{0}')", id);
 
             // set up fake metadata provider.
-            var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
-            var fakeMetadata = GetFakeContactMetadata();
-            fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
+          //  var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
+         //   var fakeMetadata = GetFakeContactMetadata();
+          //  fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
             var fakeConn = MockRepository.GenerateMock<CrmDbConnection>();
-            fakeConn.Stub(a => a.MetadataProvider).Return(fakeMetadataProvider);
+            fakeConn.Stub(a => a.MetadataProvider).Return(new FakeContactMetadataProvider());
 
             var cmd = new CrmDbCommand(fakeConn);
             cmd.CommandText = sql;
@@ -200,11 +200,11 @@ namespace CrmAdo.Tests
             var sqlWithValue = string.Format(sqlFormatString, sqlLiteralValue);
 
             // set up fake metadata provider.
-            var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
-            var fakeMetadata = GetFakeContactMetadata();
-            fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
+          //  var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
+          //  var fakeMetadata = GetFakeContactMetadata();
+          //  fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
             var fakeConn = MockRepository.GenerateMock<CrmDbConnection>();
-            fakeConn.Stub(a => a.MetadataProvider).Return(fakeMetadataProvider);
+            fakeConn.Stub(a => a.MetadataProvider).Return(new FakeContactMetadataProvider());
 
             var cmd = new CrmDbCommand(fakeConn);
             cmd.CommandText = sqlWithValue;
@@ -214,22 +214,22 @@ namespace CrmAdo.Tests
             AssertAttributeIsValue<T>(targetEntity, fieldname, assertValue);
         }
 
-        private CrmEntityMetadata GetFakeContactMetadata()
-        {
-            var path = Environment.CurrentDirectory;
-            var fileName = System.IO.Path.Combine(path, "MetadataFiles\\contactMetadata.xml");
+        //private CrmEntityMetadata GetFakeContactMetadata()
+        //{
+        //    var path = Environment.CurrentDirectory;
+        //    var fileName = System.IO.Path.Combine(path, "MetadataFiles\\contactMetadata.xml");
 
-            using (var reader = new XmlTextReader(fileName))
-            {
-                var deserialised = EntityMetadataUtils.DeserializeMetaData(reader);
-                var crmMeta = new CrmEntityMetadata();
-                var atts = new List<AttributeMetadata>();
-                atts.AddRange(deserialised.Attributes);
-                crmMeta.Attributes = atts;
-                crmMeta.EntityName = "contact";
-                return crmMeta;
-            }
-        }
+        //    using (var reader = new XmlTextReader(fileName))
+        //    {
+        //        var deserialised = EntityMetadataUtils.DeserializeMetaData(reader);
+        //        var crmMeta = new CrmEntityMetadata();
+        //        var atts = new List<AttributeMetadata>();
+        //        atts.AddRange(deserialised.Attributes);
+        //        crmMeta.Attributes = atts;
+        //        crmMeta.EntityName = "contact";
+        //        return crmMeta;
+        //    }
+        //}
 
         private void AssertAttributeIsValue<T>(Entity ent, string attributeName, T val)
         {

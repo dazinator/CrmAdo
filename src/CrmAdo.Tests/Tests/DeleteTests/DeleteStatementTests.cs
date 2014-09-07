@@ -27,11 +27,11 @@ namespace CrmAdo.Tests
             var sql = "DELETE FROM contact WHERE contactid = '" + id + "'";
 
             // set up fake metadata provider.
-            var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
-            var fakeMetadata = GetFakeContactMetadata();
-            fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
+            //var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
+           // var fakeMetadata = GetFakeContactMetadata();
+          //  fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
             var fakeConn = MockRepository.GenerateMock<CrmDbConnection>();
-            fakeConn.Stub(a => a.MetadataProvider).Return(fakeMetadataProvider);
+            fakeConn.Stub(a => a.MetadataProvider).Return(new FakeContactMetadataProvider());
 
             var cmd = new CrmDbCommand(fakeConn);
             cmd.CommandText = sql;
@@ -47,22 +47,22 @@ namespace CrmAdo.Tests
         
         #region Helper Methods
 
-        private CrmEntityMetadata GetFakeContactMetadata()
-        {
-            var path = Environment.CurrentDirectory;
-            var fileName = System.IO.Path.Combine(path, "MetadataFiles\\contactMetadata.xml");
+        //private CrmEntityMetadata GetFakeContactMetadata()
+        //{
+        //    var path = Environment.CurrentDirectory;
+        //    var fileName = System.IO.Path.Combine(path, "MetadataFiles\\contactMetadata.xml");
 
-            using (var reader = new XmlTextReader(fileName))
-            {
-                var deserialised = EntityMetadataUtils.DeserializeMetaData(reader);
-                var crmMeta = new CrmEntityMetadata();
-                var atts = new List<AttributeMetadata>();
-                atts.AddRange(deserialised.Attributes);
-                crmMeta.Attributes = atts;
-                crmMeta.EntityName = "contact";
-                return crmMeta;
-            }
-        }
+        //    using (var reader = new XmlTextReader(fileName))
+        //    {
+        //        var deserialised = EntityMetadataUtils.DeserializeMetaData(reader);
+        //        var crmMeta = new CrmEntityMetadata();
+        //        var atts = new List<AttributeMetadata>();
+        //        atts.AddRange(deserialised.Attributes);
+        //        crmMeta.Attributes = atts;
+        //        crmMeta.EntityName = "contact";
+        //        return crmMeta;
+        //    }
+        //}
 
         #endregion
     }

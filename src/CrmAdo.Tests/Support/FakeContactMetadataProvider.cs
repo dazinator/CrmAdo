@@ -13,6 +13,7 @@ namespace CrmAdo.Tests
     public class FakeContactMetadataProvider : ICrmMetaDataProvider
     {
         private Dictionary<string, CrmEntityMetadata> _Metadata = null;
+        private MetadataConverter _MetadataConverter = new MetadataConverter();
 
         public FakeContactMetadataProvider()
         {
@@ -54,7 +55,7 @@ namespace CrmAdo.Tests
                 var crmMeta = new CrmEntityMetadata();
                 var atts = new List<AttributeMetadata>();
                 atts.AddRange(deserialised.Attributes);
-                crmMeta.Attributes = atts;
+                crmMeta.Attributes = _MetadataConverter.ConvertAttributeInfoList(atts);
                 crmMeta.EntityName = "contact";
                 return crmMeta;
             }
