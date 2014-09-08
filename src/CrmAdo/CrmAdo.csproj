@@ -196,6 +196,7 @@
     <Compile Include="Visitor\CreateRequestBuilderVisitor.cs" />
     <Compile Include="Visitor\DeleteRequestBuilderVisitor.cs" />
     <Compile Include="Visitor\OrganizationRequestBuilderVisitor.cs" />
+    <Compile Include="Visitor\RetrieveMetadataChangesRequestBuilderVisitor.cs" />
     <Compile Include="Visitor\RetrieveMultipleRequestBuilderVisitor.cs" />
     <Compile Include="Visitor\SqlGenerationCrmExtensions.cs" />
     <Compile Include="Visitor\UpdateRequestBuilderVisitor.cs" />

@@ -126,6 +126,7 @@
     <Compile Include="Tests\EfTests\BasicTests.cs" />
     <Compile Include="Tests\SelectTests\SelectStatementTests.cs" />
     <Compile Include="Support\Utils.cs" />
+    <Compile Include="Tests\SelectTests\SelectMetadataVisitorTests.cs" />
     <Compile Include="Tests\UpdateTests\UpdateStatementTests.cs" />
     <Compile Include="Tests\DynamicsAttributeTypeProviderTests.cs" />
     <Compile Include="Tests\InsertTests\InsertStatementValidityTests.cs" />

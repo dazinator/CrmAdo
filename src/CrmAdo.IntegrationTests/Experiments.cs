@@ -11,6 +11,9 @@ using Microsoft.Xrm.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using NUnit.Framework;
+using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Metadata.Query;
+using Microsoft.Xrm.Sdk.Metadata;
 
 namespace CrmAdo.IntegrationTests
 {
@@ -679,6 +682,48 @@ namespace CrmAdo.IntegrationTests
 
 
 
+
+
+
+        }
+
+        [Category("Experimentation")]
+        [Test]
+        [TestCase(TestName = "Experiment for selecting entity metadata")]
+        public void Experiment_For_Selecting_Entity_Metadata()
+        {
+
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
+                                                         new CrmClientCredentialsProvider());
+
+            var orgService = serviceProvider.GetOrganisationService();
+            using (orgService as IDisposable)
+            {
+                MetadataFilterExpression entityFilter = new MetadataFilterExpression(LogicalOperator.And);
+                entityFilter.Conditions.Add(new MetadataConditionExpression("LogicalName", MetadataConditionOperator.Equals, "contact"));
+
+
+                var relationShipQuery = new RelationshipQueryExpression();
+                MetadataFilterExpression relationShipFilter = new MetadataFilterExpression(LogicalOperator.And);
+                relationShipFilter.Conditions.Add(new MetadataConditionExpression("RelationshipType", MetadataConditionOperator.Equals, RelationshipType.OneToManyRelationship));
+                relationShipQuery.Criteria = relationShipFilter;
+
+                EntityQueryExpression entityQueryExpression = new EntityQueryExpression()
+                {
+                    Criteria = entityFilter,
+                    Properties = new MetadataPropertiesExpression() { AllProperties = true }
+                    ,
+                    RelationshipQuery = relationShipQuery
+                };
+                RetrieveMetadataChangesRequest retrieveMetadataChangesRequest = new RetrieveMetadataChangesRequest()
+                {
+                    Query = entityQueryExpression,
+                    ClientVersionStamp = null
+                };
+                RetrieveMetadataChangesResponse response = (RetrieveMetadataChangesResponse)orgService.Execute(retrieveMetadataChangesRequest);
+            }
 
 
 

@@ -24,6 +24,10 @@ namespace CrmAdo.Visitor
         public DbParameterCollection Parameters { get; set; }
         public IDynamicsAttributeTypeProvider TypeProvider { get; set; }
 
+        private bool _DetectingMetadataQuery = false;
+        private bool _IsMetadataQuery = false;
+
+
         public OrganizationRequestBuilderVisitor(ICrmMetaDataProvider crmMetadataProvider, DbParameterCollection parameters, IDynamicsAttributeTypeProvider typeProvider)
         {
             CrmMetadataProvider = crmMetadataProvider;
@@ -34,10 +38,24 @@ namespace CrmAdo.Visitor
         protected override void VisitSelect(SelectBuilder item)
         {
             // Could use alternate builders like a fetch xml builder.
-            var visitor = new RetrieveMultipleRequestBuilderVisitor(Parameters);
-            IVisitableBuilder visitable = item;
-            visitable.Accept(visitor);
-            OrganizationRequest = visitor.Request;
+            // If the SELECT is for entity metadata then perform a metadata query request.
+
+            bool isMetadataQuery = IsMetadataQuery(item);
+            if (!isMetadataQuery)
+            {
+                var visitor = new RetrieveMultipleRequestBuilderVisitor(Parameters);
+                IVisitableBuilder visitable = item;
+                visitable.Accept(visitor);
+                OrganizationRequest = visitor.Request;
+            }
+            else
+            {
+                var visitor = new RetrieveMetadataChangesRequestBuilderVisitor(Parameters);
+                IVisitableBuilder visitable = item;
+                visitable.Accept(visitor);
+                OrganizationRequest = visitor.Request;
+            }
+
         }
 
         protected override void VisitInsert(InsertBuilder item)
@@ -74,10 +92,10 @@ namespace CrmAdo.Visitor
 
         protected override void VisitAlter(AlterBuilder item)
         {
-            if(item.AlterObject != null)
+            if (item.AlterObject != null)
             {
                 item.AlterObject.Accept(this);
-            }           
+            }
         }
 
         protected override void VisitAlterTableDefinition(AlterTableDefinition item)
@@ -86,6 +104,35 @@ namespace CrmAdo.Visitor
             IVisitableBuilder visitable = item;
             visitable.Accept(visitor);
             OrganizationRequest = visitor.Request;
+        }
+
+        private bool IsMetadataQuery(SelectBuilder item)
+        {
+            _DetectingMetadataQuery = true;
+            foreach (var source in item.From)
+            {
+                IVisitableBuilder visitable = source;
+                visitable.Accept(this);
+            }
+            _DetectingMetadataQuery = false;
+            return _IsMetadataQuery;
+        }
+
+        protected override void VisitTable(Table item)
+        {
+            if (_DetectingMetadataQuery)
+            {
+                if (item.Name.ToLower() == "entitymetadata")
+                {
+                    _IsMetadataQuery = true;
+                }
+            }
+        }
+
+        protected override void VisitAliasedSource(AliasedSource aliasedSource)
+        {
+            aliasedSource.Source.Accept(this);
+            // base.VisitAliasedSource(aliasedSource);
         }
 
     }
