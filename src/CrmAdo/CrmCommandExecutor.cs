@@ -8,6 +8,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using CrmAdo.Visitor;
 using Microsoft.Xrm.Sdk.Metadata;
+using Microsoft.Xrm.Sdk.Metadata.Query;
 
 namespace CrmAdo
 {
@@ -401,6 +402,44 @@ namespace CrmAdo
                 }
             }
         }
+
+        private void PopulateMetadata(EntityMetadataResultSet resultSet, MetadataQueryExpression queryExpression)
+        {
+            if (_MetadataProvider != null)
+            {
+                var metaData = new Dictionary<string, CrmEntityMetadata>();
+                var columns = new List<ColumnMetadata>();
+                PopulateColumnMetadata(queryExpression, metaData, columns);
+                resultSet.ColumnMetadata = columns;
+            }
+        }
+
+        public void PopulateColumnMetadata(MetadataQueryExpression query, Dictionary<string, CrmEntityMetadata> entityMetadata, List<ColumnMetadata> columns)
+        {
+            // get metadata for this entities columns..
+            if (!entityMetadata.ContainsKey("entitymetadata"))
+            {
+                entityMetadata["entitymetadata"] = _MetadataProvider.GetEntityMetadata("entitymetadata");
+            }
+
+            var entMeta = entityMetadata["entitymetadata"];
+            if (query.Properties.AllProperties)
+            {
+                columns.AddRange((from c in entMeta.Attributes orderby c.LogicalName select new ColumnMetadata(c)));
+            }
+            else
+            {
+                columns.AddRange((from s in query.Properties.PropertyNames
+                                  join c in entMeta.Attributes
+                                      on s.ToLower() equals c.LogicalName
+                                  select new ColumnMetadata(c)));
+            }
+
+            // populate rest of metadata.
+            throw new NotImplementedException();
+
+        }
+
         #endregion
 
         private EntityResultSet ProcessStoredProcedureCommand(CrmDbCommand command)

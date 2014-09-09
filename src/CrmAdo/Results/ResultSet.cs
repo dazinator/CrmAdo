@@ -28,8 +28,9 @@ namespace CrmAdo
 
         public abstract DbDataReader GetReader(DbConnection connection = null);
 
-        public abstract object GetScalar();      
-       
+        public abstract object GetScalar();
+
+        public List<ColumnMetadata> ColumnMetadata { get; set; }       
 
     }
 }

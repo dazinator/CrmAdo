@@ -18,7 +18,7 @@ namespace CrmAdo
 
         //TODO: Consider return datatable and using datatable reader?
         public EntityCollection Results { get; set; }
-        public List<ColumnMetadata> ColumnMetadata { get; set; }
+      //  public List<ColumnMetadata> ColumnMetadata { get; set; }
 
         public override bool HasResults()
         {
