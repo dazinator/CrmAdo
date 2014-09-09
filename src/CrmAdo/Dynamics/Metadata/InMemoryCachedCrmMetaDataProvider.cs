@@ -31,21 +31,124 @@ namespace CrmAdo.Dynamics.Metadata
             var changes = _Metadata.GetOrAdd(entityName, p =>
             {
                 Debug.WriteLine("Retrieving metadata for entity: " + entityName, "Metadata");
+
+                var pseudoMetadata = CheckPseudoEntity(entityName);
+                if (pseudoMetadata != null)
+                {
+                    return pseudoMetadata;
+                }
                 var metadata = _repository.GetChanges(entityName, null);
                 var entMeta = metadata.EntityMetadata[0];
-                var result = new CrmEntityMetadata()
-                    {
-                        Attributes = _metadataConverter.ConvertAttributeInfoList(entMeta.Attributes),
-                        EntityName = entityName,
-                        Timestamp = metadata.ServerVersionStamp
-                    };
+                var atts = _metadataConverter.ConvertAttributeInfoList(entMeta.Attributes);
+                var result = new CrmEntityMetadata(entityName, atts);
+                result.Timestamp = metadata.ServerVersionStamp;
                 return result;
             });
 
             return changes;
         }
 
+        #region Pseudo Entities
 
+        private CrmEntityMetadata CheckPseudoEntity(string entityName)
+        {
+            CrmEntityMetadata metadata = null;
+            switch (entityName.ToLower())
+            {
+                case "entitymetadata":
+                    metadata = BuildPseudoEntityMetadata();
+                    break;
+
+                case "attributemetadata":
+                    metadata = BuildPseudoAttributeMetadata();
+                    break;
+
+                case "onetomanyrelationship":
+                    metadata = BuildPseudoOneToManyMetadata();
+                    break;
+
+                case "manytomanyrelationship":
+                    metadata = BuildPseudoManyToManyMetadata();
+                    break;
+
+                default:
+                    return null;
+            }
+            metadata.IsPseudo = true;
+            return metadata;
+        }
+
+        private CrmEntityMetadata BuildPseudoManyToManyMetadata()
+        {
+            throw new NotImplementedException();
+        }
+
+        private CrmEntityMetadata BuildPseudoOneToManyMetadata()
+        {
+            throw new NotImplementedException();
+        }
+
+        private CrmEntityMetadata BuildPseudoAttributeMetadata()
+        {
+            throw new NotImplementedException();
+        }
+
+        private CrmEntityMetadata BuildPseudoEntityMetadata()
+        {
+            var metadata = new CrmEntityMetadata("entitymetadata");
+
+            metadata.AddPseudoAttribute("metadataid", AttributeTypeCode.Uniqueidentifier);
+            metadata.AddPseudoAttribute("haschanged", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("activitytypemask", AttributeTypeCode.Integer);
+            metadata.AddPseudoAttribute("autoroutetoownerqueue", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("canbeinmanytomany", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("canbeprimaryentityinrelationship", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("canberelatedentityinrelationship", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("cancreateattributes", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("cancreatecharts", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("cancreateforms", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("cancreateviews", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("canmodifyadditionalsettings", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("cantriggerworkflow", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("description", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("displaycollectionname", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("displayname", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("iconlargename", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("iconmediumname", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("iconsmallname", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("isactivity", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isactivityparty", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isauditenabled", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isavailableoffline", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("ischildentity", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isconnectionsenabled", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("iscustomentity", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("iscustomizable", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isdocumentmanagementenabled", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isduplicatedetectionenabled", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isenabledforcharts", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isimportable", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isintersect", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("ismailmergeenabled", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("ismanaged", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("ismappable", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isreadingpaneenabled", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isrenameable", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isvalidforadvancedfind", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isvalidforqueue", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isvisibleinmobile", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("logicalname", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("objecttypecode", AttributeTypeCode.Integer);
+            metadata.AddPseudoAttribute("ownershiptype", AttributeTypeCode.Integer);
+            metadata.AddPseudoAttribute("primaryidattribute", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("primarynameattribute", AttributeTypeCode.String);
+            //metadata.AddPseudoAttribut, "privileges", AttributeTypeCode.Uniqueidentifier)));
+            metadata.AddPseudoAttribute("recurrencebaseentitylogicalname", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("reportviewname", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("schemaname", AttributeTypeCode.String);
+
+            return metadata;
+        }
 
         /// <summary>
         /// Ensures the metadata is refreshed and uptodate and returns it.
@@ -58,25 +161,31 @@ namespace CrmAdo.Dynamics.Metadata
             var result = _Metadata.GetOrAdd(entityName, p =>
                 {
                     isPresent = false;
+
+                    var pseudoMetadata = CheckPseudoEntity(entityName);
+                    if (pseudoMetadata != null)
+                    {
+                        return pseudoMetadata;
+                    }
+
                     var metadata = _repository.GetChanges(entityName, null);
                     var entMeta = metadata.EntityMetadata[0];
-                    var crment = new CrmEntityMetadata()
-                        {
-                            Attributes = _metadataConverter.ConvertAttributeInfoList(entMeta.Attributes),
-                            EntityName = entityName,
-                            Timestamp = metadata.ServerVersionStamp
-                        };
+
+                    var atts = _metadataConverter.ConvertAttributeInfoList(entMeta.Attributes);
+                    var crment = new CrmEntityMetadata(entityName, atts);
+                    crment.Timestamp = metadata.ServerVersionStamp;
                     return crment;
                 });
 
 
-            if (!isPresent)
+            if (result.IsPseudo || !isPresent)
             {
-                // it wasn;t present in the cache, so return the result as its currently the latest.
+                // it's either not real crm metadata (pseudo) or it wasn't reteived from the cache, 
+                // in either of those cases, return it as its currently the latest.
                 return result;
             }
-            // refresh the metadata
-            // it was present in the cache, so check for any changes and update if required before returning.
+
+            // Check for any changes to this metadata and update it with the deltas.         
             Debug.WriteLine("Refreshing metadata for entity: " + entityName, "Metadata");
             var changes = _repository.GetChanges(entityName, result.Timestamp);
             // update existing metadata..
@@ -110,9 +219,13 @@ namespace CrmAdo.Dynamics.Metadata
             return result;
         }
 
+
+
+        #endregion
+
     }
 
-   
+
 
 
 }

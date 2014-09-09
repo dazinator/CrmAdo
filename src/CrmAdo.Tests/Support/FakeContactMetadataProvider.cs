@@ -52,11 +52,12 @@ namespace CrmAdo.Tests
             using (var reader = new XmlTextReader(fileName))
             {
                 var deserialised = EntityMetadataUtils.DeserializeMetaData(reader);
-                var crmMeta = new CrmEntityMetadata();
+
                 var atts = new List<AttributeMetadata>();
                 atts.AddRange(deserialised.Attributes);
-                crmMeta.Attributes = _MetadataConverter.ConvertAttributeInfoList(atts);
-                crmMeta.EntityName = "contact";
+                var attsList = _MetadataConverter.ConvertAttributeInfoList(atts);
+                var entName = "contact";
+                var crmMeta = new CrmEntityMetadata(entName, attsList);
                 return crmMeta;
             }
         }

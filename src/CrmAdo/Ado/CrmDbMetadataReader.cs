@@ -9,6 +9,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace CrmAdo
 {
+
     public class CrmDbMetadataReader : DbDataReader
     {
         //private EntityCollection _Results;
@@ -105,7 +106,7 @@ namespace CrmAdo
             return new DbEnumerator(this, this._DbConnection != null);
         }
 
-        #region Metadata
+        #region To Implement
 
         public override int FieldCount
         {
@@ -150,6 +151,47 @@ namespace CrmAdo
             //// Throw an exception if the ordinal cannot be found.
             //var availableColumns = string.Join(",", (from c in _Results.ColumnMetadata select c.ColumnName));
             //throw new IndexOutOfRangeException("The column named " + name + " was not found in the available columns: " + availableColumns);
+        }
+
+        public override object GetValue(int ordinal)
+        {
+            var name = GetName(ordinal);
+            var record = _Results.Results[_Position];
+            throw new NotImplementedException();
+            //if (!record.Attributes.ContainsKey(name))
+            //{
+            //    return DBNull.Value;
+            //}
+            //var val = record[name];
+            //var meta = _Results.ColumnMetadata[ordinal];
+
+            //if (meta.HasAlias)
+            //{
+            //    var aliasedVal = val as AliasedValue;
+            //    if (aliasedVal != null)
+            //    {
+            //        //if (!typeof(T).IsAssignableFrom(typeof(AliasedValue)))
+            //        //{
+            //        val = aliasedVal.Value;
+            //        // }
+            //    }
+            //}
+
+            //switch (meta.AttributeMetadata.AttributeType)
+            //{
+            //    case AttributeTypeCode.Lookup:
+            //    case AttributeTypeCode.Owner:
+            //        return ((EntityReference)val).Id;
+            //    case AttributeTypeCode.Money:
+            //        return ((Money)val).Value;
+            //    case AttributeTypeCode.Picklist:
+            //    case AttributeTypeCode.State:
+            //    case AttributeTypeCode.Status:
+            //        return ((OptionSetValue)val).Value;
+            //    default:
+            //        return val;
+            //}
+
         }
 
         /// <summary>
@@ -199,48 +241,7 @@ namespace CrmAdo
             // Look up the ordinal and return 
             // the value at that position.
             get { return this[GetOrdinal(name)]; }
-        }
-
-        public override object GetValue(int ordinal)
-        {
-            var name = GetName(ordinal);
-            var record = _Results.Results[_Position];
-            throw new NotImplementedException();
-            //if (!record.Attributes.ContainsKey(name))
-            //{
-            //    return DBNull.Value;
-            //}
-            //var val = record[name];
-            //var meta = _Results.ColumnMetadata[ordinal];
-
-            //if (meta.HasAlias)
-            //{
-            //    var aliasedVal = val as AliasedValue;
-            //    if (aliasedVal != null)
-            //    {
-            //        //if (!typeof(T).IsAssignableFrom(typeof(AliasedValue)))
-            //        //{
-            //        val = aliasedVal.Value;
-            //        // }
-            //    }
-            //}
-
-            //switch (meta.AttributeMetadata.AttributeType)
-            //{
-            //    case AttributeTypeCode.Lookup:
-            //    case AttributeTypeCode.Owner:
-            //        return ((EntityReference)val).Id;
-            //    case AttributeTypeCode.Money:
-            //        return ((Money)val).Value;
-            //    case AttributeTypeCode.Picklist:
-            //    case AttributeTypeCode.State:
-            //    case AttributeTypeCode.Status:
-            //        return ((OptionSetValue)val).Value;
-            //    default:
-            //        return val;
-            //}
-
-        }
+        }   
 
         public T GetValue<T>(int ordinal)
         {

@@ -26,5 +26,6 @@ namespace CrmAdo.Dynamics.Metadata
         public bool IsPrimaryId { get; set; }
         public bool? IsValidForUpdate { get; internal set; }
         public bool? IsValidForCreate { get; internal set; }
+        public bool IsPseudo { get; set; }
     }
 }
