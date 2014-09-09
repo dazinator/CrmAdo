@@ -132,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Ado\CrmConnectionStringBuilder.cs" />
+    <Compile Include="Ado\CrmDbMetadataReader.cs" />
     <Compile Include="ColumnMetadata.cs" />
     <Compile Include="ComponentModel\CrmConnectionStringBuilderConverter.cs" />
     <Compile Include="ComponentModel\EnumStandardValuesAttribute.cs" />
@@ -158,6 +159,8 @@
     <Compile Include="Dynamics\Metadata\IHaveMinMaxAndScaleValues.cs" />
     <Compile Include="Dynamics\Metadata\MetadataConverter.cs" />
     <Compile Include="Dynamics\Metadata\MoneyAttributeInfo.cs" />
+    <Compile Include="Results\EntityMetadataResultSet.cs" />
+    <Compile Include="Results\ResultSet.cs" />
     <Compile Include="SchemaTableProvider.cs" />
     <Compile Include="Obsolete\SqlGenerationRequestProvider.cs" />
     <Compile Include="DataReaderExtensions.cs" />
@@ -183,11 +186,11 @@
     <Compile Include="Dynamics\ICrmServiceProvider.cs" />
     <Compile Include="Dynamics\Metadata\IEntityMetadataRepository.cs" />
     <Compile Include="Dynamics\OrganisationDoesNotExistException.cs" />
-    <Compile Include="EntityResultSet.cs" />
+    <Compile Include="Results\EntityResultSet.cs" />
     <Compile Include="Core\ICrmCommandExecutor.cs" />
     <Compile Include="Core\ICrmRequestProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SystemCommandParameters.cs" />
+    <Compile Include="Util\SystemCommandParameters.cs" />
     <Compile Include="Core\ISchemaNameProvider.cs" />
     <Compile Include="Util\EnumHelper.cs" />
     <Compile Include="Visitor\BaseOrganizationRequestBuilderVisitor.cs" />

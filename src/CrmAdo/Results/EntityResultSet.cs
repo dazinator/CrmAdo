@@ -4,25 +4,23 @@ using System.Linq;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
+using System.Data.Common;
 
 namespace CrmAdo
 {
-    public class EntityResultSet
+    public class EntityResultSet : ResultSet
     {
-        private CrmDbCommand _Command;
-        private OrganizationRequest _OrgRequest;
 
         public EntityResultSet(CrmDbCommand command, OrganizationRequest request)
+            : base(command, request)
         {
-            _Command = command;
-            _OrgRequest = request;
         }
 
         //TODO: Consider return datatable and using datatable reader?
         public EntityCollection Results { get; set; }
         public List<ColumnMetadata> ColumnMetadata { get; set; }
 
-        public bool HasResults()
+        public override bool HasResults()
         {
             return Results != null && Results.Entities != null && Results.Entities.Any();
         }
@@ -32,7 +30,7 @@ namespace CrmAdo
             return ColumnMetadata != null && ColumnMetadata.Any();
         }
 
-        public int ResultCount()
+        public override int ResultCount()
         {
             if (HasResults())
             {
@@ -45,7 +43,7 @@ namespace CrmAdo
         {
             if (Results != null && Results.MoreRecords)
             {
-                var retrieveMultiple = _OrgRequest as RetrieveMultipleRequest;
+                var retrieveMultiple = Request as RetrieveMultipleRequest;
                 if (retrieveMultiple != null)
                 {
                     var query = retrieveMultiple.Query as QueryExpression;
@@ -53,11 +51,30 @@ namespace CrmAdo
                     {
                         query.PageInfo.PagingCookie = Results.PagingCookie;
                         query.PageInfo.PageNumber++;
-                        var response = (RetrieveMultipleResponse)_Command.CrmDbConnection.OrganizationService.Execute(_OrgRequest);
+                        var response = (RetrieveMultipleResponse)Command.CrmDbConnection.OrganizationService.Execute(Request);
                         Results = response.EntityCollection;
                     }
                 }
             }
+        }
+
+        public override DbDataReader GetReader(DbConnection connection = null)
+        {
+            return new CrmDbDataReader(this, connection);
+        }
+
+        public override object GetScalar()
+        {
+            if (HasResults())
+            {
+                var first = Results.Entities[0];
+                if (first.Attributes.Any())
+                {
+                    var value = first.Attributes.FirstOrDefault().Value;
+                    return CrmDbTypeConverter.ToDbType(value);
+                }
+            }
+            return null;
         }
     }
 }

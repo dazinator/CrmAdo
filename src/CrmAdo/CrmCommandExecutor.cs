@@ -11,11 +11,12 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace CrmAdo
 {
+
+
     public class CrmCommandExecutor : ICrmCommandExecutor
     {
         private ICrmRequestProvider _CrmRequestProvider;
         private ICrmMetaDataProvider _MetadataProvider;
-        // private ISqlStatementTypeChecker _SqlStatementTypeChecker;
 
         #region Constructor
         public CrmCommandExecutor(CrmDbConnection connection)
@@ -34,11 +35,11 @@ namespace CrmAdo
         }
         #endregion
 
-        public EntityResultSet ExecuteCommand(CrmDbCommand command, CommandBehavior behavior)
+        public ResultSet ExecuteCommand(CrmDbCommand command, CommandBehavior behavior)
         {
             //TODO: Should process the command text, and execute a query to dynamics, returning the Entity Collection results.
             // what would these command types mean in terms of dynamics queries?
-            EntityResultSet results = null;
+            ResultSet results = null;
             // if ((behavior & CommandBehavior.KeyInfo) > 0)
             switch (command.CommandType)
             {
@@ -64,7 +65,7 @@ namespace CrmAdo
             }
         }
 
-        private EntityResultSet ProcessTableDirectCommand(CrmDbCommand command, CommandBehavior behavior)
+        private ResultSet ProcessTableDirectCommand(CrmDbCommand command, CommandBehavior behavior)
         {
             // The command should be the name of a single entity.
             var entityName = command.CommandText;
@@ -101,7 +102,7 @@ namespace CrmAdo
             return resultSet;
         }
 
-        private EntityResultSet ProcessTextCommand(CrmDbCommand command, CommandBehavior behavior)
+        private ResultSet ProcessTextCommand(CrmDbCommand command, CommandBehavior behavior)
         {
             //  string commandText = "SELECT CustomerId, FirstName, LastName, Created FROM Customer";
 
@@ -132,11 +133,35 @@ namespace CrmAdo
                 return ProcessDeleteRequest(command, deleteRequest);
             }
 
+            var retrieveMetadataChangesRequest = request as RetrieveMetadataChangesRequest;
+            if (retrieveMetadataChangesRequest != null)
+            {
+                return ProcessRetrieveMetadataChangesRequest(command, retrieveMetadataChangesRequest);
+            }
+
             throw new NotSupportedException("Sorry, was not able to turn your command into the appropriate Dynamics SDK Organization Request message.");
 
         }
 
-        private EntityResultSet ProcessDeleteRequest(CrmDbCommand command, DeleteRequest deleteRequest)
+        private ResultSet ProcessRetrieveMetadataChangesRequest(CrmDbCommand command, RetrieveMetadataChangesRequest retrieveMetadataChangesRequest, bool schemaOnly = false)
+        {
+            var orgService = command.CrmDbConnection.OrganizationService;
+            var resultSet = new EntityMetadataResultSet(command, retrieveMetadataChangesRequest, null);
+            if (!schemaOnly)
+            {
+                var response = orgService.Execute(retrieveMetadataChangesRequest);
+                var retrieveMultipleResponse = response as RetrieveMetadataChangesResponse;
+                if (retrieveMultipleResponse != null)
+                {
+                    AssignResponseParameter(command, response);
+                    resultSet.Results = retrieveMultipleResponse.EntityMetadata;
+                }
+            }
+            //  PopulateMetadata(resultSet, retrieveMultipleRequest.Query as QueryExpression);
+            return resultSet;
+        }
+
+        private ResultSet ProcessDeleteRequest(CrmDbCommand command, DeleteRequest deleteRequest)
         {
             var orgService = command.CrmDbConnection.OrganizationService;
             var response = orgService.Execute(deleteRequest);
@@ -151,7 +176,7 @@ namespace CrmAdo
             return resultSet;
         }
 
-        private EntityResultSet ProcessUpdateRequest(CrmDbCommand command, UpdateRequest updateRequest)
+        private ResultSet ProcessUpdateRequest(CrmDbCommand command, UpdateRequest updateRequest)
         {
             var orgService = command.CrmDbConnection.OrganizationService;
             var response = orgService.Execute(updateRequest);
@@ -166,7 +191,7 @@ namespace CrmAdo
             return resultSet;
         }
 
-        private EntityResultSet ProcessCreateRequest(CrmDbCommand command, CreateRequest createRequest)
+        private ResultSet ProcessCreateRequest(CrmDbCommand command, CreateRequest createRequest)
         {
             var orgService = command.CrmDbConnection.OrganizationService;
             var response = orgService.Execute(createRequest);
@@ -198,7 +223,7 @@ namespace CrmAdo
             return resultSet;
         }
 
-        private EntityResultSet ProcessRetrieveMultiple(CrmDbCommand command, RetrieveMultipleRequest retrieveMultipleRequest, bool schemaOnly = false)
+        private ResultSet ProcessRetrieveMultiple(CrmDbCommand command, RetrieveMultipleRequest retrieveMultipleRequest, bool schemaOnly = false)
         {
             var orgService = command.CrmDbConnection.OrganizationService;
             var resultSet = new EntityResultSet(command, retrieveMultipleRequest);
@@ -216,7 +241,7 @@ namespace CrmAdo
             return resultSet;
         }
 
-        private EntityResultSet ProcessCreateEntityRequest(CrmDbCommand command, CreateEntityRequest createEntityRequest)
+        private ResultSet ProcessCreateEntityRequest(CrmDbCommand command, CreateEntityRequest createEntityRequest)
         {
             var orgService = command.CrmDbConnection.OrganizationService;
             var response = orgService.Execute(createEntityRequest);
@@ -435,16 +460,11 @@ namespace CrmAdo
                 return -1;
             }
 
-            // we don't yet support any DDL.
+            // we don't yet support other crm messages.
             throw new NotSupportedException();
 
             // return -1;
         }
-
-
-
-
-
 
     }
 

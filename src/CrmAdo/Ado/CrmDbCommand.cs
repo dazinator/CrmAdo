@@ -82,23 +82,10 @@ namespace CrmAdo
 
         protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
         {
-          //  Debug.WriteLine("CrmDbCommand.ExecuteReader(b)", "CrmDbCommand");
             EnsureOpenConnection();
             var results = _CrmCommandExecutor.ExecuteCommand(this, behavior);
-
-            // only implement CloseConnection and "all other"
-            if ((behavior & CommandBehavior.CloseConnection) > 0)
-            {
-              //  Debug.WriteLine("Behavior includes CloseConnection");
-                var reader = new CrmDbDataReader(results, _DbConnection);
-                return reader;
-            }
-            else
-            {
-                //var results = _CrmCommandExecutor.ExecuteCommand(this, behavior);
-                var reader = new CrmDbDataReader(results);
-                return reader;
-            }
+            var reader = results.GetReader(_DbConnection);
+            return reader;
         }
 
         public override int ExecuteNonQuery()
@@ -112,19 +99,10 @@ namespace CrmAdo
         {
             Debug.WriteLine("CrmDbCommand.ExecuteScalar()", "CrmDbCommand");
             EnsureOpenConnection();
-            // Use the ExecuteScalar method to retrieve a single value (for example, an aggregate value) from a database. This requires less code than using the ExecuteReader method and performing the operations necessary to generate the single value using the data returned by a DbDataReader.
-            // If the first column of the first row in the result set is not found, a null reference (Nothing in Visual Basic) is returned. If the value in the database is null, the query returns DBNull.Value.
+            // If the first column of the first row in the result set is not found, a null reference is returned. 
+            // If the value in the database is null, the query returns DBNull.Value.
             var results = _CrmCommandExecutor.ExecuteCommand(this, CommandBehavior.Default);
-            if (results != null && results.Results != null && results.Results.Entities != null && results.Results.Entities.Any())
-            {
-                var first = results.Results.Entities[0];
-                if (first.Attributes.Any())
-                {
-                    var value = first.Attributes.FirstOrDefault().Value;
-                    return CrmDbTypeConverter.ToDbType(value);
-                }
-            }
-            return null;
+            return results.GetScalar();           
         }
 
         protected void EnsureOpenConnection()
@@ -137,7 +115,7 @@ namespace CrmAdo
 
         protected override DbParameter CreateDbParameter()
         {
-           return new CrmParameter();
+            return new CrmParameter();
         }
 
         #region Not Implemented

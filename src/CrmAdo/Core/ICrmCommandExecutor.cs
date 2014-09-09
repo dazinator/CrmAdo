@@ -7,7 +7,7 @@ namespace CrmAdo
     /// </summary>
     public interface ICrmCommandExecutor
     {
-        EntityResultSet ExecuteCommand(CrmDbCommand command, CommandBehavior behavior);
+        ResultSet ExecuteCommand(CrmDbCommand command, CommandBehavior behavior);
         int ExecuteNonQueryCommand(CrmDbCommand command);
     }
 
