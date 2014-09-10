@@ -148,7 +148,7 @@ namespace CrmAdo
         private ResultSet ProcessRetrieveMetadataChangesRequest(CrmDbCommand command, RetrieveMetadataChangesRequest retrieveMetadataChangesRequest, bool schemaOnly = false)
         {
             var orgService = command.CrmDbConnection.OrganizationService;
-            var resultSet = new EntityMetadataResultSet(command, retrieveMetadataChangesRequest, null);
+            DenormalisedMetadataResult[] results = null;
             if (!schemaOnly)
             {
                 var response = orgService.Execute(retrieveMetadataChangesRequest);
@@ -160,16 +160,18 @@ namespace CrmAdo
                     if (retrieveMultipleResponse.EntityMetadata != null)
                     {
                         //int index = 0;
-                        resultSet.Results = (from r in retrieveMultipleResponse.EntityMetadata
-                                               from a in r.Attributes
-                                               from o in r.OneToManyRelationships.Union(r.ManyToOneRelationships)
-                                               from m in r.ManyToManyRelationships
-                                               select new DenormalisedMetadataResult { EntityMetadata = r, AttributeMetadata = a, OneToManyRelationship = o, ManyToManyRelationship = m }).ToArray();
-                      
-                    }                   
-                   
+                        results = (from r in retrieveMultipleResponse.EntityMetadata
+                                             from a in (r.Attributes ?? Enumerable.Empty<AttributeMetadata>()).DefaultIfEmpty()
+                                             from o in (r.OneToManyRelationships ?? Enumerable.Empty<OneToManyRelationshipMetadata>()).Union(r.ManyToOneRelationships ?? Enumerable.Empty<OneToManyRelationshipMetadata>()).DefaultIfEmpty()
+                                             from m in r.ManyToManyRelationships ?? Enumerable.Empty<ManyToManyRelationshipMetadata>().DefaultIfEmpty()
+                                             select new DenormalisedMetadataResult { EntityMetadata = r, AttributeMetadata = a, OneToManyRelationship = o, ManyToManyRelationship = m }).ToArray();
+
+                    }
+
                 }
             }
+
+            var resultSet = new EntityMetadataResultSet(command, retrieveMetadataChangesRequest, results);
             PopulateMetadata(resultSet, retrieveMetadataChangesRequest.Query);
             return resultSet;
         }
@@ -448,10 +450,10 @@ namespace CrmAdo
             }
 
 
-         
+
 
             // populate rest of metadata.
-          //  throw new NotImplementedException();
+            //  throw new NotImplementedException();
 
         }
 

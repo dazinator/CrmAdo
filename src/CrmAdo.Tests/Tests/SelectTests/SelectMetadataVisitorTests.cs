@@ -10,9 +10,10 @@ using Microsoft.Xrm.Sdk.Metadata.Query;
 namespace CrmAdo.Tests
 {
     [TestFixture(Category = "Select Statement")]
+    [Category("Metadata")]
     public class SelectMetadataVisitorTests : BaseOrganisationRequestBuilderVisitorTest
     {
-        [Category("TOP")]
+        [Category("SELECT")]
         [Test(Description = "Should support selecting entity metadata")]
         public void Should_Support_Selecting_Entity_Metadata()
         {
@@ -42,7 +43,7 @@ namespace CrmAdo.Tests
             MetadataPropertiesExpression props = query.Properties;
             Assert.That(props.PropertyNames.Count, Is.GreaterThan(1));
 
-        }
+        }    
 
 
     }

@@ -11,22 +11,26 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace CrmAdo
-{ 
+{
 
     public class EntityMetadataResultSet : ResultSet
     {
 
-        public DenormalisedMetadataResult[] DenormalisedResults = null;
+        private DenormalisedMetadataResult[] _Results = null;
         private int _ResultCount = 0;
 
         public EntityMetadataResultSet(CrmDbCommand command, OrganizationRequest request, DenormalisedMetadataResult[] results)
             : base(command, request)
         {
-            Results = results;
-
+            _Results = results;
+            if (_Results != null)
+            {
+                _ResultCount = _Results.Count();
+            }
         }
 
-        public DenormalisedMetadataResult[] Results { get; set; }
+
+        public DenormalisedMetadataResult[] Results { get { return _Results; } }
 
         public override bool HasResults()
         {

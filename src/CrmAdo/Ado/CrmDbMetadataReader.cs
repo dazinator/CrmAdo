@@ -159,7 +159,7 @@ namespace CrmAdo
         public override object GetValue(int ordinal)
         {
             var meta = _Results.ColumnMetadata[ordinal];
-            var result = _Results.DenormalisedResults[_Position];
+            var result = _Results.Results[_Position];
             var name = meta.ColumnName;
             switch (meta.AttributeMetadata.EntityLogicalName)
             {

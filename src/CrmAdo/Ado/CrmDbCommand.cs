@@ -84,7 +84,15 @@ namespace CrmAdo
         {
             EnsureOpenConnection();
             var results = _CrmCommandExecutor.ExecuteCommand(this, behavior);
-            var reader = results.GetReader(_DbConnection);
+            DbDataReader reader;
+            if (behavior == CommandBehavior.CloseConnection)
+            {
+                reader = results.GetReader(_DbConnection);
+            }
+            else
+            {
+                reader = results.GetReader();
+            }
             return reader;
         }
 
@@ -102,7 +110,7 @@ namespace CrmAdo
             // If the first column of the first row in the result set is not found, a null reference is returned. 
             // If the value in the database is null, the query returns DBNull.Value.
             var results = _CrmCommandExecutor.ExecuteCommand(this, CommandBehavior.Default);
-            return results.GetScalar();           
+            return results.GetScalar();
         }
 
         protected void EnsureOpenConnection()

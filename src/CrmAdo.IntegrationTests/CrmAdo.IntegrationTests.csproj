@@ -96,6 +96,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SelectMetadataIntegrationTests.cs" />
     <Compile Include="BaseTest.cs" />
     <Compile Include="AlterEntityIntegrationTests.cs" />
     <Compile Include="CreateEntityIntegrationTests.cs" />
