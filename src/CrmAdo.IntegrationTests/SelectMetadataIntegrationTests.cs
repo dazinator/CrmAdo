@@ -17,9 +17,7 @@ namespace CrmAdo.IntegrationTests
     [Category("Select Statement")]
     [Category("Metadata")]
     public class SelectMetadataIntegrationTests : BaseTest
-    {
-
-        public string TestEntityName { get; set; }
+    {      
 
         [TestFixtureSetUp]
         public override void SetUp()
@@ -55,10 +53,6 @@ namespace CrmAdo.IntegrationTests
             }
 
         }
-
-
-
-
 
     }
 
