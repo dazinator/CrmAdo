@@ -43,7 +43,10 @@ namespace CrmAdo
             _IsOpen = true;
         }
 
+
         private int _Depth = 0;
+
+        private DbConnection connection;
         public override int Depth
         {
             get { return _Depth; }
@@ -112,86 +115,69 @@ namespace CrmAdo
         {
             get
             {
-                throw new NotImplementedException();
-               // return _Results.ColumnMetadata.Count;
+                // throw new NotImplementedException();
+                return _Results.ColumnMetadata.Count;
             }
         }
 
         public override string GetName(int ordinal)
         {
-            throw new NotImplementedException();
-          //  return _Results.ColumnMetadata[ordinal].ColumnName;
+            //throw new NotImplementedException();
+            return _Results.ColumnMetadata[ordinal].ColumnName;
         }
 
         public override int GetOrdinal(string name)
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
 
-            //int ordinal = 0;
-            //foreach (var m in _Results.ColumnMetadata)
-            //{
-            //    if (m.ColumnName.ToLower() == name.ToLower())
-            //    {
-            //        return ordinal;
-            //    }
-            //    ordinal++;
-            //}
-            //// ok be nice.. but look for a better way to do this in future..
-            //// in case they are using an alias for the default entity (crm doesn't support this when using QueryExpression) then check for that..
-            //ordinal = 0;
-            //foreach (var m in _Results.ColumnMetadata)
-            //{
-            //    if (m.IsSameLogicalName(name))
-            //    {
-            //        return ordinal;
-            //    }
-            //    ordinal++;
-            //}
+            int ordinal = 0;
+            foreach (var m in _Results.ColumnMetadata)
+            {
+                if (m.ColumnName.ToLower() == name.ToLower())
+                {
+                    return ordinal;
+                }
+                ordinal++;
+            }
+            // ok be nice.. but look for a better way to do this in future..
+            // in case they are using an alias for the default entity (crm doesn't support this when using QueryExpression) then check for that..
+            ordinal = 0;
+            foreach (var m in _Results.ColumnMetadata)
+            {
+                if (m.IsSameLogicalName(name))
+                {
+                    return ordinal;
+                }
+                ordinal++;
+            }
 
-            //// Throw an exception if the ordinal cannot be found.
-            //var availableColumns = string.Join(",", (from c in _Results.ColumnMetadata select c.ColumnName));
-            //throw new IndexOutOfRangeException("The column named " + name + " was not found in the available columns: " + availableColumns);
+            // Throw an exception if the ordinal cannot be found.
+            var availableColumns = string.Join(",", (from c in _Results.ColumnMetadata select c.ColumnName));
+            throw new IndexOutOfRangeException("The column named " + name + " was not found in the available columns: " + availableColumns);
         }
 
         public override object GetValue(int ordinal)
         {
-            var name = GetName(ordinal);
-            var record = _Results.Results[_Position];
-            throw new NotImplementedException();
-            //if (!record.Attributes.ContainsKey(name))
-            //{
-            //    return DBNull.Value;
-            //}
-            //var val = record[name];
-            //var meta = _Results.ColumnMetadata[ordinal];
+            var meta = _Results.ColumnMetadata[ordinal];
+            var result = _Results.DenormalisedResults[_Position];
+            var name = meta.ColumnName;
+            switch (meta.AttributeMetadata.EntityLogicalName)
+            {
+                case "entitymetadata":
+                    return result.GetEntityMetadataValue(name);
 
-            //if (meta.HasAlias)
-            //{
-            //    var aliasedVal = val as AliasedValue;
-            //    if (aliasedVal != null)
-            //    {
-            //        //if (!typeof(T).IsAssignableFrom(typeof(AliasedValue)))
-            //        //{
-            //        val = aliasedVal.Value;
-            //        // }
-            //    }
-            //}
+                case "attributemetadata":
+                    return result.GetAttributeMetadataValue(name);
 
-            //switch (meta.AttributeMetadata.AttributeType)
-            //{
-            //    case AttributeTypeCode.Lookup:
-            //    case AttributeTypeCode.Owner:
-            //        return ((EntityReference)val).Id;
-            //    case AttributeTypeCode.Money:
-            //        return ((Money)val).Value;
-            //    case AttributeTypeCode.Picklist:
-            //    case AttributeTypeCode.State:
-            //    case AttributeTypeCode.Status:
-            //        return ((OptionSetValue)val).Value;
-            //    default:
-            //        return val;
-            //}
+                case "onetomanyrelationshipmetadata":
+                    return result.GetOneToManyRelationshipValue(name);
 
+                case "manytomanyrelationshipmetadata":
+                    return result.GetManyToManyRelationshipValue(name);
+
+                default:
+                    return null;
+            }
         }
 
         /// <summary>
@@ -202,8 +188,8 @@ namespace CrmAdo
         public override string GetDataTypeName(int ordinal)
         {
             // retrun the data type name e.g 'varchar'
-            throw new NotImplementedException();
-           // return _Results.ColumnMetadata[ordinal].AttributeMetadata.GetSqlDataTypeName();
+            // throw new NotImplementedException();
+            return _Results.ColumnMetadata[ordinal].AttributeMetadata.GetSqlDataTypeName();
         }
 
         /// <summary>
@@ -213,8 +199,8 @@ namespace CrmAdo
         /// <returns></returns>
         public override Type GetFieldType(int ordinal)
         {
-            throw new NotImplementedException();
-           // return _Results.ColumnMetadata[ordinal].AttributeMetadata.GetFieldType();
+            //  throw new NotImplementedException();
+            return _Results.ColumnMetadata[ordinal].AttributeMetadata.GetFieldType();
         }
 
         /// <summary>
@@ -223,8 +209,8 @@ namespace CrmAdo
         /// <returns></returns>
         public override DataTable GetSchemaTable()
         {
-            throw new NotImplementedException();
-          //  return _SchemaTableProvider.GetSchemaTable(this._Results.ColumnMetadata);
+            // throw new NotImplementedException();
+            return _SchemaTableProvider.GetSchemaTable(this._Results.ColumnMetadata);
         }
 
         #endregion
@@ -241,7 +227,7 @@ namespace CrmAdo
             // Look up the ordinal and return 
             // the value at that position.
             get { return this[GetOrdinal(name)]; }
-        }   
+        }
 
         public T GetValue<T>(int ordinal)
         {

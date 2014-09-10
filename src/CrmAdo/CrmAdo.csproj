@@ -159,6 +159,7 @@
     <Compile Include="Dynamics\Metadata\IHaveMinMaxAndScaleValues.cs" />
     <Compile Include="Dynamics\Metadata\MetadataConverter.cs" />
     <Compile Include="Dynamics\Metadata\MoneyAttributeInfo.cs" />
+    <Compile Include="Results\DenormalisedMetadataResult.cs" />
     <Compile Include="Results\EntityMetadataResultSet.cs" />
     <Compile Include="Results\ResultSet.cs" />
     <Compile Include="SchemaTableProvider.cs" />

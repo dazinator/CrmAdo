@@ -9,6 +9,7 @@ using Microsoft.Xrm.Sdk.Query;
 using CrmAdo.Visitor;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Metadata.Query;
+using CrmAdo.Results;
 
 namespace CrmAdo
 {
@@ -155,10 +156,21 @@ namespace CrmAdo
                 if (retrieveMultipleResponse != null)
                 {
                     AssignResponseParameter(command, response);
-                    resultSet.Results = retrieveMultipleResponse.EntityMetadata;
+                    // denormalise object graph to results.
+                    if (retrieveMultipleResponse.EntityMetadata != null)
+                    {
+                        //int index = 0;
+                        resultSet.Results = (from r in retrieveMultipleResponse.EntityMetadata
+                                               from a in r.Attributes
+                                               from o in r.OneToManyRelationships.Union(r.ManyToOneRelationships)
+                                               from m in r.ManyToManyRelationships
+                                               select new DenormalisedMetadataResult { EntityMetadata = r, AttributeMetadata = a, OneToManyRelationship = o, ManyToManyRelationship = m }).ToArray();
+                      
+                    }                   
+                   
                 }
             }
-            //  PopulateMetadata(resultSet, retrieveMultipleRequest.Query as QueryExpression);
+            PopulateMetadata(resultSet, retrieveMetadataChangesRequest.Query);
             return resultSet;
         }
 
@@ -435,8 +447,11 @@ namespace CrmAdo
                                   select new ColumnMetadata(c)));
             }
 
+
+         
+
             // populate rest of metadata.
-            throw new NotImplementedException();
+          //  throw new NotImplementedException();
 
         }
 

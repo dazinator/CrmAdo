@@ -30,7 +30,12 @@ namespace CrmAdo
 
         public abstract object GetScalar();
 
-        public List<ColumnMetadata> ColumnMetadata { get; set; }       
+        public List<ColumnMetadata> ColumnMetadata { get; set; }
+
+        public virtual bool HasColumnMetadata()
+        {
+            return ColumnMetadata != null && ColumnMetadata.Any();
+        }
 
     }
 }
