@@ -17,7 +17,7 @@ namespace CrmAdo.Tests
             var logBuilder = new StringBuilder();
 
             string joinType = "INNER";
-            var sql = string.Format("Select contactid, firstname, lastname From contact AS CONTACT {0} JOIN address AS ADDRESS on contact.contactid = address.contactid", joinType);
+            var sql = string.Format("Select contactid, firstname, lastname From contact AS CONTACT {0} JOIN customeraddress AS ADDRESS on contact.contactid = address.contactid", joinType);
 
             var commandText = sql;
             var commandBuilder = new CommandBuilder();
@@ -27,7 +27,7 @@ namespace CrmAdo.Tests
 
             var nestedJoinsSql =
                 string.Format(
-                    "Select contactid, firstname, lastname From contact INNER JOIN address on contact.id = address.contactid INNER JOIN occupant on address.addressid = occupant.addressid ",
+                    "Select contactid, firstname, lastname From contact INNER JOIN customeraddress on contact.id = address.contactid INNER JOIN occupant on address.addressid = occupant.addressid ",
                     joinType);
 
             builder = commandBuilder.GetCommand(nestedJoinsSql) as SelectBuilder;
@@ -36,7 +36,7 @@ namespace CrmAdo.Tests
 
             var anotherJoinSql =
              string.Format(
-                 "Select contactid, firstname, lastname From contact INNER JOIN address on contact.id = address.contactid INNER JOIN occupant on contact.contactid = occupant.contactid ",
+                 "Select contactid, firstname, lastname From contact INNER JOIN customeraddress on contact.id = address.contactid INNER JOIN occupant on contact.contactid = occupant.contactid ",
                  joinType);
 
             builder = commandBuilder.GetCommand(anotherJoinSql) as SelectBuilder;
@@ -46,7 +46,7 @@ namespace CrmAdo.Tests
 
             var moreSql =
             string.Format(
-                "Select C.contactid, C.firstname, C.lastname, O.fullname From contact C INNER JOIN address A on c.id = A.contactid LEFT JOIN occupant O on C.contactid = O.contactid ",
+                "Select C.contactid, C.firstname, C.lastname, O.fullname From contact C INNER JOIN customeraddress A on c.id = A.contactid LEFT JOIN occupant O on C.contactid = O.contactid ",
                 joinType);
 
             builder = commandBuilder.GetCommand(moreSql) as SelectBuilder;

@@ -17,6 +17,8 @@ namespace CrmAdo.Visitor
     {
         public const string ParameterToken = "@";
         private IDynamicsAttributeTypeProvider _TypeProvider;
+        private ICrmMetaDataProvider _MetadataProvider;
+
 
         public VisitingCrmRequestProvider()
             : this(new DynamicsAttributeTypeProvider())
@@ -26,24 +28,36 @@ namespace CrmAdo.Visitor
         public VisitingCrmRequestProvider(IDynamicsAttributeTypeProvider typeProvider)
         {
             _TypeProvider = typeProvider;
+            _MetadataProvider = null;
         }
+
+        public VisitingCrmRequestProvider(IDynamicsAttributeTypeProvider typeProvider, ICrmMetaDataProvider metadataProvider)
+        {
+            _MetadataProvider = metadataProvider;
+            _TypeProvider = typeProvider;
+        }
+
+
+
 
         /// <summary>
         /// Returns the <see cref="OrganizationRequest"/> for the <see cref="CrmDbCommand"/>
         /// </summary>
         /// <returns></returns>
-        public OrganizationRequest GetOrganizationRequest(CrmDbCommand command)
+        public OrganizationRequest GetOrganizationRequest(CrmDbCommand command, out List<ColumnMetadata> columnMetadata)
         {
             var commandText = command.CommandText;
             var commandBuilder = new CommandBuilder();
             var options = new CommandBuilderOptions();
             options.PlaceholderPrefix = ParameterToken;
             var sqlCommandBuilder = commandBuilder.GetCommand(commandText, options);
-
-            ICrmMetaDataProvider metadataProvider = null;
-            if (command.CrmDbConnection != null)
+            ICrmMetaDataProvider metadataProvider = _MetadataProvider;
+            if (_MetadataProvider == null)
             {
-                metadataProvider = command.CrmDbConnection.MetadataProvider;
+                if (command.CrmDbConnection != null)
+                {
+                    metadataProvider = command.CrmDbConnection.MetadataProvider;
+                }
             }
 
             var orgRequestVisitingBuilder = new OrganizationRequestBuilderVisitor(metadataProvider, command.Parameters, _TypeProvider);
@@ -53,6 +67,7 @@ namespace CrmAdo.Visitor
             {
                 throw new NotSupportedException("Could not translate the command into the appropriate Organization Service Request Message");
             }
+            columnMetadata = orgRequestVisitingBuilder.ColumnMetadata;
             return request;
         }
     }

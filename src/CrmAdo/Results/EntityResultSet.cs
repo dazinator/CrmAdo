@@ -11,8 +11,8 @@ namespace CrmAdo
     public class EntityResultSet : ResultSet
     {
 
-        public EntityResultSet(CrmDbCommand command, OrganizationRequest request)
-            : base(command, request)
+        public EntityResultSet(CrmDbCommand command, OrganizationRequest request, List<ColumnMetadata> columnMetadata)
+            : base(command, request, columnMetadata)
         {
         }
 

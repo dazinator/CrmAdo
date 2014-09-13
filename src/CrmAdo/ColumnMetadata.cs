@@ -34,6 +34,24 @@ namespace CrmAdo
             }
         }
 
+        public ColumnMetadata(string attributeName, string entityAlias = "")
+        {
+            // AttributeMetadata = attributeMetadata;
+            this.EntityAlias = entityAlias;
+            this.AttributeMetadata = null;
+
+            if (!string.IsNullOrEmpty(entityAlias))
+            {
+                _hasAlias = true;
+                this._columnName = string.Format("{0}.{1}", entityAlias, attributeName);
+            }
+            else
+            {
+                _hasAlias = false;
+                this._columnName = attributeName;
+            }
+        }
+
         public string EntityAlias { get; set; }
 
         public bool HasAlias { get { return _hasAlias; } }

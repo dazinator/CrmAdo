@@ -121,31 +121,18 @@
     <Compile Include="Tests\AdoTests\CrmConnectionStringBuilderTests.cs" />
     <Compile Include="Tests\AlterTableTests\AlterTableStatementTests.cs" />
     <Compile Include="Tests\CreateTableTests\CreateTableStatementTests.cs" />
-    <Compile Include="Tests\DeleteTests\DeleteStatementTests.cs" />
     <Compile Include="Support\FakeContactMetadataProvider.cs" />
     <Compile Include="Tests\EfTests\BasicTests.cs" />
-    <Compile Include="Tests\SelectTests\SelectStatementTests.cs" />
     <Compile Include="Support\Utils.cs" />
     <Compile Include="Tests\SelectTests\SelectMetadataVisitorTests.cs" />
-    <Compile Include="Tests\UpdateTests\UpdateStatementTests.cs" />
     <Compile Include="Tests\DynamicsAttributeTypeProviderTests.cs" />
-    <Compile Include="Tests\InsertTests\InsertStatementValidityTests.cs" />
-    <Compile Include="Tests\InsertTests\InsertStatementTests.cs" />
-    <Compile Include="Tests\SelectTests\SelectStatementJoinTests.cs" />
-    <Compile Include="Tests\SelectTests\SelectStatementWhereFilterOperatorValidityTests.cs" />
-    <Compile Include="Tests\SelectTests\SelectStatementWhereFilterParameterTests.cs" />
     <Compile Include="Support\AssertUtils.cs" />
     <Compile Include="Support\BaseTest.cs" />
     <Compile Include="Tests\AdoTests\CrmDbProviderFactoryTests.cs" />
     <Compile Include="Tests\AdoTests\CrmDbDataReaderTests.cs" />
-    <Compile Include="Tests\SelectTests\SelectStatementProjectionTests.cs" />
-    <Compile Include="Tests\SelectTests\SelectStatementWhereFilterConjunctionTests.cs" />
     <Compile Include="Tests\AdoTests\CrmDbCommandTests.cs" />
     <Compile Include="Tests\AdoTests\CrmDbConnectionTests.cs" />
-    <Compile Include="Support\CrmQueryExpressionProviderTestsBase.cs" />
     <Compile Include="Tests\Experiments.cs" />
-    <Compile Include="Tests\SelectTests\SelectStatementValidityTests.cs" />
-    <Compile Include="Tests\SelectTests\SelectStatementWhereFilterOperatorTests.cs" />
     <Compile Include="Support\LogUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\DeleteTests\DeleteStatementVisitorTests.cs" />
@@ -184,7 +171,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="MetadataFiles\accountMetadata.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="MetadataFiles\contactMetadata.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="MetadataFiles\customeraddressMetadata.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

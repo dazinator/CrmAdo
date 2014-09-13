@@ -25,7 +25,7 @@ namespace CrmAdo.Tests
         [Test]
         public void Should_Be_Able_To_Create_A_New_Data_Reader()
         {
-            var results = new EntityResultSet(null, null);
+            var results = new EntityResultSet(null, null, null);
             results.ColumnMetadata = new List<ColumnMetadata>();
             results.Results = new EntityCollection(new List<Entity>());
             var subject = CreateTestSubject(results);
@@ -35,7 +35,7 @@ namespace CrmAdo.Tests
         public void Should_Be_Able_To_Create_A_New_Data_Reader_With_Connection_And_Results()
         {
             var conn = MockRepository.GenerateMock<CrmDbConnection>();
-            var results = new EntityResultSet(null, null);
+            var results = new EntityResultSet(null, null, null);
             results.ColumnMetadata = new List<ColumnMetadata>();
 
             var firstName = MockRepository.GenerateMock<AttributeInfo>();
@@ -59,7 +59,7 @@ namespace CrmAdo.Tests
         public void Should_Close_Connection_When_Finished_Reading()
         {
             var conn = MockRepository.GenerateMock<CrmDbConnection>();
-            var results = new EntityResultSet(null, null);
+            var results = new EntityResultSet(null, null, null);
             results.ColumnMetadata = new List<ColumnMetadata>();
 
             //   var firstName = new AttributeMetadata();
@@ -115,7 +115,7 @@ namespace CrmAdo.Tests
         public void Should_Be_Able_To_Get_Schema_Data_Table()
         {
             var conn = MockRepository.GenerateMock<CrmDbConnection>();
-            var results = new EntityResultSet(null, null);
+            var results = new EntityResultSet(null, null, null);
             results.ColumnMetadata = new List<ColumnMetadata>();
 
             // set up fake metadata provider.

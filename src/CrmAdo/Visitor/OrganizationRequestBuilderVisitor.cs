@@ -20,13 +20,14 @@ namespace CrmAdo.Visitor
         public const string ParameterToken = "@";
 
         public OrganizationRequest OrganizationRequest { get; set; }
+        public List<ColumnMetadata> ColumnMetadata { get; set; }
+
         public ICrmMetaDataProvider CrmMetadataProvider { get; set; }
         public DbParameterCollection Parameters { get; set; }
         public IDynamicsAttributeTypeProvider TypeProvider { get; set; }
 
         private bool _DetectingMetadataQuery = false;
         private bool _IsMetadataQuery = false;
-
 
         public OrganizationRequestBuilderVisitor(ICrmMetaDataProvider crmMetadataProvider, DbParameterCollection parameters, IDynamicsAttributeTypeProvider typeProvider)
         {
@@ -39,18 +40,18 @@ namespace CrmAdo.Visitor
         {
             // Could use alternate builders like a fetch xml builder.
             // If the SELECT is for entity metadata then perform a metadata query request.
-
             bool isMetadataQuery = IsMetadataQuery(item);
             if (!isMetadataQuery)
             {
-                var visitor = new RetrieveMultipleRequestBuilderVisitor(Parameters);
+                var visitor = new RetrieveMultipleRequestBuilderVisitor(Parameters, CrmMetadataProvider);
                 IVisitableBuilder visitable = item;
                 visitable.Accept(visitor);
                 OrganizationRequest = visitor.Request;
+                ColumnMetadata = visitor.ColumnMetadata;
             }
             else
             {
-                var visitor = new RetrieveMetadataChangesRequestBuilderVisitor(Parameters);
+                var visitor = new RetrieveMetadataChangesRequestBuilderVisitor(Parameters, CrmMetadataProvider);
                 IVisitableBuilder visitable = item;
                 visitable.Accept(visitor);
                 OrganizationRequest = visitor.Request;

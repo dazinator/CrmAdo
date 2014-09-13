@@ -23,6 +23,8 @@ namespace CrmAdo.Visitor
         public const string OneToManyRelationshipMetadadataTableLogicalName = "onetomanyrelationshipmetadata";
         public const string ManyToManyRelationshipMetadadataTableLogicalName = "manytomanyrelationshipmetadata";
 
+        private ICrmMetaDataProvider _MetadataProvider;
+
         public enum VisitMode
         {
             From = 0,
@@ -32,16 +34,17 @@ namespace CrmAdo.Visitor
             OrderBy = 4
         }
 
-        public RetrieveMetadataChangesRequestBuilderVisitor()
-            : this(null)
+        public RetrieveMetadataChangesRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider)
+            : this(null, metadataProvider)
         {
 
         }
 
-        public RetrieveMetadataChangesRequestBuilderVisitor(DbParameterCollection parameters)
+        public RetrieveMetadataChangesRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider)
         {
             Parameters = parameters;
             Request = new RetrieveMetadataChangesRequest();
+            _MetadataProvider = metadataProvider;
             //  QueryExpression = new EntityQueryExpression();          
             // Request.Query = QueryExpression;
         }
@@ -50,6 +53,8 @@ namespace CrmAdo.Visitor
         public EntityQueryExpression QueryExpression { get; set; }
         public DbParameterCollection Parameters { get; set; }
 
+        public bool IsSingleSource { get; set; }
+        public AliasedSource SingleSource { get; set; }
         public VisitMode Mode { get; set; }
 
         #region From Context
@@ -77,13 +82,18 @@ namespace CrmAdo.Visitor
 
         protected override void VisitSelect(SelectBuilder item)
         {
-            this.QueryExpression = new EntityQueryExpression();
+            this.QueryExpression = CreateDefaultQueryExpression();
             Request.Query = this.QueryExpression;
+
             if (!item.From.Any())
             {
                 throw new InvalidOperationException("The query does not have a valid FROM clause");
             }
             Mode = VisitMode.From;
+            if (item.From.Count() == 1)
+            {
+                IsSingleSource = true;
+            }
             VisitEach(item.From);
 
             Mode = VisitMode.Projection;
@@ -122,6 +132,23 @@ namespace CrmAdo.Visitor
 
         }
 
+        private EntityQueryExpression CreateDefaultQueryExpression()
+        {
+            var query = new EntityQueryExpression();
+            // We need to ensure that attribute metadata is excluded until included.
+            query.AttributeQuery = new AttributeQueryExpression();
+            query.AttributeQuery.Properties = new MetadataPropertiesExpression();
+            query.AttributeQuery.Properties.AllProperties = false;
+            query.AttributeQuery.Criteria = new MetadataFilterExpression();
+            query.AttributeQuery.Criteria.Conditions.Add(new MetadataConditionExpression("SchemaName", MetadataConditionOperator.Equals, "ThisWillNeverExist"));
+
+            query.RelationshipQuery = new RelationshipQueryExpression();
+            query.RelationshipQuery.Properties = new MetadataPropertiesExpression();
+            query.RelationshipQuery.Properties.AllProperties = false;
+            query.RelationshipQuery.Criteria.Conditions.Add(new MetadataConditionExpression("SchemaName", MetadataConditionOperator.Equals, "ThisWillNeverExist"));
+            return query;
+        }
+
         #region From
 
 
@@ -147,7 +174,10 @@ namespace CrmAdo.Visitor
         }
         protected override void VisitAliasedSource(AliasedSource aliasedSource)
         {
-
+            if (IsSingleSource)
+            {
+                SingleSource = aliasedSource;
+            }
             aliasedSource.Source.Accept(this);
 
             //// We want the root aliased source (furthest source to the left) as this is the entity metadata.
@@ -197,7 +227,9 @@ namespace CrmAdo.Visitor
         protected override void VisitColumn(Column item)
         {
             //   bool isAliasedSource = !string.IsNullOrEmpty(item.Source.Alias);
-            var sourceTable = item.Source.Source as Table;
+            var sourceTable = IsSingleSource ? SingleSource.Source as Table : item.Source.Source as Table;
+
+            //var sourceTable = item.Source.Source as Table;
             var sourceName = sourceTable.GetTableLogicalEntityName();
             switch (sourceName)
             {
@@ -218,20 +250,20 @@ namespace CrmAdo.Visitor
 
         protected override void VisitAllColumns(AllColumns item)
         {
-            var sourceTable = item.Source.Source as Table;
+            var sourceTable = IsSingleSource ? SingleSource.Source as Table : item.Source.Source as Table;
             var sourceName = sourceTable.GetTableLogicalEntityName();
             switch (sourceName)
             {
-                case "entitymetdata":
+                case EntityMetadadataTableLogicalName:
                     this.QueryExpression.Properties.AllProperties = true;
                     break;
-                case "attributemetadata":
+                case AttributeMetadadataTableLogicalName:
                     this.QueryExpression.AttributeQuery.Properties.AllProperties = true;
                     break;
-                case "onetomanyrelationshipmetadata":
+                case OneToManyRelationshipMetadadataTableLogicalName:
                     this.QueryExpression.RelationshipQuery.Properties.AllProperties = true;
                     break;
-                case "manytomanyrelationshipmetadata":
+                case ManyToManyRelationshipMetadadataTableLogicalName:
                     this.QueryExpression.RelationshipQuery.Properties.AllProperties = true;
                     break;
             }
@@ -851,5 +883,43 @@ namespace CrmAdo.Visitor
         #endregion
 
         #endregion
+
+        private List<ColumnMetadata> GetColumnMetadata(MetadataQueryExpression queryExpression)
+        {
+            if (_MetadataProvider != null)
+            {
+                var metaData = new Dictionary<string, CrmEntityMetadata>();
+                var columns = new List<ColumnMetadata>();
+                PopulateColumnMetadata(queryExpression, metaData, columns);
+                return columns;
+            }
+            return null;
+        }
+
+        public void PopulateColumnMetadata(MetadataQueryExpression query, Dictionary<string, CrmEntityMetadata> entityMetadata, List<ColumnMetadata> columns)
+        {
+            // get metadata for this entities columns..
+            if (!entityMetadata.ContainsKey("entitymetadata"))
+            {
+                entityMetadata["entitymetadata"] = _MetadataProvider.GetEntityMetadata("entitymetadata");
+            }
+
+            var entMeta = entityMetadata["entitymetadata"];
+            if (query.Properties.AllProperties)
+            {
+                columns.AddRange((from c in entMeta.Attributes orderby c.LogicalName select new ColumnMetadata(c)));
+            }
+            else
+            {
+                columns.AddRange((from s in query.Properties.PropertyNames
+                                  join c in entMeta.Attributes
+                                      on s.ToLower() equals c.LogicalName
+                                  select new ColumnMetadata(c)));
+            }
+
+            // populate rest of metadata.
+            //  throw new NotImplementedException();
+
+        }
     }
 }

@@ -16,10 +16,11 @@ namespace CrmAdo
         public CrmDbCommand Command { get { return _Command; } set { _Command = value; } }
         public OrganizationRequest Request { get { return _OrgRequest; } set { _OrgRequest = value; } }
 
-        protected ResultSet(CrmDbCommand command, OrganizationRequest request)
+        protected ResultSet(CrmDbCommand command, OrganizationRequest request, List<ColumnMetadata> columnMetadata)
         {
             _Command = command;
             _OrgRequest = request;
+            ColumnMetadata = columnMetadata;
         }
 
         public abstract int ResultCount();

@@ -1,4 +1,5 @@
-﻿using CrmAdo.Visitor;
+﻿using CrmAdo.Dynamics;
+using CrmAdo.Visitor;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
@@ -18,7 +19,18 @@ namespace CrmAdo.Tests.Support
     {
         protected QueryExpression GetQueryExpression(string sql)
         {
-            var cmd = new CrmDbCommand(null);
+            //  var mockCrmService =  MockRepository.GenerateMock<ICrmServiceProvider>();
+            //    var conn = new CrmDbConnection()
+            // var conn = MockRepository.GenerateMock<CrmDbConnection>();
+            //   var results = new EntityResultSet(null, null, null);
+            //results.ColumnMetadata = new List<ColumnMetadata>();
+
+            // set up fake metadata provider.
+
+            //   var fakeConn = MockRepository.GenerateMock<CrmDbConnection>();
+            //  fakeConn.Stub(a => a.MetadataProvider).Return(fakeMetadataProvider);
+            //   var contactMetadata = fakeMetadataProvider.GetEntityMetadata("contact");
+            var cmd = new CrmDbCommand();
             cmd.CommandText = sql;
             return GetQueryExpression(cmd);
         }
@@ -38,8 +50,11 @@ namespace CrmAdo.Tests.Support
 
         protected T GetOrganizationRequest<T>(CrmDbCommand command) where T : OrganizationRequest
         {
-            var subject = CreateTestSubject();
-            var request = subject.GetOrganizationRequest(command) as T;
+            var fakeMetadataProvider = new FakeContactMetadataProvider();
+            var typeProvider = new DynamicsAttributeTypeProvider();
+            var subject = CreateTestSubject(typeProvider, fakeMetadataProvider);
+            List<ColumnMetadata> columnMetadata;
+            var request = subject.GetOrganizationRequest(command, out columnMetadata) as T;
             return request as T;
         }
 
@@ -62,23 +77,6 @@ namespace CrmAdo.Tests.Support
             sqlFilterString = string.Format(filterFormatString, formatArgs.ToArray());
             return sqlFilterString;
         }
-
-        //private T GetRequest<T>(string sql) where T : OrganizationRequest
-        //{
-        //    // set up fake metadata provider.
-        //    // var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
-        //    // var fakeMetadata = GetFakeContactMetadata();
-        //    // fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
-          
-        //    //  fakeConn.Stub(a => a.MetadataProvider).Return(fakeMetadataProvider);
-
-        //    var fakeConn = MockRepository.GenerateMock<CrmDbConnection>();
-        //    var cmd = new CrmDbCommand(fakeConn);
-        //    cmd.CommandText = sql;
-        //    var request = GetOrganizationRequest<T>(cmd);
-        //    return request;
-
-        //}  
 
     }
 }

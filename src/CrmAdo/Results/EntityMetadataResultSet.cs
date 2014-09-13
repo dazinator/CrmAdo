@@ -20,7 +20,7 @@ namespace CrmAdo
         private int _ResultCount = 0;
 
         public EntityMetadataResultSet(CrmDbCommand command, OrganizationRequest request, DenormalisedMetadataResult[] results)
-            : base(command, request)
+            : base(command, request, null)
         {
             _Results = results;
             if (_Results != null)

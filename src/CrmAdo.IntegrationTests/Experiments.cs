@@ -14,6 +14,7 @@ using NUnit.Framework;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata.Query;
 using Microsoft.Xrm.Sdk.Metadata;
+using System.IO;
 
 namespace CrmAdo.IntegrationTests
 {
@@ -723,6 +724,67 @@ namespace CrmAdo.IntegrationTests
                     ClientVersionStamp = null
                 };
                 RetrieveMetadataChangesResponse response = (RetrieveMetadataChangesResponse)orgService.Execute(retrieveMetadataChangesRequest);
+            }
+
+
+
+        }
+
+
+
+        [Category("Experimentation")]
+        [Test]
+        [TestCase("customeraddress", TestName = "Experiment for saving address entity metadata to a local file.")]
+        [TestCase("account", TestName = "Experiment for saving account metadata to a local file.")]
+        public void Experiment_For_Saving_Entity_Metadata_To_File(string entityName)
+        {
+
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
+                                                         new CrmClientCredentialsProvider());
+
+            var orgService = serviceProvider.GetOrganisationService();
+            using (orgService as IDisposable)
+            {
+                MetadataFilterExpression entityFilter = new MetadataFilterExpression(LogicalOperator.And);
+                entityFilter.Conditions.Add(new MetadataConditionExpression("LogicalName", MetadataConditionOperator.Equals, entityName));
+
+
+
+
+                EntityQueryExpression entityQueryExpression = new EntityQueryExpression()
+                {
+                    Criteria = entityFilter,
+                    Properties = new MetadataPropertiesExpression() { AllProperties = true }
+                };
+                RetrieveMetadataChangesRequest retrieveMetadataChangesRequest = new RetrieveMetadataChangesRequest()
+                {
+                    Query = entityQueryExpression,
+                    ClientVersionStamp = null
+                };
+                RetrieveMetadataChangesResponse response = (RetrieveMetadataChangesResponse)orgService.Execute(retrieveMetadataChangesRequest);
+                var entityMetadata = response.EntityMetadata[0];
+
+
+
+                var path = Environment.CurrentDirectory;
+                var shortFileName = entityName + "Metadata.xml";
+
+
+                var fileName = System.IO.Path.Combine(path, shortFileName);
+                var serialised = EntityMetadataUtils.SerializeMetaData(entityMetadata, System.Xml.Formatting.Indented);
+                using (var writer = new System.IO.StreamWriter(fileName))
+                {
+                    writer.Write(serialised);
+                    writer.Flush();
+                    writer.Close();
+                }
+
+                if (!File.Exists(fileName))
+                {
+                    throw new FileNotFoundException("Could not save metadata file for entity " + entityName);
+                }
             }
 
 

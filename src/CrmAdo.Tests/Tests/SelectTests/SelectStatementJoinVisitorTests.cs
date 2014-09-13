@@ -36,7 +36,7 @@ namespace CrmAdo.Tests
             }
 
 
-            var sql = string.Format("Select C.contactid, C.firstname, C.lastname, A.addressline1 From contact C {0} JOIN address A on C.contactid = A.contactid", joinType);
+            var sql = string.Format("Select C.contactid, C.firstname, C.lastname, A.addressline1 From contact C {0} JOIN customeraddress A on C.contactid = A.contactid", joinType);
 
             // Act
             var queryExpression = GetQueryExpression(sql);
@@ -46,7 +46,7 @@ namespace CrmAdo.Tests
             Assert.That(queryExpression.LinkEntities, Is.Not.Null);
             Assert.That(queryExpression.LinkEntities[0], Is.Not.Null);
             Assert.That(queryExpression.LinkEntities[0].LinkFromEntityName, Is.EqualTo("contact"));
-            Assert.That(queryExpression.LinkEntities[0].LinkToEntityName, Is.EqualTo("address"));
+            Assert.That(queryExpression.LinkEntities[0].LinkToEntityName, Is.EqualTo("customeraddress"));
             Assert.That(queryExpression.LinkEntities[0].LinkFromAttributeName, Is.EqualTo("contactid"));
             Assert.That(queryExpression.LinkEntities[0].LinkToAttributeName, Is.EqualTo("contactid"));
             Assert.That(queryExpression.LinkEntities[0].EntityAlias, Is.EqualTo("A"));
@@ -63,7 +63,7 @@ namespace CrmAdo.Tests
         public void Should_Support_Nested_Joins(string joinType)
         {
 
-            var sql = string.Format("Select C.contactid, C.firstname, C.lastname, AC.name, A.addressline1 From contact C {0} JOIN address A on C.contactid = A.contactid {0} JOIN account AC on A.addressid = AC.addressid", joinType);
+            var sql = string.Format("Select C.contactid, C.firstname, C.lastname, AC.name, A.addressline1 From contact C {0} JOIN customeraddress A on C.contactid = A.contactid {0} JOIN account AC on A.addressid = AC.addressid", joinType);
 
             var join = JoinOperator.Natural;
 
@@ -85,7 +85,7 @@ namespace CrmAdo.Tests
             Assert.That(queryExpression.LinkEntities, Is.Not.Null);
             Assert.That(queryExpression.LinkEntities[0], Is.Not.Null);
             Assert.That(queryExpression.LinkEntities[0].LinkFromEntityName, Is.EqualTo("contact"));
-            Assert.That(queryExpression.LinkEntities[0].LinkToEntityName, Is.EqualTo("address"));
+            Assert.That(queryExpression.LinkEntities[0].LinkToEntityName, Is.EqualTo("customeraddress"));
             Assert.That(queryExpression.LinkEntities[0].LinkFromAttributeName, Is.EqualTo("contactid"));
             Assert.That(queryExpression.LinkEntities[0].LinkToAttributeName, Is.EqualTo("contactid"));
             Assert.That(queryExpression.LinkEntities[0].EntityAlias, Is.EqualTo("A"));
@@ -96,7 +96,7 @@ namespace CrmAdo.Tests
             var addressEntity = queryExpression.LinkEntities[0];
             Assert.That(addressEntity.LinkEntities, Is.Not.Null);
             Assert.That(addressEntity.LinkEntities[0], Is.Not.Null);
-            Assert.That(addressEntity.LinkEntities[0].LinkFromEntityName, Is.EqualTo("address"));
+            Assert.That(addressEntity.LinkEntities[0].LinkFromEntityName, Is.EqualTo("customeraddress"));
             Assert.That(addressEntity.LinkEntities[0].LinkToEntityName, Is.EqualTo("account"));
             Assert.That(addressEntity.LinkEntities[0].LinkFromAttributeName, Is.EqualTo("addressid"));
             Assert.That(addressEntity.LinkEntities[0].LinkToAttributeName, Is.EqualTo("addressid"));
@@ -177,7 +177,7 @@ namespace CrmAdo.Tests
             var filterOnJoinedTable = Utils.GetSqlFilterString(filterOperator, filterValue, filterFormatString, filterColumnOnJoinedTable);
 
             var filterGroupOperator = "AND";
-            var sql = string.Format("Select C.contactid, C.firstname, C.lastname, A.name, A.addressline1 From contact C {0} JOIN address A on C.contactid = A.contactid Where {1} {2} {3} ", joinType, filterOnMainEntity, filterGroupOperator, filterOnJoinedTable);
+            var sql = string.Format("Select C.contactid, C.firstname, C.lastname, A.name, A.addressline1 From contact C {0} JOIN customeraddress A on C.contactid = A.contactid Where {1} {2} {3} ", joinType, filterOnMainEntity, filterGroupOperator, filterOnJoinedTable);
             // var sql = string.Format("Select C.contactid, C.firstname, C.lastname, A.addressline1 From contact C {0} JOIN address A on C.contactid = A.contactid", joinType);
             return sql;
         }
@@ -196,7 +196,7 @@ namespace CrmAdo.Tests
             var filterOnNestedJoinedTable = Utils.GetSqlFilterString(filterOperator, filterValue, filterFormatString, filterColumnOnNestedJoinedTable);
 
             var filterGroupOperator = "AND";
-            var sql = string.Format("Select C.contactid, C.firstname, C.lastname, A.name, A.addressline1 From contact C {0} JOIN address A on C.contactid = A.contactid {0} JOIN account AC on A.addressid = AC.addressid Where {1} {2} {3} {2} {4}", joinType, filterOnMainEntity, filterGroupOperator, filterOnJoinedTable, filterOnNestedJoinedTable);
+            var sql = string.Format("Select C.contactid, C.firstname, C.lastname, A.name, A.addressline1 From contact C {0} JOIN customeraddress A on C.contactid = A.contactid {0} JOIN account AC on A.addressid = AC.addressid Where {1} {2} {3} {2} {4}", joinType, filterOnMainEntity, filterGroupOperator, filterOnJoinedTable, filterOnNestedJoinedTable);
             // var sql = string.Format("Select C.contactid, C.firstname, C.lastname, A.addressline1 From contact C {0} JOIN address A on C.contactid = A.contactid", joinType);
             return sql;
         }
