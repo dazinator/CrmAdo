@@ -95,12 +95,12 @@ namespace CrmAdo.Dynamics.Metadata
 
         private CrmEntityMetadata BuildPseudoEntityMetadata()
         {
-            var metadata = new CrmEntityMetadata("entitymetadata");
-
-            metadata.AddPseudoAttribute("metadataid", AttributeTypeCode.Uniqueidentifier);
-            metadata.AddPseudoAttribute("haschanged", AttributeTypeCode.Boolean);
+            var metadata = new CrmEntityMetadata("entitymetadata");         
+          
+      
             metadata.AddPseudoAttribute("activitytypemask", AttributeTypeCode.Integer);
             metadata.AddPseudoAttribute("autoroutetoownerqueue", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("autocreateaccessteams", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("canbeinmanytomany", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("canbeprimaryentityinrelationship", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("canberelatedentityinrelationship", AttributeTypeCode.Boolean);
@@ -113,34 +113,44 @@ namespace CrmAdo.Dynamics.Metadata
             metadata.AddPseudoAttribute("description", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("displaycollectionname", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("displayname", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("haschanged", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("iconlargename", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("iconmediumname", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("iconsmallname", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("introducedversion", AttributeTypeCode.String);            
             metadata.AddPseudoAttribute("isactivity", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("isactivityparty", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isairupdated", AttributeTypeCode.Boolean);            
             metadata.AddPseudoAttribute("isauditenabled", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("isavailableoffline", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isbusinessprocessenabled", AttributeTypeCode.Boolean);            
             metadata.AddPseudoAttribute("ischildentity", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("isconnectionsenabled", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("iscustomentity", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("iscustomizable", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("isdocumentmanagementenabled", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("isduplicatedetectionenabled", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isenabledfortrace", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("isenabledforcharts", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("isimportable", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("isintersect", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("ismailmergeenabled", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("ismanaged", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("ismappable", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isquickcreateenabled", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("isreadingpaneenabled", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isreadonlyinmobileclient", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("isrenameable", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("isvalidforadvancedfind", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("isvalidforqueue", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("isvisibleinmobile", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isvisibleinmobileclient", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("logicalname", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("metadataid", AttributeTypeCode.Uniqueidentifier);
             metadata.AddPseudoAttribute("objecttypecode", AttributeTypeCode.Integer);
             metadata.AddPseudoAttribute("ownershiptype", AttributeTypeCode.Integer);
             metadata.AddPseudoAttribute("primaryidattribute", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("primaryimageattribute", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("primarynameattribute", AttributeTypeCode.String);
             //metadata.AddPseudoAttribut, "privileges", AttributeTypeCode.Uniqueidentifier)));
             metadata.AddPseudoAttribute("recurrencebaseentitylogicalname", AttributeTypeCode.String);

@@ -11,7 +11,7 @@
             <Children>
               <Selection type="Table">
                 <SelectionNode nodeId="Table">
-                  <DisplayName>{Name}</DisplayName>
+                  <DisplayName>{LogicalName}</DisplayName>
                   <Icon name="Table" />
                 </SelectionNode>
               </Selection>

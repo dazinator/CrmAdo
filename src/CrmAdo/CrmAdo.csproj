@@ -213,6 +213,10 @@
   <ItemGroup>
     <Folder Include="Obsolete\" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CrmAdoMetaData.xml" />
+    <Content Include="MetadataCollections.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\Build.targets" />
   <PropertyGroup>

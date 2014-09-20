@@ -48,7 +48,8 @@ namespace CrmAdo.IntegrationTests
                 var results = command.ExecuteReader();
                 while (results.Read())
                 {
-                    Console.WriteLine("MetadataId: " + results[0]);
+
+                    Console.WriteLine("MetadataId: " + results["AutoCreateAccessTeams"]);
                 }
             }
 
@@ -76,6 +77,33 @@ namespace CrmAdo.IntegrationTests
                 while (results.Read())
                 {
                     Console.WriteLine("MetadataId: " + results[0]);
+                }
+            }
+
+        }
+
+        [Test(Description = "Integration test that selects entity logical names from crm.")]
+        public void Should_Be_Able_To_Select_Entity_Logical_Names()
+        {
+            // create a random name for the entity. We use half a guid because names cant be too long.
+            //  string attributeSchemaName = "boolField";
+            //string lookupToEntity = "contact";
+            var sql = "SELECT LogicalName FROM EntityMetadata";
+            Console.WriteLine(sql);
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var command = conn.CreateCommand();
+
+                //   Console.WriteLine("Executing command " + sql);
+                command.CommandText = sql;
+                //   command.CommandType = CommandType.Text;
+                var results = command.ExecuteReader();
+                while (results.Read())
+                {
+                    Console.WriteLine("LogicalName: " + results[0]);
                 }
             }
 

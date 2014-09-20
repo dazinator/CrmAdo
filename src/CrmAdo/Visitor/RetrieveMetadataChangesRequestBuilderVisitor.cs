@@ -135,6 +135,13 @@ namespace CrmAdo.Visitor
         private EntityQueryExpression CreateDefaultQueryExpression()
         {
             var query = new EntityQueryExpression();
+            query.Properties = new MetadataPropertiesExpression();
+            query.Properties.AllProperties = false;
+            query.Properties.PropertyNames.Add("Attributes");
+            query.Properties.PropertyNames.Add("ManyToManyRelationships");
+            query.Properties.PropertyNames.Add("ManyToOneRelationships");
+            query.Properties.PropertyNames.Add("OneToManyRelationships");
+
             // We need to ensure that attribute metadata is excluded until included.
             query.AttributeQuery = new AttributeQueryExpression();
             query.AttributeQuery.Properties = new MetadataPropertiesExpression();
@@ -142,9 +149,12 @@ namespace CrmAdo.Visitor
             query.AttributeQuery.Criteria = new MetadataFilterExpression();
             query.AttributeQuery.Criteria.Conditions.Add(new MetadataConditionExpression("SchemaName", MetadataConditionOperator.Equals, "ThisWillNeverExist"));
 
+
             query.RelationshipQuery = new RelationshipQueryExpression();
             query.RelationshipQuery.Properties = new MetadataPropertiesExpression();
             query.RelationshipQuery.Properties.AllProperties = false;
+            //  query.RelationshipQuery.Properties.PropertyNames.Add("RelationshipType");
+
             query.RelationshipQuery.Criteria.Conditions.Add(new MetadataConditionExpression("SchemaName", MetadataConditionOperator.Equals, "ThisWillNeverExist"));
             return query;
         }
@@ -197,7 +207,7 @@ namespace CrmAdo.Visitor
             switch (item.GetTableLogicalEntityName())
             {
                 case EntityMetadadataTableLogicalName:
-                    this.QueryExpression.Properties = new MetadataPropertiesExpression();
+                    //  this.QueryExpression.Properties = new MetadataPropertiesExpression();
                     break;
                 case AttributeMetadadataTableLogicalName:
                     this.QueryExpression.AttributeQuery.Properties = new MetadataPropertiesExpression();

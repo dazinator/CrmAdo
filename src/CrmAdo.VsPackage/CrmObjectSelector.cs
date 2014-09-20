@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 namespace CrmAdo.DdexProvider
 {
 
-  
+
 
     /// <summary>
     /// Represents a custom data object selector to supplement or replace
@@ -28,11 +28,12 @@ namespace CrmAdo.DdexProvider
     {
         protected override IVsDataReader SelectObjects(string typeName, object[] restrictions, string[] properties, object[] parameters)
         {
+           // DataSourceInformation;
             if (typeName == null)
             {
                 throw new ArgumentNullException("typeName");
             }
-
+         //   DataSourceInformation.IdentifierCloseQuote
             // Execute a SQL statement to get the property values
             DbConnection conn = Site.GetLockedProviderObject() as DbConnection;
             Debug.Assert(conn != null, "Invalid provider object.");
@@ -47,21 +48,14 @@ namespace CrmAdo.DdexProvider
                 if (Site.State != DataConnectionState.Open)
                 {
                     Site.Open();
-                }             
+                }
 
 
                 // Create a command object
                 DbCommand comm = (DbCommand)conn.CreateCommand();
 
                 // Choose and format SQL based on the type
-                if (typeName.Equals(CrmObjectTypes.Root, StringComparison.OrdinalIgnoreCase))
-                {
-                    comm.CommandText = "SELECT name FROM organization";
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
+                comm.CommandText = GetCommandText(typeName);            
 
                 return new AdoDotNetReader(comm.ExecuteReader());
             }
@@ -69,6 +63,21 @@ namespace CrmAdo.DdexProvider
             {
                 Site.UnlockProviderObject();
             }
+        }
+
+        private string GetCommandText(string typeName)
+        {
+            if (typeName.Equals(CrmObjectTypes.Root, StringComparison.OrdinalIgnoreCase))
+            {
+                return "SELECT name FROM organization";
+            }
+
+            if (typeName.Equals(CrmObjectTypes.Table, StringComparison.OrdinalIgnoreCase))
+            {
+                return "SELECT * FROM entitymetadata";
+            }
+
+            throw new NotSupportedException();
         }
 
     }

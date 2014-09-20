@@ -13,13 +13,67 @@
 
     <Type name="Table">
       <Identifier>
-        <Part name="Name" />
+        <Part name="LogicalName" />
+        <Part name="MetadataId" />
       </Identifier>
       <Properties>
-        <Property name="Name" isIdentifierPart="true" />
+        <Property name="MetadataId" isIdentifierPart="true" />
+        <Property name="LogicalName" isIdentifierPart="true" />
+        <Property name="ActivityTypeMask" isIdentifierPart="false" />   
+        <Property name="AutoCreateAccessTeams" isIdentifierPart="false" />
+        <Property name="AutoRouteToOwnerQueue" isIdentifierPart="false" />
+        <Property name="CanBeInManyToMany" isIdentifierPart="false" />
+        <Property name="CanBePrimaryEntityInRelationship" isIdentifierPart="false" />
+        <Property name="CanBeRelatedEntityInRelationship" isIdentifierPart="false" />
+        <Property name="CanCreateAttributes" isIdentifierPart="false" />
+        <Property name="CanCreateCharts" isIdentifierPart="false" />
+        <Property name="CanCreateForms" isIdentifierPart="false" />
+        <Property name="CanCreateViews" isIdentifierPart="false" />
+        <Property name="CanModifyAdditionalSettings" isIdentifierPart="false" />
+        <Property name="CanTriggerWorkflow" isIdentifierPart="false" />
+        <Property name="Description" isIdentifierPart="false" />
+        <Property name="DisplayCollectionName" isIdentifierPart="false" />
+        <Property name="DisplayName" isIdentifierPart="false" />
+        <Property name="HasChanged" isIdentifierPart="false" />
+        <Property name="IconLargeName" isIdentifierPart="false" />
+        <Property name="IconMediumName" isIdentifierPart="false" />
+        <Property name="IconSmallName" isIdentifierPart="false" />
+        <Property name="IntroducedVersion" isIdentifierPart="false" />
+        <Property name="IsActivity" isIdentifierPart="false" />
+        <Property name="IsActivityParty" isIdentifierPart="false" />
+        <Property name="IsAIRUpdated" isIdentifierPart="false" />
+        <Property name="IsAuditEnabled" isIdentifierPart="false" />        
+        <Property name="IsAvailableOffline" isIdentifierPart="false" />
+        <Property name="IsBusinessProcessEnabled" isIdentifierPart="false" />
+        <Property name="IsChildEntity" isIdentifierPart="false" />
+        <Property name="IsConnectionsEnabled" isIdentifierPart="false" />
+        <Property name="IsCustomEntity" isIdentifierPart="false" />
+        <Property name="IsCustomizable" isIdentifierPart="false" />
+        <Property name="IsDocumentManagementEnabled" isIdentifierPart="false" />
+        <Property name="IsDuplicateDetectionEnabled" isIdentifierPart="false" />
+        <Property name="IsEnabledForCharts" isIdentifierPart="false" />
+        <Property name="IsEnabledForTrace" isIdentifierPart="false" />
+        <Property name="IsImportable" isIdentifierPart="false" />
+        <Property name="IsIntersect" isIdentifierPart="false" />
+        <Property name="IsMailMergeEnabled" isIdentifierPart="false" />
+        <Property name="IsManaged" isIdentifierPart="false" />
+        <Property name="IsMappable" isIdentifierPart="false" />
+        <Property name="IsQuickCreateEnabled" isIdentifierPart="false" />
+        <Property name="IsReadingPaneEnabled" isIdentifierPart="false" />
+        <Property name="IsReadOnlyInMobileClient" isIdentifierPart="false" />        
+        <Property name="IsRenameable" isIdentifierPart="false" />
+        <Property name="IsValidForAdvancedFind" isIdentifierPart="false" />
+        <Property name="IsValidForQueue" isIdentifierPart="false" />
+        <Property name="IsVisibleInMobile" isIdentifierPart="false" />
+        <Property name="IsVisibleInMobileClient" isIdentifierPart="false" />      
+        <Property name="ObjectTypeCode" isIdentifierPart="false" />
+        <Property name="OwnershipType" isIdentifierPart="false" />
+        <Property name="PrimaryIdAttribute" isIdentifierPart="false" />
+        <Property name="PrimaryImageAttribute" isIdentifierPart="false" />
+
       </Properties>
       <Services>
-        <Service type="IVsDataObjectSelector" implementationType="Microsoft.VisualStudio.Data.Framework.AdoDotNet.AdoDotNetObjectSelector, Microsoft.VisualStudio.Data.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+        <Service type="IVsDataObjectSelector" implementationType="CrmAdo.DdexProvider.CrmObjectSelector">
           <Parameters method="SelectObjects">
             <Parameter value="Tables" />
             <Parameter>

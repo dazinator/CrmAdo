@@ -11,4 +11,4 @@ and it will update all GAC dependencies.
 
 To unregister an assembly from the gac use 
 
-"%ProgramFiles%\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil.exe" /u "CrmAdo"
+"%ProgramFiles%\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil.exe" /u "SqlGeneration"
