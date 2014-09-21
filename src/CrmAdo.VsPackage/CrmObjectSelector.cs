@@ -28,12 +28,12 @@ namespace CrmAdo.DdexProvider
     {
         protected override IVsDataReader SelectObjects(string typeName, object[] restrictions, string[] properties, object[] parameters)
         {
-           // DataSourceInformation;
+            // DataSourceInformation;
             if (typeName == null)
             {
                 throw new ArgumentNullException("typeName");
             }
-         //   DataSourceInformation.IdentifierCloseQuote
+            //   DataSourceInformation.IdentifierCloseQuote
             // Execute a SQL statement to get the property values
             DbConnection conn = Site.GetLockedProviderObject() as DbConnection;
             Debug.Assert(conn != null, "Invalid provider object.");
@@ -55,7 +55,7 @@ namespace CrmAdo.DdexProvider
                 DbCommand comm = (DbCommand)conn.CreateCommand();
 
                 // Choose and format SQL based on the type
-                comm.CommandText = GetCommandText(typeName);            
+                comm.CommandText = GetCommandText(typeName, restrictions);
 
                 return new AdoDotNetReader(comm.ExecuteReader());
             }
@@ -65,7 +65,7 @@ namespace CrmAdo.DdexProvider
             }
         }
 
-        private string GetCommandText(string typeName)
+        private string GetCommandText(string typeName, object[] restrictions)
         {
             if (typeName.Equals(CrmObjectTypes.Root, StringComparison.OrdinalIgnoreCase))
             {
@@ -75,6 +75,17 @@ namespace CrmAdo.DdexProvider
             if (typeName.Equals(CrmObjectTypes.Table, StringComparison.OrdinalIgnoreCase))
             {
                 return "SELECT * FROM entitymetadata";
+            }
+
+            if (typeName.Equals(CrmObjectTypes.Column, StringComparison.OrdinalIgnoreCase))
+            {
+                if (restrictions == null)
+                {
+                    throw new ArgumentNullException("must provide entity name restriction");
+                }
+                var entityName = restrictions.First();
+                var commandText = "SELECT attributemetadata.EntityLogicalName, attributemetadata.LogicalName FROM entitymetadata INNER JOIN attributemetadata ON entitymetadata.MetadataId = attributemetadata.MetadataId WHERE entitymetadata.LogicalName = '{0}'";
+                return string.Format(commandText, entityName);
             }
 
             throw new NotSupportedException();

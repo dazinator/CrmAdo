@@ -15,7 +15,7 @@ namespace CrmAdo.DdexProvider
         public const string Root = "";
         //public const string User = "User";
         public const string Table = "Table";
-        //public const string Column = "Column";
+        public const string Column = "Column";
         //public const string Index = "Index";
         //public const string IndexColumn = "IndexColumn";
         //public const string ForeignKey = "ForeignKey";

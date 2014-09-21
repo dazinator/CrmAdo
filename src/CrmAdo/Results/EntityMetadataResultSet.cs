@@ -19,18 +19,13 @@ namespace CrmAdo
         private DenormalisedMetadataResult[] _Results = null;
         private int _ResultCount = 0;
 
-        public EntityMetadataResultSet(CrmDbCommand command, OrganizationRequest request, DenormalisedMetadataResult[] results)
-            : base(command, request, null)
+        public EntityMetadataResultSet(CrmDbCommand command, OrganizationRequest request, List<ColumnMetadata> columnMetadata)
+            : base(command, request, columnMetadata)
         {
-            _Results = results;
-            if (_Results != null)
-            {
-                _ResultCount = _Results.Count();
-            }
+
         }
 
-
-        public DenormalisedMetadataResult[] Results { get { return _Results; } }
+        public DenormalisedMetadataResult[] Results { get { return _Results; } set { _Results = value; _ResultCount = _Results.Count(); } }
 
         public override bool HasResults()
         {

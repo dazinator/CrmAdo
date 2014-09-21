@@ -19,7 +19,7 @@
       <Properties>
         <Property name="MetadataId" isIdentifierPart="true" />
         <Property name="LogicalName" isIdentifierPart="true" />
-        <Property name="ActivityTypeMask" isIdentifierPart="false" />   
+        <Property name="ActivityTypeMask" isIdentifierPart="false" />
         <Property name="AutoCreateAccessTeams" isIdentifierPart="false" />
         <Property name="AutoRouteToOwnerQueue" isIdentifierPart="false" />
         <Property name="CanBeInManyToMany" isIdentifierPart="false" />
@@ -42,7 +42,7 @@
         <Property name="IsActivity" isIdentifierPart="false" />
         <Property name="IsActivityParty" isIdentifierPart="false" />
         <Property name="IsAIRUpdated" isIdentifierPart="false" />
-        <Property name="IsAuditEnabled" isIdentifierPart="false" />        
+        <Property name="IsAuditEnabled" isIdentifierPart="false" />
         <Property name="IsAvailableOffline" isIdentifierPart="false" />
         <Property name="IsBusinessProcessEnabled" isIdentifierPart="false" />
         <Property name="IsChildEntity" isIdentifierPart="false" />
@@ -60,12 +60,12 @@
         <Property name="IsMappable" isIdentifierPart="false" />
         <Property name="IsQuickCreateEnabled" isIdentifierPart="false" />
         <Property name="IsReadingPaneEnabled" isIdentifierPart="false" />
-        <Property name="IsReadOnlyInMobileClient" isIdentifierPart="false" />        
+        <Property name="IsReadOnlyInMobileClient" isIdentifierPart="false" />
         <Property name="IsRenameable" isIdentifierPart="false" />
         <Property name="IsValidForAdvancedFind" isIdentifierPart="false" />
         <Property name="IsValidForQueue" isIdentifierPart="false" />
         <Property name="IsVisibleInMobile" isIdentifierPart="false" />
-        <Property name="IsVisibleInMobileClient" isIdentifierPart="false" />      
+        <Property name="IsVisibleInMobileClient" isIdentifierPart="false" />
         <Property name="ObjectTypeCode" isIdentifierPart="false" />
         <Property name="OwnershipType" isIdentifierPart="false" />
         <Property name="PrimaryIdAttribute" isIdentifierPart="false" />
@@ -88,6 +88,95 @@
               </Parameter>
               <Parameter value="Type">
                 <Parameter value="TABLE_TYPE" />
+              </Parameter>
+            </Parameter>
+          </Parameters>
+        </Service>
+
+        <Service type="IDSRefBuilder">
+
+          <Parameters method="AppendToDSRef">
+            <!-- Top level parameters add nodes under the root node -->
+            <Parameter>
+              <!-- The node name (typically name of the object) -->
+              <Parameter value="{0}" />
+              <!-- usually the schema -->
+              <Parameter />
+              <!-- The node type (from the __DSREFTYPE enumeration) -->
+              <Parameter value="Table" />
+              <!-- The node extended type (not used very often) -->
+              <Parameter />
+              <!-- The node properties, identified by specific GUIDs -->
+              <Parameter>
+                <!-- GUID_DSRefProperty_PreciseType -->
+                <Parameter value="39A5A7E7-513F-44a4-B79D-7652CD8962D9">
+                  <Parameter value="101" type="System.Int32" />
+                  <!-- Table -->
+                </Parameter>
+              </Parameter>
+            </Parameter>
+          </Parameters>
+        </Service>
+      </Services>
+    </Type>
+
+    <Type name="Column">
+      <Identifier>       
+        <Part name="LogicalName" />     
+      </Identifier>
+      <Properties>           
+        <Property name="LogicalName" isIdentifierPart="true" />
+      </Properties>
+      <Services>
+        <Service type="IVsDataObjectSelector" implementationType="CrmAdo.DdexProvider.CrmObjectSelector">
+          <Parameters method="SelectObjects">
+            <Parameter value="Columns" />
+            <!--<Parameter>
+              <Parameter value="Table">
+                <Parameter value="LogicalName" />
+              </Parameter>             
+            </Parameter>-->
+          </Parameters>
+        </Service>
+        <Service type="IDSRefBuilder">
+          <Parameters method="AppendToDSRef">
+            <Parameter>          
+              <Parameter value="{2}" />
+              <Parameter value="{1}" />
+              <Parameter value="Table" />
+              <Parameter />
+              <Parameter>
+                
+        <!-- GUID_DSRefProperty_PreciseType -->
+        
+                <Parameter value="39A5A7E7-513F-44a4-B79D-7652CD8962D9">
+                  <Parameter value="101" type="System.Int32" />
+                  
+        <!-- Table -->
+        
+                </Parameter>
+              </Parameter>
+              
+        <!-- This parameter specifies child nodes -->
+        
+              <Parameter>
+                <Parameter>
+                  <Parameter value="{2}" />
+                  <Parameter />
+                  <Parameter value="Field" />
+                  <Parameter />
+                  <Parameter>
+                    
+        <!-- GUID_DSRefProperty_PreciseType -->
+        
+                    <Parameter value="39A5A7E7-513F-44a4-B79D-7652CD8962D9">
+                      <Parameter value="102" type="System.Int32" />
+                      
+        <!-- Table_Column -->
+        
+                    </Parameter>
+                  </Parameter>
+                </Parameter>
               </Parameter>
             </Parameter>
           </Parameters>

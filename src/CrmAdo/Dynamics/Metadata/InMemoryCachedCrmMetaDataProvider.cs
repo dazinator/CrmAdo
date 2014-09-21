@@ -53,28 +53,26 @@ namespace CrmAdo.Dynamics.Metadata
         private CrmEntityMetadata CheckPseudoEntity(string entityName)
         {
             CrmEntityMetadata metadata = null;
+            // The following are "pseudo entities" - in other words, they are not real entities in dynamics crm.
+            // however we spawn up the metadata for them manually so that they can be treated as ordinary entities  
+            // in terms of the query model.
             switch (entityName.ToLower())
             {
                 case "entitymetadata":
                     metadata = BuildPseudoEntityMetadata();
                     break;
-
                 case "attributemetadata":
                     metadata = BuildPseudoAttributeMetadata();
                     break;
-
                 case "onetomanyrelationship":
                     metadata = BuildPseudoOneToManyMetadata();
                     break;
-
                 case "manytomanyrelationship":
                     metadata = BuildPseudoManyToManyMetadata();
                     break;
-
                 default:
                     return null;
-            }
-            metadata.IsPseudo = true;
+            }         
             return metadata;
         }
 
@@ -90,14 +88,45 @@ namespace CrmAdo.Dynamics.Metadata
 
         private CrmEntityMetadata BuildPseudoAttributeMetadata()
         {
-            throw new NotImplementedException();
+            var metadata = new CrmEntityMetadata("attributemetadata");
+            metadata.IsPseudo = true;
+            metadata.AddPseudoAttribute("attributeof", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("attributetype", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("attributetypename", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("canbesecuredforcreate", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("canbesecuredforread", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("canbesecuredforupdate", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("canmodifyadditionalsettings", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("columnnumber", AttributeTypeCode.Integer);
+            metadata.AddPseudoAttribute("deprecatedversion", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("description", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("displayname", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("entitylogicalname", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("introducedversion", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("isauditenabled", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("iscustomattribute", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("iscustomizable", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("ismanaged", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isprimaryid", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isprimaryname", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isrenameable", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("issecured", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isvalidforadvancedfind", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isvalidforcreate", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isvalidforread", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isvalidforupdate", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("linkedattributeid", AttributeTypeCode.Uniqueidentifier);
+            metadata.AddPseudoAttribute("logicalname", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("requiredlevel", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("schemaname", AttributeTypeCode.String);
+                      
+            return metadata;
         }
 
         private CrmEntityMetadata BuildPseudoEntityMetadata()
         {
-            var metadata = new CrmEntityMetadata("entitymetadata");         
-          
-      
+            var metadata = new CrmEntityMetadata("entitymetadata");
+            metadata.IsPseudo = true;
             metadata.AddPseudoAttribute("activitytypemask", AttributeTypeCode.Integer);
             metadata.AddPseudoAttribute("autoroutetoownerqueue", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("autocreateaccessteams", AttributeTypeCode.Boolean);
@@ -117,13 +146,13 @@ namespace CrmAdo.Dynamics.Metadata
             metadata.AddPseudoAttribute("iconlargename", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("iconmediumname", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("iconsmallname", AttributeTypeCode.String);
-            metadata.AddPseudoAttribute("introducedversion", AttributeTypeCode.String);            
+            metadata.AddPseudoAttribute("introducedversion", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("isactivity", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("isactivityparty", AttributeTypeCode.Boolean);
-            metadata.AddPseudoAttribute("isairupdated", AttributeTypeCode.Boolean);            
+            metadata.AddPseudoAttribute("isairupdated", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("isauditenabled", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("isavailableoffline", AttributeTypeCode.Boolean);
-            metadata.AddPseudoAttribute("isbusinessprocessenabled", AttributeTypeCode.Boolean);            
+            metadata.AddPseudoAttribute("isbusinessprocessenabled", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("ischildentity", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("isconnectionsenabled", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("iscustomentity", AttributeTypeCode.Boolean);
@@ -155,8 +184,7 @@ namespace CrmAdo.Dynamics.Metadata
             //metadata.AddPseudoAttribut, "privileges", AttributeTypeCode.Uniqueidentifier)));
             metadata.AddPseudoAttribute("recurrencebaseentitylogicalname", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("reportviewname", AttributeTypeCode.String);
-            metadata.AddPseudoAttribute("schemaname", AttributeTypeCode.String);
-
+            metadata.AddPseudoAttribute("schemaname", AttributeTypeCode.String);           
             return metadata;
         }
 

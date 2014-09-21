@@ -1,6 +1,7 @@
 ﻿using CrmAdo.Ado;
 using System;
 using System.Data.Common;
+using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
@@ -48,7 +49,8 @@ namespace CrmAdo
 
         public override DbCommandBuilder CreateCommandBuilder()
         {
-            throw new NotSupportedException();
+            //return new DbCommandBuilder()
+            throw new NotImplementedException();
         }
 
         public override DbDataAdapter CreateDataAdapter()

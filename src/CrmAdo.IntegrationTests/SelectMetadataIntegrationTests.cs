@@ -17,7 +17,7 @@ namespace CrmAdo.IntegrationTests
     [Category("Select Statement")]
     [Category("Metadata")]
     public class SelectMetadataIntegrationTests : BaseTest
-    {      
+    {
 
         [TestFixtureSetUp]
         public override void SetUp()
@@ -33,8 +33,8 @@ namespace CrmAdo.IntegrationTests
             // create a random name for the entity. We use half a guid because names cant be too long.
             //  string attributeSchemaName = "boolField";
             //string lookupToEntity = "contact";
-            var sql = "SELECT e.MetadataId FROM EntityMetadata AS e";          
-             Console.WriteLine(sql);
+            var sql = "SELECT e.MetadataId FROM EntityMetadata AS e";
+            Console.WriteLine(sql);
 
             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
             using (var conn = new CrmDbConnection(connectionString.ConnectionString))
@@ -104,6 +104,98 @@ namespace CrmAdo.IntegrationTests
                 while (results.Read())
                 {
                     Console.WriteLine("LogicalName: " + results[0]);
+                }
+            }
+
+        }
+
+        [Test(Description = "Integration test that selects entity metadata joined to attribute metadata.")]
+        public void Should_Be_Able_To_Select_EntityMetadata_Joined_To_Attribute_Metadata()
+        {
+            // create a random name for the entity. We use half a guid because names cant be too long.
+            //  string attributeSchemaName = "boolField";
+            //string lookupToEntity = "contact";
+            var sql = "SELECT e.LogicalName, a.LogicalName FROM EntityMetadata AS e INNER JOIN AttributeMetadata a ON e.MetadataId = a.MetadataId";
+            Console.WriteLine(sql);
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var command = conn.CreateCommand();
+
+                //   Console.WriteLine("Executing command " + sql);
+                command.CommandText = sql;
+                //   command.CommandType = CommandType.Text;
+                var results = command.ExecuteReader();
+                while (results.Read())
+                {
+                    Console.WriteLine("Entity: " + results[0] + ", Atttribute: " + results[1]);
+                }
+            }
+
+        }
+
+        [Test(Description = "Integration test that selects attribute metadata for a particular entity from crm.")]
+        public void Should_Be_Able_To_Select_Attribute_Metadata_For_Entity()
+        {
+            // create a random name for the entity. We use half a guid because names cant be too long.
+            //  string attributeSchemaName = "boolField";
+            //string lookupToEntity = "contact";
+            var sql = "SELECT a.LogicalName FROM EntityMetadata AS e INNER JOIN AttributeMetadata a ON e.MetadataId = a.MetadataId WHERE e.LogicalName = 'contact'";
+            Console.WriteLine(sql);
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var command = conn.CreateCommand();
+
+                //   Console.WriteLine("Executing command " + sql);
+                command.CommandText = sql;
+                //   command.CommandType = CommandType.Text;
+                var results = command.ExecuteReader();
+                while (results.Read())
+                {
+                    for (int i = 0; i < results.FieldCount; i++)
+                    {
+                        Console.Write(results[i]);
+                        Console.Write(',');
+                    }
+                    Console.WriteLine("");
+                }
+            }
+
+        }
+
+        [Test(Description = "Integration test that selects entity metadata joined to attribute metadata all columns.")]
+        public void Should_Be_Able_To_Select_EntityMetadata_Joined_To_Attribute_Metadata_All_Columns()
+        {
+            // create a random name for the entity. We use half a guid because names cant be too long.
+            //  string attributeSchemaName = "boolField";
+            //string lookupToEntity = "contact";
+            var sql = "SELECT e.*, a.* FROM EntityMetadata AS e INNER JOIN AttributeMetadata a ON e.MetadataId = a.MetadataId";
+            Console.WriteLine(sql);
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var command = conn.CreateCommand();
+
+                //   Console.WriteLine("Executing command " + sql);
+                command.CommandText = sql;
+                //   command.CommandType = CommandType.Text;
+                var results = command.ExecuteReader();
+
+                while (results.Read())
+                {
+                    for (int i = 0; i < results.FieldCount; i++)
+                    {
+                        Console.Write(results[i]);
+                        Console.Write(',');
+                    }
+                    Console.WriteLine("");
                 }
             }
 

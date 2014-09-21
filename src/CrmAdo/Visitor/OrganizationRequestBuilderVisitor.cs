@@ -55,6 +55,7 @@ namespace CrmAdo.Visitor
                 IVisitableBuilder visitable = item;
                 visitable.Accept(visitor);
                 OrganizationRequest = visitor.Request;
+                ColumnMetadata = visitor.ColumnMetadata;
             }
 
         }
@@ -123,17 +124,41 @@ namespace CrmAdo.Visitor
         {
             if (_DetectingMetadataQuery)
             {
-                if (item.Name.ToLower() == "entitymetadata")
+                switch (item.Name.ToLower())
                 {
-                    _IsMetadataQuery = true;
+                    case "entitymetadata":
+                    case "attributemetadata":
+                    case "onetomanyrelationshipmetadata":
+                    case "manytomanyrelationshipmetadata":
+                        _IsMetadataQuery = true;
+                        break;
                 }
             }
         }
 
         protected override void VisitAliasedSource(AliasedSource aliasedSource)
         {
-            aliasedSource.Source.Accept(this);
+            if (_DetectingMetadataQuery)
+            {
+                aliasedSource.Source.Accept(this);
+            }
             // base.VisitAliasedSource(aliasedSource);
+        }
+
+        protected override void VisitInnerJoin(InnerJoin item)
+        {
+            if (_DetectingMetadataQuery)
+            {
+                item.RightHand.Source.Accept(this);
+            }
+        }
+
+        protected override void VisitLeftOuterJoin(LeftOuterJoin item)
+        {
+            if (_DetectingMetadataQuery)
+            {                
+                item.RightHand.Source.Accept(this);
+            }
         }
 
     }

@@ -160,7 +160,7 @@ namespace CrmAdo
         {
             var meta = _Results.ColumnMetadata[ordinal];
             var result = _Results.Results[_Position];
-            var name = meta.ColumnName;
+            var name = meta.AttributeMetadata.LogicalName;
             switch (meta.AttributeMetadata.EntityLogicalName)
             {
                 case "entitymetadata":

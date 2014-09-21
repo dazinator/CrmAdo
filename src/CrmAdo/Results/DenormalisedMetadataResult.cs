@@ -111,7 +111,7 @@ namespace CrmAdo.Results
                 case "isvisibleinmobile":
                     return EntityMetadata.IsVisibleInMobile.Value;
                 case "isvisibleinmobileclient":
-                    return EntityMetadata.IsVisibleInMobileClient.Value;                                   
+                    return EntityMetadata.IsVisibleInMobileClient.Value;
                 case "logicalname":
                     return EntityMetadata.LogicalName;
                 case "metadataid":
@@ -131,7 +131,7 @@ namespace CrmAdo.Results
                 case "reportviewname":
                     return EntityMetadata.ReportViewName;
                 case "schemaname":
-                    return EntityMetadata.SchemaName;             
+                    return EntityMetadata.SchemaName;
 
                 default:
                     return null;
@@ -140,10 +140,70 @@ namespace CrmAdo.Results
 
         public object GetAttributeMetadataValue(string propertyname)
         {
+            if (AttributeMetadata == null)
+            {
+                return null;
+            }
             switch (propertyname.ToLower())
             {
-                case "metadataid":
-                    return AttributeMetadata.MetadataId;
+                case "attributeof":
+                    return AttributeMetadata.AttributeOf;
+                case "attributetype":
+                    return AttributeMetadata.AttributeType.Value.ToString();
+                case "attributetypename":
+                    return AttributeMetadata.AttributeTypeName.Value;
+                case "canbesecuredforcreate":
+                    return AttributeMetadata.CanBeSecuredForCreate;
+                case "canbesecuredforread":
+                    return AttributeMetadata.CanBeSecuredForRead;
+                case "canbesecuredforupdate":
+                    return AttributeMetadata.CanBeSecuredForUpdate;
+                case "canmodifyadditionalsettings":
+                    return AttributeMetadata.CanModifyAdditionalSettings.Value;
+                case "columnnumber":
+                    return AttributeMetadata.ColumnNumber;
+                case "deprecatedversion":
+                    return AttributeMetadata.DeprecatedVersion;
+                case "description":
+                    return AttributeMetadata.Description;
+                case "displayname":
+                    return AttributeMetadata.DisplayName;
+                case "entitylogicalname":
+                    return AttributeMetadata.EntityLogicalName;
+                case "introducedversion":
+                    return AttributeMetadata.IntroducedVersion;
+                case "isauditenabled":
+                    return AttributeMetadata.IsAuditEnabled.Value;
+                case "iscustomattribute":
+                    return AttributeMetadata.IsCustomAttribute;
+                case "iscustomizable":
+                    return AttributeMetadata.IsCustomizable.Value;
+                case "ismanaged":
+                    return AttributeMetadata.IsManaged;
+                case "isprimaryid":
+                    return AttributeMetadata.IsPrimaryId;
+                case "isprimaryname":
+                    return AttributeMetadata.IsPrimaryName;
+                case "isrenameable":
+                    return AttributeMetadata.IsRenameable.Value;
+                case "issecured":
+                    return AttributeMetadata.IsSecured;
+                case "isvalidforadvancedfind":
+                    return AttributeMetadata.IsValidForAdvancedFind.Value;
+                case "isvalidforcreate":
+                    return AttributeMetadata.IsValidForCreate;
+                case "isvalidforread":
+                    return AttributeMetadata.IsValidForRead;
+                case "isvalidforupdate":
+                    return AttributeMetadata.IsValidForUpdate;
+                case "linkedattributeid":
+                    return AttributeMetadata.LinkedAttributeId;
+                case "logicalname":
+                    return AttributeMetadata.LogicalName;
+                case "requiredlevel":
+                    return AttributeMetadata.RequiredLevel.Value.ToString();
+                case "schemaname":
+                    return AttributeMetadata.SchemaName;
 
                 default:
                     return null;
