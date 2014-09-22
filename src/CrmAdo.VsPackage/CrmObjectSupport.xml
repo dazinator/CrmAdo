@@ -11,14 +11,146 @@
       </Services>
     </RootType>
 
-    <Type name="Table">
+    <Type name="EntityMetadata" nameProperty="LogicalName">
       <Identifier>
         <Part name="LogicalName" />
-        <Part name="MetadataId" />
       </Identifier>
       <Properties>
-        <Property name="MetadataId" isIdentifierPart="true" />
         <Property name="LogicalName" isIdentifierPart="true" />
+        <Property name="MetadataId" isIdentifierPart="false" />
+        <Property name="ActivityTypeMask" isIdentifierPart="false" />
+        <Property name="AutoCreateAccessTeams" isIdentifierPart="false" />
+        <Property name="AutoRouteToOwnerQueue" isIdentifierPart="false" />
+        <Property name="CanBeInManyToMany" isIdentifierPart="false" />
+        <Property name="CanBePrimaryEntityInRelationship" isIdentifierPart="false" />
+        <Property name="CanBeRelatedEntityInRelationship" isIdentifierPart="false" />
+        <Property name="CanCreateAttributes" isIdentifierPart="false" />
+        <Property name="CanCreateCharts" isIdentifierPart="false" />
+        <Property name="CanCreateForms" isIdentifierPart="false" />
+        <Property name="CanCreateViews" isIdentifierPart="false" />
+        <Property name="CanModifyAdditionalSettings" isIdentifierPart="false" />
+        <Property name="CanTriggerWorkflow" isIdentifierPart="false" />
+        <Property name="Description" isIdentifierPart="false" />
+        <Property name="DisplayCollectionName" isIdentifierPart="false" />
+        <Property name="DisplayName" isIdentifierPart="false" />
+        <Property name="HasChanged" isIdentifierPart="false" />
+        <Property name="IconLargeName" isIdentifierPart="false" />
+        <Property name="IconMediumName" isIdentifierPart="false" />
+        <Property name="IconSmallName" isIdentifierPart="false" />
+        <Property name="IntroducedVersion" isIdentifierPart="false" />
+        <Property name="IsActivity" isIdentifierPart="false" />
+        <Property name="IsActivityParty" isIdentifierPart="false" />
+        <Property name="IsAIRUpdated" isIdentifierPart="false" />
+        <Property name="IsAuditEnabled" isIdentifierPart="false" />
+        <Property name="IsAvailableOffline" isIdentifierPart="false" />
+        <Property name="IsBusinessProcessEnabled" isIdentifierPart="false" />
+        <Property name="IsChildEntity" isIdentifierPart="false" />
+        <Property name="IsConnectionsEnabled" isIdentifierPart="false" />
+        <Property name="IsCustomEntity" isIdentifierPart="false" />
+        <Property name="IsCustomizable" isIdentifierPart="false" />
+        <Property name="IsDocumentManagementEnabled" isIdentifierPart="false" />
+        <Property name="IsDuplicateDetectionEnabled" isIdentifierPart="false" />
+        <Property name="IsEnabledForCharts" isIdentifierPart="false" />
+        <Property name="IsEnabledForTrace" isIdentifierPart="false" />
+        <Property name="IsImportable" isIdentifierPart="false" />
+        <Property name="IsIntersect" isIdentifierPart="false" />
+        <Property name="IsMailMergeEnabled" isIdentifierPart="false" />
+        <Property name="IsManaged" isIdentifierPart="false" />
+        <Property name="IsMappable" isIdentifierPart="false" />
+        <Property name="IsQuickCreateEnabled" isIdentifierPart="false" />
+        <Property name="IsReadingPaneEnabled" isIdentifierPart="false" />
+        <Property name="IsReadOnlyInMobileClient" isIdentifierPart="false" />
+        <Property name="IsRenameable" isIdentifierPart="false" />
+        <Property name="IsValidForAdvancedFind" isIdentifierPart="false" />
+        <Property name="IsValidForQueue" isIdentifierPart="false" />
+        <Property name="IsVisibleInMobile" isIdentifierPart="false" />
+        <Property name="IsVisibleInMobileClient" isIdentifierPart="false" />
+        <Property name="ObjectTypeCode" isIdentifierPart="false" />
+        <Property name="OwnershipType" isIdentifierPart="false" />
+        <Property name="PrimaryIdAttribute" isIdentifierPart="false" />
+        <Property name="PrimaryImageAttribute" isIdentifierPart="false" />
+        <Property name="PrimaryNameAttribute" isIdentifierPart="false" />
+        <Property name="RecurrenceBaseEntityLogicalName" isIdentifierPart="false" />
+        <Property name="ReportViewName" isIdentifierPart="false" />
+        <Property name="SchemaName" isIdentifierPart="false" />
+      </Properties>
+      <Services>
+        <Service type="IVsDataObjectSelector" implementationType="CrmAdo.DdexProvider.CrmObjectSelector">
+          <Parameters method="SelectObjects">
+            <Parameter value="Table" />
+          </Parameters>
+        </Service>
+        <Service type="IDSRefBuilder">
+          <Parameters method="AppendToDSRef">
+            <Parameter>
+              <Parameter value="{0}" />
+              <Parameter />
+              <Parameter value="Table" />
+              <Parameter />
+              <Parameter>
+                <Parameter value="39A5A7E7-513F-44a4-B79D-7652CD8962D9">
+                  <Parameter value="101" type="System.Int32" />
+                </Parameter>
+              </Parameter>
+            </Parameter>
+          </Parameters>
+        </Service>
+      </Services>
+    </Type>
+
+    <Type name="AttributeMetadata" nameProperty="LogicalName">
+      <Identifier>
+        <Part name="EntityLogicalName" />
+        <Part name="LogicalName" />
+      </Identifier>
+      <Properties>
+        <Property name="EntityLogicalName" isIdentifierPart="true" />
+        <Property name="LogicalName" isIdentifierPart="true" />
+        <Property name="AttributeOf" isIdentifierPart="false" />
+        <Property name="AttributeType" isIdentifierPart="false" />
+        <Property name="AttributeTypeName" isIdentifierPart="false" />
+        <Property name="CanBeSecuredForCreate" isIdentifierPart="false" />
+        <Property name="CanBeSecuredForRead" isIdentifierPart="false" />
+        <Property name="CanBeSecuredForUpdate" isIdentifierPart="false" />
+        <Property name="CanModifyAdditionalSettings" isIdentifierPart="false" />
+        <Property name="ColumnNumber" isIdentifierPart="false" />
+        <Property name="DeprecatedVersion" isIdentifierPart="false" />
+        <Property name="Description" isIdentifierPart="false" />
+        <Property name="DisplayName" isIdentifierPart="false" />
+        <Property name="IntroducedVersion" isIdentifierPart="false" />
+        <Property name="IsAuditEnabled" isIdentifierPart="false" />
+        <Property name="IsCustomAttribute" isIdentifierPart="false" />
+        <Property name="IsCustomizable" isIdentifierPart="false" />
+        <Property name="IsManaged" isIdentifierPart="false" />
+        <Property name="IsPrimaryid" isIdentifierPart="false" />
+        <Property name="IsPrimaryName" isIdentifierPart="false" />
+        <Property name="IsRenameable" isIdentifierPart="false" />
+        <Property name="IsSecured" isIdentifierPart="false" />
+        <Property name="IsValidforAdvancedFind" isIdentifierPart="false" />
+        <Property name="IsValidForCreate" isIdentifierPart="false" />
+        <Property name="IsValidForRead" isIdentifierPart="false" />
+        <Property name="IsValidForUpdate" isIdentifierPart="false" />
+        <Property name="LinkedAttributeId" isIdentifierPart="false" />
+        <Property name="MetadataId" isIdentifierPart="false" />
+        <Property name="RequiredLevel" isIdentifierPart="false" />
+        <Property name="SchemaName" isIdentifierPart="false" />
+      </Properties>
+      <Services>
+        <Service type="IVsDataObjectSelector" implementationType="CrmAdo.DdexProvider.CrmObjectSelector">
+          <Parameters method="SelectObjects">
+            <Parameter value="Column" />
+          </Parameters>
+        </Service>
+      </Services>
+    </Type>
+
+    <!--<Type name="Table">
+      <Identifier>
+        <Part name="LogicalName" />
+      </Identifier>
+      <Properties>
+        <Property name="LogicalName" isIdentifierPart="true" />
+        <Property name="MetadataId" isIdentifierPart="false" />
         <Property name="ActivityTypeMask" isIdentifierPart="false" />
         <Property name="AutoCreateAccessTeams" isIdentifierPart="false" />
         <Property name="AutoRouteToOwnerQueue" isIdentifierPart="false" />
@@ -74,40 +206,42 @@
       <Services>
         <Service type="IVsDataObjectSelector" implementationType="CrmAdo.DdexProvider.CrmObjectSelector">
           <Parameters method="SelectObjects">
-            <Parameter value="Tables" />
+            <Parameter value="Table" />
           </Parameters>
         </Service>
         <Service type="IDSRefBuilder">
-          <Parameters method="AppendToDSRef">          
-            <Parameter>           
-              <Parameter value="{0}" />           
-              <Parameter />           
-              <Parameter value="Table" />           
-              <Parameter />          
-              <Parameter>         
+          <Parameters method="AppendToDSRef">
+            <Parameter>
+              <Parameter value="{0}" />
+              <Parameter />
+              <Parameter value="Table" />
+              <Parameter />
+              <Parameter>
                 <Parameter value="39A5A7E7-513F-44a4-B79D-7652CD8962D9">
-                  <Parameter value="101" type="System.Int32" />              
+                  <Parameter value="101" type="System.Int32" />
                 </Parameter>
               </Parameter>
             </Parameter>
           </Parameters>
         </Service>
       </Services>
-    </Type>
-    <Type name="Column" nameProperty="LogicalName">
+    </Type>-->
+
+    <!--<Type name="TableColumn" nameProperty="LogicalName">
       <Identifier>
-        <Part name="MetadataId" type="System.Guid" />
-        <Part name="LogicalName" />       
+        <Part name="LogicalName" />
       </Identifier>
       <Properties>
-        <Property name="MetadataId" isIdentifierPart="true" />
-        <Property name="LogicalName" isIdentifierPart="true" />      
+        <Property name="LogicalName" isIdentifierPart="true" />
+        <Property name="MetadataId" isIdentifierPart="false" />
         <Property name="ColumnNumber" isIdentifierPart="false" />
-        <!--<Property name="IsNullable" type="System.Boolean" />
+        -->
+    <!--<Property name="IsNullable" type="System.Boolean" />
         <Property name="IsIdentity" type="System.Boolean" />
         <Property name="IdentitySeed" type="System.Int32" />
         <Property name="IdentityIncrement" type="System.Int32" />
         <Property name="IsPrimaryKey" type="System.Boolean" />-->
+    <!--
       </Properties>
       <Services>
         <Service type="IVsDataObjectSelector" implementationType="CrmAdo.DdexProvider.CrmObjectSelector">
@@ -115,30 +249,47 @@
             <Parameter value="Column" />
           </Parameters>
         </Service>
-        <!--<Service type="IDSRefBuilder">
+        -->
+    <!--<Service type="IDSRefBuilder">
           <Parameters method="AppendToDSRef">
             <Parameter>
               -->
-        <!-- this is probably wrong, but nut sure where it's used yet -->
-        <!--
+    <!--
+        -->
+    <!-- this is probably wrong, but nut sure where it's used yet -->
+    <!--
+        -->
+    <!--
               <Parameter value="{2}" />
               <Parameter value="{1}" />
               <Parameter value="Table" />
               <Parameter />
               <Parameter>
                 -->
-        <!-- GUID_DSRefProperty_PreciseType -->
-        <!--
+    <!--
+        -->
+    <!-- GUID_DSRefProperty_PreciseType -->
+    <!--
+        -->
+    <!--
                 <Parameter value="39A5A7E7-513F-44a4-B79D-7652CD8962D9">
                   <Parameter value="101" type="System.Int32" />
                   -->
-        <!-- Table -->
-        <!--
+    <!--
+        -->
+    <!-- Table -->
+    <!--
+        -->
+    <!--
                 </Parameter>
               </Parameter>
               -->
-        <!-- This parameter specifies child nodes -->
-        <!--
+    <!--
+        -->
+    <!-- This parameter specifies child nodes -->
+    <!--
+        -->
+    <!--
               <Parameter>
                 <Parameter>
                   <Parameter value="{2}" />
@@ -147,13 +298,21 @@
                   <Parameter />
                   <Parameter>
                     -->
-        <!-- GUID_DSRefProperty_PreciseType -->
-        <!--
+    <!--
+        -->
+    <!-- GUID_DSRefProperty_PreciseType -->
+    <!--
+        -->
+    <!--
                     <Parameter value="39A5A7E7-513F-44a4-B79D-7652CD8962D9">
                       <Parameter value="102" type="System.Int32" />
                       -->
-        <!-- Table_Column -->
-        <!--
+    <!--
+        -->
+    <!-- Table_Column -->
+    <!--
+        -->
+    <!--
                     </Parameter>
                   </Parameter>
                 </Parameter>
@@ -161,9 +320,10 @@
             </Parameter>
           </Parameters>
         </Service>-->
+    <!--
       </Services>
-    </Type>
-    
+    </Type>-->
+
     <!--<Type name="View" preferredOrdering="Name">
       <Identifier>
         <Part name="Name" />
@@ -471,10 +631,36 @@
   </Types>
   <MappedTypes>
 
-    <MappedType name="Table" underlyingType="Table">
-
-      <Selection restrictions="null,null,{Name},BASE TABLE" />
+    <MappedType name="Table" underlyingType="EntityMetadata">
+      <Selection/>
       <Identifier>
+        <Part name="Name" underlyingMember="LogicalName" />
+      </Identifier>
+      <Properties>
+        <Property name="Name" isIdentifierPart="true" underlyingMember="LogicalName" />
+      </Properties>
+    </MappedType>
+
+    <MappedType name="TableColumn" underlyingType="AttributeMetadata">
+      <Selection restrictions="{Table}" />
+      <Identifier>
+        <Part name="EntityLogicalName" underlyingMember="EntityLogicalName" />
+        <Part name="LogicalName" underlyingMember="LogicalName" />
+      </Identifier>
+      <!--<Properties>
+        <Property name="Name" isIdentifierPart="true" underlyingMember="LogicalName" />
+      </Properties>-->
+      <!--<Properties>
+        <Property name="LogicalName" isIdentifierPart="true" underlyingMember="LogicalName" />
+        <Property name="MetadataId" isIdentifierPart="true" underlyingMember="MetadataId" />
+        <Property name="ColumnNumber" isIdentifierPart="false" underlyingMember="ColumnNumber" />
+      </Properties>-->
+    </MappedType>
+
+    <!--<MappedType name="Table" underlyingType="EntityMetadata">
+      <Selection/>
+      <Identifier>
+        <Part name="Catalog" underlyingMember="Database"/>
         <Part name="LogicalName" />
         <Part name="MetadataId" />
       </Identifier>
@@ -533,20 +719,7 @@
         <Property name="PrimaryIdAttribute" isIdentifierPart="false" underlyingMember="PrimaryIdAttribute"/>
         <Property name="PrimaryImageAttribute" isIdentifierPart="false" underlyingMember="PrimaryImageAttribute"/>
       </Properties>
-    </MappedType>
-
-    <MappedType name="TableColumn" underlyingType="Column">
-      <Selection restrictions="{Table}" />
-      <Identifier>
-        <Part name="MetadataId" />
-        <Part name="LogicalName" />
-      </Identifier>
-      <Properties>
-        <Property name="LogicalName" isIdentifierPart="true" underlyingMember="LogicalName" />
-        <Property name="MetadataId" isIdentifierPart="true" underlyingMember="MetadataId" />
-        <Property name="ColumnNumber" isIdentifierPart="false" underlyingMember="ColumnNumber" />
-      </Properties>
-    </MappedType>
+    </MappedType>-->
 
     <!--<MappedType name="TableUniqueKey" underlyingType="Index">
 
@@ -631,6 +804,6 @@
       </Properties>
     </MappedType>-->
 
-    
+
   </MappedTypes>
 </DataObjectSupport>

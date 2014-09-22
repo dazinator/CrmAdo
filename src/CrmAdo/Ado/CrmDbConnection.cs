@@ -185,7 +185,10 @@ namespace CrmAdo
 
         public override string Database
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                return string.Empty;
+            }
         }
 
 

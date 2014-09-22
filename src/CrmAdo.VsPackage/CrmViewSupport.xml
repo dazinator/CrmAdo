@@ -9,7 +9,7 @@
     </Properties>
   </Define>-->
 
-  <Define name="ColumnProperties">
+  <!--<Define name="ColumnProperties">
     <Properties>
       <Property name="Name">
         <DisplayName resource="Node_Column_AttributeLogicalName" />
@@ -20,7 +20,7 @@
         <Description resource="Node_Column_EntityLogicalName_Description" />
       </Property>
     </Properties>
-  </Define>
+  </Define>-->
 
   <Views>
     <View name="Dynamics Crm">
@@ -43,28 +43,47 @@
               <Command guid="501822E1-B5AF-11d0-B4DC-00A0C91506EF" cmdid="0x3528" provider="884DD964-5327-461f-9F06-6484DD540F8F" />
             </Commands>
             <Children>
-              <Selection type="Table">
+              <Selection type="EntityMetadata" >
                 <SelectionNode nodeId="Table">
                   <DisplayName resource="Node_Table" />
-                  <Icon name="Table" />
+                  <Icon name="Table"  />
                   <Commands>
                     <Command guid="501822E1-B5AF-11d0-B4DC-00A0C91506EF" cmdid="0x3060" provider="884DD964-5327-461f-9F06-6484DD540F8F" />
                   </Commands>
                   <Children>
-                    <Selection type="Column" restrictions="{Table.LogicalName}">
+                    <StaticNode>
+                      <DisplayName resource="Node_Columns" />
+                      <Icon name="Folder" />
+                      <Children>
+                        <Selection type="AttributeMetadata" restrictions="{Table.LogicalName}">
+                          <SelectionNode>
+                            <DisplayName>{LogicalName}</DisplayName>
+                            <Icon name="Column" />
+                          </SelectionNode>
+                        </Selection>
+                      </Children>
+                    </StaticNode>
+
+                    <!--<Selection type="AttributeMetadata" restrictions="{Table.LogicalName}">
                       <SelectionNode>
-                        <DisplayName>{Column.LogicalName}</DisplayName>
+                        <DisplayName resource="Node_Column" />
+                        -->
+                    <!--<DisplayName>{Name}</DisplayName>-->
+                    <!--
+                        <DisplayName>{Table.LogicalName}{Column.LogicalName}</DisplayName>
                         <Icon name="Column" />
-                        <Properties>
+                        -->
+                    <!--<Properties>
                           <TypeDisplayName>{LogicalName}</TypeDisplayName>                         
                           <Property name="Name">
                             <DisplayName>{LogicalName}</DisplayName>
                             <Category>Column Info</Category>
                             <Value>{LogicalName}</Value>
                           </Property>
-                        </Properties>
+                        </Properties>-->
+                    <!--
                       </SelectionNode>
-                    </Selection>
+                    </Selection>-->
                   </Children>
                 </SelectionNode>
               </Selection>
@@ -94,12 +113,14 @@
 
   <Resources baseName="CrmAdo.DdexProvider.Resources">
     <Resource name="Connection_DisplayName">CrmAdo - {Root.Name}</Resource>
-    <Resource name="Node_Tables">Tables</Resource>
+    <Resource name="Node_Tables">Entities</Resource>
+    <Resource name="Node_Columns">Attributes</Resource>
     <Resource name="Node_Table">{LogicalName}</Resource>
-    <Resource name="Node_Column_AttributeLogicalName">{LogicalName}</Resource>
+    <Resource name="Node_Column">{LogicalName}</Resource>
+    <!--<Resource name="Node_Column_AttributeLogicalName">{LogicalName}</Resource>
     <Resource name="Node_Column_AttributeLogicalName_Description">The logical name of the attribute.</Resource>
     <Resource name="Node_Column_EntityLogicalName">{EntityLogicalName}</Resource>
-    <Resource name="Node_Column_EntityLogicalName_Description">The logical name of the entity.</Resource>
+    <Resource name="Node_Column_EntityLogicalName_Description">The logical name of the entity.</Resource>-->
   </Resources>
 
 </DataViewSupport>
