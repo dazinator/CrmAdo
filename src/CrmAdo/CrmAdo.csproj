@@ -131,11 +131,19 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ado\CrmCommandBuilder.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Ado\CrmConnectionStringBuilder.cs" />
+    <Compile Include="Ado\CrmDataAdaptor.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Ado\CrmDataAdaptorRowUpdatedEventArgs.cs" />
+    <Compile Include="Ado\CrmDataAdaptorRowUpdatingEventArgs.cs" />
     <Compile Include="Ado\CrmDbMetadataReader.cs" />
     <Compile Include="ColumnMetadata.cs" />
-    <Compile Include="ComponentModel\CrmConnectionStringBuilderConverter.cs" />
-    <Compile Include="ComponentModel\EnumStandardValuesAttribute.cs" />
+    <Compile Include="DesignTime\CrmConnectionStringBuilderConverter.cs" />
+    <Compile Include="DesignTime\EnumStandardValuesAttribute.cs" />
     <Compile Include="CrmCommandExecutor.cs" />
     <Compile Include="Ado\CrmDbCommand.cs">
       <SubType>Component</SubType>

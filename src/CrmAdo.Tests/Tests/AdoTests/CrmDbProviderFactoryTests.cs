@@ -43,5 +43,19 @@ namespace CrmAdo.Tests
             var command = dbprovider.CreateCommand();
         }
 
+        [Test]
+        public void Should_Be_Able_To_Create_A_New_DataAdaptor_Via_Provider_Factory()
+        {
+            var dbprovider = DbProviderFactories.GetFactory(CrmDbProviderFactory.Invariant);
+            var command = dbprovider.CreateDataAdapter();
+        }
+
+        [Test]
+        public void Should_Be_Able_To_Create_A_New_CommandBuilder_Via_Provider_Factory()
+        {
+            var dbprovider = DbProviderFactories.GetFactory(CrmDbProviderFactory.Invariant);
+            var command = dbprovider.CreateCommandBuilder();
+        }
+
     }
 }

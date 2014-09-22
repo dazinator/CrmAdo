@@ -50,12 +50,34 @@ namespace CrmAdo.DdexProvider
                     Site.Open();
                 }
 
-
                 // Create a command object
                 DbCommand comm = (DbCommand)conn.CreateCommand();
 
                 // Choose and format SQL based on the type
                 comm.CommandText = GetCommandText(typeName, restrictions);
+                var r = comm.ExecuteReader();
+//#if DEBUG
+//                while (r.Read())
+//                {
+//                    for (int i = 0; i < r.FieldCount; i++)
+//                    {
+//                        var item = r[i];
+//                        Console.Write(item);
+//                    }
+//                }
+//                r = comm.ExecuteReader();
+//#endif
+
+                var reader = new AdoDotNetReader(r);
+                while (reader.Read())
+                {
+                    for (int i = 0; i < reader.ItemCount; i++)
+                    {
+                        var item = reader.GetItem(i);
+                        Console.Write(item);
+                    }
+                }
+
 
                 return new AdoDotNetReader(comm.ExecuteReader());
             }
@@ -84,7 +106,7 @@ namespace CrmAdo.DdexProvider
                     throw new ArgumentNullException("must provide entity name restriction");
                 }
                 var entityName = restrictions.First();
-                var commandText = "SELECT attributemetadata.EntityLogicalName, attributemetadata.LogicalName FROM entitymetadata INNER JOIN attributemetadata ON entitymetadata.MetadataId = attributemetadata.MetadataId WHERE entitymetadata.LogicalName = '{0}'";
+                var commandText = "SELECT attributemetadata.MetadataId, attributemetadata.LogicalName, attributemetadata.ColumnNumber FROM entitymetadata INNER JOIN attributemetadata ON entitymetadata.MetadataId = attributemetadata.MetadataId WHERE entitymetadata.LogicalName = '{0}'";
                 return string.Format(commandText, entityName);
             }
 

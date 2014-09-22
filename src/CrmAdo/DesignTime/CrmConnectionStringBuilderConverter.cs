@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrmAdo.ComponentModel
+namespace CrmAdo.DesignTime
 {
     public class CrmConnectionStringBuilderConverter : TypeConverter
     {

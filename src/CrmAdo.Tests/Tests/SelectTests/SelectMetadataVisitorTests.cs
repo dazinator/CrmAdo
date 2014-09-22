@@ -19,8 +19,6 @@ namespace CrmAdo.Tests
         {
             StringBuilder sqlBuilder = new StringBuilder();
 
-
-
             sqlBuilder.AppendLine("SELECT e.MetadataId, e.HasChanged, e.ActivityTypeMask, e.Attributes, e.AutoRouteToOwnerQueue, e.CanBeInManyToMany, e.CanBePrimaryEntityInRelationship, ");
             sqlBuilder.AppendLine("e.CanBeRelatedEntityInRelationship, e.CanCreateAttributes, e.CanCreateCharts, e.CanCreateForms, e.CanCreateViews, e.CanModifyAdditionalSettings, e.CanTriggerWorkflow, ");
             sqlBuilder.AppendLine("e.Description, e.DisplayCollectionName, e.DisplayName, e.IconLargeName, e.IconMediumName, e.IconSmallName, e.IsActivity, e.IsActivityParty, e.IsAuditEnabled, ");

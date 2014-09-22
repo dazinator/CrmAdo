@@ -943,6 +943,7 @@ namespace CrmAdo.Visitor
                 ColumnMetadata columnMetadata = null;
                 if (colMeta == null)
                 {
+                    
                     // could throw an exception as no metadata found for this attribute?
                     //  throw new ArgumentException("Unknown column: " + columnAttributeName);
                     columnMetadata = new ColumnMetadata(attributeName, entityAlias);

@@ -17,7 +17,7 @@ namespace CrmAdo.Tests
             var logBuilder = new StringBuilder();
 
             string joinType = "INNER";
-            var sql = string.Format("Select contactid, firstname, lastname From contact AS CONTACT {0} JOIN customeraddress AS ADDRESS on contact.contactid = address.contactid", joinType);
+            var sql = string.Format("Select C.contactid, C.firstname, C.lastname From contact AS C {0} JOIN customeraddress AS A on C.contactid = A.contactid", joinType);
 
             var commandText = sql;
             var commandBuilder = new CommandBuilder();
@@ -27,7 +27,7 @@ namespace CrmAdo.Tests
 
             var nestedJoinsSql =
                 string.Format(
-                    "Select contactid, firstname, lastname From contact INNER JOIN customeraddress on contact.id = address.contactid INNER JOIN occupant on address.addressid = occupant.addressid ",
+                    "Select contactid, firstname, lastname From contact INNER JOIN customeraddress on contact.id = customeraddress.contactid INNER JOIN occupant on customeraddress.addressid = occupant.addressid ",
                     joinType);
 
             builder = commandBuilder.GetCommand(nestedJoinsSql) as SelectBuilder;
@@ -36,7 +36,7 @@ namespace CrmAdo.Tests
 
             var anotherJoinSql =
              string.Format(
-                 "Select contactid, firstname, lastname From contact INNER JOIN customeraddress on contact.id = address.contactid INNER JOIN occupant on contact.contactid = occupant.contactid ",
+                 "Select contactid, firstname, lastname From contact INNER JOIN customeraddress on contact.id = customeraddress.contactid INNER JOIN occupant on contact.contactid = occupant.contactid ",
                  joinType);
 
             builder = commandBuilder.GetCommand(anotherJoinSql) as SelectBuilder;

@@ -6,12 +6,12 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CrmAdo.ComponentModel;
 using System.Collections;
 using CrmAdo.Util;
 using System.Text.RegularExpressions;
 using Microsoft.Xrm.Client.Configuration;
 using System.Diagnostics;
+using CrmAdo.DesignTime;
 
 namespace CrmAdo.Ado
 {

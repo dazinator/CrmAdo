@@ -40,6 +40,11 @@ namespace CrmAdo
             return new CrmConnectionStringBuilder();
         }
 
+        public override DbDataAdapter CreateDataAdapter()
+        {
+            return new CrmDataAdapter();
+        }
+
         #region Not Implemented Yet
 
         public override bool CanCreateDataSourceEnumerator
@@ -50,13 +55,10 @@ namespace CrmAdo
         public override DbCommandBuilder CreateCommandBuilder()
         {
             //return new DbCommandBuilder()
-            throw new NotImplementedException();
+            return new CrmCommandBuilder();
         }
 
-        public override DbDataAdapter CreateDataAdapter()
-        {
-            throw new NotSupportedException();
-        }
+
 
         public override DbDataSourceEnumerator CreateDataSourceEnumerator()
         {

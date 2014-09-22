@@ -88,6 +88,8 @@ namespace CrmAdo.Dynamics.Metadata
 
         private CrmEntityMetadata BuildPseudoAttributeMetadata()
         {
+         //   AttributeMetadata x;
+            
             var metadata = new CrmEntityMetadata("attributemetadata");
             metadata.IsPseudo = true;
             metadata.AddPseudoAttribute("attributeof", AttributeTypeCode.String);
@@ -117,6 +119,7 @@ namespace CrmAdo.Dynamics.Metadata
             metadata.AddPseudoAttribute("isvalidforupdate", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("linkedattributeid", AttributeTypeCode.Uniqueidentifier);
             metadata.AddPseudoAttribute("logicalname", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("metadataid", AttributeTypeCode.Uniqueidentifier);
             metadata.AddPseudoAttribute("requiredlevel", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("schemaname", AttributeTypeCode.String);
                       

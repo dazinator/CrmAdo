@@ -200,6 +200,8 @@ namespace CrmAdo.Results
                     return AttributeMetadata.LinkedAttributeId;
                 case "logicalname":
                     return AttributeMetadata.LogicalName;
+                case "metadataid":
+                    return AttributeMetadata.MetadataId;
                 case "requiredlevel":
                     return AttributeMetadata.RequiredLevel.Value.ToString();
                 case "schemaname":

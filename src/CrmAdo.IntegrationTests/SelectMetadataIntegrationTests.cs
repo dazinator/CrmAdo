@@ -168,6 +168,53 @@ namespace CrmAdo.IntegrationTests
 
         }
 
+        [Test(Description = "Integration test that selects specific attribute metadata for a particular entity from crm.")]
+        public void Should_Be_Able_To_Select_Specific_Attribute_Metadata_Columns_For_Entity()
+        {
+            // create a random name for the entity. We use half a guid because names cant be too long.
+            //  string attributeSchemaName = "boolField";
+            //string lookupToEntity = "contact";
+            var sql = "SELECT attributemetadata.MetadataId, attributemetadata.EntityLogicalName, attributemetadata.LogicalName, attributemetadata.ColumnNumber FROM entitymetadata INNER JOIN attributemetadata ON entitymetadata.MetadataId = attributemetadata.MetadataId WHERE entitymetadata.LogicalName = '{0}'";
+            sql = string.Format(sql, "contact");
+            Console.WriteLine(sql);
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var command = conn.CreateCommand();
+
+                //   Console.WriteLine("Executing command " + sql);
+                command.CommandText = sql;
+                //   command.CommandType = CommandType.Text;
+                var results = command.ExecuteReader();
+                while (results.Read())
+                {
+                    for (int i = 0; i < results.FieldCount; i++)
+                    {
+                        Console.Write("field " + i.ToString() + ": ");
+                        var value = results[i];
+                        if (value == null)
+                        {
+                            Console.Write("NULL");
+                        }
+                        else
+                        {
+                            Console.Write(value);
+                        }
+
+                        Console.Write(',');
+                    }
+                    Console.WriteLine("");
+                }
+            }
+
+        }
+
+
+
+
+
         [Test(Description = "Integration test that selects entity metadata joined to attribute metadata all columns.")]
         public void Should_Be_Able_To_Select_EntityMetadata_Joined_To_Attribute_Metadata_All_Columns()
         {

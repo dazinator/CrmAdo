@@ -160,6 +160,11 @@ namespace CrmAdo
         {
             var meta = _Results.ColumnMetadata[ordinal];
             var result = _Results.Results[_Position];
+            if(meta.AttributeMetadata == null)
+            {
+                // unknown property.
+                return null;
+            }
             var name = meta.AttributeMetadata.LogicalName;
             switch (meta.AttributeMetadata.EntityLogicalName)
             {
