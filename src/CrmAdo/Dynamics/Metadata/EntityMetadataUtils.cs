@@ -138,7 +138,7 @@ namespace CrmAdo.Dynamics.Metadata
                     return attType.ToString();
             }
         }
-
+        
         #region Decimal
 
         /// <summary>

@@ -10,6 +10,8 @@ using CrmAdo.Visitor;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Metadata.Query;
 using CrmAdo.Results;
+using CrmAdo.Util.DynamicLinq;
+using System.ComponentModel;
 
 namespace CrmAdo
 {
@@ -373,7 +375,9 @@ namespace CrmAdo
         private void ProcessRetrieveMetadataChangesRequest(CrmDbCommand command, RetrieveMetadataChangesRequest retrieveMetadataChangesRequest, EntityMetadataResultSet resultSet, bool schemaOnly = false)
         {
             var orgService = command.CrmDbConnection.OrganizationService;
-            DenormalisedMetadataResult[] results = null;
+
+            CrmAdo.EntityMetadataResultSet.DenormalisedMetadataResult[] results = null;
+            EntityMetadataDataSet ds = new EntityMetadataDataSet();
             if (!schemaOnly)
             {
                 var response = orgService.Execute(retrieveMetadataChangesRequest);
@@ -384,12 +388,72 @@ namespace CrmAdo
                     // denormalise object graph to results.
                     if (retrieveMultipleResponse.EntityMetadata != null)
                     {
-                        //int index = 0;
+                        //int index = 0;                    
+                        //foreach (var item in retrieveMultipleResponse.EntityMetadata)
+                        //{
+                        //    ds.AddSdkMetadata(item, retrieveMultipleResponse.ServerVersionStamp);
+                        //}
+
+                        //var t = (from r in retrieveMultipleResponse.EntityMetadata
+                        //         from a in (r.Attributes ?? Enumerable.Empty<AttributeMetadata>()).DefaultIfEmpty()
+                        //         from o in (r.OneToManyRelationships ?? Enumerable.Empty<OneToManyRelationshipMetadata>()).Union(r.ManyToOneRelationships ?? Enumerable.Empty<OneToManyRelationshipMetadata>()).DefaultIfEmpty()
+                        //         from m in (r.ManyToManyRelationships ?? Enumerable.Empty<ManyToManyRelationshipMetadata>()).DefaultIfEmpty()
+                        //         select new DenormalisedMetadataResult { EntityMetadata = r, AttributeMetadata = a, OneToManyRelationship = o, ManyToManyRelationship = m }).AsEnumerable();
+
+                        //DataTable resultTable = BuildMetadataResultDataTable(resultSet.ColumnMetadata, t);
+
+
                         results = (from r in retrieveMultipleResponse.EntityMetadata
                                    from a in (r.Attributes ?? Enumerable.Empty<AttributeMetadata>()).DefaultIfEmpty()
                                    from o in (r.OneToManyRelationships ?? Enumerable.Empty<OneToManyRelationshipMetadata>()).Union(r.ManyToOneRelationships ?? Enumerable.Empty<OneToManyRelationshipMetadata>()).DefaultIfEmpty()
                                    from m in (r.ManyToManyRelationships ?? Enumerable.Empty<ManyToManyRelationshipMetadata>()).DefaultIfEmpty()
-                                   select new DenormalisedMetadataResult { EntityMetadata = r, AttributeMetadata = a, OneToManyRelationship = o, ManyToManyRelationship = m }).ToArray();
+                                   select new CrmAdo.EntityMetadataResultSet.DenormalisedMetadataResult { EntityMetadata = r, AttributeMetadata = a, OneToManyRelationship = o, ManyToManyRelationship = m }).ToArray();
+
+                        // var dataResults = resul
+
+
+                        //var x = (from e in ds.EntityMetadata.AsEnumerable()
+                        //         from a in ds.AttributeMetadata.as
+                        //         from a in e.GetAttributeMetadataRows().AsEnumerable()    
+                        //        ).AsQueryable().Select("");
+
+
+                        //results = 
+
+                        //    (from e in ds.EntityMetadata.AsQueryable()
+                        //     from a in (e.GetAttributeMetadataRows() ?? Enumerable.Empty<CrmAdo.Metadata.EntityMetadataDataSet.AttributeMetadataRow>()).DefaultIfEmpty()).Select()
+
+
+                        //   .Select()
+
+                        //  select e[]
+                        //          
+
+
+
+
+                        //from a in (r.Attributes ?? Enumerable.Empty<AttributeMetadata>()).DefaultIfEmpty()
+                        //from o in (r.OneToManyRelationships ?? Enumerable.Empty<OneToManyRelationshipMetadata>()).Union(r.ManyToOneRelationships ?? Enumerable.Empty<OneToManyRelationshipMetadata>()).DefaultIfEmpty()
+                        //from m in (r.ManyToManyRelationships ?? Enumerable.Empty<ManyToManyRelationshipMetadata>()).DefaultIfEmpty()
+                        //select new DenormalisedMetadataResult { EntityMetadata = r, AttributeMetadata = a, OneToManyRelationship = o, ManyToManyRelationship = m }).ToArray();
+
+
+                        //              var q = from tA in tblA.AsEnumerable()
+                        //join tB in tblB.AsEnumerable()
+                        //on (int)tA["ID"] equals (int)tB["ID"]
+                        //select new
+                        //{
+                        //  ID = (int)tA["ID"],
+                        //  Name = (string)tA["NAME"],
+                        //  Address = (string)tA["ADDRESS"],
+                        //  Phone = (string)tB["PHONE"],
+                        //  Mail = (string)tB["MAIL"]
+                        //};
+
+                        //   ds.DefaultViewManager.CreateDataView()
+
+
+
                         resultSet.Results = results;
                     }
 
@@ -400,6 +464,11 @@ namespace CrmAdo
             // PopulateMetadata(resultSet, retrieveMetadataChangesRequest.Query);
             // return resultSet;
         }
+
+       
+
+
+
 
         #region Metadata
 

@@ -167,6 +167,16 @@
     <Compile Include="Dynamics\Metadata\IHaveMinMaxAndScaleValues.cs" />
     <Compile Include="Dynamics\Metadata\MetadataConverter.cs" />
     <Compile Include="Dynamics\Metadata\MoneyAttributeInfo.cs" />
+    <Compile Include="Dynamics\Metadata\EntityMetadataDataSet.cs">
+      <DependentUpon>EntityMetadataDataSet.xsd</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Dynamics\Metadata\EntityMetadataDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EntityMetadataDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Results\DataTableResultSet.cs" />
     <Compile Include="Results\DenormalisedMetadataResult.cs" />
     <Compile Include="Results\EntityMetadataResultSet.cs" />
     <Compile Include="Results\ResultSet.cs" />
@@ -198,6 +208,8 @@
     <Compile Include="Core\ICrmCommandExecutor.cs" />
     <Compile Include="Core\ICrmRequestProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\DynamicLinq.cs" />
+    <Compile Include="Util\Extensions.cs" />
     <Compile Include="Util\SystemCommandParameters.cs" />
     <Compile Include="Core\ISchemaNameProvider.cs" />
     <Compile Include="Util\EnumHelper.cs" />
@@ -216,11 +228,20 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Key.pfx" />
+    <None Include="Dynamics\Metadata\EntityMetadataDataSet.xsc">
+      <DependentUpon>EntityMetadataDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="Dynamics\Metadata\EntityMetadataDataSet.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>EntityMetadataDataSet.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Dynamics\Metadata\EntityMetadataDataSet.xss">
+      <DependentUpon>EntityMetadataDataSet.xsd</DependentUpon>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Obsolete\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="CrmAdoMetaData.xml" />
     <Content Include="MetadataCollections.xml" />

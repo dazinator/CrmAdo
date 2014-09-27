@@ -943,7 +943,7 @@ namespace CrmAdo.Visitor
                 ColumnMetadata columnMetadata = null;
                 if (colMeta == null)
                 {
-                    
+
                     // could throw an exception as no metadata found for this attribute?
                     //  throw new ArgumentException("Unknown column: " + columnAttributeName);
                     columnMetadata = new ColumnMetadata(attributeName, entityAlias);
@@ -977,44 +977,6 @@ namespace CrmAdo.Visitor
             }
             var entMeta = EntityMetadata[entityName];
             return entMeta;
-        }
-
-
-        //private List<ColumnMetadata> GetColumnMetadata(MetadataQueryExpression queryExpression)
-        //{
-        //    if (_MetadataProvider != null)
-        //    {
-        //        var metaData = new Dictionary<string, CrmEntityMetadata>();
-        //        var columns = new List<ColumnMetadata>();
-        //        PopulateColumnMetadata(queryExpression, metaData, columns);
-        //        return columns;
-        //    }
-        //    return null;
-        //}
-
-        //private void PopulateColumnMetadata(MetadataQueryExpression query, Dictionary<string, CrmEntityMetadata> entityMetadata, List<ColumnMetadata> columns)
-        //{
-        //    // get metadata for this entities columns..
-        //    if (!entityMetadata.ContainsKey("entitymetadata"))
-        //    {
-        //        entityMetadata["entitymetadata"] = _MetadataProvider.GetEntityMetadata("entitymetadata");
-        //    }
-
-        //    var entMeta = entityMetadata["entitymetadata"];
-        //    if (query.Properties.AllProperties)
-        //    {
-        //        columns.AddRange((from c in entMeta.Attributes orderby c.LogicalName select new ColumnMetadata(c)));
-        //    }
-        //    else
-        //    {
-        //        columns.AddRange((from s in query.Properties.PropertyNames
-        //                          join c in entMeta.Attributes
-        //                              on s.ToLower() equals c.LogicalName
-        //                          select new ColumnMetadata(c)));
-        //    }
-
-        //    //  throw new NotImplementedException();
-
-        //}
+        }        
     }
 }
