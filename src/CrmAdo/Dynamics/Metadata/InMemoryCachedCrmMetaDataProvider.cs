@@ -122,6 +122,7 @@ namespace CrmAdo.Dynamics.Metadata
             metadata.AddPseudoAttribute("metadataid", AttributeTypeCode.Uniqueidentifier);
             metadata.AddPseudoAttribute("requiredlevel", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("schemaname", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("isprimarykey", AttributeTypeCode.Boolean);
                       
             return metadata;
         }

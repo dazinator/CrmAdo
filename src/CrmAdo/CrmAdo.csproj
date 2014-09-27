@@ -177,7 +177,6 @@
       <DependentUpon>EntityMetadataDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="Results\DataTableResultSet.cs" />
-    <Compile Include="Results\DenormalisedMetadataResult.cs" />
     <Compile Include="Results\EntityMetadataResultSet.cs" />
     <Compile Include="Results\ResultSet.cs" />
     <Compile Include="SchemaTableProvider.cs" />

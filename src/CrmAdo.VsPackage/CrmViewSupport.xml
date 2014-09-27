@@ -1,27 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <DataViewSupport xmlns="http://schemas.microsoft.com/VisualStudio/2007/07/Data/DataViewSupport">
-  <!--<Define name="ColumnProperties">
-    <Properties>
-      <Property name="LogicalName">
-        <DisplayName resource="Node_Column_AttributeLogicalName" />
-        <Description resource="Node_Column_AttributeLogicalName_Description" />
-      </Property>
-    </Properties>
-  </Define>-->
-
-  <!--<Define name="ColumnProperties">
-    <Properties>
-      <Property name="Name">
-        <DisplayName resource="Node_Column_AttributeLogicalName" />
-        <Description resource="Node_Column_AttributeLogicalName_Description" />
-      </Property>
-      <Property name="EntityLogicalName">
-        <DisplayName resource="Node_Column_EntityLogicalName" />
-        <Description resource="Node_Column_EntityLogicalName_Description" />
-      </Property>
-    </Properties>
-  </Define>-->
-
+  
   <Views>
     <View name="Dynamics Crm">
       <DisplayName>CrmAdo Dynamics Crm</DisplayName>
@@ -55,7 +34,13 @@
                       <DisplayName resource="Node_Columns" />
                       <Icon name="Folder" />
                       <Children>
-                        <Selection type="AttributeMetadata" restrictions="{Table.LogicalName}">
+                        <Selection type="AttributeMetadata" restrictions="{Table.LogicalName}" filter="IsPrimaryKey=True">
+                          <SelectionNode>
+                            <DisplayName>{LogicalName}</DisplayName>
+                            <Icon name="PrimaryKey" />
+                          </SelectionNode>
+                        </Selection>
+                        <Selection type="AttributeMetadata" restrictions="{Table.LogicalName}" filter="IsPrimaryKey=False">
                           <SelectionNode>
                             <DisplayName>{LogicalName}</DisplayName>
                             <Icon name="Column" />

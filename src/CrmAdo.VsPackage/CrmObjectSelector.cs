@@ -84,7 +84,7 @@ namespace CrmAdo.DdexProvider
                     throw new ArgumentNullException("must provide entity name restriction");
                 }
                 var entityName = restrictions.First();
-                var commandText = "SELECT attributemetadata.* FROM entitymetadata INNER JOIN attributemetadata ON entitymetadata.MetadataId = attributemetadata.MetadataId WHERE entitymetadata.LogicalName = '{0}'";
+                var commandText = "SELECT entitymetadata.PrimaryIdAttribute, attributemetadata.* FROM entitymetadata INNER JOIN attributemetadata ON entitymetadata.MetadataId = attributemetadata.MetadataId WHERE entitymetadata.LogicalName = '{0}'";
                 return string.Format(commandText, entityName);
             }
 

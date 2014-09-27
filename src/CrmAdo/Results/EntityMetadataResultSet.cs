@@ -215,6 +215,8 @@ namespace CrmAdo
                         return AttributeMetadata.RequiredLevel.Value.ToString();
                     case "schemaname":
                         return AttributeMetadata.SchemaName;
+                    case "isprimarykey":
+                        return AttributeMetadata.LogicalName == EntityMetadata.PrimaryIdAttribute;
 
                     default:
                         return null;
@@ -269,7 +271,7 @@ namespace CrmAdo
         }
 
         public override DbDataReader GetReader(DbConnection connection = null)
-        {            
+        {
             return new CrmDbMetadataReader(this, connection);
         }
 
@@ -280,5 +282,5 @@ namespace CrmAdo
     }
 
 
-   
+
 }

@@ -134,6 +134,7 @@
         <Property name="MetadataId" isIdentifierPart="false" />
         <Property name="RequiredLevel" isIdentifierPart="false" />
         <Property name="SchemaName" isIdentifierPart="false" />
+        <Property name="IsPrimaryKey" isIdentifierPart="false" />
       </Properties>
       <Services>
         <Service type="IVsDataObjectSelector" implementationType="CrmAdo.DdexProvider.CrmObjectSelector">
