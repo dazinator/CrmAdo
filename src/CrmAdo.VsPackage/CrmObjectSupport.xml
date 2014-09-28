@@ -15,7 +15,7 @@
       <Identifier>
         <Part name="LogicalName" />
       </Identifier>
-      <Properties>
+      <Properties>      
         <Property name="LogicalName" isIdentifierPart="true" />
         <Property name="MetadataId" isIdentifierPart="false" />
         <Property name="ActivityTypeMask" isIdentifierPart="false" />
@@ -134,7 +134,7 @@
         <Property name="MetadataId" isIdentifierPart="false" />
         <Property name="RequiredLevel" isIdentifierPart="false" />
         <Property name="SchemaName" isIdentifierPart="false" />
-        <Property name="IsPrimaryKey" isIdentifierPart="false" />
+        <Property name="IsPrimaryKey" isIdentifierPart="false" type="System.Boolean" />
       </Properties>
       <Services>
         <Service type="IVsDataObjectSelector" implementationType="CrmAdo.DdexProvider.CrmObjectSelector">
@@ -648,6 +648,10 @@
         <Part name="EntityLogicalName" underlyingMember="EntityLogicalName" />
         <Part name="LogicalName" underlyingMember="LogicalName" />
       </Identifier>
+      <Properties>
+        <Property name="IsPrimaryKey" isIdentifierPart="false" underlyingMember="IsPrimaryKey" />
+      </Properties>
+      
       <!--<Properties>
         <Property name="Name" isIdentifierPart="true" underlyingMember="LogicalName" />
       </Properties>-->

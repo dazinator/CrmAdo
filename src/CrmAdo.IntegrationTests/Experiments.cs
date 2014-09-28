@@ -376,7 +376,7 @@ namespace CrmAdo.IntegrationTests
                 thread.Join();
             }
 
-        }       
+        }
 
         [Category("Experimentation")]
         [Test]
@@ -568,12 +568,17 @@ namespace CrmAdo.IntegrationTests
 
 
         }
-        
+
 
         [Category("Experimentation")]
         [Test]
         [TestCase("customeraddress", TestName = "Experiment for saving address entity metadata to a local file.")]
         [TestCase("account", TestName = "Experiment for saving account metadata to a local file.")]
+        [TestCase("pluginassembly", TestName = "Experiment for saving pluginassembly metadata to a local file.")]
+        [TestCase("plugintype", TestName = "Experiment for saving plugintype metadata to a local file.")]
+        [TestCase("sdkmessageprocessingstep", TestName = "Experiment for saving sdkmessageprocessingstep metadata to a local file.")]
+        [TestCase("sdkmessageprocessingstepimage", TestName = "Experiment for saving sdkmessageprocessingstepimage metadata to a local file.")]
+        [TestCase("sdkmessageprocessingstepsecureconfig", TestName = "Experiment for saving sdkmessageprocessingstepsecureconfig metadata to a local file.")]      
         public void Experiment_For_Saving_Entity_Metadata_To_File(string entityName)
         {
 
@@ -625,6 +630,51 @@ namespace CrmAdo.IntegrationTests
                 }
             }
 
+
+
+        }
+        
+
+        [Category("Experimentation")]
+        [Test]
+        [TestCase(TestName = "Experiment for selecting plugins")]
+        public void Experiment_For_Selecting_Plugins()
+        {
+            var sql = string.Format("Select * from pluginassembly");
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var command = conn.CreateCommand();
+
+                Console.WriteLine("Executing command " + sql);
+                command.CommandText = sql;
+                //   command.CommandType = CommandType.Text;
+
+
+                using (var reader = command.ExecuteReader())
+                {
+                    int resultCount = 0;
+                    foreach (var result in reader)
+                    {
+                        resultCount++;
+
+                        for (int i = 0; i < reader.FieldCount; i++)
+                        {
+                            Console.Write(reader.GetName(i));
+                            Console.Write("=");
+                            Console.Write(reader[i]);
+                            Console.WriteLine();
+                        }
+
+                        Console.WriteLine("*****");
+                       
+                    }
+
+                    Console.WriteLine("There were " + resultCount + " results..");
+                }
+            }
 
 
         }

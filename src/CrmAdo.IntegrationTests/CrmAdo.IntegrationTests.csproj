@@ -48,6 +48,18 @@
     <Reference Include="Microsoft.IdentityModel">
       <HintPath>..\..\lib\Microsoft.IdentityModel.6.1.7600.16394\lib\net35\Microsoft.IdentityModel.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualStudio.Data.Core, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Microsoft.VisualStudio.Data.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Data.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Microsoft.VisualStudio.Data.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Data.Services, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Microsoft.VisualStudio.Data.Services.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Xrm.Client, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\lib\Microsoft.CrmSdk.Extensions.6.0.4\lib\net40\Microsoft.Xrm.Client.dll</HintPath>
       <Private>True</Private>
@@ -112,6 +124,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CrmObjectSelectorTests.cs" />
     <Compile Include="SelectMetadataIntegrationTests.cs" />
     <Compile Include="BaseTest.cs" />
     <Compile Include="AlterEntityIntegrationTests.cs" />
@@ -137,6 +150,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CrmAdo.VsPackage\CrmAdo.DdexProvider2013.csproj">
+      <Project>{9024366d-45c9-47ba-8d20-f88975a7ed7c}</Project>
+      <Name>CrmAdo.DdexProvider2013</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CrmAdo\CrmAdo.csproj">
       <Project>{61D9051D-4C85-419F-97DC-D56D4A72C5E3}</Project>
       <Name>CrmAdo</Name>

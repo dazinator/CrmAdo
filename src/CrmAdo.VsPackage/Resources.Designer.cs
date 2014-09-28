@@ -61,6 +61,564 @@ namespace CrmAdo.DdexProvider {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The attribute this attribute relates to..
+        /// </summary>
+        internal static string AttributeProperty_AttributeOf_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_AttributeOf_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Related Attribute.
+        /// </summary>
+        internal static string AttributeProperty_AttributeOf_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_AttributeOf_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The attribute type.
+        /// </summary>
+        internal static string AttributeProperty_AttributeType_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_AttributeType_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type.
+        /// </summary>
+        internal static string AttributeProperty_AttributeType_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_AttributeType_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The attribute  type name..
+        /// </summary>
+        internal static string AttributeProperty_AttributeTypeName_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_AttributeTypeName_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type Name.
+        /// </summary>
+        internal static string AttributeProperty_AttributeTypeName_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_AttributeTypeName_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AttributeProperty_CanBeSecuredForCreate_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_CanBeSecuredForCreate_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can Be Secured For Create.
+        /// </summary>
+        internal static string AttributeProperty_CanBeSecuredForCreate_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_CanBeSecuredForCreate_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AttributeProperty_CanBeSecuredForRead_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_CanBeSecuredForRead_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can Be Secured For Read.
+        /// </summary>
+        internal static string AttributeProperty_CanBeSecuredForRead_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_CanBeSecuredForRead_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AttributeProperty_CanBeSecuredForUpdate_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_CanBeSecuredForUpdate_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can Be Secured For Update.
+        /// </summary>
+        internal static string AttributeProperty_CanBeSecuredForUpdate_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_CanBeSecuredForUpdate_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AttributeProperty_CanModifyAdditionalSettings_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_CanModifyAdditionalSettings_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can Modify Additional Settings.
+        /// </summary>
+        internal static string AttributeProperty_CanModifyAdditionalSettings_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_CanModifyAdditionalSettings_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AttributeProperty_ColumnNumber_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_ColumnNumber_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Column Number.
+        /// </summary>
+        internal static string AttributeProperty_ColumnNumber_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_ColumnNumber_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AttributeProperty_DeprecatedVersion_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_DeprecatedVersion_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deprecated Version.
+        /// </summary>
+        internal static string AttributeProperty_DeprecatedVersion_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_DeprecatedVersion_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AttributeProperty_Description_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_Description_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        internal static string AttributeProperty_Description_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_Description_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AttributeProperty_DisplayName_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_DisplayName_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display Name.
+        /// </summary>
+        internal static string AttributeProperty_DisplayName_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_DisplayName_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The logical name of the entity that this attribute belongs to..
+        /// </summary>
+        internal static string AttributeProperty_EntityLogicalName_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_EntityLogicalName_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Entity Logical Name.
+        /// </summary>
+        internal static string AttributeProperty_EntityLogicalName_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_EntityLogicalName_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AttributeProperty_IntroducedVersion_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IntroducedVersion_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Introduced Version.
+        /// </summary>
+        internal static string AttributeProperty_IntroducedVersion_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IntroducedVersion_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AttributeProperty_IsAuditEnabled_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsAuditEnabled_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Is Audit Enabled.
+        /// </summary>
+        internal static string AttributeProperty_IsAuditEnabled_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsAuditEnabled_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AttributeProperty_IsCustomAttribute_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsCustomAttribute_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Is Custom Attribute.
+        /// </summary>
+        internal static string AttributeProperty_IsCustomAttribute_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsCustomAttribute_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AttributeProperty_IsCustomizable_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsCustomizable_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Is Customisable.
+        /// </summary>
+        internal static string AttributeProperty_IsCustomizable_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsCustomizable_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AttributeProperty_IsManaged_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsManaged_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Is Managed.
+        /// </summary>
+        internal static string AttributeProperty_IsManaged_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsManaged_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Whether this attribute is a primary key for an entity..
+        /// </summary>
+        internal static string AttributeProperty_IsPrimaryid_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsPrimaryid_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Is Primary Id.
+        /// </summary>
+        internal static string AttributeProperty_IsPrimaryid_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsPrimaryid_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Whether the attribute is the primary key.
+        /// </summary>
+        internal static string AttributeProperty_IsPrimaryKey_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsPrimaryKey_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Is Primary Key.
+        /// </summary>
+        internal static string AttributeProperty_IsPrimaryKey_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsPrimaryKey_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Whether this attribute is the &apos;name&apos; attribute for the entity..
+        /// </summary>
+        internal static string AttributeProperty_IsPrimaryName_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsPrimaryName_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Is Primary Name.
+        /// </summary>
+        internal static string AttributeProperty_IsPrimaryName_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsPrimaryName_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AttributeProperty_IsRenameable_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsRenameable_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Is Renameable.
+        /// </summary>
+        internal static string AttributeProperty_IsRenameable_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsRenameable_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AttributeProperty_IsSecured_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsSecured_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Is Secured.
+        /// </summary>
+        internal static string AttributeProperty_IsSecured_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsSecured_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AttributeProperty_IsValidforAdvancedFind_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsValidforAdvancedFind_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Is Valid For Advanced Find.
+        /// </summary>
+        internal static string AttributeProperty_IsValidforAdvancedFind_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsValidforAdvancedFind_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AttributeProperty_IsValidForCreate_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsValidForCreate_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Is Valid For Create.
+        /// </summary>
+        internal static string AttributeProperty_IsValidForCreate_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsValidForCreate_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AttributeProperty_IsValidForRead_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsValidForRead_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Is Valid For Read.
+        /// </summary>
+        internal static string AttributeProperty_IsValidForRead_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsValidForRead_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string AttributeProperty_IsValidForUpdate_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsValidForUpdate_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Is Valid For Update.
+        /// </summary>
+        internal static string AttributeProperty_IsValidForUpdate_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_IsValidForUpdate_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The id of the attribute that this attribute relates to..
+        /// </summary>
+        internal static string AttributeProperty_LinkedAttributeId_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_LinkedAttributeId_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Linked Attribute Id.
+        /// </summary>
+        internal static string AttributeProperty_LinkedAttributeId_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_LinkedAttributeId_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The logical name of the attribute..
+        /// </summary>
+        internal static string AttributeProperty_LogicalName_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_LogicalName_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logical Name.
+        /// </summary>
+        internal static string AttributeProperty_LogicalName_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_LogicalName_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The unique id for this attribute metadata record..
+        /// </summary>
+        internal static string AttributeProperty_MetadataId_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_MetadataId_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Metadata Id.
+        /// </summary>
+        internal static string AttributeProperty_MetadataId_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_MetadataId_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Whether this attribute is required as a System or Application level or not required at all..
+        /// </summary>
+        internal static string AttributeProperty_RequiredLevel_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_RequiredLevel_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Required Level.
+        /// </summary>
+        internal static string AttributeProperty_RequiredLevel_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_RequiredLevel_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The schema name for the attribute..
+        /// </summary>
+        internal static string AttributeProperty_SchemaName_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_SchemaName_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Schema Name.
+        /// </summary>
+        internal static string AttributeProperty_SchemaName_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_SchemaName_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dynamics Crm.
         /// </summary>
         internal static string DataView_SqlServer {
@@ -70,56 +628,47 @@ namespace CrmAdo.DdexProvider {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Functions.
+        ///   Looks up a localized string similar to Entities.
         /// </summary>
-        internal static string Node_Functions {
+        internal static string Node_Entities {
             get {
-                return ResourceManager.GetString("Node_Functions", resourceCulture);
+                return ResourceManager.GetString("Node_Entities", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Stored Procedures.
+        ///   Looks up a localized string similar to {LogicalName}.
         /// </summary>
-        internal static string Node_StoredProcedures {
+        internal static string Node_Entity {
             get {
-                return ResourceManager.GetString("Node_StoredProcedures", resourceCulture);
+                return ResourceManager.GetString("Node_Entity", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tables.
+        ///   Looks up a localized string similar to {LogicalName}.
         /// </summary>
-        internal static string Node_Tables {
+        internal static string Node_EntityAttribute {
             get {
-                return ResourceManager.GetString("Node_Tables", resourceCulture);
+                return ResourceManager.GetString("Node_EntityAttribute", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Types.
+        ///   Looks up a localized string similar to Attributes.
         /// </summary>
-        internal static string Node_UserDefinedTypes {
+        internal static string Node_EntityAttributes {
             get {
-                return ResourceManager.GetString("Node_UserDefinedTypes", resourceCulture);
+                return ResourceManager.GetString("Node_EntityAttributes", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Users.
+        ///   Looks up a localized string similar to CrmAdo - {Root.Name}.
         /// </summary>
-        internal static string Node_Users {
+        internal static string Node_InitialDisplayName {
             get {
-                return ResourceManager.GetString("Node_Users", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Views.
-        /// </summary>
-        internal static string Node_Views {
-            get {
-                return ResourceManager.GetString("Node_Views", resourceCulture);
+                return ResourceManager.GetString("Node_InitialDisplayName", resourceCulture);
             }
         }
         
@@ -133,7 +682,7 @@ namespace CrmAdo.DdexProvider {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CrmAdo DDEX provider for Dynamics Crm.
+        ///   Looks up a localized string similar to CrmAdo provider for Dynamics Crm.
         /// </summary>
         internal static string Provider_DisplayName {
             get {

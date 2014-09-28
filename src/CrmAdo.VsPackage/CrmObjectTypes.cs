@@ -10,15 +10,16 @@ namespace CrmAdo.DdexProvider
     /// Represents constant string values for all the supported data object
     /// types.  This list must be in sync with the data object support XML.
     /// </summary>
-    internal static class CrmObjectTypes
+    public static class CrmObjectTypes
     {
         public const string Root = "";
         //public const string User = "User";
         public const string EntityMetadata = "EntityMetadata";
         public const string AttributeMetadata = "AttributeMetadata";
+        public const string PluginAssembly = "PluginAssembly";
       
-        public const string Table = "Table";
-        public const string TableColumn = "TableColumn";
+        //public const string Table = "Table";
+        //public const string TableColumn = "TableColumn";
         //public const string Index = "Index";
         //public const string IndexColumn = "IndexColumn";
         //public const string ForeignKey = "ForeignKey";

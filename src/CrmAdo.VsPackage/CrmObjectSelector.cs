@@ -24,8 +24,21 @@ namespace CrmAdo.DdexProvider
     /// for Crm.  Many of the enumerations here are required for full
     /// support of the built in data design scenarios.
     /// </summary>
-    internal class CrmObjectSelector : DataObjectSelector
+    public class CrmObjectSelector : DataObjectSelector
     {
+
+        public CrmObjectSelector()
+            : base()
+        {
+
+        }
+
+        public CrmObjectSelector(IVsDataConnection connection)
+            : base(connection)
+        {
+
+        }
+
         protected override IVsDataReader SelectObjects(string typeName, object[] restrictions, string[] properties, object[] parameters)
         {
             // DataSourceInformation;
@@ -57,7 +70,7 @@ namespace CrmAdo.DdexProvider
                 comm.CommandText = GetCommandText(typeName, restrictions);
                 var r = comm.ExecuteReader();
                 var reader = new AdoDotNetReader(r);
-                return reader;               
+                return reader;
             }
             finally
             {
@@ -86,6 +99,18 @@ namespace CrmAdo.DdexProvider
                 var entityName = restrictions.First();
                 var commandText = "SELECT entitymetadata.PrimaryIdAttribute, attributemetadata.* FROM entitymetadata INNER JOIN attributemetadata ON entitymetadata.MetadataId = attributemetadata.MetadataId WHERE entitymetadata.LogicalName = '{0}'";
                 return string.Format(commandText, entityName);
+            }
+
+            if (typeName.Equals(CrmObjectTypes.PluginAssembly, StringComparison.OrdinalIgnoreCase))
+            {
+                //if (restrictions == null)
+                //{
+                //    throw new ArgumentNullException("must provide entity name restriction");
+                //}
+                //  var entityName = restrictions.First();
+                var commandText = "SELECT * from pluginassembly";
+                return commandText;
+                //   return string.Format(commandText, entityName);
             }
 
             throw new NotSupportedException();
