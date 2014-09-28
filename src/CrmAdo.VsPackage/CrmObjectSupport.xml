@@ -15,7 +15,7 @@
       <Identifier>
         <Part name="LogicalName" />
       </Identifier>
-      <Properties>      
+      <Properties>
         <Property name="LogicalName" isIdentifierPart="true" />
         <Property name="MetadataId" isIdentifierPart="false" />
         <Property name="ActivityTypeMask" isIdentifierPart="false" />
@@ -139,7 +139,24 @@
       <Services>
         <Service type="IVsDataObjectSelector" implementationType="CrmAdo.DdexProvider.CrmObjectSelector">
           <Parameters method="SelectObjects">
-            <Parameter value="Column" />
+            <!--<Parameter value="Column" />-->
+          </Parameters>
+        </Service>
+      </Services>
+    </Type>
+
+    <Type name="PluginAssembly" nameProperty="Name">
+      <Identifier>
+        <Part name="Name" />
+      </Identifier>
+      <Properties>
+        <Property name="Name" isIdentifierPart="true" />
+        <Property name="Version" isIdentifierPart="false" />
+      </Properties>
+      <Services>
+        <Service type="IVsDataObjectSelector" implementationType="CrmAdo.DdexProvider.CrmObjectSelector">
+          <Parameters method="SelectObjects">
+            <!--<Parameter value="Column" />-->
           </Parameters>
         </Service>
       </Services>
@@ -651,7 +668,7 @@
       <Properties>
         <Property name="IsPrimaryKey" isIdentifierPart="false" underlyingMember="IsPrimaryKey" />
       </Properties>
-      
+
       <!--<Properties>
         <Property name="Name" isIdentifierPart="true" underlyingMember="LogicalName" />
       </Properties>-->

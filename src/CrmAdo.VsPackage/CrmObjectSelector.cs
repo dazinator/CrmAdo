@@ -108,7 +108,7 @@ namespace CrmAdo.DdexProvider
                 //    throw new ArgumentNullException("must provide entity name restriction");
                 //}
                 //  var entityName = restrictions.First();
-                var commandText = "SELECT * from pluginassembly";
+                var commandText = "SELECT * FROM pluginassembly";
                 return commandText;
                 //   return string.Format(commandText, entityName);
             }

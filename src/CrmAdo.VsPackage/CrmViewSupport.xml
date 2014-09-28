@@ -125,7 +125,7 @@
       <Property name="SchemaName">
         <DisplayName resource="AttributeProperty_SchemaName_DisplayName"></DisplayName>
         <Description resource="AttributeProperty_SchemaName_Description" />
-      </Property>    
+      </Property>
     </Properties>
   </Define>
 
@@ -162,20 +162,22 @@
                       <DisplayName resource="Node_EntityAttributes" />
                       <Icon name="Folder" />
                       <Children>
-                        <Selection type="AttributeMetadata" restrictions="{Table.LogicalName}" filter="IsPrimaryKey=True">
+                        <Selection type="AttributeMetadata" restrictions="{Table.LogicalName}">
                           <SelectionNode>
                             <DisplayName resource="Node_EntityAttribute"/>
-                            <Icon name="PrimaryKey"/>
+                            <Icon name="PrimaryKey" when ="{IsPrimaryKey} = true"/>
+                            <Icon name="Column" when ="{IsPrimaryKey} = false"/>
                             <PropertiesRef name="AttributeProperties" />
+
                           </SelectionNode>
                         </Selection>
-                        <Selection type="AttributeMetadata" restrictions="{Table.LogicalName}" filter="IsPrimaryKey=False">
+                        <!--<Selection type="AttributeMetadata" restrictions="{Table.LogicalName}" filter="IsPrimaryKey=False">
                           <SelectionNode>
                             <DisplayName resource="Node_EntityAttribute"/>
                             <Icon name="Column" />
                             <PropertiesRef name="AttributeProperties" />
                           </SelectionNode>
-                        </Selection>
+                        </Selection>-->
                       </Children>
                     </StaticNode>
 
@@ -200,6 +202,18 @@
                       </SelectionNode>
                     </Selection>-->
                   </Children>
+                </SelectionNode>
+              </Selection>
+            </Children>
+          </StaticNode>
+
+          <StaticNode>
+            <DisplayName resource="Node_PluginAssemblies" />
+            <Children>
+              <Selection type="PluginAssembly" >
+                <SelectionNode nodeId="PluginAssembly">
+                  <DisplayName resource="Node_PluginAssembly" />
+                  <Icon name="Default"/>                 
                 </SelectionNode>
               </Selection>
             </Children>

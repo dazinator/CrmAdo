@@ -578,7 +578,7 @@ namespace CrmAdo.IntegrationTests
         [TestCase("plugintype", TestName = "Experiment for saving plugintype metadata to a local file.")]
         [TestCase("sdkmessageprocessingstep", TestName = "Experiment for saving sdkmessageprocessingstep metadata to a local file.")]
         [TestCase("sdkmessageprocessingstepimage", TestName = "Experiment for saving sdkmessageprocessingstepimage metadata to a local file.")]
-        [TestCase("sdkmessageprocessingstepsecureconfig", TestName = "Experiment for saving sdkmessageprocessingstepsecureconfig metadata to a local file.")]      
+        [TestCase("sdkmessageprocessingstepsecureconfig", TestName = "Experiment for saving sdkmessageprocessingstepsecureconfig metadata to a local file.")]
         public void Experiment_For_Saving_Entity_Metadata_To_File(string entityName)
         {
 
@@ -633,7 +633,7 @@ namespace CrmAdo.IntegrationTests
 
 
         }
-        
+
 
         [Category("Experimentation")]
         [Test]
@@ -669,7 +669,7 @@ namespace CrmAdo.IntegrationTests
                         }
 
                         Console.WriteLine("*****");
-                       
+
                     }
 
                     Console.WriteLine("There were " + resultCount + " results..");
@@ -695,6 +695,34 @@ namespace CrmAdo.IntegrationTests
                 orgService.Create(account);
             }
         }
+
+
+        [Category("Experimentation")]
+        [Test]
+        [TestCase(TestName = "Experiment for loading icon resource")]
+        public void Experiment_For_Loading_Manifest_Resource()
+        {
+
+            var ddexAssy = typeof(DdexProvider.CrmObjectSelector).Assembly;
+
+            
+            // Get the stream that holds the resource
+            // NOTE1: Make sure not to close this stream!
+            // NOTE2: Also be very careful to match the case
+            //        on the resource name itself
+
+            var names = ddexAssy.GetManifestResourceNames();
+
+            foreach (var item in names)
+            {
+                Console.WriteLine(item);
+            }
+
+
+
+
+        }
+
 
 
 

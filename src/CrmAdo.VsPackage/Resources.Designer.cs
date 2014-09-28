@@ -673,6 +673,24 @@ namespace CrmAdo.DdexProvider {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Plugins.
+        /// </summary>
+        internal static string Node_PluginAssemblies {
+            get {
+                return ResourceManager.GetString("Node_PluginAssemblies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {Name} - {Version}.
+        /// </summary>
+        internal static string Node_PluginAssembly {
+            get {
+                return ResourceManager.GetString("Node_PluginAssembly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This is a the CrmAdo DDEX provider that connects to instances of Dynamics Crm..
         /// </summary>
         internal static string Provider_Description {

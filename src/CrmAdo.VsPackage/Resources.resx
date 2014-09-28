@@ -330,4 +330,10 @@
   <data name="Provider_ShortDisplayName" xml:space="preserve">
     <value>CrmAdo Provider (DDEX)</value>
   </data>
+  <data name="Node_PluginAssembly" xml:space="preserve">
+    <value>{Name} - {Version}</value>
+  </data>
+  <data name="Node_PluginAssemblies" xml:space="preserve">
+    <value>Plugins</value>
+  </data>
 </root>
