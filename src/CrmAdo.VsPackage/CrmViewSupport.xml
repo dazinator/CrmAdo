@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <DataViewSupport xmlns="http://schemas.microsoft.com/VisualStudio/2007/07/Data/DataViewSupport">
+
   <Define name="AttributeProperties">
     <Properties>
       <Property name="IsPrimaryKey">
@@ -92,7 +93,7 @@
       </Property>
       <Property name="IsSecured">
         <DisplayName resource="AttributeProperty_IsSecured_DisplayName"></DisplayName>
-        <Description resource="AttributeProperty_IsSecured_Description" />       
+        <Description resource="AttributeProperty_IsSecured_Description" />
       </Property>
       <Property name="IsValidforAdvancedFind">
         <DisplayName resource="AttributeProperty_IsValidforAdvancedFind_DisplayName"></DisplayName>
@@ -126,7 +127,21 @@
         <DisplayName resource="AttributeProperty_SchemaName_DisplayName"></DisplayName>
         <Description resource="AttributeProperty_SchemaName_Description" />
       </Property>
+      <PropertyListRef name="OptionSetAttributeProperties"/>
     </Properties>
+  </Define>
+
+  <Define name="OptionSetAttributeProperties">
+    <Property name="OptionSetName">
+      <DisplayName resource="AttributeProperty_OptionSetName_DisplayName"></DisplayName>
+      <Category>Option Set</Category>
+      <Description resource="AttributeProperty_OptionSetName_Description" />
+    </Property>
+    <Property name="OptionSetOptions">
+      <DisplayName resource="AttributeProperty_OptionSetOptions_DisplayName"></DisplayName>
+      <Category>Option Set</Category>
+      <Description resource="AttributeProperty_OptionSetOptions_Description" />
+    </Property>
   </Define>
 
   <Views>
@@ -167,17 +182,9 @@
                             <DisplayName resource="Node_EntityAttribute"/>
                             <Icon name="PrimaryKey" when ="{IsPrimaryKey} = true"/>
                             <Icon name="Column" when ="{IsPrimaryKey} = false"/>
-                            <PropertiesRef name="AttributeProperties" />
-
+                            <PropertiesRef name="AttributeProperties"/>
                           </SelectionNode>
                         </Selection>
-                        <!--<Selection type="AttributeMetadata" restrictions="{Table.LogicalName}" filter="IsPrimaryKey=False">
-                          <SelectionNode>
-                            <DisplayName resource="Node_EntityAttribute"/>
-                            <Icon name="Column" />
-                            <PropertiesRef name="AttributeProperties" />
-                          </SelectionNode>
-                        </Selection>-->
                       </Children>
                     </StaticNode>
 
@@ -213,7 +220,7 @@
               <Selection type="PluginAssembly" >
                 <SelectionNode nodeId="PluginAssembly">
                   <DisplayName resource="Node_PluginAssembly" />
-                  <Icon name="Default"/>                 
+                  <Icon name="Default"/>
                 </SelectionNode>
               </Selection>
             </Children>
@@ -241,11 +248,5 @@
   </Views>
 
   <Resources baseName="CrmAdo.DdexProvider.Resources"/>
-
-  <!--<Resource name="Node_Column_AttributeLogicalName">{LogicalName}</Resource>
-    <Resource name="Node_Column_AttributeLogicalName_Description">The logical name of the attribute.</Resource>
-    <Resource name="Node_Column_EntityLogicalName">{EntityLogicalName}</Resource>
-    <Resource name="Node_Column_EntityLogicalName_Description">The logical name of the entity.</Resource>-->
-
 
 </DataViewSupport>

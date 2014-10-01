@@ -583,6 +583,42 @@ namespace CrmAdo.DdexProvider {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The name of the option set..
+        /// </summary>
+        internal static string AttributeProperty_OptionSetName_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_OptionSetName_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Option Set Name.
+        /// </summary>
+        internal static string AttributeProperty_OptionSetName_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_OptionSetName_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The individual options in the option set..
+        /// </summary>
+        internal static string AttributeProperty_OptionSetOptions_Description {
+            get {
+                return ResourceManager.GetString("AttributeProperty_OptionSetOptions_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Options.
+        /// </summary>
+        internal static string AttributeProperty_OptionSetOptions_DisplayName {
+            get {
+                return ResourceManager.GetString("AttributeProperty_OptionSetOptions_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Whether this attribute is required as a System or Application level or not required at all..
         /// </summary>
         internal static string AttributeProperty_RequiredLevel_Description {

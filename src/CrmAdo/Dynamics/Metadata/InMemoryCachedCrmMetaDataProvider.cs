@@ -123,7 +123,8 @@ namespace CrmAdo.Dynamics.Metadata
             metadata.AddPseudoAttribute("requiredlevel", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("schemaname", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("isprimarykey", AttributeTypeCode.Boolean);
-                      
+            metadata.AddPseudoAttribute("optionsetname", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("optionsetoptions", AttributeTypeCode.String);                      
             return metadata;
         }
 

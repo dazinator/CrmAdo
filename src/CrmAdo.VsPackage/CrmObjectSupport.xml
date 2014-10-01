@@ -1,5 +1,45 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <DataObjectSupport xmlns="http://schemas.microsoft.com/VisualStudio/2007/07/Data/DataObjectSupport">
+
+  <Define name="BaseAttributeProperties">
+    <Property name="EntityLogicalName" isIdentifierPart="true" />
+    <Property name="LogicalName" isIdentifierPart="true" />
+    <Property name="AttributeOf"  />
+    <Property name="AttributeType"  />
+    <Property name="AttributeTypeName" minSourceVersion="6.0.0000.0215"/>
+    <Property name="CanBeSecuredForCreate"  />
+    <Property name="CanBeSecuredForRead"  />
+    <Property name="CanBeSecuredForUpdate"  />
+    <Property name="CanModifyAdditionalSettings"  />
+    <Property name="ColumnNumber"  />
+    <Property name="DeprecatedVersion"  />
+    <Property name="Description"  />
+    <Property name="DisplayName"  />
+    <Property name="IntroducedVersion"  />
+    <Property name="IsAuditEnabled"  />
+    <Property name="IsCustomAttribute"  />
+    <Property name="IsCustomizable"  />
+    <Property name="IsManaged"  />
+    <Property name="IsPrimaryid"  />
+    <Property name="IsPrimaryName"  />
+    <Property name="IsRenameable"  />
+    <Property name="IsSecured"  />
+    <Property name="IsValidforAdvancedFind"  />
+    <Property name="IsValidForCreate"  />
+    <Property name="IsValidForRead"  />
+    <Property name="IsValidForUpdate"  />
+    <Property name="LinkedAttributeId"  />
+    <Property name="MetadataId"  />
+    <Property name="RequiredLevel"  />
+    <Property name="SchemaName"  />
+    <Property name="IsPrimaryKey" type="System.Boolean" />
+  </Define>
+
+  <Define name="OptionSetAttributeProperties">
+    <Property name="OptionSetName" />
+    <Property name="OptionSetOptions" />
+  </Define>
+
   <Types>
 
     <RootType>
@@ -67,7 +107,7 @@
         <Property name="IsVisibleInMobileClient" minSourceVersion="6.0.0000.0215" />
         <Property name="ObjectTypeCode"  />
         <Property name="OwnershipType"  />
-        <!--<Property name="PhysicalName" minSourceVersion="6.0.0000.0215"/>-->        
+        <!--<Property name="PhysicalName" minSourceVersion="6.0.0000.0215"/>-->
         <Property name="PrimaryIdAttribute" />
         <Property name="PrimaryImageAttribute" minSourceVersion="6.0.0000.0215" />
         <Property name="PrimaryNameAttribute"  />
@@ -106,37 +146,8 @@
         <Part name="LogicalName" />
       </Identifier>
       <Properties>
-        <Property name="EntityLogicalName" isIdentifierPart="true" />
-        <Property name="LogicalName" isIdentifierPart="true" />
-        <Property name="AttributeOf"  />
-        <Property name="AttributeType"  />
-        <Property name="AttributeTypeName" minSourceVersion="6.0.0000.0215"/>
-        <Property name="CanBeSecuredForCreate"  />
-        <Property name="CanBeSecuredForRead"  />
-        <Property name="CanBeSecuredForUpdate"  />
-        <Property name="CanModifyAdditionalSettings"  />
-        <Property name="ColumnNumber"  />
-        <Property name="DeprecatedVersion"  />
-        <Property name="Description"  />
-        <Property name="DisplayName"  />
-        <Property name="IntroducedVersion"  />
-        <Property name="IsAuditEnabled"  />
-        <Property name="IsCustomAttribute"  />
-        <Property name="IsCustomizable"  />
-        <Property name="IsManaged"  />
-        <Property name="IsPrimaryid"  />
-        <Property name="IsPrimaryName"  />
-        <Property name="IsRenameable"  />
-        <Property name="IsSecured"  />
-        <Property name="IsValidforAdvancedFind"  />
-        <Property name="IsValidForCreate"  />
-        <Property name="IsValidForRead"  />
-        <Property name="IsValidForUpdate"  />
-        <Property name="LinkedAttributeId"  />
-        <Property name="MetadataId"  />
-        <Property name="RequiredLevel"  />
-        <Property name="SchemaName"  />
-        <Property name="IsPrimaryKey" type="System.Boolean" />
+        <PropertyListRef name="BaseAttributeProperties" />
+        <PropertyListRef name="OptionSetAttributeProperties" />
       </Properties>
       <Services>
         <Service type="IVsDataObjectSelector" implementationType="CrmAdo.DdexProvider.CrmObjectSelector">
@@ -163,491 +174,6 @@
         </Service>
       </Services>
     </Type>
-
-    <!--<Type name="Table">
-      <Identifier>
-        <Part name="LogicalName" />
-      </Identifier>
-      <Properties>
-        <Property name="LogicalName" isIdentifierPart="true" />
-        <Property name="MetadataId" isIdentifierPart="false" />
-        <Property name="ActivityTypeMask" isIdentifierPart="false" />
-        <Property name="AutoCreateAccessTeams" isIdentifierPart="false" />
-        <Property name="AutoRouteToOwnerQueue" isIdentifierPart="false" />
-        <Property name="CanBeInManyToMany" isIdentifierPart="false" />
-        <Property name="CanBePrimaryEntityInRelationship" isIdentifierPart="false" />
-        <Property name="CanBeRelatedEntityInRelationship" isIdentifierPart="false" />
-        <Property name="CanCreateAttributes" isIdentifierPart="false" />
-        <Property name="CanCreateCharts" isIdentifierPart="false" />
-        <Property name="CanCreateForms" isIdentifierPart="false" />
-        <Property name="CanCreateViews" isIdentifierPart="false" />
-        <Property name="CanModifyAdditionalSettings" isIdentifierPart="false" />
-        <Property name="CanTriggerWorkflow" isIdentifierPart="false" />
-        <Property name="Description" isIdentifierPart="false" />
-        <Property name="DisplayCollectionName" isIdentifierPart="false" />
-        <Property name="DisplayName" isIdentifierPart="false" />
-        <Property name="HasChanged" isIdentifierPart="false" />
-        <Property name="IconLargeName" isIdentifierPart="false" />
-        <Property name="IconMediumName" isIdentifierPart="false" />
-        <Property name="IconSmallName" isIdentifierPart="false" />
-        <Property name="IntroducedVersion" isIdentifierPart="false" />
-        <Property name="IsActivity" isIdentifierPart="false" />
-        <Property name="IsActivityParty" isIdentifierPart="false" />
-        <Property name="IsAIRUpdated" isIdentifierPart="false" />
-        <Property name="IsAuditEnabled" isIdentifierPart="false" />
-        <Property name="IsAvailableOffline" isIdentifierPart="false" />
-        <Property name="IsBusinessProcessEnabled" isIdentifierPart="false" />
-        <Property name="IsChildEntity" isIdentifierPart="false" />
-        <Property name="IsConnectionsEnabled" isIdentifierPart="false" />
-        <Property name="IsCustomEntity" isIdentifierPart="false" />
-        <Property name="IsCustomizable" isIdentifierPart="false" />
-        <Property name="IsDocumentManagementEnabled" isIdentifierPart="false" />
-        <Property name="IsDuplicateDetectionEnabled" isIdentifierPart="false" />
-        <Property name="IsEnabledForCharts" isIdentifierPart="false" />
-        <Property name="IsEnabledForTrace" isIdentifierPart="false" />
-        <Property name="IsImportable" isIdentifierPart="false" />
-        <Property name="IsIntersect" isIdentifierPart="false" />
-        <Property name="IsMailMergeEnabled" isIdentifierPart="false" />
-        <Property name="IsManaged" isIdentifierPart="false" />
-        <Property name="IsMappable" isIdentifierPart="false" />
-        <Property name="IsQuickCreateEnabled" isIdentifierPart="false" />
-        <Property name="IsReadingPaneEnabled" isIdentifierPart="false" />
-        <Property name="IsReadOnlyInMobileClient" isIdentifierPart="false" />
-        <Property name="IsRenameable" isIdentifierPart="false" />
-        <Property name="IsValidForAdvancedFind" isIdentifierPart="false" />
-        <Property name="IsValidForQueue" isIdentifierPart="false" />
-        <Property name="IsVisibleInMobile" isIdentifierPart="false" />
-        <Property name="IsVisibleInMobileClient" isIdentifierPart="false" />
-        <Property name="ObjectTypeCode" isIdentifierPart="false" />
-        <Property name="OwnershipType" isIdentifierPart="false" />
-        <Property name="PrimaryIdAttribute" isIdentifierPart="false" />
-        <Property name="PrimaryImageAttribute" isIdentifierPart="false" />
-      </Properties>
-      <Services>
-        <Service type="IVsDataObjectSelector" implementationType="CrmAdo.DdexProvider.CrmObjectSelector">
-          <Parameters method="SelectObjects">
-            <Parameter value="Table" />
-          </Parameters>
-        </Service>
-        <Service type="IDSRefBuilder">
-          <Parameters method="AppendToDSRef">
-            <Parameter>
-              <Parameter value="{0}" />
-              <Parameter />
-              <Parameter value="Table" />
-              <Parameter />
-              <Parameter>
-                <Parameter value="39A5A7E7-513F-44a4-B79D-7652CD8962D9">
-                  <Parameter value="101" type="System.Int32" />
-                </Parameter>
-              </Parameter>
-            </Parameter>
-          </Parameters>
-        </Service>
-      </Services>
-    </Type>-->
-
-    <!--<Type name="TableColumn" nameProperty="LogicalName">
-      <Identifier>
-        <Part name="LogicalName" />
-      </Identifier>
-      <Properties>
-        <Property name="LogicalName" isIdentifierPart="true" />
-        <Property name="MetadataId" isIdentifierPart="false" />
-        <Property name="ColumnNumber" isIdentifierPart="false" />
-        -->
-    <!--<Property name="IsNullable" type="System.Boolean" />
-        <Property name="IsIdentity" type="System.Boolean" />
-        <Property name="IdentitySeed" type="System.Int32" />
-        <Property name="IdentityIncrement" type="System.Int32" />
-        <Property name="IsPrimaryKey" type="System.Boolean" />-->
-    <!--
-      </Properties>
-      <Services>
-        <Service type="IVsDataObjectSelector" implementationType="CrmAdo.DdexProvider.CrmObjectSelector">
-          <Parameters method="SelectObjects">
-            <Parameter value="Column" />
-          </Parameters>
-        </Service>
-        -->
-    <!--<Service type="IDSRefBuilder">
-          <Parameters method="AppendToDSRef">
-            <Parameter>
-              -->
-    <!--
-        -->
-    <!-- this is probably wrong, but nut sure where it's used yet -->
-    <!--
-        -->
-    <!--
-              <Parameter value="{2}" />
-              <Parameter value="{1}" />
-              <Parameter value="Table" />
-              <Parameter />
-              <Parameter>
-                -->
-    <!--
-        -->
-    <!-- GUID_DSRefProperty_PreciseType -->
-    <!--
-        -->
-    <!--
-                <Parameter value="39A5A7E7-513F-44a4-B79D-7652CD8962D9">
-                  <Parameter value="101" type="System.Int32" />
-                  -->
-    <!--
-        -->
-    <!-- Table -->
-    <!--
-        -->
-    <!--
-                </Parameter>
-              </Parameter>
-              -->
-    <!--
-        -->
-    <!-- This parameter specifies child nodes -->
-    <!--
-        -->
-    <!--
-              <Parameter>
-                <Parameter>
-                  <Parameter value="{2}" />
-                  <Parameter />
-                  <Parameter value="Field" />
-                  <Parameter />
-                  <Parameter>
-                    -->
-    <!--
-        -->
-    <!-- GUID_DSRefProperty_PreciseType -->
-    <!--
-        -->
-    <!--
-                    <Parameter value="39A5A7E7-513F-44a4-B79D-7652CD8962D9">
-                      <Parameter value="102" type="System.Int32" />
-                      -->
-    <!--
-        -->
-    <!-- Table_Column -->
-    <!--
-        -->
-    <!--
-                    </Parameter>
-                  </Parameter>
-                </Parameter>
-              </Parameter>
-            </Parameter>
-          </Parameters>
-        </Service>-->
-    <!--
-      </Services>
-    </Type>-->
-
-    <!--<Type name="View" preferredOrdering="Name">
-      <Identifier>
-        <Part name="Name" />
-      </Identifier>
-      <Properties>
-        <Property name="Name" isIdentifierPart="true" />
-      </Properties>
-      <Services>
-        <Service type="IVsDataObjectSelector" implementationType="CrmAdo.DdexProvider.CrmObjectSelector">
-          <Parameters method="SelectObjects">
-            <Parameter value="Views" />          
-          </Parameters>
-        </Service>
-        <Service type="IDSRefBuilder">
-          <Parameters method="AppendToDSRef">
-            <Parameter>
-              <Parameter value="{0}" />
-              <Parameter />
-              <Parameter value="View" />
-              <Parameter />
-              <Parameter>               
-                <Parameter value="39A5A7E7-513F-44a4-B79D-7652CD8962D9">
-                  <Parameter value="301" type="System.Int32" />              
-                </Parameter>
-              </Parameter>
-            </Parameter>
-          </Parameters>
-        </Service>
-      </Services>
-    </Type>
-    <Type name="ViewColumn" preferredOrdering="View, Ordinal">
-      <Identifier>
-        <Part name="View" />
-        <Part name="Name" />
-      </Identifier>
-      <Properties>
-        <Property name="Name" isIdentifierPart="true" />
-        <Property name="Ordinal" type="System.Int32" />
-        <Property name="DataType" type="System.Type" />
-        <Property name="ColumnSize" type="System.Int32" />
-        <Property name="IsPrimaryKey" type="System.Boolean" />
-        <Property name="ProviderType" />
-        <Property name="Scale" type="System.Int32" />
-        <Property name="Precision" type="System.Int32" />       
-      </Properties>
-      <Services>
-        <Service type="IVsDataObjectSelector">
-          <Parameters method="SelectObjects">
-            <Parameter value="ViewColumns" />
-            <Parameter>
-              <Parameter value="View">
-                <Parameter value="TableName" />
-              </Parameter>
-              <Parameter value="Name">
-                <Parameter value="ColumnName" />
-              </Parameter>
-              <Parameter value="Ordinal">
-                <Parameter value="ColumnOrdinal" />
-              </Parameter>
-              <Parameter value="DataType">
-                <Parameter value="DataType" />
-              </Parameter>
-              <Parameter value="ProviderType">
-                <Parameter value="ProviderType" />
-              </Parameter>
-              <Parameter value="IsPrimaryKey">
-                <Parameter value="IsKey" />
-              </Parameter>
-              <Parameter value="Scale">
-                <Parameter value="NumericScale" />
-              </Parameter>
-              <Parameter value="Precision">
-                <Parameter value="NumericPrecision" />
-              </Parameter>           
-            </Parameter>
-          </Parameters>
-        </Service>
-        <Service type="IDSRefBuilder">
-          <Parameters method="AppendToDSRef">
-            <Parameter>          
-              <Parameter value="{2}" />
-              <Parameter value="{1}" />
-              <Parameter value="View" />
-              <Parameter />
-              <Parameter>              
-                <Parameter value="39A5A7E7-513F-44a4-B79D-7652CD8962D9">
-                  <Parameter value="101" type="System.Int32" />              
-                </Parameter>
-              </Parameter>            
-              <Parameter>
-                <Parameter>
-                  <Parameter value="{2}" />
-                  <Parameter />
-                  <Parameter value="Field" />
-                  <Parameter />
-                  <Parameter>                
-                    <Parameter value="39A5A7E7-513F-44a4-B79D-7652CD8962D9">
-                      <Parameter value="102" type="System.Int32" />               
-                    </Parameter>
-                  </Parameter>
-                </Parameter>
-              </Parameter>
-            </Parameter>
-          </Parameters>
-        </Service>
-      </Services>
-    </Type>
-    <Type name="Procedure" preferredOrdering="Name">
-      <Identifier>
-        <Part name="Name" />
-      </Identifier>
-      <Properties>
-        <Property name="Name" isIdentifierPart="true" />
-      </Properties>
-      <Services>
-        <Service type="IVsDataObjectSelector">
-          <Parameters method="GetSupportedRestrictions">
-            <Parameter value="Name" />
-          </Parameters>
-          <Parameters method="SelectObjects">
-            <Parameter value="Procedures" />
-            <Parameter>
-              <Parameter value="Name">
-                <Parameter value="PROCEDURE_NAME" />
-              </Parameter>
-            </Parameter>
-          </Parameters>
-        </Service>
-        <Service type="IDSRefBuilder">
-          <Parameters method="AppendToDSRef">
-            <Parameter>
-              <Parameter value="{0}" />
-              <Parameter />
-              <Parameter value="StoredProcedure" />
-              <Parameter />
-              <Parameter>              
-                <Parameter value="39A5A7E7-513F-44a4-B79D-7652CD8962D9">
-                  <Parameter value="401" type="System.Int32" />                
-                </Parameter>
-              </Parameter>
-            </Parameter>
-          </Parameters>
-        </Service>
-      </Services>
-    </Type>
-    <Type name="ProcedureParameter" preferredOrdering="Procedure, Ordinal">
-      <Identifier>
-        <Part name="Procedure" />
-        <Part name="Name" />
-      </Identifier>
-      <Properties>
-        <Property name="Name" isIdentifierPart="true" />
-        <Property name="Ordinal" type="System.Int32" />
-        <Property name="Mode" />
-        <Property name="DataType" type="System.Type" />
-        <Property name="ProviderType" />     
-      </Properties>
-      <Services>
-        <Service type="IVsDataObjectSelector">
-          <Parameters method="SelectObjects">
-            <Parameter value="ProcedureParameters" />
-            <Parameter>
-              <Parameter value="Procedure">
-                <Parameter value="ProcedureName" />
-              </Parameter>
-              <Parameter value="Name">
-                <Parameter value="ParameterName" />
-              </Parameter>
-              <Parameter value="Ordinal">
-                <Parameter value="Ordinal" />
-              </Parameter>
-              <Parameter value="Mode">
-                <Parameter value="ParameterMode" />
-              </Parameter>
-              <Parameter value="DataType">
-                <Parameter value="DataType" />
-              </Parameter>
-              <Parameter value="ProviderType">
-                <Parameter value="ProviderType" />
-              </Parameter>           
-            </Parameter>
-          </Parameters>
-        </Service>
-      </Services>
-    </Type>
-    <Type name="Index" preferredOrdering="Table, Name">
-      <Identifier>
-        <Part name="Table" />
-        <Part name="Name" />
-      </Identifier>
-      <Properties>
-        <Property name="Name" isIdentifierPart="true" />
-        <Property name="IsUnique" type="System.Boolean" />
-        <Property name="IsPrimary" type="System.Boolean" />
-      </Properties>
-      <Services>
-        <Service type="IVsDataObjectSelector">
-          <Parameters method="SelectObjects">
-            <Parameter value="Index" />
-            <Parameter>
-              <Parameter value="Table">
-                <Parameter value="TableName" />
-              </Parameter>
-              <Parameter value="Name">
-                <Parameter value="IndexName" />
-              </Parameter>
-              <Parameter value="IsUnique">
-                <Parameter value="IsUnique" />
-              </Parameter>
-              <Parameter value="IsPrimary">
-                <Parameter value="IsPrimary" />
-              </Parameter>
-            </Parameter>
-          </Parameters>
-        </Service>
-        <Service type="IDSRefBuilder">
-          <Parameters method="AppendToDSRef">
-            <Parameter>
-              <Parameter value="{2}" />
-              <Parameter value="{1}" />
-              <Parameter value="Table" />
-              <Parameter />
-              <Parameter>              
-                <Parameter value="39A5A7E7-513F-44a4-B79D-7652CD8962D9">
-                  <Parameter value="101" type="System.Int32" />                
-                </Parameter>
-              </Parameter>
-              <Parameter>
-                <Parameter>
-                  <Parameter value="{2}" />
-                  <Parameter />
-                  <Parameter value="Index" />
-                  <Parameter />
-                </Parameter>
-              </Parameter>
-            </Parameter>
-          </Parameters>
-        </Service>
-      </Services>
-    </Type>
-    <Type name="IndexColumn" preferredOrdering="Table, Index, Ordinal">
-      <Identifier>
-        <Part name="Table" />
-        <Part name="Index" />
-        <Part name="Name" />
-      </Identifier>
-      <Properties>
-        <Property name="Name" isIdentifierPart="true" />
-        <Property name="Ordinal" type="System.Byte" />
-      </Properties>
-      <Services>
-        <Service type="IVsDataObjectSelector">
-          <Parameters method="SelectObjects">
-            <Parameter value="IndexColumns" />
-            <Parameter>
-              <Parameter value="Table">
-                <Parameter value="LogicalName" />
-              </Parameter>
-              <Parameter value="Index">
-                <Parameter value="IndexName" />
-              </Parameter>
-              <Parameter value="Name">
-                <Parameter value="ColumnName" />
-              </Parameter>
-              <Parameter value="Ordinal">
-                <Parameter value="Ordinal" />
-              </Parameter>
-            </Parameter>
-          </Parameters>
-        </Service>
-        <Service type="IDSRefBuilder">
-          <Parameters method="AppendToDSRef">
-            <Parameter>
-              <Parameter value="{2}" />
-              <Parameter value="{1}" />
-              <Parameter value="Table" />
-              <Parameter />
-              <Parameter>             
-                <Parameter value="39A5A7E7-513F-44a4-B79D-7652CD8962D9">
-                  <Parameter value="101" type="System.Int32" />                
-                </Parameter>
-              </Parameter>
-              <Parameter>
-                <Parameter>
-                  <Parameter value="{3}" />
-                  <Parameter />
-                  <Parameter value="Index" />
-                  <Parameter />
-                  <Parameter />
-                  <Parameter>
-                    <Parameter>
-                      <Parameter value="{4}" />
-                      <Parameter />
-                      <Parameter value="Field" />
-                    </Parameter>
-                  </Parameter>
-                </Parameter>
-              </Parameter>
-            </Parameter>
-          </Parameters>
-        </Service>
-      </Services>
-    </Type>-->
-
   </Types>
   <MappedTypes>
 
@@ -670,163 +196,7 @@
       <Properties>
         <Property name="IsPrimaryKey" isIdentifierPart="false" underlyingMember="IsPrimaryKey" />
       </Properties>
-
-      <!--<Properties>
-        <Property name="Name" isIdentifierPart="true" underlyingMember="LogicalName" />
-      </Properties>-->
-      <!--<Properties>
-        <Property name="LogicalName" isIdentifierPart="true" underlyingMember="LogicalName" />
-        <Property name="MetadataId" isIdentifierPart="true" underlyingMember="MetadataId" />
-        <Property name="ColumnNumber" isIdentifierPart="false" underlyingMember="ColumnNumber" />
-      </Properties>-->
     </MappedType>
-
-    <!--<MappedType name="Table" underlyingType="EntityMetadata">
-      <Selection/>
-      <Identifier>
-        <Part name="Catalog" underlyingMember="Database"/>
-        <Part name="LogicalName" />
-        <Part name="MetadataId" />
-      </Identifier>
-      <Properties>
-        <Property name="MetadataId" isIdentifierPart="true" underlyingMember="MetadataId" />
-        <Property name="LogicalName" isIdentifierPart="true" underlyingMember="LogicalName"/>
-        <Property name="ActivityTypeMask" isIdentifierPart="false" underlyingMember="ActivityTypeMask" />
-        <Property name="AutoCreateAccessTeams" isIdentifierPart="false" underlyingMember="AutoCreateAccessTeams"/>
-        <Property name="AutoRouteToOwnerQueue" isIdentifierPart="false" underlyingMember="AutoRouteToOwnerQueue"/>
-        <Property name="CanBeInManyToMany" isIdentifierPart="false" underlyingMember="CanBeInManyToMany"/>
-        <Property name="CanBePrimaryEntityInRelationship" isIdentifierPart="false" underlyingMember="CanBePrimaryEntityInRelationship"/>
-        <Property name="CanBeRelatedEntityInRelationship" isIdentifierPart="false" underlyingMember="CanBeRelatedEntityInRelationship"/>
-        <Property name="CanCreateAttributes" isIdentifierPart="false" underlyingMember="CanCreateAttributes"/>
-        <Property name="CanCreateCharts" isIdentifierPart="false" underlyingMember="CanCreateCharts"/>
-        <Property name="CanCreateForms" isIdentifierPart="false" underlyingMember="CanCreateForms"/>
-        <Property name="CanCreateViews" isIdentifierPart="false" underlyingMember="CanCreateViews"/>
-        <Property name="CanModifyAdditionalSettings" isIdentifierPart="false" underlyingMember="CanModifyAdditionalSettings"/>
-        <Property name="CanTriggerWorkflow" isIdentifierPart="false" underlyingMember="CanTriggerWorkflow"/>
-        <Property name="Description" isIdentifierPart="false" underlyingMember="Description" />
-        <Property name="DisplayCollectionName" isIdentifierPart="false" underlyingMember="DisplayCollectionName"/>
-        <Property name="DisplayName" isIdentifierPart="false" underlyingMember="DisplayName"/>
-        <Property name="HasChanged" isIdentifierPart="false" underlyingMember="HasChanged"/>
-        <Property name="IconLargeName" isIdentifierPart="false" underlyingMember="IconLargeName"/>
-        <Property name="IconMediumName" isIdentifierPart="false" underlyingMember="IconMediumName"/>
-        <Property name="IconSmallName" isIdentifierPart="false" underlyingMember="IconSmallName"/>
-        <Property name="IntroducedVersion" isIdentifierPart="false" underlyingMember="IntroducedVersion"/>
-        <Property name="IsActivity" isIdentifierPart="false" underlyingMember="IsActivity"/>
-        <Property name="IsActivityParty" isIdentifierPart="false" underlyingMember="IsActivityParty"/>
-        <Property name="IsAIRUpdated" isIdentifierPart="false" underlyingMember="IsAIRUpdated"/>
-        <Property name="IsAuditEnabled" isIdentifierPart="false" underlyingMember="IsAuditEnabled"/>
-        <Property name="IsAvailableOffline" isIdentifierPart="false" underlyingMember="IsAvailableOffline"/>
-        <Property name="IsBusinessProcessEnabled" isIdentifierPart="false" underlyingMember="IsBusinessProcessEnabled" />
-        <Property name="IsChildEntity" isIdentifierPart="false" underlyingMember="IsChildEntity"/>
-        <Property name="IsConnectionsEnabled" isIdentifierPart="false" underlyingMember="IsConnectionsEnabled"/>
-        <Property name="IsCustomEntity" isIdentifierPart="false" underlyingMember="IsCustomEntity"/>
-        <Property name="IsCustomizable" isIdentifierPart="false" underlyingMember="IsCustomizable"/>
-        <Property name="IsDocumentManagementEnabled" isIdentifierPart="false" underlyingMember="IsDocumentManagementEnabled"/>
-        <Property name="IsDuplicateDetectionEnabled" isIdentifierPart="false" underlyingMember="IsDuplicateDetectionEnabled"/>
-        <Property name="IsEnabledForCharts" isIdentifierPart="false" underlyingMember="IsEnabledForCharts"/>
-        <Property name="IsEnabledForTrace" isIdentifierPart="false" underlyingMember="IsEnabledForTrace"/>
-        <Property name="IsImportable" isIdentifierPart="false" underlyingMember="IsImportable"/>
-        <Property name="IsIntersect" isIdentifierPart="false" underlyingMember="IsIntersect"/>
-        <Property name="IsMailMergeEnabled" isIdentifierPart="false" underlyingMember="IsMailMergeEnabled"/>
-        <Property name="IsManaged" isIdentifierPart="false" underlyingMember="IsManaged"/>
-        <Property name="IsMappable" isIdentifierPart="false" underlyingMember="IsMappable"/>
-        <Property name="IsQuickCreateEnabled" isIdentifierPart="false" underlyingMember="IsQuickCreateEnabled"/>
-        <Property name="IsReadingPaneEnabled" isIdentifierPart="false" underlyingMember="IsReadingPaneEnabled"/>
-        <Property name="IsReadOnlyInMobileClient" isIdentifierPart="false" underlyingMember="IsReadOnlyInMobileClient"/>
-        <Property name="IsRenameable" isIdentifierPart="false" underlyingMember="IsRenameable"/>
-        <Property name="IsValidForAdvancedFind" isIdentifierPart="false" underlyingMember="IsValidForAdvancedFind"/>
-        <Property name="IsValidForQueue" isIdentifierPart="false" underlyingMember="IsValidForQueue"/>
-        <Property name="IsVisibleInMobile" isIdentifierPart="false" underlyingMember="IsVisibleInMobile"/>
-        <Property name="IsVisibleInMobileClient" isIdentifierPart="false" underlyingMember="IsVisibleInMobileClient"/>
-        <Property name="ObjectTypeCode" isIdentifierPart="false" underlyingMember="ObjectTypeCode"/>
-        <Property name="OwnershipType" isIdentifierPart="false" underlyingMember="OwnershipType"/>
-        <Property name="PrimaryIdAttribute" isIdentifierPart="false" underlyingMember="PrimaryIdAttribute"/>
-        <Property name="PrimaryImageAttribute" isIdentifierPart="false" underlyingMember="PrimaryImageAttribute"/>
-      </Properties>
-    </MappedType>-->
-
-    <!--<MappedType name="TableUniqueKey" underlyingType="Index">
-
-      <Selection restrictions="{Table},{Name}" filter="IsUnique = true" />
-      <Identifier>
-        <Part name="Table" underlyingMember="Table" />
-        <Part name="Name" underlyingMember="Name" />
-      </Identifier>
-      <Properties>
-        <Property name="Name" isIdentifierPart="true" />
-        <Property name="IsPrimary" underlyingMember="IsPrimary" />
-      </Properties>
-    </MappedType>
-
-    <MappedType name="TableUniqueKeyColumn" underlyingType="IndexColumn">
-      <Selection restrictions="{Table},{TableUniqueKey},{Name}" />
-      <Identifier>
-        <Part name="Table" underlyingMember="Table" />
-        <Part name="TableUniqueKey" underlyingMember="Index" />
-        <Part name="Name" underlyingMember="Name" />
-      </Identifier>
-      <Properties>
-        <Property name="Name" isIdentifierPart="true" />
-        <Property name="Ordinal" underlyingMember="Ordinal">
-          <Conversion>
-            <ChangeType type="System.Int32" />
-          </Conversion>
-        </Property>
-      </Properties>
-    </MappedType>
-
-    <MappedType name="View" underlyingType="View">
-      <Selection restrictions="{Name}" />
-      <Identifier>
-        <Part name="Name" underlyingMember="Name" />
-      </Identifier>
-      <Properties>
-        <Property name="Name" isIdentifierPart="true" />
-      </Properties>
-    </MappedType>
-
-    <MappedType name="ViewColumn" underlyingType="ViewColumn">
-      <Selection restrictions="{View},{Name}" />
-      <Identifier>
-        <Part name="View" underlyingMember="View" />
-        <Part name="Name" underlyingMember="Name" />
-      </Identifier>
-      <Properties>
-        <Property name="Name" isIdentifierPart="true" />
-        <Property name="Ordinal" underlyingMember="Ordinal" />
-        <Property name="DataType" underlyingMember="DataType" />
-        <Property name="ProviderType" underlyingMember="ProviderType" />       
-      </Properties>
-    </MappedType>
-
-    <MappedType name="StoredProcedure" underlyingType="Procedure">
-      <Selection restrictions="{Name}" />
-      <Identifier>
-        <Part name="Name" underlyingMember="Name" />
-      </Identifier>
-      <Properties>
-        <Property name="Name" isIdentifierPart="true" />
-      </Properties>
-    </MappedType>
-    
-    <MappedType name="StoredProcedureParameter" underlyingType="ProcedureParameter">
-      <Selection restrictions="{StoredProcedure},{Name}" />
-      <Identifier>
-        <Part name="StoredProcedure" underlyingMember="Procedure" />
-        <Part name="Name" underlyingMember="Name" />
-      </Identifier>
-      <Properties>
-        <Property name="Name" isIdentifierPart="true" />
-        <Property name="Ordinal" underlyingMember="Ordinal" />
-        <Property name="DataType" underlyingMember="DataType" />
-        <Property name="ProviderType" underlyingMember="ProviderType" />
-        <Property name="Direction" underlyingMember="Mode">
-          <Conversion>
-            <Calculate expr="IIF({0} = 'INOUT', 'IN/OUT', {0})" exprType="System.String" />
-          </Conversion>
-        </Property>       
-      </Properties>
-    </MappedType>-->
 
 
   </MappedTypes>

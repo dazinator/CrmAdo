@@ -336,4 +336,16 @@
   <data name="Node_PluginAssemblies" xml:space="preserve">
     <value>Plugins</value>
   </data>
+  <data name="AttributeProperty_OptionSetName_Description" xml:space="preserve">
+    <value>The name of the option set.</value>
+  </data>
+  <data name="AttributeProperty_OptionSetName_DisplayName" xml:space="preserve">
+    <value>Option Set Name</value>
+  </data>
+  <data name="AttributeProperty_OptionSetOptions_Description" xml:space="preserve">
+    <value>The individual options in the option set.</value>
+  </data>
+  <data name="AttributeProperty_OptionSetOptions_DisplayName" xml:space="preserve">
+    <value>Options</value>
+  </data>
 </root>

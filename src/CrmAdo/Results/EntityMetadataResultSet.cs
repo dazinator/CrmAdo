@@ -159,7 +159,7 @@ namespace CrmAdo
                 {
                     case "attributeof":
                         return AttributeMetadata.AttributeOf;
-                    case "attributetype":
+                    case "attributetype":                       
                         return AttributeMetadata.AttributeType.Value.ToString();
                     case "attributetypename":
                         return AttributeMetadata.AttributeTypeName.Value;
@@ -219,7 +219,50 @@ namespace CrmAdo
                         return AttributeMetadata.SchemaName;
                     case "isprimarykey":
                         return AttributeMetadata.LogicalName == EntityMetadata.PrimaryIdAttribute;
-
+                    case "optionsetoptions":
+                        OptionSetMetadata opt = null;
+                        if (AttributeMetadata.AttributeType.HasValue)
+                        {
+                            if (AttributeMetadata.AttributeType.Value == AttributeTypeCode.Picklist)
+                            {
+                                opt = ((PicklistAttributeMetadata)AttributeMetadata).OptionSet;
+                            }
+                            else if (AttributeMetadata.AttributeType.Value == AttributeTypeCode.State)
+                            {
+                                opt = ((StateAttributeMetadata)AttributeMetadata).OptionSet;
+                            }
+                            else if (AttributeMetadata.AttributeType.Value == AttributeTypeCode.Status)
+                            {
+                                opt = ((StatusAttributeMetadata)AttributeMetadata).OptionSet;
+                            }
+                        }
+                        if (opt != null)
+                        {
+                            return string.Join(Environment.NewLine, opt.Options.Select(o => o.Value + " : " + o.Label.UserLocalizedLabel.Label));
+                        }
+                        return string.Empty;
+                    case "optionsetname":
+                        OptionSetMetadata optset = null;
+                        if (AttributeMetadata.AttributeType.HasValue)
+                        {
+                            if (AttributeMetadata.AttributeType.Value == AttributeTypeCode.Picklist)
+                            {
+                                optset = ((PicklistAttributeMetadata)AttributeMetadata).OptionSet;
+                            }
+                            else if (AttributeMetadata.AttributeType.Value == AttributeTypeCode.State)
+                            {
+                                optset = ((StateAttributeMetadata)AttributeMetadata).OptionSet;
+                            }
+                            else if (AttributeMetadata.AttributeType.Value == AttributeTypeCode.Status)
+                            {
+                                optset = ((StatusAttributeMetadata)AttributeMetadata).OptionSet;
+                            }
+                        }
+                        if (optset != null)
+                        {
+                            return optset.Name;
+                        }
+                        return string.Empty;
                     default:
                         return null;
                 }
