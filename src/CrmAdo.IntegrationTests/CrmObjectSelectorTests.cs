@@ -62,6 +62,8 @@ namespace CrmAdo.IntegrationTests
                 mockVsDataConnection.Stub(c => c.UnlockProviderObject());
 
                 var sut = new CrmObjectSelector(mockVsDataConnection);
+                Console.Write(conn.ServerVersion);
+               
 
                 var reader = sut.SelectObjects(CrmObjectTypes.EntityMetadata, null, null);
                 using (reader)
@@ -115,7 +117,7 @@ namespace CrmAdo.IntegrationTests
             {
                 conn.Open();
 
-              
+
                 IVsDataConnection mockVsDataConnection = MockRepository.GenerateMock<IVsDataConnection>();
                 mockVsDataConnection.Stub(c => c.State).Return(DataConnectionState.Open);
                 mockVsDataConnection.Stub(c => c.GetLockedProviderObject()).Return(conn);
@@ -141,7 +143,7 @@ namespace CrmAdo.IntegrationTests
                         Console.Write(" version: " + reader.GetItem("version"));
                         Console.Write(" major: " + reader.GetItem("major"));
                         Console.Write(" minor: " + reader.GetItem("minor"));
-                       // Console.Write(" patch: " + reader.GetItem("patch"));
+                        // Console.Write(" patch: " + reader.GetItem("patch"));
 
                     }
 

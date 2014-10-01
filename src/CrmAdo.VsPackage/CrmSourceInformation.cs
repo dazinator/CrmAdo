@@ -78,6 +78,28 @@ namespace CrmAdo.DdexProvider
                     }
                 }
             }
+
+             if (propertyName.Equals(DataSourceVersion, StringComparison.OrdinalIgnoreCase))
+            {
+                if (Site.State != DataConnectionState.Open)
+                {
+                    Site.Open();
+                }
+                CrmDbConnection conn = Connection as CrmDbConnection;
+                Debug.Assert(conn != null, "Invalid provider object.");
+                if (conn != null)
+                {
+                    try                    {
+                       
+                        return conn.ServerVersion;
+                    }
+                    catch (DbException)
+                    {
+                        // We let the base class apply default behavior
+                    }
+                }
+            }
+          
             return base.RetrieveValue(propertyName);
 
             //if (propertyName.Equals(DefaultSchema,

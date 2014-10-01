@@ -705,7 +705,7 @@ namespace CrmAdo.IntegrationTests
 
             var ddexAssy = typeof(DdexProvider.CrmObjectSelector).Assembly;
 
-            
+
             // Get the stream that holds the resource
             // NOTE1: Make sure not to close this stream!
             // NOTE2: Also be very careful to match the case
@@ -720,6 +720,29 @@ namespace CrmAdo.IntegrationTests
 
 
 
+
+        }
+
+
+        [Category("Experimentation")]
+        [Test]
+        [TestCase(TestName = "Experiment for retrieving crm version")]
+        public void Experiment_For_Crm_Version_Request()
+        {
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
+                                                         new CrmClientCredentialsProvider());
+
+            var orgService = serviceProvider.GetOrganisationService();
+            using (orgService as IDisposable)
+            {
+                var req = new RetrieveVersionRequest();
+                var resp = (RetrieveVersionResponse)orgService.Execute(req);
+                //assigns the version to a string
+                string versionNumber = resp.Version;
+                Console.WriteLine(versionNumber);
+            }
 
         }
 

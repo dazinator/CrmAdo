@@ -92,7 +92,7 @@
       </Property>
       <Property name="IsSecured">
         <DisplayName resource="AttributeProperty_IsSecured_DisplayName"></DisplayName>
-        <Description resource="AttributeProperty_IsSecured_Description" />
+        <Description resource="AttributeProperty_IsSecured_Description" />       
       </Property>
       <Property name="IsValidforAdvancedFind">
         <DisplayName resource="AttributeProperty_IsValidforAdvancedFind_DisplayName"></DisplayName>

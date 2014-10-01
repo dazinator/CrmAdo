@@ -25,19 +25,18 @@ namespace CrmAdo.DdexProvider
     /// support of the built in data design scenarios.
     /// </summary>
     public class CrmObjectSelector : DataObjectSelector
-    {
-
+    {      
         public CrmObjectSelector()
             : base()
         {
-
+            
         }
 
         public CrmObjectSelector(IVsDataConnection connection)
             : base(connection)
         {
-
-        }
+           
+        }       
 
         protected override IVsDataReader SelectObjects(string typeName, object[] restrictions, string[] properties, object[] parameters)
         {
@@ -114,7 +113,7 @@ namespace CrmAdo.DdexProvider
             }
 
             throw new NotSupportedException();
-        }
+        }        
 
     }
 }

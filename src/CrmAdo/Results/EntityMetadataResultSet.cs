@@ -129,6 +129,8 @@ namespace CrmAdo
                         return EntityMetadata.ObjectTypeCode;
                     case "ownershiptype":
                         return EntityMetadata.OwnershipType;
+                    //case "physicalname":
+                    //    return EntityMetadata.;
                     case "primaryidattribute":
                         return EntityMetadata.PrimaryIdAttribute;
                     case "primaryimageattribute":

@@ -19,6 +19,8 @@ namespace CrmAdo
     {
         private ICrmServiceProvider _CrmServiceProvider = null;
         private ICrmMetaDataProvider _MetadataProvider = null;
+        private bool _InitialisedVersion = false;
+        private string _CrmVersion = string.Empty;
 
         #region Constructor
 
@@ -137,29 +139,34 @@ namespace CrmAdo
         {
             get
             {
-                bool hadToOpen = false;
-                try
+                if (!_InitialisedVersion)
                 {
-                    if (_State != ConnectionState.Open)
+                    bool hadToOpen = false;
+                    try
                     {
-                        hadToOpen = true;
-                        this.Open();
-                    }
+                        if (_State != ConnectionState.Open)
+                        {
+                            hadToOpen = true;
+                            this.Open();
+                        }
 
-                    var req = new RetrieveVersionRequest();
-                    var resp = (RetrieveVersionResponse)_OrganizationService.Execute(req);
-                    //assigns the version to a string
-                    string versionNumber = resp.Version;
-                    return versionNumber;
-                }
-                finally
-                {
-                    // return connection to orginal state.
-                    if (hadToOpen)
+                        var req = new RetrieveVersionRequest();
+                        var resp = (RetrieveVersionResponse)_OrganizationService.Execute(req);
+                        //assigns the version to a string
+                        string versionNumber = resp.Version;
+                        _CrmVersion = versionNumber;
+                    }
+                    finally
                     {
-                        this.Close();
+                        // return connection to orginal state.
+                        if (hadToOpen)
+                        {
+                            this.Close();
+                        }
                     }
                 }
+
+                return _CrmVersion;
                 //  throw new NotImplementedException();
             }
         }
@@ -292,8 +299,8 @@ namespace CrmAdo
                 // }
             }
 
-            return result;          
-        }       
+            return result;
+        }
 
         //private static void AddMetadataCollectionRow(DataTable dataTable, DataColumn nameCol, DataColumn restrictionsCol, DataColumn identifiersCol, string collectionName, int restrictions, int identifiers)
         //{
@@ -343,9 +350,9 @@ namespace CrmAdo
             dataTable.Columns.Add("IdentifierOpenQuote", typeof(string));
             dataTable.Columns.Add("IdentifierCloseQuote", typeof(string));
             dataTable.Columns.Add("SupportsAnsi92Sql", typeof(bool));
-            dataTable.Columns.Add("SupportsQuotedIdentifierParts", typeof(bool));          
+            dataTable.Columns.Add("SupportsQuotedIdentifierParts", typeof(bool));
             dataTable.Columns.Add("ParameterPrefix", typeof(string));
-            dataTable.Columns.Add("ParameterPrefixInName", typeof(bool));           
+            dataTable.Columns.Add("ParameterPrefixInName", typeof(bool));
             dataTable.Columns.Add("ColumnAliasSupported", typeof(bool));
             dataTable.Columns.Add("TableAliasSupported", typeof(bool));
             dataTable.Columns.Add("TableSupported", typeof(bool));
@@ -363,13 +370,13 @@ namespace CrmAdo
             dataRow[DbMetaDataColumnNames.DataSourceProductName] = "CrmAdo Provider for Dynamics CRM";
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             dataRow[DbMetaDataColumnNames.DataSourceProductVersion] = version.ToString();
-            dataRow[DbMetaDataColumnNames.NumberOfIdentifierParts] = 1;           
+            dataRow[DbMetaDataColumnNames.NumberOfIdentifierParts] = 1;
             dataRow["IdentifierOpenQuote"] = "[";
             dataRow["IdentifierCloseQuote"] = "]";
             dataRow["SupportsAnsi92Sql"] = false;
             dataRow["SupportsQuotedIdentifierParts"] = true;
             dataRow["ParameterPrefix"] = "@";
-            dataRow["ParameterPrefixInName"] = true;           
+            dataRow["ParameterPrefixInName"] = true;
             dataRow["ColumnAliasSupported"] = false;
             dataRow["TableAliasSupported"] = true;
             dataRow["TableSupported"] = true;

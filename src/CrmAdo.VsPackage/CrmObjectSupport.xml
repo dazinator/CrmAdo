@@ -17,62 +17,64 @@
       </Identifier>
       <Properties>
         <Property name="LogicalName" isIdentifierPart="true" />
-        <Property name="MetadataId" isIdentifierPart="false" />
-        <Property name="ActivityTypeMask" isIdentifierPart="false" />
-        <Property name="AutoCreateAccessTeams" isIdentifierPart="false" />
-        <Property name="AutoRouteToOwnerQueue" isIdentifierPart="false" />
+        <Property name="MetadataId" />
+        <Property name="ActivityTypeMask" />
+        <Property name="AutoCreateAccessTeams" minSourceVersion="6.0.0000.0215" />
+        <Property name="AutoRouteToOwnerQueue" />
         <Property name="CanBeInManyToMany" isIdentifierPart="false" />
-        <Property name="CanBePrimaryEntityInRelationship" isIdentifierPart="false" />
-        <Property name="CanBeRelatedEntityInRelationship" isIdentifierPart="false" />
-        <Property name="CanCreateAttributes" isIdentifierPart="false" />
-        <Property name="CanCreateCharts" isIdentifierPart="false" />
-        <Property name="CanCreateForms" isIdentifierPart="false" />
-        <Property name="CanCreateViews" isIdentifierPart="false" />
-        <Property name="CanModifyAdditionalSettings" isIdentifierPart="false" />
-        <Property name="CanTriggerWorkflow" isIdentifierPart="false" />
-        <Property name="Description" isIdentifierPart="false" />
-        <Property name="DisplayCollectionName" isIdentifierPart="false" />
-        <Property name="DisplayName" isIdentifierPart="false" />
-        <Property name="HasChanged" isIdentifierPart="false" />
-        <Property name="IconLargeName" isIdentifierPart="false" />
-        <Property name="IconMediumName" isIdentifierPart="false" />
-        <Property name="IconSmallName" isIdentifierPart="false" />
-        <Property name="IntroducedVersion" isIdentifierPart="false" />
-        <Property name="IsActivity" isIdentifierPart="false" />
-        <Property name="IsActivityParty" isIdentifierPart="false" />
-        <Property name="IsAIRUpdated" isIdentifierPart="false" />
-        <Property name="IsAuditEnabled" isIdentifierPart="false" />
-        <Property name="IsAvailableOffline" isIdentifierPart="false" />
-        <Property name="IsBusinessProcessEnabled" isIdentifierPart="false" />
-        <Property name="IsChildEntity" isIdentifierPart="false" />
-        <Property name="IsConnectionsEnabled" isIdentifierPart="false" />
-        <Property name="IsCustomEntity" isIdentifierPart="false" />
-        <Property name="IsCustomizable" isIdentifierPart="false" />
-        <Property name="IsDocumentManagementEnabled" isIdentifierPart="false" />
-        <Property name="IsDuplicateDetectionEnabled" isIdentifierPart="false" />
-        <Property name="IsEnabledForCharts" isIdentifierPart="false" />
-        <Property name="IsEnabledForTrace" isIdentifierPart="false" />
-        <Property name="IsImportable" isIdentifierPart="false" />
-        <Property name="IsIntersect" isIdentifierPart="false" />
-        <Property name="IsMailMergeEnabled" isIdentifierPart="false" />
-        <Property name="IsManaged" isIdentifierPart="false" />
-        <Property name="IsMappable" isIdentifierPart="false" />
-        <Property name="IsQuickCreateEnabled" isIdentifierPart="false" />
-        <Property name="IsReadingPaneEnabled" isIdentifierPart="false" />
-        <Property name="IsReadOnlyInMobileClient" isIdentifierPart="false" />
-        <Property name="IsRenameable" isIdentifierPart="false" />
-        <Property name="IsValidForAdvancedFind" isIdentifierPart="false" />
-        <Property name="IsValidForQueue" isIdentifierPart="false" />
-        <Property name="IsVisibleInMobile" isIdentifierPart="false" />
-        <Property name="IsVisibleInMobileClient" isIdentifierPart="false" />
-        <Property name="ObjectTypeCode" isIdentifierPart="false" />
-        <Property name="OwnershipType" isIdentifierPart="false" />
-        <Property name="PrimaryIdAttribute" isIdentifierPart="false" />
-        <Property name="PrimaryImageAttribute" isIdentifierPart="false" />
-        <Property name="PrimaryNameAttribute" isIdentifierPart="false" />
-        <Property name="RecurrenceBaseEntityLogicalName" isIdentifierPart="false" />
-        <Property name="ReportViewName" isIdentifierPart="false" />
-        <Property name="SchemaName" isIdentifierPart="false" />
+        <Property name="CanBePrimaryEntityInRelationship" />
+        <Property name="CanBeRelatedEntityInRelationship" />
+        <Property name="CanCreateAttributes"/>
+        <Property name="CanCreateCharts" />
+        <Property name="CanCreateForms" />
+        <Property name="CanCreateViews"  />
+        <Property name="CanModifyAdditionalSettings"  />
+        <Property name="CanTriggerWorkflow"  />
+        <Property name="Description"  />
+        <Property name="DisplayCollectionName"  />
+        <Property name="DisplayName"  />
+        <Property name="HasChanged" />
+        <Property name="IconLargeName" minSourceVersion="6.0.0000.0215" />
+        <Property name="IconMediumName"  />
+        <Property name="IconSmallName"  />
+        <Property name="IntroducedVersion" minSourceVersion="6.0.0000.0215" />
+        <Property name="IsActivity" />
+        <Property name="IsActivityParty"  />
+        <Property name="IsAIRUpdated"  minSourceVersion="6.0.0000.0215"/>
+        <Property name="IsAuditEnabled" />
+        <Property name="IsAvailableOffline"  />
+        <Property name="IsBusinessProcessEnabled" minSourceVersion="6.0.0000.0215" />
+        <Property name="IsChildEntity"  />
+        <Property name="IsConnectionsEnabled"  />
+        <Property name="IsCustomEntity"  />
+        <Property name="IsCustomizable"  />
+        <Property name="IsDocumentManagementEnabled"  />
+        <Property name="IsDuplicateDetectionEnabled"  />
+        <Property name="IsEnabledForCharts" />
+        <Property name="IsEnabledForTrace" minSourceVersion="6.0.0000.0215" />
+        <Property name="IsImportable"  />
+        <Property name="IsIntersect"  />
+        <Property name="IsMailMergeEnabled"  />
+        <Property name="IsManaged"  />
+        <Property name="IsMappable"  />
+        <Property name="IsQuickCreateEnabled" minSourceVersion="6.0.0000.0215"/>
+        <Property name="IsReadingPaneEnabled"  />
+        <Property name="IsReadOnlyInMobileClient" minSourceVersion="6.0.0000.0215" />
+        <Property name="IsRenameable"  />
+        <Property name="IsValidForAdvancedFind"  />
+        <Property name="IsValidForQueue"  />
+        <Property name="IsVisibleInMobile"  />
+        <Property name="IsVisibleInMobileClient" minSourceVersion="6.0.0000.0215" />
+        <Property name="ObjectTypeCode"  />
+        <Property name="OwnershipType"  />
+        <!--<Property name="PhysicalName" minSourceVersion="6.0.0000.0215"/>-->        
+        <Property name="PrimaryIdAttribute" />
+        <Property name="PrimaryImageAttribute" minSourceVersion="6.0.0000.0215" />
+        <Property name="PrimaryNameAttribute"  />
+        <Property name="RecurrenceBaseEntityLogicalName" minSourceVersion="6.0.0000.0215" />
+        <Property name="ReportViewName"  />
+        <Property name="SchemaName" />
+        <!--<Property name="WorkflowSupport" minSourceVersion="6.0.0000.0215"/>-->
       </Properties>
       <Services>
         <Service type="IVsDataObjectSelector" implementationType="CrmAdo.DdexProvider.CrmObjectSelector">
