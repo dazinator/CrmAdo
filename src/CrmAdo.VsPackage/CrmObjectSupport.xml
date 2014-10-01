@@ -108,35 +108,35 @@
       <Properties>
         <Property name="EntityLogicalName" isIdentifierPart="true" />
         <Property name="LogicalName" isIdentifierPart="true" />
-        <Property name="AttributeOf" isIdentifierPart="false" />
-        <Property name="AttributeType" isIdentifierPart="false" />
-        <Property name="AttributeTypeName" isIdentifierPart="false" />
-        <Property name="CanBeSecuredForCreate" isIdentifierPart="false" />
-        <Property name="CanBeSecuredForRead" isIdentifierPart="false" />
-        <Property name="CanBeSecuredForUpdate" isIdentifierPart="false" />
-        <Property name="CanModifyAdditionalSettings" isIdentifierPart="false" />
-        <Property name="ColumnNumber" isIdentifierPart="false" />
-        <Property name="DeprecatedVersion" isIdentifierPart="false" />
-        <Property name="Description" isIdentifierPart="false" />
-        <Property name="DisplayName" isIdentifierPart="false" />
-        <Property name="IntroducedVersion" isIdentifierPart="false" />
-        <Property name="IsAuditEnabled" isIdentifierPart="false" />
-        <Property name="IsCustomAttribute" isIdentifierPart="false" />
-        <Property name="IsCustomizable" isIdentifierPart="false" />
-        <Property name="IsManaged" isIdentifierPart="false" />
-        <Property name="IsPrimaryid" isIdentifierPart="false" />
-        <Property name="IsPrimaryName" isIdentifierPart="false" />
-        <Property name="IsRenameable" isIdentifierPart="false" />
-        <Property name="IsSecured" isIdentifierPart="false" />
-        <Property name="IsValidforAdvancedFind" isIdentifierPart="false" />
-        <Property name="IsValidForCreate" isIdentifierPart="false" />
-        <Property name="IsValidForRead" isIdentifierPart="false" />
-        <Property name="IsValidForUpdate" isIdentifierPart="false" />
-        <Property name="LinkedAttributeId" isIdentifierPart="false" />
-        <Property name="MetadataId" isIdentifierPart="false" />
-        <Property name="RequiredLevel" isIdentifierPart="false" />
-        <Property name="SchemaName" isIdentifierPart="false" />
-        <Property name="IsPrimaryKey" isIdentifierPart="false" type="System.Boolean" />
+        <Property name="AttributeOf"  />
+        <Property name="AttributeType"  />
+        <Property name="AttributeTypeName" minSourceVersion="6.0.0000.0215"/>
+        <Property name="CanBeSecuredForCreate"  />
+        <Property name="CanBeSecuredForRead"  />
+        <Property name="CanBeSecuredForUpdate"  />
+        <Property name="CanModifyAdditionalSettings"  />
+        <Property name="ColumnNumber"  />
+        <Property name="DeprecatedVersion"  />
+        <Property name="Description"  />
+        <Property name="DisplayName"  />
+        <Property name="IntroducedVersion"  />
+        <Property name="IsAuditEnabled"  />
+        <Property name="IsCustomAttribute"  />
+        <Property name="IsCustomizable"  />
+        <Property name="IsManaged"  />
+        <Property name="IsPrimaryid"  />
+        <Property name="IsPrimaryName"  />
+        <Property name="IsRenameable"  />
+        <Property name="IsSecured"  />
+        <Property name="IsValidforAdvancedFind"  />
+        <Property name="IsValidForCreate"  />
+        <Property name="IsValidForRead"  />
+        <Property name="IsValidForUpdate"  />
+        <Property name="LinkedAttributeId"  />
+        <Property name="MetadataId"  />
+        <Property name="RequiredLevel"  />
+        <Property name="SchemaName"  />
+        <Property name="IsPrimaryKey" type="System.Boolean" />
       </Properties>
       <Services>
         <Service type="IVsDataObjectSelector" implementationType="CrmAdo.DdexProvider.CrmObjectSelector">
