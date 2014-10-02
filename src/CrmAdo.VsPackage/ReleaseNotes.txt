@@ -1,0 +1,2 @@
+﻿v1.1.0
+This is the initial release on the visual studio extensions store!
