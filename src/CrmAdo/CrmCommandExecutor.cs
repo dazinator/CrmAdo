@@ -464,12 +464,7 @@ namespace CrmAdo
             // PopulateMetadata(resultSet, retrieveMetadataChangesRequest.Query);
             // return resultSet;
         }
-
-       
-
-
-
-
+                
         #region Metadata
 
         //private void PopulateMetadata(EntityResultSet resultSet, QueryExpression queryExpression)
@@ -598,9 +593,6 @@ namespace CrmAdo
             // Perhaps this could be used for exectuign fetch xml commands...?
             throw new System.NotImplementedException();
         }
-
-
-
     }
 
 }
