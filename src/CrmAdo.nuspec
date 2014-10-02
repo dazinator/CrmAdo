@@ -4,7 +4,7 @@
     <id>CrmAdo</id>
     <version>0.0.0</version>
     <title>CrmAdo</title>
-    <description>CrmAdo is an ADO.Net data provider for Dynamics Crm. It's goal is to make it easy for you to perform CRUD operations against Dynamics Crm. It hides away the complexities of using the IOrganisation web service, and exposes Dynamics to you as an ordinary ADO.Net data source that you can execute T-SQL against. It allows you to use the familiar ADO.Net classes to connect to, and perform your queries against Dynamics CRM. Architecturally, CrmAdo sits on top of the Dynamics SDK, and handles all the conversion between your T-SQL commands submitted by the ADO.Net classes, into the appropriate IOrganisation web service calls and interactions behind the scenes.</description>
+    <description>CrmAdo is an ADO.Net data provider for Dynamics Crm. It's goal is to make it easy for you to perform CRUD operations against Dynamics Crm. It exposes Dynamics to you as an ordinary ADO.Net data source that you can execute SQL commands against. It allows you to use the familiar ADO.Net classes to connect to, and perform your queries against Dynamics CRM. Architecturally, CrmAdo sits on top of the Dynamics SDK, and handles all the conversion between your SQL commands into the appropriate IOrganisation web service calls and interactions behind the scenes.</description>
     <authors>Darrell Tunnell</authors>
     <owners>Darrell Tunnell</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -12,7 +12,7 @@
     <projectUrl>http://dazinator.github.io/CrmAdo/</projectUrl>
     <copyright>Copyright � Darrell Tunnell 2014</copyright>
     <releaseNotes>
-     Internal improvements: new engine for building XRM request messages based on visitor design pattern.
+     Can support for DDEX and
     </releaseNotes>
     <tags>Dynamics Crm ADO ADO.Net Data Provider SQL T-SQL DynamicsCrm</tags>
     <dependencies>
