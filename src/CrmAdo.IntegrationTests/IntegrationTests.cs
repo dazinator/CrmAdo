@@ -22,20 +22,26 @@ namespace CrmAdo.IntegrationTests
 
             CleanUp();
 
-            var sqlFormatString = "INSERT INTO CONTACT (contactid, firstname, lastname) VALUES('{0}', '{1}', '{2}')";
-            var insertAlbertEinstenSql = string.Format(sqlFormatString, Guid.Parse("21476b89-41b1-e311-9351-6c3be5be9f98"), "Albert", "Einstein");
 
-            ExecuteReader(insertAlbertEinstenSql, 1);
+            try
+            {
+                var sqlFormatString = "INSERT INTO CONTACT (contactid, firstname, lastname) VALUES('{0}', '{1}', '{2}')";
+                var insertAlbertEinstenSql = string.Format(sqlFormatString, Guid.Parse("21476b89-41b1-e311-9351-6c3be5be9f98"), "Albert", "Einstein");
 
-            var insertMaxPlanck = string.Format(sqlFormatString, Guid.Parse("5f90afbb-41b1-e311-9351-6c3be5be9f98"), "Max", "Planck");
-            ExecuteReader(insertMaxPlanck, 1);
+                ExecuteReader(insertAlbertEinstenSql, 1);
 
-            var insertGalileo = string.Format(sqlFormatString, Guid.Parse("6f90afbb-51b1-e311-9351-6c3ce5be9f93"), "Galileo", "Galilei");
-            ExecuteReader(insertGalileo, 1);
+                var insertMaxPlanck = string.Format(sqlFormatString, Guid.Parse("5f90afbb-41b1-e311-9351-6c3be5be9f98"), "Max", "Planck");
+                ExecuteReader(insertMaxPlanck, 1);
 
+                var insertGalileo = string.Format(sqlFormatString, Guid.Parse("6f90afbb-51b1-e311-9351-6c3ce5be9f93"), "Galileo", "Galilei");
+                ExecuteReader(insertGalileo, 1);
 
-
-
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
         }
 
         // NOTE: THESE TESTS REQUIRE A CONNECTION STRING TO BE SET IN THE CONFIG FILE, WITH A NAME OF 'CrmOrganisation'

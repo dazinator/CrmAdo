@@ -142,7 +142,7 @@ namespace CrmAdo.IntegrationTests
 
                     if (total != -1)
                     {
-                        Assert.That(resultCount, Is.EqualTo(total));
+                        Assert.That(resultCount, Is.Not.GreaterThan(total));
                     }
 
                     watch.Stop();
