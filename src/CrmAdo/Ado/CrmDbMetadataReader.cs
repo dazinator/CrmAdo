@@ -44,9 +44,7 @@ namespace CrmAdo
         }
 
 
-        private int _Depth = 0;
-
-        private DbConnection connection;
+        private int _Depth = 0;       
         public override int Depth
         {
             get { return _Depth; }

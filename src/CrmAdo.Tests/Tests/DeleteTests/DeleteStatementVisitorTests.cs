@@ -16,7 +16,7 @@ namespace CrmAdo.Tests
     [TestFixture()]
     public class DeleteStatementVisitorTests : BaseOrganisationRequestBuilderVisitorTest
     {
-        private FakeContactMetadataProvider _ContactMetadataProvider;
+       // private FakeContactMetadataProvider _ContactMetadataProvider;
 
         [Category("String Literal")]
         [Test(Description = "Should support Deletion of a single entity by id")]

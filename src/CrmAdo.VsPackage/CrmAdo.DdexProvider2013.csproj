@@ -182,6 +182,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CrmViewSupport.xml" />
     <Resource Include="ReleaseNotes.txt" />
+    <Content Include="eula.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Resources\Package.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

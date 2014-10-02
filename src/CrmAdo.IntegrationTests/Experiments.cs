@@ -15,6 +15,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata.Query;
 using Microsoft.Xrm.Sdk.Metadata;
 using System.IO;
+using CrmAdo.DdexProvider;
 
 namespace CrmAdo.IntegrationTests
 {
@@ -703,7 +704,7 @@ namespace CrmAdo.IntegrationTests
         public void Experiment_For_Loading_Manifest_Resource()
         {
 
-            var ddexAssy = typeof(DdexProvider.CrmObjectSelector).Assembly;
+            var ddexAssy = typeof(CrmObjectSelector).Assembly;
 
 
             // Get the stream that holds the resource

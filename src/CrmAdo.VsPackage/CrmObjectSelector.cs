@@ -36,8 +36,9 @@ namespace CrmAdo.DdexProvider
             : base(connection)
         {
            
-        }       
+        }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         protected override IVsDataReader SelectObjects(string typeName, object[] restrictions, string[] properties, object[] parameters)
         {
             // DataSourceInformation;

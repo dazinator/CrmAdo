@@ -5,7 +5,7 @@
 
   <PropertyGroup>
     <!--The nuget feed url to push nuget package to -->
-    <PushTo Condition="$(PushTo) == ''">https://www.nuget.org/</PushTo>
+    <PushTo Condition="$(PushTo) == ''">https://www.nuget.org</PushTo>
     <!--The nuspec file to be used for packaging -->
     <NuspecFileName Condition="$(NuspecFileName) == ''">$(SolutionName).nuspec</NuspecFileName>
     <!--The version number of the assembly info-->
@@ -19,7 +19,7 @@
     <!--Where the NuGet package will be output to.-->
     <PackageOutputDir Condition="$(PackageOutputDir) == ''">$(TargetDir.Trim('\\'))\NuGet\</PackageOutputDir>
     <PackageOutputDir Condition="$(PackageOutputDir) != ''">$(PackageOutputDir.Trim('\\'))</PackageOutputDir>
-    <NuGetExe>$(SolutionDir)..\lib\NuGet.CommandLine.2.8.0\tools\NuGet.exe</NuGetExe>
+    <NuGetExe>$(SolutionDir)..\lib\NuGet.CommandLine.2.8.2\tools\NuGet.exe</NuGetExe>
   </PropertyGroup>
 
   <!--After Build - Release|AnyCPU.-->
