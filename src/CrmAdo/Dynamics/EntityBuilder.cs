@@ -82,9 +82,9 @@ namespace CrmAdo.Dynamics
 
             public EntityBuilder EntityBuilder { get; set; }
 
-            public AttributeMetadata AttributeMetadata { get; set; }
+            public AttributeInfo AttributeMetadata { get; set; }
 
-            public EntityAttributeBuilder(EntityBuilder entityBuilder, AttributeMetadata attributeMetadata)
+            public EntityAttributeBuilder(EntityBuilder entityBuilder, AttributeInfo attributeMetadata)
             {
                 EntityBuilder = entityBuilder;
                 AttributeMetadata = attributeMetadata;
@@ -110,7 +110,7 @@ namespace CrmAdo.Dynamics
             public EntityBuilder SetValue<T>(T val)
             {
                 this.EntityBuilder.Entity[AttributeMetadata.LogicalName] = val;
-                if (AttributeMetadata.IsPrimaryId.GetValueOrDefault())
+                if (AttributeMetadata.IsPrimaryId)
                 {
                     this.EntityBuilder.Entity.Id = AttributeTypeConverter.GetUniqueIdentifier(val);
                 }

@@ -1,0 +1,351 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AttributeProperty_AttributeOf_Description" xml:space="preserve">
+    <value>The attribute this attribute relates to.</value>
+  </data>
+  <data name="AttributeProperty_AttributeOf_DisplayName" xml:space="preserve">
+    <value>Related Attribute</value>
+  </data>
+  <data name="AttributeProperty_AttributeTypeName_Description" xml:space="preserve">
+    <value>The attribute  type name.</value>
+  </data>
+  <data name="AttributeProperty_AttributeTypeName_DisplayName" xml:space="preserve">
+    <value>Type Name</value>
+  </data>
+  <data name="AttributeProperty_AttributeType_Description" xml:space="preserve">
+    <value>The attribute type</value>
+  </data>
+  <data name="AttributeProperty_AttributeType_DisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="AttributeProperty_CanBeSecuredForCreate_Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AttributeProperty_CanBeSecuredForCreate_DisplayName" xml:space="preserve">
+    <value>Can Be Secured For Create</value>
+  </data>
+  <data name="AttributeProperty_CanBeSecuredForRead_Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AttributeProperty_CanBeSecuredForRead_DisplayName" xml:space="preserve">
+    <value>Can Be Secured For Read</value>
+  </data>
+  <data name="AttributeProperty_CanBeSecuredForUpdate_Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AttributeProperty_CanBeSecuredForUpdate_DisplayName" xml:space="preserve">
+    <value>Can Be Secured For Update</value>
+  </data>
+  <data name="AttributeProperty_CanModifyAdditionalSettings_Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AttributeProperty_CanModifyAdditionalSettings_DisplayName" xml:space="preserve">
+    <value>Can Modify Additional Settings</value>
+  </data>
+  <data name="AttributeProperty_ColumnNumber_Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AttributeProperty_ColumnNumber_DisplayName" xml:space="preserve">
+    <value>Column Number</value>
+  </data>
+  <data name="AttributeProperty_DeprecatedVersion_Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AttributeProperty_DeprecatedVersion_DisplayName" xml:space="preserve">
+    <value>Deprecated Version</value>
+  </data>
+  <data name="AttributeProperty_Description_Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AttributeProperty_Description_DisplayName" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="AttributeProperty_DisplayName_Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AttributeProperty_DisplayName_DisplayName" xml:space="preserve">
+    <value>Display Name</value>
+  </data>
+  <data name="AttributeProperty_EntityLogicalName_Description" xml:space="preserve">
+    <value>The logical name of the entity that this attribute belongs to.</value>
+  </data>
+  <data name="AttributeProperty_EntityLogicalName_DisplayName" xml:space="preserve">
+    <value>Entity Logical Name</value>
+  </data>
+  <data name="AttributeProperty_IntroducedVersion_Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AttributeProperty_IntroducedVersion_DisplayName" xml:space="preserve">
+    <value>Introduced Version</value>
+  </data>
+  <data name="AttributeProperty_IsAuditEnabled_Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AttributeProperty_IsAuditEnabled_DisplayName" xml:space="preserve">
+    <value>Is Audit Enabled</value>
+  </data>
+  <data name="AttributeProperty_IsCustomAttribute_Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AttributeProperty_IsCustomAttribute_DisplayName" xml:space="preserve">
+    <value>Is Custom Attribute</value>
+  </data>
+  <data name="AttributeProperty_IsCustomizable_Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AttributeProperty_IsCustomizable_DisplayName" xml:space="preserve">
+    <value>Is Customisable</value>
+  </data>
+  <data name="AttributeProperty_IsManaged_Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AttributeProperty_IsManaged_DisplayName" xml:space="preserve">
+    <value>Is Managed</value>
+  </data>
+  <data name="AttributeProperty_IsPrimaryid_Description" xml:space="preserve">
+    <value>Whether this attribute is a primary key for an entity.</value>
+  </data>
+  <data name="AttributeProperty_IsPrimaryid_DisplayName" xml:space="preserve">
+    <value>Is Primary Id</value>
+  </data>
+  <data name="AttributeProperty_IsPrimaryKey_Description" xml:space="preserve">
+    <value>Whether the attribute is the primary key</value>
+  </data>
+  <data name="AttributeProperty_IsPrimaryKey_DisplayName" xml:space="preserve">
+    <value>Is Primary Key</value>
+  </data>
+  <data name="AttributeProperty_IsPrimaryName_Description" xml:space="preserve">
+    <value>Whether this attribute is the 'name' attribute for the entity.</value>
+  </data>
+  <data name="AttributeProperty_IsPrimaryName_DisplayName" xml:space="preserve">
+    <value>Is Primary Name</value>
+  </data>
+  <data name="AttributeProperty_IsRenameable_Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AttributeProperty_IsRenameable_DisplayName" xml:space="preserve">
+    <value>Is Renameable</value>
+  </data>
+  <data name="AttributeProperty_IsSecured_Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AttributeProperty_IsSecured_DisplayName" xml:space="preserve">
+    <value>Is Secured</value>
+  </data>
+  <data name="AttributeProperty_IsValidforAdvancedFind_Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AttributeProperty_IsValidforAdvancedFind_DisplayName" xml:space="preserve">
+    <value>Is Valid For Advanced Find</value>
+  </data>
+  <data name="AttributeProperty_IsValidForCreate_Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AttributeProperty_IsValidForCreate_DisplayName" xml:space="preserve">
+    <value>Is Valid For Create</value>
+  </data>
+  <data name="AttributeProperty_IsValidForRead_Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AttributeProperty_IsValidForRead_DisplayName" xml:space="preserve">
+    <value>Is Valid For Read</value>
+  </data>
+  <data name="AttributeProperty_IsValidForUpdate_Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AttributeProperty_IsValidForUpdate_DisplayName" xml:space="preserve">
+    <value>Is Valid For Update</value>
+  </data>
+  <data name="AttributeProperty_LinkedAttributeId_Description" xml:space="preserve">
+    <value>The id of the attribute that this attribute relates to.</value>
+  </data>
+  <data name="AttributeProperty_LinkedAttributeId_DisplayName" xml:space="preserve">
+    <value>Linked Attribute Id</value>
+  </data>
+  <data name="AttributeProperty_LogicalName_Description" xml:space="preserve">
+    <value>The logical name of the attribute.</value>
+  </data>
+  <data name="AttributeProperty_LogicalName_DisplayName" xml:space="preserve">
+    <value>Logical Name</value>
+  </data>
+  <data name="AttributeProperty_MetadataId_Description" xml:space="preserve">
+    <value>The unique id for this attribute metadata record.</value>
+  </data>
+  <data name="AttributeProperty_MetadataId_DisplayName" xml:space="preserve">
+    <value>Metadata Id</value>
+  </data>
+  <data name="AttributeProperty_RequiredLevel_Description" xml:space="preserve">
+    <value>Whether this attribute is required as a System or Application level or not required at all.</value>
+  </data>
+  <data name="AttributeProperty_RequiredLevel_DisplayName" xml:space="preserve">
+    <value>Required Level</value>
+  </data>
+  <data name="AttributeProperty_SchemaName_Description" xml:space="preserve">
+    <value>The schema name for the attribute.</value>
+  </data>
+  <data name="AttributeProperty_SchemaName_DisplayName" xml:space="preserve">
+    <value>Schema Name</value>
+  </data>
+  <data name="DataView_SqlServer" xml:space="preserve">
+    <value>Dynamics Crm</value>
+  </data>
+  <data name="Node_Entities" xml:space="preserve">
+    <value>Entities</value>
+  </data>
+  <data name="Node_Entity" xml:space="preserve">
+    <value>{LogicalName}</value>
+  </data>
+  <data name="Node_EntityAttribute" xml:space="preserve">
+    <value>{LogicalName}</value>
+  </data>
+  <data name="Node_EntityAttributes" xml:space="preserve">
+    <value>Attributes</value>
+  </data>
+  <data name="Node_InitialDisplayName" xml:space="preserve">
+    <value>CrmAdo - {Root.Name}</value>
+  </data>
+  <data name="Provider_Description" xml:space="preserve">
+    <value>This is a the CrmAdo DDEX provider that connects to instances of Dynamics Crm.</value>
+  </data>
+  <data name="Provider_DisplayName" xml:space="preserve">
+    <value>CrmAdo provider for Dynamics Crm</value>
+  </data>
+  <data name="Provider_ShortDisplayName" xml:space="preserve">
+    <value>CrmAdo Provider (DDEX)</value>
+  </data>
+  <data name="Node_PluginAssembly" xml:space="preserve">
+    <value>{Name} - {Version}</value>
+  </data>
+  <data name="Node_PluginAssemblies" xml:space="preserve">
+    <value>Plugins</value>
+  </data>
+  <data name="AttributeProperty_OptionSetName_Description" xml:space="preserve">
+    <value>The name of the option set.</value>
+  </data>
+  <data name="AttributeProperty_OptionSetName_DisplayName" xml:space="preserve">
+    <value>Option Set Name</value>
+  </data>
+  <data name="AttributeProperty_OptionSetOptions_Description" xml:space="preserve">
+    <value>The individual options in the option set.</value>
+  </data>
+  <data name="AttributeProperty_OptionSetOptions_DisplayName" xml:space="preserve">
+    <value>Options</value>
+  </data>
+</root>

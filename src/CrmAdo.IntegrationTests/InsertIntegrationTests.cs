@@ -14,7 +14,7 @@ using NUnit.Framework;
 namespace CrmAdo.IntegrationTests
 {
     [TestFixture()]
-    public class InsertIntegrationTests
+    public class InsertIntegrationTests : BaseTest
     {
         private List<Guid> _NewContactIds;
 
@@ -33,7 +33,7 @@ namespace CrmAdo.IntegrationTests
 
         // NOTE: THESE TESTS REQUIRE A CONNECTION STRING TO BE SET IN THE CONFIG FILE, WITH A NAME OF 'CrmOrganisation'
         // ============================================================================================================
-        [Category("Integration")]
+      
         [Category("Insert Statement")]
         [Test(Description = "Integration tests that inserts a new contact into Dynamics CRM contacts.")]
         [TestCase("INSERT INTO contact (firstname, lastname) Values('{0}','{1}')")]
@@ -68,40 +68,39 @@ namespace CrmAdo.IntegrationTests
         }
 
 
-        //[Category("Integration")]
-        //[Category("Insert Statement")]
-        //[Category("Performance")]
-        //[Test(Description = "Integration tests that inserts 10000 contacts into Dynamics CRM.")]
-        //public void Should_Be_Able_To_Insert_Many_Contacts()
-        //{
-        //    var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
-        //    using (var conn = new CrmDbConnection(connectionString.ConnectionString))
-        //    {
-        //        conn.Open();
-        //        // create 10000 contacts in dynamics..
-        //        Console.WriteLine("starting insert..");
-        //        var watch = new Stopwatch();
-        //        watch.Start();
-        //        for (int i = 0; i < 10000; i++)
-        //        {
-        //            Guid testdata = Guid.NewGuid();
-        //            var sql = string.Format("INSERT INTO contact (contactid, firstname, lastname) Values('{0}','{1}','{2}')", testdata, "Derren" + testdata.ToString(), "Brown");
+   
+        [Category("Insert Statement")]
+        [Category("Performance")]
+        [Test(Description = "Integration tests that inserts 1000 contacts into Dynamics CRM.")]
+        public void Should_Be_Able_To_Insert_Many_Contacts()
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                // create 10000 contacts in dynamics..
+                Console.WriteLine("starting insert..");
+                var watch = new Stopwatch();
+                watch.Start();
+                for (int i = 0; i < 1000; i++)
+                {
+                    Guid testdata = Guid.NewGuid();
+                    var sql = string.Format("INSERT INTO contact (contactid, firstname, lastname) Values('{0}','{1}','{2}')", testdata, "Derren" + testdata.ToString(), "Brown");
 
-        //            var command = conn.CreateCommand();
-        //            command.CommandText = sql;
-        //            var result = command.ExecuteNonQuery();
-        //            Assert.That(result, Is.EqualTo(1));
-        //        }
-        //        watch.Stop();
-        //        Console.WriteLine("Inserting 10000 contacts took " + watch.Elapsed.ToString());
+                    var command = conn.CreateCommand();
+                    command.CommandText = sql;
+                    var result = command.ExecuteNonQuery();
+                    Assert.That(result, Is.EqualTo(1));
+                }
+                watch.Stop();
+                Console.WriteLine("Inserting 1000 contacts took " + watch.Elapsed.ToString());
 
-        //    }
+            }
 
-        //}
+        }
 
 
-
-        [Category("Integration")]
+   
         [Category("Select Statement")]
         [Category("Performance")]
         [TestCase(-1, Description = "Can select all contacts")]

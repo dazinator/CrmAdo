@@ -146,11 +146,7 @@ namespace CrmAdo.Dynamics.Metadata
             }
            
         }
-
-
-
-       
-           
+                  
     
     }
 }

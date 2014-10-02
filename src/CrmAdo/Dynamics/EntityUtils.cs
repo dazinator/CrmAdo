@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using System.Xml;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using Microsoft.Xrm.Sdk.Metadata.Query;
 
 namespace CrmAdo.Dynamics
 { // ReSharper disable CheckNamespace 
@@ -99,6 +100,35 @@ namespace CrmAdo.Dynamics
                     return ConditionOperator.NotOn;
                 case ConditionOperator.NotOn:
                     return ConditionOperator.On;
+                default:
+                    throw new NotSupportedException("Can not negate condition operator: " + conditionOperator);
+
+            }
+        }
+
+        public static void NegateOperator(this MetadataConditionExpression conditionOperator)
+        {
+            var negated = GetNegatedOperator(conditionOperator.ConditionOperator);
+            conditionOperator.ConditionOperator = negated;
+        }
+
+        private static MetadataConditionOperator GetNegatedOperator(this MetadataConditionOperator conditionOperator)
+        {
+            switch (conditionOperator)
+            {
+
+                case MetadataConditionOperator.Equals:
+                    return MetadataConditionOperator.NotEquals;
+                case MetadataConditionOperator.NotEquals:
+                    return MetadataConditionOperator.Equals;            
+                case MetadataConditionOperator.LessThan:
+                    throw new NotSupportedException("Can not negate a 'Less Than' filter when performing metadata queries, as the Crm Sdk does not allow for 'Greater Than Equals' condition operator.");
+                case MetadataConditionOperator.GreaterThan:
+                    throw new NotSupportedException("Can not negate a 'Greater Than' filter when performing metadata queries, as the Crm Sdk does not allow for 'Less Than Equals' condition operator.");
+                case MetadataConditionOperator.In:
+                    return MetadataConditionOperator.NotIn;
+                case MetadataConditionOperator.NotIn:
+                    return MetadataConditionOperator.In;              
                 default:
                     throw new NotSupportedException("Can not negate condition operator: " + conditionOperator);
 

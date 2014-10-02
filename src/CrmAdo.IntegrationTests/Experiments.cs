@@ -11,11 +11,16 @@ using Microsoft.Xrm.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using NUnit.Framework;
+using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Metadata.Query;
+using Microsoft.Xrm.Sdk.Metadata;
+using System.IO;
 
 namespace CrmAdo.IntegrationTests
 {
     [TestFixture()]
-    public class Experiments
+    [Category("Experimental")]
+    public class Experiments : BaseTest
     {
         [Category("Experimentation")]
         [Test]
@@ -329,7 +334,6 @@ namespace CrmAdo.IntegrationTests
 
         }
 
-
         [Category("Experimentation")]
         [Test]
         [TestCase(TestName = "Experiment for min active row version")]
@@ -372,211 +376,6 @@ namespace CrmAdo.IntegrationTests
                 thread.Join();
             }
 
-        }
-
-        [Category("Experimentation")]
-        [Test]
-        [TestCase(TestName = "Experiment for min active row version")]
-        public void Experiment_For_Version_Number()
-        {
-            // var sql = string.Format("Select C.firstname, C.lastname From contact Where firstname Like '%ax%' ");
-
-
-            // now keep querying for min active row version..
-            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
-            var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
-                                                         new CrmClientCredentialsProvider());
-
-            var orgService = serviceProvider.GetOrganisationService();
-            using (orgService as IDisposable)
-            {
-                var accounts = orgService.RetrieveMultiple(new QueryExpression("account") { ColumnSet = new ColumnSet("versionnumber", "name") });
-                foreach (var a in accounts.Entities)
-                {
-                    // 621ae9e6-3fb1-e311-9caa-d89d6764506c is 369649
-                    Console.WriteLine(a.Id + " version number is: " + a["versionnumber"]);
-                }
-
-                var id = Guid.Parse("621ae9e6-3fb1-e311-9caa-d89d6764506c");
-                var acc = orgService.Retrieve("account", id, new ColumnSet("versionnumber", "name"));
-
-                Console.WriteLine("version number is: " + acc["versionnumber"]);
-
-                acc["name"] = acc["name"] + "a";
-                orgService.Update(acc);
-
-                Console.WriteLine("version number immediately following update: " + acc["versionnumber"]);
-
-                acc = orgService.Retrieve("account", id, new ColumnSet("versionnumber", "name"));
-                Console.WriteLine("version number requeried after update: " + acc["versionnumber"]);
-
-            }
-
-
-
-
-        }
-
-
-        [Category("Experimentation")]
-        [Test]
-        [TestCase(TestName = "Experiment for version number increments in CRM")]
-        public void Experiment_For_Version_Number_Increments()
-        {
-            // var sql = string.Format("Select C.firstname, C.lastname From contact Where firstname Like '%ax%' ");
-
-
-            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
-            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
-            {
-                conn.Open();
-
-                var sql = string.Empty;
-                long contactVersionNumber = 0;
-                long accountVersionNumber = 0;
-
-                long insertedContactVersionNumber = 0;
-                long insertedAccountVersionNumber = 0;
-
-                using (var command = conn.CreateCommand())
-                {
-
-                    sql = string.Format("SELECT TOP 1 contactid, firstname, lastname, versionnumber FROM contact ORDER BY versionnumber DESC");
-                    Console.WriteLine("Executing command " + sql);
-                    command.CommandText = sql;
-                    //   command.CommandType = CommandType.Text;
-                    using (var reader = command.ExecuteReader())
-                    {
-                        int resultCount = 0;
-                        foreach (var result in reader)
-                        {
-                            resultCount++;
-                            var contactId = (Guid)reader["contactid"];
-                            var firstName = (string)reader.SafeGetString(1);
-                            var lastName = (string)reader.SafeGetString(2);
-                            contactVersionNumber = (long)reader[3];
-                            Console.WriteLine(string.Format("{0} {1} {2} {3}", contactId, firstName, lastName, contactVersionNumber.ToString()));
-                        }
-
-                        Console.WriteLine("There were " + resultCount + " results..");
-                    }
-                }
-
-
-                using (var command = conn.CreateCommand())
-                {
-
-                    sql = string.Format("SELECT TOP 1 accountid, name, versionnumber FROM account ORDER BY versionnumber DESC");
-                    Console.WriteLine("Executing command " + sql);
-                    command.CommandText = sql;
-                    //   command.CommandType = CommandType.Text;
-                    using (var reader = command.ExecuteReader())
-                    {
-                        int resultCount = 0;
-                        foreach (var result in reader)
-                        {
-                            resultCount++;
-                            var id = (Guid)reader["accountid"];
-                            var name = (string)reader.SafeGetString(1);
-                            accountVersionNumber = (long)reader[2];
-                            Console.WriteLine(string.Format("{0} {1} {2}", id, name, accountVersionNumber.ToString()));
-                        }
-
-                        Console.WriteLine("There were " + resultCount + " results..");
-                    }
-                }
-
-                // insert new contact.
-                Guid newContactId = Guid.NewGuid();
-                using (var command = conn.CreateCommand())
-                {
-
-                    sql =
-                        string.Format("INSERT INTO contact (contactid, firstname, lastname) VALUES ('" +
-                                      newContactId.ToString() + "', 'ed', 'ed')");
-                    Console.WriteLine("Executing command " + sql);
-                    command.CommandText = sql;
-                    command.ExecuteNonQuery();
-                }
-
-                // get the inserted contact version number.
-                using (var command = conn.CreateCommand())
-                {
-                    Guid newId = Guid.NewGuid();
-                    sql =
-                        string.Format("SELECT versionnumber from contact WHERE contactid = '" +
-                                      newContactId.ToString() + "'");
-                    Console.WriteLine("Executing command " + sql);
-                    command.CommandText = sql;
-                    insertedContactVersionNumber = (long)command.ExecuteScalar();
-                }
-
-
-
-                // insert an account;
-                Guid newAccountId = Guid.NewGuid();
-                using (var command = conn.CreateCommand())
-                {
-
-                    sql =
-                        string.Format("INSERT INTO account (accountid, name) VALUES ('" +
-                                      newAccountId.ToString() + "', 'ed')");
-                    Console.WriteLine("Executing command " + sql);
-                    command.CommandText = sql;
-                    command.ExecuteNonQuery();
-                }
-
-                // get the inserted account version number.
-                Guid newaccountid;
-                using (var command = conn.CreateCommand())
-                {
-                    newaccountid = Guid.NewGuid();
-                    sql =
-                        string.Format("SELECT versionnumber from account WHERE accountid = '" +
-                                      newAccountId.ToString() + "'");
-                    Console.WriteLine("Executing command " + sql);
-                    command.CommandText = sql;
-                    insertedAccountVersionNumber = (long)command.ExecuteScalar();
-                }
-
-
-                // update account and see version number change?
-                using (var command = conn.CreateCommand())
-                {
-
-                    sql =
-                        string.Format("UPDATE account SET name = 'testsyncchange' WHERE accountid = '" +
-                                      newAccountId.ToString() + "'");
-                    Console.WriteLine("Executing command " + sql);
-                    command.CommandText = sql;
-                    command.ExecuteNonQuery();
-                }
-
-
-                // get the updated account version number.
-                long updatedAccountVersionNumber;
-                using (var command = conn.CreateCommand())
-                {
-                    sql =
-                        string.Format("SELECT versionnumber from account WHERE accountid = '" +
-                                      newAccountId.ToString() + "'");
-                    Console.WriteLine("Executing command " + sql);
-                    command.CommandText = sql;
-                    updatedAccountVersionNumber = (long)command.ExecuteScalar();
-                }
-
-
-                // assert that the inserted account version number is the biggest because it was inserted last
-                Console.WriteLine("Max contact versionnumber prior to insert " + contactVersionNumber);
-                Console.WriteLine("Max account versionnumber prior to insert " + accountVersionNumber);
-
-                Console.WriteLine("Inserted new contact and it has version number " + insertedContactVersionNumber);
-                Console.WriteLine("Inserted new account and it has version number " + insertedAccountVersionNumber);
-
-                Console.WriteLine("Then updated the account and now it has version number " + updatedAccountVersionNumber);
-
-
-            }
         }
 
         [Category("Experimentation")]
@@ -670,16 +469,71 @@ namespace CrmAdo.IntegrationTests
         }
 
 
-        //
         [Category("Experimentation")]
         [Test]
-        [TestCase(TestName = "Experiment for row version of particular entity")]
-        public void Experiment_For_Row_Version_oF_Entity()
+        [TestCase(TestName = "Experiment for creating publisher")]
+        public void Experiment_For_Creating_Publisher()
         {
+
+            ////Define a new publisher
+            //Publisher _crmSdkPublisher = new Publisher
+            //{
+            //    UniqueName = "sdksamples",
+            //    FriendlyName = "Microsoft CRM SDK Samples",
+            //    SupportingWebsiteUrl = "http://msdn.microsoft.com/en-us/dynamics/crm/default.aspx",
+            //    CustomizationPrefix = "sample",
+            //    EMailAddress = "someone@microsoft.com",
+            //    Description = "This publisher was created with samples from the Microsoft Dynamics CRM SDK"
+
+            //};
+
+
             // var sql = string.Format("Select C.firstname, C.lastname From contact Where firstname Like '%ax%' ");
+            var sqlFormatString = @"INSERT INTO Publisher (UniqueName,FriendlyName,SupportingWebsiteUrl,CustomizationPrefix,EMailAddress,Description) VALUES ('{0}','{1}','{2}','{3}','{4}','{5}');";
+            var sql = string.Format(sqlFormatString, "CrmAdo", "Crm Ado", @"http://dazinator.github.io/CrmAdo/", "crmado", "darrell.tunnell@googlemail.com", "crm ado publisher");
 
 
-            // now keep querying for min active row version..
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var command = conn.CreateCommand();
+
+                Console.WriteLine("Executing command " + sql);
+                command.CommandText = sql;
+                //   command.CommandType = CommandType.Text;
+                using (var reader = command.ExecuteReader())
+                {
+                    int resultCount = 0;
+                    foreach (var result in reader)
+                    {
+                        resultCount++;
+                        var publisherid = (Guid)reader["publisherid"];
+                        // var versionNumber = (long)reader[3];
+                        Console.WriteLine(string.Format("{0}", publisherid));
+                    }
+                    //while (reader.Read())
+                    //{
+
+                    //}
+                    Console.WriteLine("There were " + resultCount + " results..");
+                }
+            }
+
+
+
+
+
+
+        }
+
+        [Category("Experimentation")]
+        [Test]
+        [TestCase(TestName = "Experiment for selecting entity metadata")]
+        public void Experiment_For_Selecting_Entity_Metadata()
+        {
+
+
             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
             var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
                                                          new CrmClientCredentialsProvider());
@@ -687,10 +541,141 @@ namespace CrmAdo.IntegrationTests
             var orgService = serviceProvider.GetOrganisationService();
             using (orgService as IDisposable)
             {
-                var entId = Guid.Parse("cfbc27e7-46a3-459c-992f-daa6c51d49f4");
-                var ent = orgService.Retrieve("new_synctest", entId, new ColumnSet("versionnumber", "new_name"));
-                Console.WriteLine(ent.Id + " version number is: " + ent["versionnumber"]);
+                MetadataFilterExpression entityFilter = new MetadataFilterExpression(LogicalOperator.And);
+                entityFilter.Conditions.Add(new MetadataConditionExpression("LogicalName", MetadataConditionOperator.Equals, "contact"));
+
+
+                var relationShipQuery = new RelationshipQueryExpression();
+                MetadataFilterExpression relationShipFilter = new MetadataFilterExpression(LogicalOperator.And);
+                relationShipFilter.Conditions.Add(new MetadataConditionExpression("RelationshipType", MetadataConditionOperator.Equals, RelationshipType.OneToManyRelationship));
+                relationShipQuery.Criteria = relationShipFilter;
+
+                EntityQueryExpression entityQueryExpression = new EntityQueryExpression()
+                {
+                    Criteria = entityFilter,
+                    Properties = new MetadataPropertiesExpression() { AllProperties = true }
+                    ,
+                    RelationshipQuery = relationShipQuery
+                };
+                RetrieveMetadataChangesRequest retrieveMetadataChangesRequest = new RetrieveMetadataChangesRequest()
+                {
+                    Query = entityQueryExpression,
+                    ClientVersionStamp = null
+                };
+                RetrieveMetadataChangesResponse response = (RetrieveMetadataChangesResponse)orgService.Execute(retrieveMetadataChangesRequest);
             }
+
+
+
+        }
+
+
+        [Category("Experimentation")]
+        [Test]
+        [TestCase("customeraddress", TestName = "Experiment for saving address entity metadata to a local file.")]
+        [TestCase("account", TestName = "Experiment for saving account metadata to a local file.")]
+        [TestCase("pluginassembly", TestName = "Experiment for saving pluginassembly metadata to a local file.")]
+        [TestCase("plugintype", TestName = "Experiment for saving plugintype metadata to a local file.")]
+        [TestCase("sdkmessageprocessingstep", TestName = "Experiment for saving sdkmessageprocessingstep metadata to a local file.")]
+        [TestCase("sdkmessageprocessingstepimage", TestName = "Experiment for saving sdkmessageprocessingstepimage metadata to a local file.")]
+        [TestCase("sdkmessageprocessingstepsecureconfig", TestName = "Experiment for saving sdkmessageprocessingstepsecureconfig metadata to a local file.")]
+        public void Experiment_For_Saving_Entity_Metadata_To_File(string entityName)
+        {
+
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
+                                                         new CrmClientCredentialsProvider());
+
+            var orgService = serviceProvider.GetOrganisationService();
+            using (orgService as IDisposable)
+            {
+                MetadataFilterExpression entityFilter = new MetadataFilterExpression(LogicalOperator.And);
+                entityFilter.Conditions.Add(new MetadataConditionExpression("LogicalName", MetadataConditionOperator.Equals, entityName));
+
+
+
+
+                EntityQueryExpression entityQueryExpression = new EntityQueryExpression()
+                {
+                    Criteria = entityFilter,
+                    Properties = new MetadataPropertiesExpression() { AllProperties = true }
+                };
+                RetrieveMetadataChangesRequest retrieveMetadataChangesRequest = new RetrieveMetadataChangesRequest()
+                {
+                    Query = entityQueryExpression,
+                    ClientVersionStamp = null
+                };
+                RetrieveMetadataChangesResponse response = (RetrieveMetadataChangesResponse)orgService.Execute(retrieveMetadataChangesRequest);
+                var entityMetadata = response.EntityMetadata[0];
+
+
+
+                var path = Environment.CurrentDirectory;
+                var shortFileName = entityName + "Metadata.xml";
+
+
+                var fileName = System.IO.Path.Combine(path, shortFileName);
+                var serialised = EntityMetadataUtils.SerializeMetaData(entityMetadata, System.Xml.Formatting.Indented);
+                using (var writer = new System.IO.StreamWriter(fileName))
+                {
+                    writer.Write(serialised);
+                    writer.Flush();
+                    writer.Close();
+                }
+
+                if (!File.Exists(fileName))
+                {
+                    throw new FileNotFoundException("Could not save metadata file for entity " + entityName);
+                }
+            }
+
+
+
+        }
+
+
+        [Category("Experimentation")]
+        [Test]
+        [TestCase(TestName = "Experiment for selecting plugins")]
+        public void Experiment_For_Selecting_Plugins()
+        {
+            var sql = string.Format("Select * from pluginassembly");
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var command = conn.CreateCommand();
+
+                Console.WriteLine("Executing command " + sql);
+                command.CommandText = sql;
+                //   command.CommandType = CommandType.Text;
+
+
+                using (var reader = command.ExecuteReader())
+                {
+                    int resultCount = 0;
+                    foreach (var result in reader)
+                    {
+                        resultCount++;
+
+                        for (int i = 0; i < reader.FieldCount; i++)
+                        {
+                            Console.Write(reader.GetName(i));
+                            Console.Write("=");
+                            Console.Write(reader[i]);
+                            Console.WriteLine();
+                        }
+
+                        Console.WriteLine("*****");
+
+                    }
+
+                    Console.WriteLine("There were " + resultCount + " results..");
+                }
+            }
+
 
         }
 
@@ -710,6 +695,57 @@ namespace CrmAdo.IntegrationTests
                 orgService.Create(account);
             }
         }
+
+
+        [Category("Experimentation")]
+        [Test]
+        [TestCase(TestName = "Experiment for loading icon resource")]
+        public void Experiment_For_Loading_Manifest_Resource()
+        {
+
+            var ddexAssy = typeof(DdexProvider.CrmObjectSelector).Assembly;
+
+
+            // Get the stream that holds the resource
+            // NOTE1: Make sure not to close this stream!
+            // NOTE2: Also be very careful to match the case
+            //        on the resource name itself
+
+            var names = ddexAssy.GetManifestResourceNames();
+
+            foreach (var item in names)
+            {
+                Console.WriteLine(item);
+            }
+
+
+
+
+        }
+
+
+        [Category("Experimentation")]
+        [Test]
+        [TestCase(TestName = "Experiment for retrieving crm version")]
+        public void Experiment_For_Crm_Version_Request()
+        {
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
+                                                         new CrmClientCredentialsProvider());
+
+            var orgService = serviceProvider.GetOrganisationService();
+            using (orgService as IDisposable)
+            {
+                var req = new RetrieveVersionRequest();
+                var resp = (RetrieveVersionResponse)orgService.Execute(req);
+                //assigns the version to a string
+                string versionNumber = resp.Version;
+                Console.WriteLine(versionNumber);
+            }
+
+        }
+
 
 
 

@@ -13,11 +13,34 @@ using NUnit.Framework;
 namespace CrmAdo.IntegrationTests
 {
     [TestFixture()]
-    public class IntegrationTests
+    public class IntegrationTests : BaseTest
     {
+
+        [TestFixtureSetUp]
+        public void TestDataSetup()
+        {
+
+            CleanUp();
+
+            var sqlFormatString = "INSERT INTO CONTACT (contactid, firstname, lastname) VALUES('{0}', '{1}', '{2}')";
+            var insertAlbertEinstenSql = string.Format(sqlFormatString, Guid.Parse("21476b89-41b1-e311-9351-6c3be5be9f98"), "Albert", "Einstein");
+
+            ExecuteReader(insertAlbertEinstenSql, 1);
+
+            var insertMaxPlanck = string.Format(sqlFormatString, Guid.Parse("5f90afbb-41b1-e311-9351-6c3be5be9f98"), "Max", "Planck");
+            ExecuteReader(insertMaxPlanck, 1);
+
+            var insertGalileo = string.Format(sqlFormatString, Guid.Parse("6f90afbb-51b1-e311-9351-6c3ce5be9f93"), "Galileo", "Galilei");
+            ExecuteReader(insertGalileo, 1);
+
+
+
+
+        }
+
         // NOTE: THESE TESTS REQUIRE A CONNECTION STRING TO BE SET IN THE CONFIG FILE, WITH A NAME OF 'CrmOrganisation'
         // ============================================================================================================
-        [Category("Integration")]
+
         [Test(Description = "Integration tests that perform a variety of select queries against CRM.")]
         [TestCase("=", "Some Guy", "{0} {1} '{2}'", TestName = "Should Support Equals a String Constant")]
         [TestCase("<>", "Donald", "{0} {1} '{2}'", TestName = "Should Support Not Equals a String Constant")]
@@ -91,7 +114,7 @@ namespace CrmAdo.IntegrationTests
 
         }
 
-        [Category("Integration")]
+
         [Test(Description = "Integration tests that gets metadata from crm.")]
         public void Should_Get_Changed_Metadata()
         {
@@ -123,7 +146,7 @@ namespace CrmAdo.IntegrationTests
             Assert.That(contactMetadata.Attributes.FirstOrDefault(a => a.LogicalName == "lastname"), Is.Not.Null);
         }
 
-        [Category("Integration")]
+
         [Test]
         [TestCase("INNER")]
         [TestCase("LEFT")]
@@ -178,7 +201,7 @@ namespace CrmAdo.IntegrationTests
 
         }
 
-        [Category("Integration")]
+
         [TestCase("INNER", "((C.firstname = 'Albert' AND C.lastname = 'Einstein') OR (C.lastname = 'Planck' AND C.firstname = 'Max')) AND (C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", 2, TestName = "Should be able to chain filter groups in parenthesis using AND as well as OR conjunctions")]
         [TestCase("INNER", "(C.firstname = 'Albert' AND C.lastname = 'Einstein') OR (C.lastname = 'Planck' AND C.firstname = 'Max') OR (C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", 4, TestName = "Should be able to chain mutiple filter groups in parenthesis using an OR conjunction")]
         [TestCase("INNER", "C.firstname = 'Albert' AND (C.lastname = 'Einstein' AND C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", 2, TestName = "Should be able to chain an AND conjunction with a nested filter group containing an AND conjunction")]
@@ -241,8 +264,42 @@ namespace CrmAdo.IntegrationTests
 
         }
 
+        [TestFixtureTearDown]
+        public void CleanUp()
+        {
+            var sqlFormatString = "DELETE FROM CONTACT WHERE contactid = '{0}'";
+            var deleteAlbertEinstenSql = string.Format(sqlFormatString, Guid.Parse("21476b89-41b1-e311-9351-6c3be5be9f98"));
+
+            try
+            {
+                ExecuteNonQuery(deleteAlbertEinstenSql, 1);
+            }
+            catch (Exception e)
+            {
+                // throw;
+            }
 
 
+            var deleteMaxPlanck = string.Format(sqlFormatString, Guid.Parse("5f90afbb-41b1-e311-9351-6c3be5be9f98"));
+            try
+            {
+                ExecuteNonQuery(deleteMaxPlanck, 1);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+            var deleteGalileo = string.Format(sqlFormatString, Guid.Parse("6f90afbb-51b1-e311-9351-6c3ce5be9f93"));
+            try
+            {
+                ExecuteNonQuery(deleteGalileo, 1);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
 
 
     }

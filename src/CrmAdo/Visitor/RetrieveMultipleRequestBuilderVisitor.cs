@@ -18,6 +18,8 @@ namespace CrmAdo.Visitor
     public class RetrieveMultipleRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor
     {
 
+        private ICrmMetaDataProvider _MetadataProvider;
+
         public enum VisitMode
         {
             From = 0,
@@ -27,25 +29,31 @@ namespace CrmAdo.Visitor
             OrderBy = 4
         }
 
-
-
-        public RetrieveMultipleRequestBuilderVisitor()
-            : this(null)
+        public RetrieveMultipleRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider)
+            : this(null, metadataProvider)
         {
 
         }
 
-        public RetrieveMultipleRequestBuilderVisitor(DbParameterCollection parameters)
+        public RetrieveMultipleRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider)
         {
             Parameters = parameters;
             Request = new RetrieveMultipleRequest();
             QueryExpression = new QueryExpression();
             Request.Query = QueryExpression;
+            _MetadataProvider = metadataProvider;
+            EntityMetadata = new Dictionary<string, CrmEntityMetadata>();
+            ColumnMetadata = new List<ColumnMetadata>();
         }
 
         public RetrieveMultipleRequest Request { get; set; }
         public QueryExpression QueryExpression { get; set; }
         public DbParameterCollection Parameters { get; set; }
+        public bool IsSingleSource { get; set; }
+        public AliasedSource SingleSource { get; set; }
+
+        private Dictionary<string, CrmEntityMetadata> EntityMetadata { get; set; }
+        public List<ColumnMetadata> ColumnMetadata { get; set; }
 
         public VisitMode Mode { get; set; }
 
@@ -81,6 +89,10 @@ namespace CrmAdo.Visitor
                 throw new InvalidOperationException("The query does not have a valid FROM clause");
             }
             Mode = VisitMode.From;
+            if (item.From.Count() == 1)
+            {
+                IsSingleSource = true;
+            }
             VisitEach(item.From);
 
             Mode = VisitMode.Projection;
@@ -155,6 +167,10 @@ namespace CrmAdo.Visitor
         protected override void VisitAliasedSource(AliasedSource aliasedSource)
         {
             // We want the top aliased source (furthest source to the left) as this is the main entity.
+            if (IsSingleSource)
+            {
+                SingleSource = aliasedSource;
+            }
             if (this.Level > SourceTableLevel)
             {
                 SourceTableLevel = this.Level;
@@ -175,22 +191,37 @@ namespace CrmAdo.Visitor
                                  ? sourceTable.GetTableLogicalEntityName()
                                  : item.Source.Alias;
             var linkItem = QueryExpression.FindLinkEntity(sourceName, isAliasedSource);
-            var columnAttributeName = item.GetColumnLogicalAttributeName();
+            var attributeName = item.GetColumnLogicalAttributeName();
+            string entityName = null;
+            string alias = null;
             if (linkItem == null)
             {
-                QueryExpression.ColumnSet.AddColumn(columnAttributeName);
-                // wehn we can;t find the source, assume default entity..
-                //   throw new InvalidOperationException("Could not find source named: " + sourceName);
+                QueryExpression.ColumnSet.AddColumn(attributeName);
+                entityName = MainSourceTable.GetTableLogicalEntityName();
             }
             else
             {
-                linkItem.Columns.AddColumn(columnAttributeName);
+                linkItem.Columns.AddColumn(attributeName);
+                alias = linkItem.EntityAlias;
+                entityName = linkItem.LinkToEntityName.ToLower();
             }
+
+            AddColumnMetadata(entityName, alias, attributeName);
+
         }
+
         protected override void VisitAllColumns(AllColumns item)
         {
             this.QueryExpression.IncludeAllColumns();
+
+            var aliasedSource = IsSingleSource ? SingleSource : item.Source;
+            var sourceTable = aliasedSource.Source as Table;
+
+            var entityName = sourceTable.GetTableLogicalEntityName();
+            var alias = aliasedSource.Alias;
+            AddAllColumnMetadata(entityName, alias);
         }
+
         #endregion
 
         #region Top
@@ -989,5 +1020,62 @@ namespace CrmAdo.Visitor
         #endregion
 
         #endregion
+
+        private void AddAllColumnMetadata(string entityName, string entityAlias)
+        {
+            // Add the metadata for this column.
+            var entityMetadata = GetEntityMetadata(entityName);
+            if (entityMetadata != null)
+            {
+                // Populate metadata for these columns.
+                ColumnMetadata.AddRange((from c in entityMetadata.Attributes orderby c.LogicalName select new ColumnMetadata(c, entityAlias)));
+            }
+            else
+            {
+                // Could throw an exceptiton as no metadata found for this entity.
+            }
+        }
+
+        private void AddColumnMetadata(string entityName, string entityAlias, string attributeName)
+        {
+            // Add the metadata for this column.
+            var entityMetadata = GetEntityMetadata(entityName);
+            if (entityMetadata != null)
+            {
+                var colMeta = entityMetadata.Attributes.FirstOrDefault(c => c.LogicalName == attributeName);
+                ColumnMetadata columnMetadata = null;
+                if (colMeta == null)
+                {
+                    // could throw an exception as no metadata found for this attribute?
+                    //  throw new ArgumentException("Unknown column: " + columnAttributeName);
+                    columnMetadata = new ColumnMetadata(attributeName, entityAlias);
+
+                }
+                else
+                {
+                    columnMetadata = new ColumnMetadata(colMeta, entityAlias);
+                }
+                ColumnMetadata.Add(columnMetadata);
+            }
+            else
+            {
+                // Could throw an exceptiton as no metadata found for this entity.
+            }
+        }
+
+        private CrmEntityMetadata GetEntityMetadata(string entityName)
+        {
+            if (!EntityMetadata.ContainsKey(entityName))
+            {
+                if (_MetadataProvider == null)
+                {
+                    return null;
+                }
+                EntityMetadata[entityName] = _MetadataProvider.GetEntityMetadata(entityName);
+            }
+            var entMeta = EntityMetadata[entityName];
+            return entMeta;
+        }
+
     }
 }

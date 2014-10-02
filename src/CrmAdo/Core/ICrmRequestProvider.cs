@@ -1,5 +1,6 @@
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using System.Collections.Generic;
 
 namespace CrmAdo
 {
@@ -8,6 +9,6 @@ namespace CrmAdo
     /// </summary>
     public interface ICrmRequestProvider
     {
-        OrganizationRequest GetOrganizationRequest(CrmDbCommand command);
+        OrganizationRequest GetOrganizationRequest(CrmDbCommand command, out List<ColumnMetadata> ColumnMetadata);
     }
 }

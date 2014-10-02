@@ -1,17 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{31343D89-C6F5-4397-91EC-2DF4CCAA849B}"
 	ProjectSection(SolutionItems) = preProject
-		.nuget\packages.config = .nuget\packages.config
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{3F08C5C4-EBE3-49FE-8C3D-B5DCD230FACC}"
-	ProjectSection(SolutionItems) = preProject
-		Machine Config.txt = Machine Config.txt
+		IntegrationTests.testsettings = IntegrationTests.testsettings
+		UnitTests.testsettings = UnitTests.testsettings
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{051242FC-6944-44A6-9C47-88C04DF0F75A}"
+	ProjectSection(SolutionItems) = preProject
+		After Build Add To GAC notes.txt = After Build Add To GAC notes.txt
+		AttributeMetadata.txt = AttributeMetadata.txt
+		Plugin Metadata.txt = Plugin Metadata.txt
+		Query Metadata.txt = Query Metadata.txt
+		Work In Progress.txt = Work In Progress.txt
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{6F14A947-1316-4CF7-ADD6-8F20A2BB453E}"
 	ProjectSection(SolutionItems) = preProject
@@ -26,6 +31,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo.Tests", "CrmAdo.Tests\CrmAdo.Tests.csproj", "{35FB72AA-FD92-4A2D-9E52-B5E221687E56}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo.IntegrationTests", "CrmAdo.IntegrationTests\CrmAdo.IntegrationTests.csproj", "{050B2CC8-C601-4792-B0B7-50B4514C618B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo.EntityFramework", "CrmEF\CrmAdo.EntityFramework.csproj", "{D9372B45-9334-4997-BF80-3F0383F7BB3C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{0873ABB3-96CD-4F00-A291-D98860388834}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo.DdexProvider2013", "CrmAdo.VsPackage\CrmAdo.DdexProvider2013.csproj", "{9024366D-45C9-47BA-8D20-F88975A7ED7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo.VsPackage_IntegrationTests", "CrmAdo.VsPackage\CrmAdo.VsPackage_IntegrationTests\CrmAdo.VsPackage_IntegrationTests.csproj", "{39ADB5D3-D6D2-46DC-98DE-871B1F8EC4E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -86,8 +99,58 @@ Global
 		{050B2CC8-C601-4792-B0B7-50B4514C618B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{050B2CC8-C601-4792-B0B7-50B4514C618B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{050B2CC8-C601-4792-B0B7-50B4514C618B}.Release|x64.ActiveCfg = Release|Any CPU
+		{D9372B45-9334-4997-BF80-3F0383F7BB3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9372B45-9334-4997-BF80-3F0383F7BB3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9372B45-9334-4997-BF80-3F0383F7BB3C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D9372B45-9334-4997-BF80-3F0383F7BB3C}.IntegrationTesting|Any CPU.ActiveCfg = Release|Any CPU
+		{D9372B45-9334-4997-BF80-3F0383F7BB3C}.IntegrationTesting|Any CPU.Build.0 = Release|Any CPU
+		{D9372B45-9334-4997-BF80-3F0383F7BB3C}.IntegrationTesting|x64.ActiveCfg = Release|Any CPU
+		{D9372B45-9334-4997-BF80-3F0383F7BB3C}.Release 4.0|Any CPU.ActiveCfg = Release|Any CPU
+		{D9372B45-9334-4997-BF80-3F0383F7BB3C}.Release 4.0|Any CPU.Build.0 = Release|Any CPU
+		{D9372B45-9334-4997-BF80-3F0383F7BB3C}.Release 4.0|x64.ActiveCfg = Release|Any CPU
+		{D9372B45-9334-4997-BF80-3F0383F7BB3C}.Release 4.5|Any CPU.ActiveCfg = Release|Any CPU
+		{D9372B45-9334-4997-BF80-3F0383F7BB3C}.Release 4.5|Any CPU.Build.0 = Release|Any CPU
+		{D9372B45-9334-4997-BF80-3F0383F7BB3C}.Release 4.5|x64.ActiveCfg = Release|Any CPU
+		{D9372B45-9334-4997-BF80-3F0383F7BB3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9372B45-9334-4997-BF80-3F0383F7BB3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9372B45-9334-4997-BF80-3F0383F7BB3C}.Release|x64.ActiveCfg = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.IntegrationTesting|Any CPU.ActiveCfg = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.IntegrationTesting|Any CPU.Build.0 = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.IntegrationTesting|x64.ActiveCfg = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Release 4.0|Any CPU.ActiveCfg = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Release 4.0|Any CPU.Build.0 = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Release 4.0|x64.ActiveCfg = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Release 4.5|Any CPU.ActiveCfg = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Release 4.5|Any CPU.Build.0 = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Release 4.5|x64.ActiveCfg = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9024366D-45C9-47BA-8D20-F88975A7ED7C}.Release|x64.ActiveCfg = Release|Any CPU
+		{39ADB5D3-D6D2-46DC-98DE-871B1F8EC4E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39ADB5D3-D6D2-46DC-98DE-871B1F8EC4E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39ADB5D3-D6D2-46DC-98DE-871B1F8EC4E7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{39ADB5D3-D6D2-46DC-98DE-871B1F8EC4E7}.IntegrationTesting|Any CPU.ActiveCfg = Release|Any CPU
+		{39ADB5D3-D6D2-46DC-98DE-871B1F8EC4E7}.IntegrationTesting|Any CPU.Build.0 = Release|Any CPU
+		{39ADB5D3-D6D2-46DC-98DE-871B1F8EC4E7}.IntegrationTesting|x64.ActiveCfg = Release|Any CPU
+		{39ADB5D3-D6D2-46DC-98DE-871B1F8EC4E7}.Release 4.0|Any CPU.ActiveCfg = Release|Any CPU
+		{39ADB5D3-D6D2-46DC-98DE-871B1F8EC4E7}.Release 4.0|Any CPU.Build.0 = Release|Any CPU
+		{39ADB5D3-D6D2-46DC-98DE-871B1F8EC4E7}.Release 4.0|x64.ActiveCfg = Release|Any CPU
+		{39ADB5D3-D6D2-46DC-98DE-871B1F8EC4E7}.Release 4.5|Any CPU.ActiveCfg = Release|Any CPU
+		{39ADB5D3-D6D2-46DC-98DE-871B1F8EC4E7}.Release 4.5|Any CPU.Build.0 = Release|Any CPU
+		{39ADB5D3-D6D2-46DC-98DE-871B1F8EC4E7}.Release 4.5|x64.ActiveCfg = Release|Any CPU
+		{39ADB5D3-D6D2-46DC-98DE-871B1F8EC4E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39ADB5D3-D6D2-46DC-98DE-871B1F8EC4E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39ADB5D3-D6D2-46DC-98DE-871B1F8EC4E7}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{35FB72AA-FD92-4A2D-9E52-B5E221687E56} = {0873ABB3-96CD-4F00-A291-D98860388834}
+		{050B2CC8-C601-4792-B0B7-50B4514C618B} = {0873ABB3-96CD-4F00-A291-D98860388834}
+		{39ADB5D3-D6D2-46DC-98DE-871B1F8EC4E7} = {0873ABB3-96CD-4F00-A291-D98860388834}
 	EndGlobalSection
 EndGlobal

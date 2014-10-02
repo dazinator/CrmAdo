@@ -1,8 +1,10 @@
-﻿using CrmAdo.Visitor;
+﻿using CrmAdo.Dynamics;
+using CrmAdo.Visitor;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using NUnit.Framework;
+using Rhino.Mocks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,7 +19,18 @@ namespace CrmAdo.Tests.Support
     {
         protected QueryExpression GetQueryExpression(string sql)
         {
-            var cmd = new CrmDbCommand(null);
+            //  var mockCrmService =  MockRepository.GenerateMock<ICrmServiceProvider>();
+            //    var conn = new CrmDbConnection()
+            // var conn = MockRepository.GenerateMock<CrmDbConnection>();
+            //   var results = new EntityResultSet(null, null, null);
+            //results.ColumnMetadata = new List<ColumnMetadata>();
+
+            // set up fake metadata provider.
+
+            //   var fakeConn = MockRepository.GenerateMock<CrmDbConnection>();
+            //  fakeConn.Stub(a => a.MetadataProvider).Return(fakeMetadataProvider);
+            //   var contactMetadata = fakeMetadataProvider.GetEntityMetadata("contact");
+            var cmd = new CrmDbCommand();
             cmd.CommandText = sql;
             return GetQueryExpression(cmd);
         }
@@ -37,8 +50,11 @@ namespace CrmAdo.Tests.Support
 
         protected T GetOrganizationRequest<T>(CrmDbCommand command) where T : OrganizationRequest
         {
-            var subject = CreateTestSubject();
-            var request = subject.GetOrganizationRequest(command) as T;
+            var fakeMetadataProvider = new FakeContactMetadataProvider();
+            var typeProvider = new DynamicsAttributeTypeProvider();
+            var subject = CreateTestSubject(typeProvider, fakeMetadataProvider);
+            List<ColumnMetadata> columnMetadata;
+            var request = subject.GetOrganizationRequest(command, out columnMetadata) as T;
             return request as T;
         }
 
@@ -61,7 +77,6 @@ namespace CrmAdo.Tests.Support
             sqlFilterString = string.Format(filterFormatString, formatArgs.ToArray());
             return sqlFilterString;
         }
-
 
     }
 }

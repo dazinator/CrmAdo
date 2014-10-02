@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace CrmAdo.Visitor
 {
     /// <summary>
@@ -19,24 +20,44 @@ namespace CrmAdo.Visitor
         public const string ParameterToken = "@";
 
         public OrganizationRequest OrganizationRequest { get; set; }
+        public List<ColumnMetadata> ColumnMetadata { get; set; }
+
         public ICrmMetaDataProvider CrmMetadataProvider { get; set; }
         public DbParameterCollection Parameters { get; set; }
-        public IDynamicsAttributeTypeProvider TypeProvider { get; set; }    
+        public IDynamicsAttributeTypeProvider TypeProvider { get; set; }
+
+        private bool _DetectingMetadataQuery = false;
+        private bool _IsMetadataQuery = false;
 
         public OrganizationRequestBuilderVisitor(ICrmMetaDataProvider crmMetadataProvider, DbParameterCollection parameters, IDynamicsAttributeTypeProvider typeProvider)
         {
             CrmMetadataProvider = crmMetadataProvider;
             Parameters = parameters;
-            TypeProvider = typeProvider;        
+            TypeProvider = typeProvider;
         }
 
-        protected override void VisitSelect(SQLGeneration.Builders.SelectBuilder item)
+        protected override void VisitSelect(SelectBuilder item)
         {
             // Could use alternate builders like a fetch xml builder.
-            var visitor = new RetrieveMultipleRequestBuilderVisitor(Parameters);
-            IVisitableBuilder visitable = item;
-            visitable.Accept(visitor);
-            OrganizationRequest = visitor.Request;
+            // If the SELECT is for entity metadata then perform a metadata query request.
+            bool isMetadataQuery = IsMetadataQuery(item);
+            if (!isMetadataQuery)
+            {
+                var visitor = new RetrieveMultipleRequestBuilderVisitor(Parameters, CrmMetadataProvider);
+                IVisitableBuilder visitable = item;
+                visitable.Accept(visitor);
+                OrganizationRequest = visitor.Request;
+                ColumnMetadata = visitor.ColumnMetadata;
+            }
+            else
+            {
+                var visitor = new RetrieveMetadataChangesRequestBuilderVisitor(Parameters, CrmMetadataProvider);
+                IVisitableBuilder visitable = item;
+                visitable.Accept(visitor);
+                OrganizationRequest = visitor.Request;
+                ColumnMetadata = visitor.ColumnMetadata;
+            }
+
         }
 
         protected override void VisitInsert(InsertBuilder item)
@@ -61,6 +82,83 @@ namespace CrmAdo.Visitor
             IVisitableBuilder visitable = item;
             visitable.Accept(visitor);
             OrganizationRequest = visitor.Request;
+        }
+
+        protected override void VisitCreate(CreateBuilder item)
+        {
+            var visitor = new CreateEntityRequestBuilderVisitor(Parameters, CrmMetadataProvider);
+            IVisitableBuilder visitable = item;
+            visitable.Accept(visitor);
+            OrganizationRequest = visitor.Request;
+        }
+
+        protected override void VisitAlter(AlterBuilder item)
+        {
+            if (item.AlterObject != null)
+            {
+                item.AlterObject.Accept(this);
+            }
+        }
+
+        protected override void VisitAlterTableDefinition(AlterTableDefinition item)
+        {
+            var visitor = new CreateAttributeRequestBuilderVisitor(Parameters, CrmMetadataProvider);
+            IVisitableBuilder visitable = item;
+            visitable.Accept(visitor);
+            OrganizationRequest = visitor.Request;
+        }
+
+        private bool IsMetadataQuery(SelectBuilder item)
+        {
+            _DetectingMetadataQuery = true;
+            foreach (var source in item.From)
+            {
+                IVisitableBuilder visitable = source;
+                visitable.Accept(this);
+            }
+            _DetectingMetadataQuery = false;
+            return _IsMetadataQuery;
+        }
+
+        protected override void VisitTable(Table item)
+        {
+            if (_DetectingMetadataQuery)
+            {
+                switch (item.Name.ToLower())
+                {
+                    case "entitymetadata":
+                    case "attributemetadata":
+                    case "onetomanyrelationshipmetadata":
+                    case "manytomanyrelationshipmetadata":
+                        _IsMetadataQuery = true;
+                        break;
+                }
+            }
+        }
+
+        protected override void VisitAliasedSource(AliasedSource aliasedSource)
+        {
+            if (_DetectingMetadataQuery)
+            {
+                aliasedSource.Source.Accept(this);
+            }
+            // base.VisitAliasedSource(aliasedSource);
+        }
+
+        protected override void VisitInnerJoin(InnerJoin item)
+        {
+            if (_DetectingMetadataQuery)
+            {
+                item.RightHand.Source.Accept(this);
+            }
+        }
+
+        protected override void VisitLeftOuterJoin(LeftOuterJoin item)
+        {
+            if (_DetectingMetadataQuery)
+            {                
+                item.RightHand.Source.Accept(this);
+            }
         }
 
     }

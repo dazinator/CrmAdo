@@ -122,7 +122,10 @@ namespace CrmAdo
 
         public override int FieldCount
         {
-            get { return _Results.ColumnMetadata.Count; }
+            get
+            {
+                return _Results.ColumnMetadata.Count;
+            }
         }
 
         public override string GetName(int ordinal)
@@ -166,7 +169,7 @@ namespace CrmAdo
         public override string GetDataTypeName(int ordinal)
         {
             // retrun the data type name e.g 'varchar'
-            return _Results.ColumnMetadata[ordinal].GetDataTypeName();
+            return _Results.ColumnMetadata[ordinal].AttributeMetadata.GetSqlDataTypeName();
         }
 
         /// <summary>
@@ -176,7 +179,7 @@ namespace CrmAdo
         /// <returns></returns>
         public override Type GetFieldType(int ordinal)
         {
-            return _Results.ColumnMetadata[ordinal].GetFieldType();
+            return _Results.ColumnMetadata[ordinal].AttributeMetadata.GetFieldType();
         }
 
         /// <summary>
@@ -227,7 +230,7 @@ namespace CrmAdo
                 }
             }
 
-            switch (meta.AttributeType())
+            switch (meta.AttributeMetadata.AttributeType)
             {
                 case AttributeTypeCode.Lookup:
                 case AttributeTypeCode.Owner:
@@ -241,7 +244,7 @@ namespace CrmAdo
                 default:
                     return val;
             }
-          
+
         }
 
         public T GetValue<T>(int ordinal)
