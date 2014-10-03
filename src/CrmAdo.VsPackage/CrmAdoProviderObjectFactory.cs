@@ -86,28 +86,8 @@ namespace CrmAdo.DdexProvider
     [Guid(GuidList.guidCrmAdo_DdexProviderObjectFactoryString)]
     class CrmAdoProviderObjectFactory : DataProviderObjectFactory
     {
-
-
-
         public override object CreateObject(Type objType)
-        {
-
-            //IVsDataConnectionProperties == Microsoft.VisualStudio.Data.Framework.AdoDotNet.AdoDotNetConnectionProperties
-            //IVsDataConnectionUIProperties == Microsoft.VisualStudio.Data.Framework.AdoDotNet.AdoDotNetConnectionProperties
-            //IVsDataConnectionSupport == Microsoft.VisualStudio.Data.Framework.AdoDotNet.AdoDotNetConnectionSupport
-
-            //IDSRefBuilder == DSRefBuilder
-            //IVsDataObjectSupport == Microsoft.VisualStudio.Data.Framework.DataObjectSupport
-            //IVsDataViewSupport == Microsoft.VisualStudio.Data.Framework.DataViewSupport
-
-            //IVsDataCommand == 
-            //IVsDataConnectionEquivalencyComparer == System.Data.RSSBus.DynamicsCRM.DynamicsCRMConnectionEquivalencyComparer      
-            //IVsDataMappedObjectConverter == 
-            //IVsDataObjectIdentifierConverter == 
-            //IVsDataObjectIdentifierResolver
-            //IVsDataObjectMemberComparer
-            //IVsDataObjectSelector          
-            //IVsDataSourceInformation ==                 
+        {                      
 
             if (objType == typeof(IVsDataConnectionProperties) || objType == typeof(IVsDataConnectionUIProperties))
                 return new AdoDotNetConnectionProperties();
