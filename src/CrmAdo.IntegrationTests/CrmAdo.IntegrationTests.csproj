@@ -166,7 +166,6 @@
     <None Include="app.Release.config">
       <DependentUpon>app.config</DependentUpon>
     </None>
-    <None Include="bin\Debug\CrmAdo.IntegrationTests.dll.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -181,35 +180,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="bin\coretools\CrmSvcUtil.exe" />
-    <Content Include="bin\coretools\CrmSvcUtil.xml" />
-    <Content Include="bin\coretools\Microsoft.Xrm.Sdk.dll" />
-    <Content Include="bin\coretools\SolutionPackager.exe" />
-    <Content Include="bin\Debug\CrmAdo.DdexProvider.dll" />
-    <Content Include="bin\Debug\CrmAdo.DdexProvider.pdb" />
-    <Content Include="bin\Debug\CrmAdo.IntegrationTests.dll" />
-    <Content Include="bin\Debug\CrmAdo.IntegrationTests.pdb" />
-    <Content Include="bin\Debug\EntityFramework.dll" />
-    <Content Include="bin\Debug\EntityFramework.SqlServer.dll" />
-    <Content Include="bin\Debug\EntityFramework.SqlServer.xml" />
-    <Content Include="bin\Debug\EntityFramework.xml" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Client.dll" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Client.xml" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Sdk.Deployment.dll" />
-    <Content Include="bin\Debug\Microsoft.Xrm.Sdk.Deployment.xml" />
-    <Content Include="bin\Debug\nunit.framework.dll" />
-    <Content Include="bin\Debug\nunit.framework.xml" />
-    <Content Include="bin\Debug\Resources\Package.ico" />
-    <Content Include="bin\Debug\Rhino.Mocks.dll" />
-    <Content Include="bin\Debug\Rhino.Mocks.xml" />
-    <Content Include="bin\tools\CrmSvcUtil.exe" />
-    <Content Include="bin\tools\CrmSvcUtil.xml" />
-    <Content Include="bin\tools\Microsoft.Crm.Sdk.Proxy.dll" />
-    <Content Include="bin\tools\Microsoft.Xrm.Client.dll" />
-    <Content Include="bin\tools\Microsoft.Xrm.Sdk.dll" />
-    <Content Include="bin\tools\WebsiteCopy.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
