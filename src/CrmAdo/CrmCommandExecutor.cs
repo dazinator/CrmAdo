@@ -46,6 +46,7 @@ namespace CrmAdo
             //TODO: Should process the command text, and execute a query to dynamics, returning the Entity Collection results.
             // what would these command types mean in terms of dynamics queries?
             ResultSet results = null;
+            
             // if ((behavior & CommandBehavior.KeyInfo) > 0)
             switch (command.CommandType)
             {

@@ -9,96 +9,149 @@ using System.Threading.Tasks;
 
 namespace CrmAdo.Ado
 {
-    [Designer("CrmAdo.DesignTime.DataAdapterDesigner, CrmAdo")]
-    [ToolboxItem("CrmAdo.DesignTime.DataAdapterToolboxItem, CrmAdo")]
+    //[Designer("CrmAdo.DesignTime.DataAdapterDesigner, CrmAdo")]
+    //[ToolboxItem("CrmAdo.DesignTime.DataAdapterToolboxItem, CrmAdo")]
     public class CrmDataAdapter : DbDataAdapter, IDbDataAdapter, IDataAdapter
     {
 
-        public event EventHandler<RowUpdatedEventArgs> RowUpdated;
-        public event EventHandler<RowUpdatingEventArgs> RowUpdating;
+        private CrmDbCommand _selectCommand;
+        private CrmDbCommand _insertCommand;
+        private CrmDbCommand _updateCommand;
+        private CrmDbCommand _deleteCommand;
 
-
-        private CrmDbCommand _DeleteCommand;
-        public new CrmDbCommand DeleteCommand
-        {
-            get
-            {
-                return this._DeleteCommand;
-            }
-            set
-            {
-                this._DeleteCommand = value;
-            }
-        }
-
-        private CrmDbCommand _InsertCommand;
-        public new CrmDbCommand InsertCommand
-        {
-            get
-            {
-                return this._InsertCommand;
-            }
-            set
-            {
-                this._InsertCommand = value;
-            }
-        }
-
-        private CrmDbCommand _SelectCommand;
-        public new CrmDbCommand SelectCommand
-        {
-            get
-            {
-                return this._SelectCommand;
-            }
-            set
-            {
-                this._SelectCommand = value;
-            }
-        }
-
-        private CrmDbCommand _UpdateCommand;
-        public new CrmDbCommand UpdateCommand
-        {
-            get
-            {
-                return this._UpdateCommand;
-            }
-            set
-            {
-                this._UpdateCommand = value;
-            }
-        }
+        /*
+         * Inherit from Component through DbDataAdapter. The event
+         * mechanism is designed to work with the Component.Events
+         * property. These variables are the keys used to find the
+         * events in the components list of events.
+         */
+        static private readonly object EventRowUpdated = new object();
+        static private readonly object EventRowUpdating = new object();
 
         public CrmDataAdapter()
         {
-
         }
 
-        public CrmDataAdapter(CrmDbCommand command)
+        public CrmDbCommand SelectCommand
         {
-            this._SelectCommand = command;
+            get { return _selectCommand; }
+            set { _selectCommand = value; }
         }
 
-        public CrmDataAdapter(CrmDbConnection connection, string commandText)
+        IDbCommand IDbDataAdapter.SelectCommand
         {
-            this._SelectCommand = new CrmDbCommand(connection, commandText);
+            get { return _selectCommand; }
+            set { _selectCommand = (CrmDbCommand)value; }
         }
 
-        public CrmDataAdapter(string connectionString, string commandText)
+        public CrmDbCommand InsertCommand
         {
-            this._SelectCommand = new CrmDbCommand(new CrmDbConnection(connectionString), commandText);
+            get { return _insertCommand; }
+            set { _insertCommand = value; }
         }
 
-        protected override RowUpdatedEventArgs CreateRowUpdatedEvent(DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
+        IDbCommand IDbDataAdapter.InsertCommand
         {
-            return new CrmDataAdaptorRowUpdatedEventArgs(dataRow, command, statementType, tableMapping);
+            get { return _insertCommand; }
+            set { _insertCommand = (CrmDbCommand)value; }
         }
 
-        protected override RowUpdatingEventArgs CreateRowUpdatingEvent(DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
+        public CrmDbCommand UpdateCommand
         {
-            return new CrmDataAdaptorRowUpdatingEventArgs(dataRow, command, statementType, tableMapping);
+            get { return _updateCommand; }
+            set { _updateCommand = value; }
         }
 
+        IDbCommand IDbDataAdapter.UpdateCommand
+        {
+            get { return _updateCommand; }
+            set { _updateCommand = (CrmDbCommand)value; }
+        }
+
+        public CrmDbCommand DeleteCommand
+        {
+            get { return _deleteCommand; }
+            set { _deleteCommand = value; }
+        }
+
+        IDbCommand IDbDataAdapter.DeleteCommand
+        {
+            get { return _deleteCommand; }
+            set { _deleteCommand = (CrmDbCommand)value; }
+        }
+
+        override protected RowUpdatedEventArgs CreateRowUpdatedEvent(DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
+        {
+            return new CrmDataAdapterRowUpdatedEventArgs(dataRow, command, statementType, tableMapping);
+        }
+
+        override protected RowUpdatingEventArgs CreateRowUpdatingEvent(DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
+        {
+            return new CrmDataAdapterRowUpdatingEventArgs(dataRow, command, statementType, tableMapping);
+        }
+
+        override protected void OnRowUpdating(RowUpdatingEventArgs value)
+        {
+            CrmDataAdapterRowUpdatingEventHandler handler = (CrmDataAdapterRowUpdatingEventHandler)Events[EventRowUpdating];
+            if ((null != handler) && (value is CrmDataAdapterRowUpdatingEventArgs))
+            {
+                handler(this, (CrmDataAdapterRowUpdatingEventArgs)value);
+            }
+        }
+
+        override protected void OnRowUpdated(RowUpdatedEventArgs value)
+        {
+            CrmDataAdapterRowUpdatedEventHandler handler = (CrmDataAdapterRowUpdatedEventHandler)Events[EventRowUpdated];
+            if ((null != handler) && (value is CrmDataAdapterRowUpdatedEventArgs))
+            {
+                handler(this, (CrmDataAdapterRowUpdatedEventArgs)value);
+            }
+        }
+
+        public event CrmDataAdapterRowUpdatingEventHandler RowUpdating
+        {
+            add { Events.AddHandler(EventRowUpdating, value); }
+            remove { Events.RemoveHandler(EventRowUpdating, value); }
+        }
+
+        public event CrmDataAdapterRowUpdatedEventHandler RowUpdated
+        {
+            add { Events.AddHandler(EventRowUpdated, value); }
+            remove { Events.RemoveHandler(EventRowUpdated, value); }
+        }
     }
+
+    public delegate void CrmDataAdapterRowUpdatingEventHandler(object sender, CrmDataAdapterRowUpdatingEventArgs e);
+    public delegate void CrmDataAdapterRowUpdatedEventHandler(object sender, CrmDataAdapterRowUpdatedEventArgs e);
+
+    public class CrmDataAdapterRowUpdatingEventArgs : RowUpdatingEventArgs
+    {
+        public CrmDataAdapterRowUpdatingEventArgs(DataRow row, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
+            : base(row, command, statementType, tableMapping)
+        {
+        }
+
+        // Hide the inherited implementation of the command property.
+        new public CrmDbCommand Command
+        {
+            get { return (CrmDbCommand)base.Command; }
+            set { base.Command = value; }
+        }
+    }
+
+    public class CrmDataAdapterRowUpdatedEventArgs : RowUpdatedEventArgs
+    {
+        public CrmDataAdapterRowUpdatedEventArgs(DataRow row, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
+            : base(row, command, statementType, tableMapping)
+        {
+        }
+
+        // Hide the inherited implementation of the command property.
+        new public CrmDbCommand Command
+        {
+            get { return (CrmDbCommand)base.Command; }
+        }
+    }
+
 }
+

@@ -72,6 +72,42 @@ namespace CrmAdo.Tests
             // Act
             subject.ExecuteScalar();
         }
+
+        [Test]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void Should_Throw_When_It_Has_Empty_CommandText_And_ExecuteDbDataReader_Is_Called_()
+        {
+            // Arrange
+            var conn = MockRepository.GenerateMock<CrmDbConnection>();
+            conn.Stub(c => c.State).Return(ConnectionState.Open);
+            var subject = CreateTestSubject(conn);
+            // Act
+            subject.ExecuteReader();
+        }
+
+        [Test]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void Should_Throw_When_It_Has_Empty_CommandText_And_ExecuteNonQuery_Is_Called_()
+        {
+            // Arrange
+            var conn = MockRepository.GenerateMock<CrmDbConnection>();
+            conn.Stub(c => c.State).Return(ConnectionState.Open);
+            var subject = CreateTestSubject(conn);
+            // Act
+            subject.ExecuteNonQuery();
+        }
+
+        [Test]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void Should_Throw_When_It_Has_Empty_CommandText_And_ExecuteScalar_Is_Called_()
+        {
+            // Arrange
+            var conn = MockRepository.GenerateMock<CrmDbConnection>();
+            conn.Stub(c => c.State).Return(ConnectionState.Open);
+            var subject = CreateTestSubject(conn);
+            // Act
+            subject.ExecuteScalar();
+        }
         
     }
 }

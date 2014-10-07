@@ -82,7 +82,9 @@ namespace CrmAdo
 
         protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
         {
+            EnsureHasCommandText();
             EnsureOpenConnection();
+
             var results = _CrmCommandExecutor.ExecuteCommand(this, behavior);
             DbDataReader reader;
             if (behavior == CommandBehavior.CloseConnection)
@@ -99,13 +101,16 @@ namespace CrmAdo
         public override int ExecuteNonQuery()
         {
             Debug.WriteLine("CrmDbCommand.ExecuteNonQuery()", "CrmDbCommand");
+            EnsureHasCommandText();
             EnsureOpenConnection();
+
             return _CrmCommandExecutor.ExecuteNonQueryCommand(this);
         }
 
         public override object ExecuteScalar()
         {
             Debug.WriteLine("CrmDbCommand.ExecuteScalar()", "CrmDbCommand");
+            EnsureHasCommandText();
             EnsureOpenConnection();
             // If the first column of the first row in the result set is not found, a null reference is returned. 
             // If the value in the database is null, the query returns DBNull.Value.
@@ -119,6 +124,14 @@ namespace CrmAdo
             // must have a valid and open connection
             if (_DbConnection == null || _DbConnection.State != ConnectionState.Open)
                 throw new InvalidOperationException("Connection must be valid and open");
+        }
+
+        private void EnsureHasCommandText()
+        {
+            if (string.IsNullOrWhiteSpace(this.CommandText))
+            {
+                throw new InvalidOperationException("Command must have command text.");
+            }
         }
 
         protected override DbParameter CreateDbParameter()
