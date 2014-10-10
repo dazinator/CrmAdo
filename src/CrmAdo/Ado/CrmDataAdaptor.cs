@@ -11,7 +11,8 @@ namespace CrmAdo.Ado
 {
     //[Designer("CrmAdo.DesignTime.DataAdapterDesigner, CrmAdo")]
     //[ToolboxItem("CrmAdo.DesignTime.DataAdapterToolboxItem, CrmAdo")]
-    public class CrmDataAdapter : DbDataAdapter, IDbDataAdapter, IDataAdapter
+    [DefaultEvent("RowUpdated")]
+    public class CrmDataAdapter : DbDataAdapter, IDbDataAdapter, IDataAdapter, ICloneable
     {
 
         private CrmDbCommand _selectCommand;
@@ -29,9 +30,24 @@ namespace CrmAdo.Ado
         static private readonly object EventRowUpdating = new object();
 
         public CrmDataAdapter()
+            : base()
         {
         }
 
+        public CrmDataAdapter(CrmDbCommand selectCommand)
+            : base()
+        {
+            this.SelectCommand = selectCommand;
+        }
+
+        private CrmDataAdapter(CrmDataAdapter from)
+            : base(from)
+        {
+
+        }
+
+        [DefaultValue(null)]
+        [Editor("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
         public CrmDbCommand SelectCommand
         {
             get { return _selectCommand; }
@@ -44,6 +60,8 @@ namespace CrmAdo.Ado
             set { _selectCommand = (CrmDbCommand)value; }
         }
 
+        [DefaultValue(null)]
+        [Editor("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
         public CrmDbCommand InsertCommand
         {
             get { return _insertCommand; }
@@ -56,6 +74,8 @@ namespace CrmAdo.Ado
             set { _insertCommand = (CrmDbCommand)value; }
         }
 
+        [DefaultValue(null)]
+        [Editor("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
         public CrmDbCommand UpdateCommand
         {
             get { return _updateCommand; }
@@ -68,10 +88,18 @@ namespace CrmAdo.Ado
             set { _updateCommand = (CrmDbCommand)value; }
         }
 
+        [DefaultValue(null)]
+        [Editor("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
         public CrmDbCommand DeleteCommand
         {
-            get { return _deleteCommand; }
-            set { _deleteCommand = value; }
+            get
+            {
+                return this._deleteCommand;
+            }
+            set
+            {
+                this._deleteCommand = value;
+            }
         }
 
         IDbCommand IDbDataAdapter.DeleteCommand
@@ -118,6 +146,11 @@ namespace CrmAdo.Ado
         {
             add { Events.AddHandler(EventRowUpdated, value); }
             remove { Events.RemoveHandler(EventRowUpdated, value); }
+        }
+
+        object ICloneable.Clone()
+        {
+            return new CrmDataAdapter(this);
         }
     }
 

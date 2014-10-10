@@ -234,6 +234,7 @@ namespace CrmAdo
             {
                 case AttributeTypeCode.Lookup:
                 case AttributeTypeCode.Owner:
+                case AttributeTypeCode.Customer:
                     return ((EntityReference)val).Id;
                 case AttributeTypeCode.Money:
                     return ((Money)val).Value;

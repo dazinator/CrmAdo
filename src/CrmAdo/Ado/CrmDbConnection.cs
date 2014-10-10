@@ -40,8 +40,15 @@ namespace CrmAdo
         }
 
         public CrmDbConnection(ICrmServiceProvider serviceProvider)
+            : this(serviceProvider, new InMemoryCachedCrmMetaDataProvider(new EntityMetadataRepository(serviceProvider)))
         {
             _CrmServiceProvider = serviceProvider;
+        }
+
+        public CrmDbConnection(ICrmServiceProvider serviceProvider, ICrmMetaDataProvider metadataProvider)
+        {
+            _CrmServiceProvider = serviceProvider;
+            _MetadataProvider = metadataProvider;
         }
 
         #endregion

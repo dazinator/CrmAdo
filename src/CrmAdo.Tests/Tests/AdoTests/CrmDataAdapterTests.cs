@@ -10,6 +10,7 @@ using CrmAdo.Dynamics;
 using Rhino.Mocks.Constraints;
 using Microsoft.Xrm.Sdk.Messages;
 using CrmAdo.Dynamics.Metadata;
+using CrmAdo.Tests.Support;
 
 namespace CrmAdo.Tests
 {
@@ -98,12 +99,15 @@ namespace CrmAdo.Tests
             var mockServiceProvider = MockRepository.GenerateMock<ICrmServiceProvider>();
             mockServiceProvider.Stub(c => c.GetOrganisationService()).Return(fakeOrgService);
 
-            var dbConnection = new CrmDbConnection(mockServiceProvider);
+            var fakeMetadataProvider = new FakeContactMetadataProvider();
+            var dbConnection = new CrmDbConnection(mockServiceProvider, fakeMetadataProvider);
             var selectCommand = new CrmDbCommand(dbConnection);
             selectCommand.CommandText = "SELECT * FROM contact";
 
-            IList<Entity> fakeContactsData = GenerateFakeEntities("contact", 100);
+            var entityDataGenerator = new EntityDataGenerator();
+            IList<Entity> fakeContactsData = entityDataGenerator.GenerateFakeEntities("contact", 100);
 
+            // This is the fake reponse that the org service will return when its requested to get the data.
             var response = new RetrieveMultipleResponse
             {
                 Results = new ParameterCollection
@@ -112,199 +116,28 @@ namespace CrmAdo.Tests
  }
             };
 
-
-
+            // Setup fake org service to return fake response.
             fakeOrgService.Stub(f => f.Execute(Arg<OrganizationRequest>.Matches(new OrganizationRequestMessageConstraint<RetrieveMultipleRequest>())))
                 .WhenCalled(x =>
                 {
                     var request = ((RetrieveMultipleRequest)x.Arguments[0]);
-
                 }).Return(response);
 
-
-
-            //var conn = MockRepository.GenerateStub<CrmDbConnection>();
-            //var fakeSelectCommand = MockRepository.GenerateStub<CrmDbCommand>();
-            //fakeSelectCommand.Connection = conn;
-            //conn.Stub(a => a.State).Return(ConnectionState.Open);
-
-            // fakeSelectCommand.Stub(m => m.Connection).Return(conn);
-            //  fakeSelectCommand.Connection = conn;
-            // mockSelectCommand.CommandText = "SELECT * FROM CONTACT";
+            // Act
+            var ds = new DataSet();
             var subject = CreateTestSubject();
             subject.SelectCommand = selectCommand;
-
-            var ds = new DataSet();
             var result = subject.Fill(ds);
 
+            // Assert
             Assert.NotNull(ds);
             Assert.NotNull(ds.Tables);
             Assert.That(ds.Tables.Count, NUnit.Framework.Is.EqualTo(1));
 
             var table = ds.Tables[0];
+        }       
 
+    }  
 
-
-            //var results = new EntityResultSet(null, null, null);
-            //results.ColumnMetadata = new List<ColumnMetadata>();
-
-            //var firstName = MockRepository.GenerateMock<AttributeInfo>();
-            //var lastname = MockRepository.GenerateMock<AttributeInfo>();
-            //var firstNameC = new ColumnMetadata(firstName);
-            //var lastnameC = new ColumnMetadata(lastname);
-
-
-
-            //subject.
-        }
-
-        private IList<Entity> GenerateFakeEntities(string entityName, int howMany)
-        {
-
-            var metadataProvider = new FakeContactMetadataProvider();
-            var metadata = metadataProvider.GetEntityMetadata(entityName);
-            Random rand = new Random();
-
-            List<Entity> results = new List<Entity>();
-
-            // Used for generating random dates.
-            DateTime minCrmDate = new DateTime(1900, 1, 1);
-            int crmDayRange = (DateTime.Today - minCrmDate).Days;
-
-            for (int i = 0; i < howMany; i++)
-            {
-                var ent = new Microsoft.Xrm.Sdk.Entity(entityName);
-                ent.Id = Guid.NewGuid();
-
-                foreach (var a in metadata.Attributes)
-                {
-                    switch (a.AttributeType.Value)
-                    {
-                        case AttributeTypeCode.BigInt:
-                            var randomBigInt = (long)rand.NextLong(0, Int64.MaxValue);
-                            ent[a.LogicalName] = randomBigInt;
-                            break;
-                        case AttributeTypeCode.Boolean:
-                            int randomBoolInt = rand.Next(0, 1);
-                            ent[a.LogicalName] = randomBoolInt == 1;
-                            break;
-                        case AttributeTypeCode.CalendarRules:
-                            break;
-                        case AttributeTypeCode.Customer:
-                            int randomCustomerInt = rand.Next(0, 1);
-                            string customerentity = "contact";
-                            Guid customerId = Guid.NewGuid();
-                            if (randomCustomerInt == 1)
-                            {
-                                customerentity = "account";
-                            }
-                            EntityReference customerRef = new EntityReference(customerentity, customerId);
-                            ent[a.LogicalName] = customerRef;
-                            break;
-                        case AttributeTypeCode.DateTime:
-                            DateTime randomDate = rand.NextCrmDate(minCrmDate, crmDayRange);
-                            ent[a.LogicalName] = randomDate;
-                            break;
-                        case AttributeTypeCode.Decimal:
-                            var decAtt = (DecimalAttributeInfo)a;
-                            var scale = decAtt.GetNumericScale();
-                            byte byteScale = (byte)scale;
-                            var randomDecimal = rand.NextDecimal(byteScale);
-                            ent[a.LogicalName] = randomDecimal;
-                            break;
-                        case AttributeTypeCode.Double:
-                            var doubleAtt = (DoubleAttributeInfo)a;
-                            var doubleScale = doubleAtt.GetNumericScale();
-                            byte byteDoubleScale = (byte)doubleScale;
-                            // todo apply precision / scale
-                            var randomDouble = rand.NextDouble();
-                            ent[a.LogicalName] = randomDouble;
-                            break;
-                        case AttributeTypeCode.EntityName:
-                            break;
-                        case AttributeTypeCode.Integer:
-                            ent[a.LogicalName] = rand.Next();
-                            break;
-                        case AttributeTypeCode.Lookup:
-                            break;
-                        case AttributeTypeCode.ManagedProperty:
-                            break;
-                        case AttributeTypeCode.Memo:
-                            var randomMemoString = string.Format("Test Memo String {0}", DateTime.UtcNow.Ticks.ToString());
-                            ent[a.LogicalName] = randomMemoString;
-                            break;
-                        case AttributeTypeCode.Money:
-                            var moneyAtt = (MoneyAttributeInfo)a;
-                            var mscale = moneyAtt.GetNumericScale();
-                            byte bytemScale = (byte)mscale;
-                            var randomMoneyDecimal = rand.NextDecimal(bytemScale);
-                            var randMoney = new Money(randomMoneyDecimal);
-                            ent[a.LogicalName] = randMoney;
-                            break;
-                        case AttributeTypeCode.Owner:
-                            EntityReference ownerRef = new EntityReference("systemuser", Guid.NewGuid());
-                            ent[a.LogicalName] = ownerRef;
-                            break;
-                        case AttributeTypeCode.PartyList:
-                            break;
-                        case AttributeTypeCode.Picklist:
-                            OptionSetValue optValue = new OptionSetValue(rand.Next());
-                            ent[a.LogicalName] = optValue;
-                            break;
-                        case AttributeTypeCode.State:
-                            // todo randomise active and inactive.
-                            ent[a.LogicalName] = 0;
-                            break;
-                        case AttributeTypeCode.Status:
-                            // todo randomise active and inactive.
-                            ent[a.LogicalName] = 1;
-                            break;
-                        case AttributeTypeCode.String:
-                            var randomString = string.Format("TestString{0}", DateTime.UtcNow.Ticks.ToString());
-                            ent[a.LogicalName] = randomString;
-                            break;
-                        case AttributeTypeCode.Uniqueidentifier:
-                            ent[a.LogicalName] = Guid.NewGuid();
-                            break;
-                        case AttributeTypeCode.Virtual:
-                            break;
-                        default:
-                            break;
-                    }
-
-                }
-
-                results.Add(ent);
-            }
-
-            return results;
-        }
-
-    }
-
-    public static class RandomExtensions
-    {
-        public static long NextLong(this Random random, long min, long max)
-        {
-            byte[] buf = new byte[8];
-            random.NextBytes(buf);
-            long longRand = BitConverter.ToInt64(buf, 0);
-            return (Math.Abs(longRand % (max - min)) + min);
-        }
-
-        public static DateTime NextCrmDate(this Random random, DateTime minDate, int dayRange)
-        {
-            return minDate.AddDays(random.Next(dayRange));
-        }
-
-        public static decimal NextDecimal(this Random r, byte scale)
-        {
-            var s = scale;
-            var a = (int)(uint.MaxValue * r.NextDouble());
-            var b = (int)(uint.MaxValue * r.NextDouble());
-            var c = (int)(uint.MaxValue * r.NextDouble());
-            var n = r.NextDouble() >= 0.5;
-            return new Decimal(a, b, c, n, s);
-        }
-    }
+   
 }

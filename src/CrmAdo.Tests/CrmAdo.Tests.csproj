@@ -137,7 +137,10 @@
   <ItemGroup>
     <Compile Include="Support\BaseOrganisationRequestBuilderVisitorTest.cs" />
     <Compile Include="Support\EfModel\Blog.cs" />
+    <Compile Include="Support\EntityDataGenerator.cs" />
     <Compile Include="Support\EntityFrameworkCodeFirstTestBase.cs" />
+    <Compile Include="Support\GACWrap.cs" />
+    <Compile Include="Support\RandomExtensions.cs" />
     <Compile Include="Tests\AdoTests\CrmConnectionStringBuilderTests.cs" />
     <Compile Include="Tests\AdoTests\CrmDataAdapterTests.cs" />
     <Compile Include="Tests\AlterTableTests\AlterTableStatementTests.cs" />
