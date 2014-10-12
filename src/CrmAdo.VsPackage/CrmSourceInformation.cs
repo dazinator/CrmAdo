@@ -100,7 +100,9 @@ namespace CrmAdo.DdexProvider
                 }
             }
           
-            return base.RetrieveValue(propertyName);
+            var val = base.RetrieveValue(propertyName);
+
+            return val;
 
             //if (propertyName.Equals(DefaultSchema,
             //        StringComparison.OrdinalIgnoreCase))

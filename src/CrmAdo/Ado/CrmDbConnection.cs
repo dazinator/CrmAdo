@@ -244,7 +244,8 @@ namespace CrmAdo
                     break;
 
                 case "reservedwords":
-                    //   return NpgsqlSchema.GetReservedWords();
+                    //   return NpgsqlSchema.GetReservedWords();              
+                    result = GetReservedWords();
                     break;
 
                 case "DataTypes":
@@ -393,6 +394,110 @@ namespace CrmAdo
             dataRow["SupportsVerifySQL"] = false;
             dataTable.Rows.Add(dataRow);
             return dataTable;
+        }
+
+        public static DataTable GetReservedWords()
+        {
+            DataTable table = new DataTable("ReservedWords");
+            table.Locale = CultureInfo.InvariantCulture;
+            table.Columns.Add("ReservedWord", typeof(string));
+
+            // List of keywords taken from SQLGeneration library token registry grammer.
+            string[] keywords = new[]
+            {
+                "TOP",
+                "UPDATE",
+                "VALUES",
+                "WHERE",
+                "WITH",
+                "BETWEEN",
+                "AND",
+                "OR",
+                "DELETE",
+                "ALL",
+                "ANY",
+                "SOME",
+                "FROM",
+                "GROUP",
+                "BY",
+                "HAVING",
+                "INSERT",
+                "INTO",
+                "IS",
+                "FULL",
+                "OUTER",
+                "JOIN",
+                "INNER",
+                "LEFT",
+                "RIGHT",
+                "CROSS",
+                "IN",
+                "LIKE",
+                "NOT",
+                "NULLS",
+                "NULL",
+                "ORDER",
+                "ASC",
+                "DESC",
+                "PERCENT",
+                "SELECT",
+                "UNION",
+                "INTERSECT",
+                "EXCEPT",
+                "MINUS",
+                "SET",
+                "ON",
+                "AS",
+                "EXISTS",
+                "OVER",
+                "PARTITION",
+                "ROWS",
+                "RANGE",
+                "UNBOUNDED",
+                "PRECEDING",
+                "FOLLOWING",
+                "CURRENT",
+                "ROW",
+                "CASE",
+                "WHEN",
+                "THEN",
+                "ELSE",
+                "END",
+                "CREATE", /// DDL
+                "DATABASE",
+                "TABLE",
+                "PRIMARY",
+                "KEY",
+                "COLLATE",
+                "CONSTRAINT",
+                "IDENTITY",
+                "DEFAULT",
+                "ROWGUIDCOL",
+                "UNIQUE",
+                "CLUSTERED",
+                "NONCLUSTERED",
+                "FOREIGN",
+                "REFERENCES",
+                "NO",
+                "ACTION",
+                "CASCADE",
+                "FOR",
+                "REPLICATION",
+                "CHECK",
+                "ALTER",
+                "MODIFY",
+                "CURRENT",
+                "COLUMN",
+                "ADD",
+                "DROP",
+                "PERSISTED",
+                "SPARSE"               
+            };
+            foreach (string keyword in keywords)
+            {
+                table.Rows.Add(keyword);
+            }
+            return table;
         }
 
 
