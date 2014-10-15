@@ -27,6 +27,11 @@ namespace CrmAdo.Tests
             var mockServiceProvider = MockRepository.GenerateMock<ICrmServiceProvider>();
             mockServiceProvider
                 .Stub(c => c.GetOrganisationService()).Return(fakeOrgService);
+
+            var fakeConnProvider = MockRepository.GenerateMock<ICrmConnectionProvider>();
+            fakeConnProvider.Stub(c => c.OrganisationServiceConnectionString).Return("fakeconn");
+            mockServiceProvider.Stub(c => c.ConnectionProvider).Return(fakeConnProvider);
+
             var dbConnection = CreateTestSubject(mockServiceProvider);
             // Act
             dbConnection.Open();
@@ -44,6 +49,11 @@ namespace CrmAdo.Tests
             var mockServiceProvider = MockRepository.GenerateMock<ICrmServiceProvider>();
             mockServiceProvider
                 .Stub(c => c.GetOrganisationService()).Return(fakeOrgService);
+
+            var fakeConnProvider = MockRepository.GenerateMock<ICrmConnectionProvider>();
+            fakeConnProvider.Stub(c => c.OrganisationServiceConnectionString).Return("fakeconn");
+            mockServiceProvider.Stub(c => c.ConnectionProvider).Return(fakeConnProvider);
+
             var dbConnection = CreateTestSubject(mockServiceProvider);
 
             // Act
@@ -51,18 +61,23 @@ namespace CrmAdo.Tests
 
             // Assert
             mockServiceProvider.AssertWasCalled(o => o.GetOrganisationService(), options => options.Repeat.Once());
-        }
+        }       
 
         [Test]
         public void Should_Close_Connection_On_Dispose()
         {
             // Arrange
             var fakeOrgService = MockRepository.GenerateMock<IOrganizationService, IDisposable>();
+
             var mockServiceProvider = MockRepository.GenerateMock<ICrmServiceProvider>();
-            mockServiceProvider
-                .Stub(c => c.GetOrganisationService()).Return(fakeOrgService);
+            mockServiceProvider.Stub(c => c.GetOrganisationService()).Return(fakeOrgService);
+
+            var fakeConnProvider = MockRepository.GenerateMock<ICrmConnectionProvider>();
+            fakeConnProvider.Stub(c => c.OrganisationServiceConnectionString).Return("fakeconn");
+            mockServiceProvider.Stub(c => c.ConnectionProvider).Return(fakeConnProvider);
+
             var dbConnection = CreateTestSubject(mockServiceProvider);
-        
+
             // Act
             using (dbConnection)
             {
@@ -81,6 +96,10 @@ namespace CrmAdo.Tests
             var mockServiceProvider = MockRepository.GenerateMock<ICrmServiceProvider>();
             mockServiceProvider
                 .Stub(c => c.GetOrganisationService()).Return(fakeOrgService);
+
+            var fakeConnProvider = MockRepository.GenerateMock<ICrmConnectionProvider>();
+            fakeConnProvider.Stub(c => c.OrganisationServiceConnectionString).Return("fakeconn");
+            mockServiceProvider.Stub(c => c.ConnectionProvider).Return(fakeConnProvider);
 
             var dbConnection = CreateTestSubject(mockServiceProvider);
 
@@ -102,6 +121,11 @@ namespace CrmAdo.Tests
             var mockServiceProvider = MockRepository.GenerateMock<ICrmServiceProvider>();
             mockServiceProvider
                 .Stub(c => c.GetOrganisationService()).Return(fakeOrgService);
+
+            var fakeConnProvider = MockRepository.GenerateMock<ICrmConnectionProvider>();
+            fakeConnProvider.Stub(c => c.OrganisationServiceConnectionString).Return("fakeconn");
+            mockServiceProvider.Stub(c => c.ConnectionProvider).Return(fakeConnProvider);
+
             var dbConnection = CreateTestSubject(mockServiceProvider);
 
             // Act

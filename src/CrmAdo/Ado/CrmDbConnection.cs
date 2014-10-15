@@ -9,9 +9,12 @@ using CrmAdo.Ado;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Collections.Concurrent;
+using Microsoft.Xrm.Sdk.Query;
 
 namespace CrmAdo
-{
+{      
+
     /// <summary>
     /// Represents a connection to Dynamics Crm.
     /// </summary>
@@ -19,8 +22,11 @@ namespace CrmAdo
     {
         private ICrmServiceProvider _CrmServiceProvider = null;
         private ICrmMetaDataProvider _MetadataProvider = null;
+        private CrmConnectionCache _ConnectionCache = null;
+        private CrmConnectionInfo _ConnectionInfo = null;
+
         private bool _InitialisedVersion = false;
-        private string _CrmVersion = string.Empty;
+        // private string _CrmVersion = string.Empty;
 
         #region Constructor
 
@@ -31,24 +37,20 @@ namespace CrmAdo
         }
 
         public CrmDbConnection(string connectionString)
+            : this(new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString }, new CrmClientCredentialsProvider()))
         {
-            var connectionProvider = new ExplicitConnectionStringProviderWithFallbackToConfig();
-            connectionProvider.OrganisationServiceConnectionString = connectionString;
-            var credentialsProvider = new CrmClientCredentialsProvider();
-            _CrmServiceProvider = new CrmServiceProvider(connectionProvider, credentialsProvider);
-            _MetadataProvider = new InMemoryCachedCrmMetaDataProvider(new EntityMetadataRepository(_CrmServiceProvider));
         }
 
         public CrmDbConnection(ICrmServiceProvider serviceProvider)
             : this(serviceProvider, new InMemoryCachedCrmMetaDataProvider(new EntityMetadataRepository(serviceProvider)))
         {
-            _CrmServiceProvider = serviceProvider;
         }
 
         public CrmDbConnection(ICrmServiceProvider serviceProvider, ICrmMetaDataProvider metadataProvider)
         {
             _CrmServiceProvider = serviceProvider;
-            _MetadataProvider = metadataProvider;
+            _MetadataProvider = metadataProvider;          
+            _ConnectionCache = new CrmConnectionCache();
         }
 
         #endregion
@@ -79,18 +81,14 @@ namespace CrmAdo
         {
             if (_State == ConnectionState.Closed)
             {
-                _State = ConnectionState.Connecting;
-                _OrganizationService = _CrmServiceProvider.GetOrganisationService();
-
-                // could do a whoami request to warmup the connection.
-                //TODO:  would rather cache this information against the connection string so its not requiried on every open.
-                //var req = new WhoAmIRequest();
-                //var resp = (WhoAmIResponse)_OrganizationService.Execute(req);
-                //var orgId = resp.OrganizationId;
-                //var businessUnitId = resp.BusinessUnitId;
-                //var userId = resp.UserId;
-
-                _State = ConnectionState.Open;
+                ExecuteWithinStateTransition(
+                    ConnectionState.Connecting,
+                    f =>
+                    {
+                        _OrganizationService = _CrmServiceProvider.GetOrganisationService();
+                        _ConnectionInfo = _ConnectionCache.GetConnectionInfo(this);
+                    },
+                    ConnectionState.Open);
             }
             else
             {
@@ -142,39 +140,35 @@ namespace CrmAdo
             }
         }
 
+        public CrmConnectionInfo ConnectionInfo
+        {
+            get
+            {
+                if (_ConnectionInfo == null)
+                {
+                    ExecuteAndOpenIfNeccessary(a =>
+                    {
+                        _ConnectionInfo = _ConnectionCache.GetConnectionInfo(this);
+                    });
+                }
+
+                return _ConnectionInfo;
+            }
+        }
+
         public override string ServerVersion
         {
             get
             {
-                if (!_InitialisedVersion)
-                {
-                    bool hadToOpen = false;
-                    try
-                    {
-                        if (_State != ConnectionState.Open)
-                        {
-                            hadToOpen = true;
-                            this.Open();
-                        }
+                return ConnectionInfo.ServerVersion;
+            }
+        }
 
-                        var req = new RetrieveVersionRequest();
-                        var resp = (RetrieveVersionResponse)_OrganizationService.Execute(req);
-                        //assigns the version to a string
-                        string versionNumber = resp.Version;
-                        _CrmVersion = versionNumber;
-                    }
-                    finally
-                    {
-                        // return connection to orginal state.
-                        if (hadToOpen)
-                        {
-                            this.Close();
-                        }
-                    }
-                }
-
-                return _CrmVersion;
-                //  throw new NotImplementedException();
+        public override string Database
+        {
+            get
+            {
+                return ConnectionInfo.OrganisationName;
             }
         }
 
@@ -188,8 +182,101 @@ namespace CrmAdo
             get { return _CrmServiceProvider; }
         }
 
-        #region Not Implemented
+        #region StateWrappers
 
+        /// <summary>
+        /// Enusures that whilst a Func<CrmDbConnection> is executed, the connection transitions to the correct state.
+        /// Afterwards the connection transitions to either the successful state, or the broken state.         
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="execute"></param>
+        private TResult ExecuteWithinStateTransition<TResult>(ConnectionState stateWhileExecuting, Func<CrmDbConnection, TResult> execute, ConnectionState transitionToStateOnSuccess)
+        {
+            // bool hadToChangeState = false;
+            ConnectionState _previousState = this._State;
+            try
+            {
+                if (_State != stateWhileExecuting)
+                {
+                    //  hadToChangeState = true;
+                    this._State = stateWhileExecuting;
+                }
+                var result = execute(this);
+                _State = transitionToStateOnSuccess;
+                return result;
+            }
+            catch (Exception)
+            {
+                _State = ConnectionState.Broken;
+                throw;
+            }
+
+        }
+
+        /// <summary>
+        /// Enusures that whilst a Action<CrmDbConnection> is executed, the connection transitions to the correct state.
+        /// Afterwards the connection transitions to either the successful state, or the broken state.         
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="execute"></param>
+        private void ExecuteWithinStateTransition(ConnectionState stateWhileExecuting, Action<CrmDbConnection> execute, ConnectionState transitionToStateOnSuccess)
+        {
+            // bool hadToChangeState = false;
+            ConnectionState _previousState = this._State;
+            try
+            {
+                if (_State != stateWhileExecuting)
+                {
+                    //  hadToChangeState = true;
+                    this._State = stateWhileExecuting;
+                }
+                execute(this);
+                _State = transitionToStateOnSuccess;
+                return;
+            }
+            catch (Exception)
+            {
+                _State = ConnectionState.Broken;
+                throw;
+            }
+
+        }
+
+        /// <summary>
+        /// Enusures that prior to executing an Action<CrmDbConnection>, the connection is Open(). If it is not open already it will be opened. If it is necessary to Open() it then
+        /// after executing the connection will be Closed() otherwise it will remain in an Open state.     
+        /// </summary>      
+        /// <param name="execute"></param>
+        private void ExecuteAndOpenIfNeccessary(Action<CrmDbConnection> execute)
+        {
+            bool hadToOpen = false;
+            ConnectionState previousState = _State;
+            try
+            {
+                if (_State != ConnectionState.Open)
+                {
+                    hadToOpen = true;
+                    this.Open();
+                }
+
+                execute(this);
+
+            }
+            finally
+            {
+                // return connection to orginal state.
+                if (hadToOpen)
+                {
+                    this.Close();
+                }
+            }
+
+        }
+
+
+        #endregion
+
+        #region Not Implemented
 
         public override void ChangeDatabase(string databaseName)
         {
@@ -197,14 +284,7 @@ namespace CrmAdo
             throw new NotImplementedException();
         }
 
-        public override string Database
-        {
-            get
-            {
-                return string.Empty;
-            }
-        }
-
+        #region Schema
 
         /// <summary>
         /// Returns the supported collections
@@ -500,6 +580,7 @@ namespace CrmAdo
             return table;
         }
 
+        #endregion
 
         #endregion
 

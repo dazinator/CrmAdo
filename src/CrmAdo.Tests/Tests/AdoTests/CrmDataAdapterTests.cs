@@ -99,6 +99,10 @@ namespace CrmAdo.Tests
             var mockServiceProvider = MockRepository.GenerateMock<ICrmServiceProvider>();
             mockServiceProvider.Stub(c => c.GetOrganisationService()).Return(fakeOrgService);
 
+            var fakeConnProvider = MockRepository.GenerateMock<ICrmConnectionProvider>();
+            fakeConnProvider.Stub(c => c.OrganisationServiceConnectionString).Return("fakeconn");
+            mockServiceProvider.Stub(c => c.ConnectionProvider).Return(fakeConnProvider);
+
             var fakeMetadataProvider = new FakeContactMetadataProvider();
             var dbConnection = new CrmDbConnection(mockServiceProvider, fakeMetadataProvider);
             var selectCommand = new CrmDbCommand(dbConnection);
@@ -150,6 +154,10 @@ namespace CrmAdo.Tests
             var mockServiceProvider = MockRepository.GenerateMock<ICrmServiceProvider>();
             mockServiceProvider.Stub(c => c.GetOrganisationService()).Return(fakeOrgService);
 
+            var fakeConnProvider = MockRepository.GenerateMock<ICrmConnectionProvider>();
+            fakeConnProvider.Stub(c => c.OrganisationServiceConnectionString).Return("fakeconn");
+            mockServiceProvider.Stub(c => c.ConnectionProvider).Return(fakeConnProvider);
+
             var fakeMetadataProvider = new FakeContactMetadataProvider();
             var dbConnection = new CrmDbConnection(mockServiceProvider, fakeMetadataProvider);
             var selectCommand = new CrmDbCommand(dbConnection);
@@ -195,6 +203,10 @@ namespace CrmAdo.Tests
             var fakeOrgService = MockRepository.GenerateMock<IOrganizationService, IDisposable>();
             var mockServiceProvider = MockRepository.GenerateMock<ICrmServiceProvider>();
             mockServiceProvider.Stub(c => c.GetOrganisationService()).Return(fakeOrgService);
+
+            var fakeConnProvider = MockRepository.GenerateMock<ICrmConnectionProvider>();
+            fakeConnProvider.Stub(c => c.OrganisationServiceConnectionString).Return("fakeconn");
+            mockServiceProvider.Stub(c => c.ConnectionProvider).Return(fakeConnProvider);
 
             var fakeMetadataProvider = new FakeContactMetadataProvider();
             var dbConnection = new CrmDbConnection(mockServiceProvider, fakeMetadataProvider);
@@ -249,6 +261,10 @@ namespace CrmAdo.Tests
             var fakeOrgService = MockRepository.GenerateMock<IOrganizationService, IDisposable>();
             var mockServiceProvider = MockRepository.GenerateMock<ICrmServiceProvider>();
             mockServiceProvider.Stub(c => c.GetOrganisationService()).Return(fakeOrgService);
+           
+            var fakeConnProvider = MockRepository.GenerateMock<ICrmConnectionProvider>();
+            fakeConnProvider.Stub(c => c.OrganisationServiceConnectionString).Return("fakeconn");
+            mockServiceProvider.Stub(c => c.ConnectionProvider).Return(fakeConnProvider);
 
             var fakeMetadataProvider = new FakeContactMetadataProvider();
             var dbConnection = new CrmDbConnection(mockServiceProvider, fakeMetadataProvider);
@@ -303,6 +319,10 @@ namespace CrmAdo.Tests
             var fakeOrgService = MockRepository.GenerateMock<IOrganizationService, IDisposable>();
             var mockServiceProvider = MockRepository.GenerateMock<ICrmServiceProvider>();
             mockServiceProvider.Stub(c => c.GetOrganisationService()).Return(fakeOrgService);
+
+            var fakeConnProvider = MockRepository.GenerateMock<ICrmConnectionProvider>();
+            fakeConnProvider.Stub(c => c.OrganisationServiceConnectionString).Return("fakeconn");
+            mockServiceProvider.Stub(c => c.ConnectionProvider).Return(fakeConnProvider);
 
             var fakeMetadataProvider = new FakeContactMetadataProvider();
             var dbConnection = new CrmDbConnection(mockServiceProvider, fakeMetadataProvider);

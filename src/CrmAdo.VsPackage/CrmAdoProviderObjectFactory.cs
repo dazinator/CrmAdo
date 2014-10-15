@@ -17,6 +17,33 @@ using EnvDTE80;
 
 namespace CrmAdo.DdexProvider
 {
+    public class CrmAdoConnectionSupport : AdoDotNetConnectionSupport
+    {
+        protected override IVsDataReader DeriveSchemaCore(string command, DataCommandType commandType, IVsDataParameter[] parameters, int commandTimeout)
+        {
+            var result = base.DeriveSchemaCore(command, commandType, parameters, commandTimeout);
+            return result;
+        }
+
+        protected override DbCommand GetCommand(string command, DataCommandType commandType, IVsDataParameter[] parameters, int commandTimeout)
+        {
+            var result = base.GetCommand(command, commandType, parameters, commandTimeout);
+            return result;
+        }
+
+    }
+
+    public class CrmAdoDsRefBuilder : DSRefBuilder
+    {
+        protected override void AppendToDSRef(object dsRef, string typeName, object[] identifier, object[] parameters)
+        {
+            base.AppendToDSRef(dsRef, typeName, identifier, parameters);
+            return;
+        }        
+
+    }
+
+
     public class CrmAdoDataSourceVersionNumberComparer : IComparer<string>
     {
         public int Compare(string x, string y)
@@ -31,16 +58,16 @@ namespace CrmAdo.DdexProvider
 
         public CrmAdoDataSourceVersionComparer()
             : this(null)
-        {          
+        {
         }
 
         public CrmAdoDataSourceVersionComparer(IVsDataConnection site)
             : this(site, new CrmAdoDataSourceVersionNumberComparer())
-        {            
+        {
         }
 
         public CrmAdoDataSourceVersionComparer(IVsDataConnection site, IComparer<string> comparer)
-            :base(site)
+            : base(site)
         {
             Comparer = comparer;
         }
@@ -87,13 +114,13 @@ namespace CrmAdo.DdexProvider
     class CrmAdoProviderObjectFactory : DataProviderObjectFactory
     {
         public override object CreateObject(Type objType)
-        {                      
+        {
 
             if (objType == typeof(IVsDataConnectionProperties) || objType == typeof(IVsDataConnectionUIProperties))
                 return new AdoDotNetConnectionProperties();
             else if (objType == typeof(IVsDataConnectionSupport))
             {
-                var connSupport = new AdoDotNetConnectionSupport();
+                var connSupport = new CrmAdoConnectionSupport();
 
                 //var comparer = new CrmAdoDataSourceVersionComparer();              
 
@@ -134,7 +161,7 @@ namespace CrmAdo.DdexProvider
                 return connSupport;
             }
             else if (objType == typeof(IDSRefBuilder))
-                return new Microsoft.VisualStudio.Data.Framework.DSRefBuilder();
+                return new CrmAdoDsRefBuilder();
             else if (objType == typeof(IVsDataObjectSupport))
                 return new DataObjectSupport(this.GetType().Namespace + ".CrmObjectSupport", System.Reflection.Assembly.GetExecutingAssembly());
             else if (objType == typeof(IVsDataViewSupport))

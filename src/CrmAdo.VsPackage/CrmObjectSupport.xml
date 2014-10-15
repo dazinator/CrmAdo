@@ -155,6 +155,34 @@
             <!--<Parameter value="Column" />-->
           </Parameters>
         </Service>
+        <Service type="IDSRefBuilder">
+          <Parameters method="AppendToDSRef">
+            <Parameter>
+              <Parameter value="{0}" />
+              <Parameter />
+              <Parameter value="Table" />
+              <Parameter />
+              <Parameter>
+                <Parameter value="39A5A7E7-513F-44a4-B79D-7652CD8962D9">
+                  <Parameter value="101" type="System.Int32" />
+                </Parameter>
+              </Parameter>
+              <Parameter>
+                <Parameter>
+                  <Parameter value="{3}" />
+                  <Parameter />
+                  <Parameter value="Field" />
+                  <Parameter />
+                  <Parameter>
+                    <Parameter value="39A5A7E7-513F-44A4-B79D-7652CD8962D9">
+                      <Parameter value="102" type="System.Int32" />
+                    </Parameter>
+                  </Parameter>
+                </Parameter>
+              </Parameter>
+            </Parameter>
+          </Parameters>
+        </Service>
       </Services>
     </Type>
 

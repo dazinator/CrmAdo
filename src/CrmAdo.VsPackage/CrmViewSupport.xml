@@ -156,13 +156,13 @@
                         provider is specified using a COM class ID registered in the
                         Visual Studio local registry hive.
                     -->
-          <Command guid="501822E1-B5AF-11d0-B4DC-00A0C91506EF" cmdid="0x3528" provider="884DD964-5327-461f-9F06-6484DD540F8F" />
+          <Command guid="501822E1-B5AF-11d0-B4DC-00A0C91506EF" cmdid="13608" provider="884DD964-5327-461f-9F06-6484DD540F8F" />
         </Commands>
         <Children>
           <StaticNode>
             <DisplayName resource="Node_Entities" />
             <Commands>
-              <Command guid="501822E1-B5AF-11d0-B4DC-00A0C91506EF" cmdid="0x3528" provider="884DD964-5327-461f-9F06-6484DD540F8F" />
+              <Command guid="501822E1-B5AF-11d0-B4DC-00A0C91506EF" cmdid="13608" provider="884DD964-5327-461f-9F06-6484DD540F8F" />
             </Commands>
             <Children>
               <Selection type="EntityMetadata" >
@@ -170,7 +170,7 @@
                   <DisplayName resource="Node_Entity" />
                   <Icon name="Table"  />
                   <Commands>
-                    <Command guid="501822E1-B5AF-11d0-B4DC-00A0C91506EF" cmdid="0x3060" provider="884DD964-5327-461f-9F06-6484DD540F8F" />
+                    <Command guid="501822E1-B5AF-11d0-B4DC-00A0C91506EF" cmdid="13608" provider="884DD964-5327-461f-9F06-6484DD540F8F" />
                   </Commands>
                   <Children>
                     <StaticNode>

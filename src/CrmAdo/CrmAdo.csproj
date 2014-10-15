@@ -149,6 +149,8 @@
     <Compile Include="Ado\CrmDataAdaptorRowUpdatingEventArgs.cs" />
     <Compile Include="Ado\CrmDbMetadataReader.cs" />
     <Compile Include="ColumnMetadata.cs" />
+    <Compile Include="CrmConnectionCache.cs" />
+    <Compile Include="CrmConnectionInfo.cs" />
     <Compile Include="DesignTime\CrmConnectionStringBuilderConverter.cs" />
     <Compile Include="DesignTime\EnumStandardValuesAttribute.cs" />
     <Compile Include="CrmCommandExecutor.cs" />
