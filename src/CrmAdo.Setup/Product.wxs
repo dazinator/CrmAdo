@@ -10,13 +10,19 @@
     <Feature Id="ProductFeature" Title="CrmAdo ADO.NET Data Provider" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
     </Feature>
-
-    <SetProperty Id="InvariantName"
-           Value="/configuration/connectionStrings/add[\[]@name='[CONNECTIONSTRING_NAME]'[\]]"
-           After="InstallInitialize" Sequence="execute" />
+    <Binary Id="CustomActionsDll" src="$(var.CrmAdo.Installation.TargetDir)$(var.CrmAdo.Installation.TargetName).CA.dll" />
+    <CustomAction Id='ConfigureCrmAdoDataProvider' BinaryKey='CustomActionsDll' DllEntry='ConfigureCrmAdoDataProvider' Execute='immediate' Return='check'/>
+    <CustomAction Id='RemoveCrmAdoDataProviderConfiguration' BinaryKey='CustomActionsDll' DllEntry='RemoveCrmAdoDataProviderConfiguration' Execute='immediate' Return='check'/>
+    <InstallExecuteSequence>
+      <Custom Action='ConfigureCrmAdoDataProvider' After='InstallFiles'>
+        NOT Installed
+      </Custom>
+      <Custom Action='RemoveCrmAdoDataProviderConfiguration' Before='InstallFinalize'>
+        Installed AND NOT UPGRADINGPRODUCTCODE
+      </Custom>
+    </InstallExecuteSequence>    
   </Product>
-
-
+  <!--$(var.CrmAdo.Installation.TargetDir)$(var.CrmAdo.Installation.TargetName).CA.dll-->
   <!-- Step 1: Define the directory structure -->
   <Fragment>
     <Directory Id="TARGETDIR" Name="SourceDir">
@@ -32,8 +38,16 @@
   </Fragment>
 
   <Fragment>
-    <ComponentGroup Id="ProductComponents" Directory="TARGETDIR">
+    <ComponentGroup Id="ProductComponents">
       <!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
+      <!--<Component Id="CrmAdo.Installation.CA.dll" Directory="TARGETDIR" Guid="954DEBCF-D06C-4638-887B-8356AC992091">
+        --><!-- Add to GAC. --><!--
+        <File Id="CrmAdo.Installation.CA.dll"
+            Source="$(var.CrmAdo.Installation.TargetDir)$(var.CrmAdo.Installation.TargetName).CA.dll"
+            Assembly="no"
+            KeyPath="yes" />
+      </Component>-->
+      
       <Component Id="CrmAdo.dll" Directory="GAC" Guid="D97A86CC-C9E4-47B7-BF04-2DEC44B16E84">
         <!-- Add to GAC. -->
         <File Id="CrmAdo.dll"
@@ -42,81 +56,24 @@
             KeyPath="yes" />
       </Component>
 
-      <Component Id="MachineConfigNET40" Guid="E376BBD2-D000-4964-BF1C-2593F27FF7FD" Directory="TARGETDIR">
-        <util:XmlConfig
-        Id="AddDbProviderFactoryElement"
-        File="[WindowsFolder]Microsoft.NET\Framework\v4.0.30319\CONFIG\Machine.Config"
-        Action="create"
-        On="install"
-        VerifyPath="//configuration/system.data/DbProviderFactories/add[\[]@invariant='System.Data.DynamicsCrm.CrmAdo'[\]]"
-        ElementPath="//configuration/system.data/DbProviderFactories"
-        Name="add"
-        Node="element"
-        Sequence="1">
-        </util:XmlConfig>
-        <util:XmlConfig
-              Id="SetDbProviderInvariant"
-              File="[WindowsFolder]Microsoft.NET\Framework\v4.0.30319\CONFIG\Machine.Config"
-              ElementId="AddDbProviderFactoryElement"
-              Name="invariant"
-              Value="System.Data.DynamicsCrm.CrmAdo"
-              Sequence="1">
-        </util:XmlConfig>
-
-        <util:XmlConfig
-               Id="SetDbProviderName"
-               File="[WindowsFolder]Microsoft.NET\Framework\v4.0.30319\CONFIG\Machine.Config"
-               ElementId="AddDbProviderFactoryElement"
-               Name="name"
-               Value="CrmAdo Data Provider"
-               Sequence="3">
-        </util:XmlConfig>
-        <!--ElementPath="//configuration/system.data/DbProviderFactories/add[\[]@invariant='System.Data.DynamicsCrm.CrmAdo'[\]]"-->
-        <util:XmlConfig
-               Id="SetDbProviderDescription"
-               File="[WindowsFolder]Microsoft.NET\Framework\v4.0.30319\CONFIG\Machine.Config"
-               ElementId="AddDbProviderFactoryElement"
-               Name="description"
-               Value="CrmAdo Data Provider for Microsoft Dynamics Crm 2013"
-               Sequence="3">
-        </util:XmlConfig>
-        <util:XmlConfig
-               Id="SetDbProviderType"
-               File="[WindowsFolder]Microsoft.NET\Framework\v4.0.30319\CONFIG\Machine.Config"
-               ElementId="AddDbProviderFactoryElement"
-               Name="type"
-               Value="CrmAdo.CrmDbProviderFactory, CrmAdo, Version=!(bind.FileVersion.CrmAdo.dll), Culture=neutral, PublicKeyToken=ba966c247ee8fd34"
-               Sequence="3">
-        </util:XmlConfig>
-
-        <util:XmlConfig
-         Id="UninstallDbProviderConfig"
-         File="[WindowsFolder]Microsoft.NET\Framework\v4.0.30319\CONFIG\Machine.Config"
-         Sequence="1"
-         On="uninstall"
-         Action="delete"
-         ElementPath="/configuration/system.data/DbProviderFactories"
-         VerifyPath="/configuration/system.data/DbProviderFactories/add[\[]@invariant='System.Data.DynamicsCrm.CrmAdo'[\]]"
-         Node="element"
-        
-        
-        >
-        </util:XmlConfig>
+      <Component Id="Microsoft.Xrm.Sdk.dll" Directory="GAC" Guid="A666F417-90E8-4EC6-9187-3C1B3CB4CA57">
+        <!-- Add to GAC. -->
+        <File Id="Microsoft.Xrm.Sdk.dll"
+            Source="$(var.CrmAdo.TargetDir)Microsoft.Xrm.Sdk.dll"
+            Assembly=".net"
+            KeyPath="yes" />
       </Component>
-      <!--ElementPath="//configuration/system.data/DbProviderFactories/add[\[]@invariant='System.Data.DynamicsCrm.CrmAdo'[\]]"-->
-           
-      <Component Id="UninstallMachineConfigNET40" Guid="AAD20E7F-BE52-4B17-AA73-671FE2723D9C" Directory="TARGETDIR">
-        <util:XmlConfig
-        Id="UninstallDbProvider"
-        File="[WindowsFolder]Microsoft.NET\Framework\v4.0.30319\CONFIG\Machine.Config"
-        Action="delete"
-        Node="element"
-        On="uninstall"       
-        VerifyPath="//configuration/system.data/DbProviderFactories/add[\[]@invariant='System.Data.DynamicsCrm.CrmAdo'[\]]"       
-        ElementPath="//configuration/system.data/DbProviderFactories"
-        Sequence="1">
-        </util:XmlConfig>
+
+      <Component Id="SQLGeneration.dll" Directory="GAC" Guid="E855ADC7-1F30-4CFF-A143-5BA3CCFC100F">
+        <!-- Add to GAC. -->
+        <File Id="SQLGeneration.dll"
+            Source="$(var.CrmAdo.TargetDir)SQLGeneration.dll"
+            Assembly=".net"
+            KeyPath="yes" />
       </Component>
+
     </ComponentGroup>
   </Fragment>
+
+
 </Wix>

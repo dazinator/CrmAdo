@@ -42,6 +42,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo.VsPackage_Integratio
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "CrmAdo.Setup", "CrmAdo.Setup\CrmAdo.Setup.wixproj", "{5496FE05-AD61-4BC2-80EA-7670CF0EF499}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo.Installation", "CrmAdo.Installation\CrmAdo.Installation.csproj", "{5FE4693B-2B74-46A9-B739-F5560E7C5990}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -276,6 +278,36 @@ Global
 		{5496FE05-AD61-4BC2-80EA-7670CF0EF499}.Release|x64.ActiveCfg = Release|x86
 		{5496FE05-AD61-4BC2-80EA-7670CF0EF499}.Release|x86.ActiveCfg = Release|x86
 		{5496FE05-AD61-4BC2-80EA-7670CF0EF499}.Release|x86.Build.0 = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Debug|x64.ActiveCfg = Debug|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Debug|x86.ActiveCfg = Debug|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Debug|x86.Build.0 = Debug|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.IntegrationTesting|Any CPU.ActiveCfg = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.IntegrationTesting|Mixed Platforms.ActiveCfg = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.IntegrationTesting|Mixed Platforms.Build.0 = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.IntegrationTesting|x64.ActiveCfg = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.IntegrationTesting|x86.ActiveCfg = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.IntegrationTesting|x86.Build.0 = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Release 4.0|Any CPU.ActiveCfg = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Release 4.0|Mixed Platforms.ActiveCfg = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Release 4.0|Mixed Platforms.Build.0 = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Release 4.0|x64.ActiveCfg = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Release 4.0|x86.ActiveCfg = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Release 4.0|x86.Build.0 = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Release 4.5|Any CPU.ActiveCfg = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Release 4.5|Mixed Platforms.ActiveCfg = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Release 4.5|Mixed Platforms.Build.0 = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Release 4.5|x64.ActiveCfg = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Release 4.5|x86.ActiveCfg = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Release 4.5|x86.Build.0 = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Release|Any CPU.ActiveCfg = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Release|Mixed Platforms.Build.0 = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Release|x64.ActiveCfg = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Release|x86.ActiveCfg = Release|x86
+		{5FE4693B-2B74-46A9-B739-F5560E7C5990}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

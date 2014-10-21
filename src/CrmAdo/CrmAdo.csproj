@@ -109,6 +109,7 @@
     <Reference Include="SQLGeneration, Version=2.5.5.0, Culture=neutral, PublicKeyToken=22ea15b5a3c0e6aa, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\SQLGeneration.DazinatorFork.2.5.5\lib\net40\SQLGeneration.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

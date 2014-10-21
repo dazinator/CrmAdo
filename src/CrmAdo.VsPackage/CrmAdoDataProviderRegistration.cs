@@ -68,30 +68,30 @@ namespace CrmAdo.DdexProvider
                 supportedProviderKey.SetValue("DisplayName", "Provider_DisplayName, " + resourcesNamespace);
 
 
-                // Register assemblies in GAC - REQUIRED FOR DDEX - which sucks by the way.
-                var directory = AssemblyDirectory;
+                //// Register assemblies in GAC - REQUIRED FOR DDEX - which sucks by the way.
+                //var directory = AssemblyDirectory;
 
-                List<string> assembliesList = new List<string>();
-                assembliesList.Add("CrmAdo.dll");
-                assembliesList.Add("Microsoft.Xrm.Sdk.dll");
-                assembliesList.Add("SQLGeneration.dll");
+                //List<string> assembliesList = new List<string>();
+                //assembliesList.Add("CrmAdo.dll");
+                //assembliesList.Add("Microsoft.Xrm.Sdk.dll");
+                //assembliesList.Add("SQLGeneration.dll");
 
-                // Install Ado.Net provider required assemblies into Gac.   
+                //// Install Ado.Net provider required assemblies into Gac.   
 
-                var dir = GacHelper.CurrentAssemblyDirectory;
-                foreach (var item in assembliesList)
-                {
-                    var assemblyDir = System.IO.Path.Combine(dir, item);
-                    if (System.IO.File.Exists(assemblyDir))
-                    {
-                        GacHelper.AddToGac(assemblyDir);
-                    }
-                    else
-                    {
-                        Trace.WriteLine("Could not find file: " + assemblyDir);
-                        throw new Exception("Could not register file into gac: " + assemblyDir);
-                    }
-                }
+                //var dir = GacHelper.CurrentAssemblyDirectory;
+                //foreach (var item in assembliesList)
+                //{
+                //    var assemblyDir = System.IO.Path.Combine(dir, item);
+                //    if (System.IO.File.Exists(assemblyDir))
+                //    {
+                //        GacHelper.AddToGac(assemblyDir);
+                //    }
+                //    else
+                //    {
+                //        Trace.WriteLine("Could not find file: " + assemblyDir);
+                //        throw new Exception("Could not register file into gac: " + assemblyDir);
+                //    }
+                //}
 
                 //Publish objPub = new Publish();
                 //foreach (var item in assembliesList)
@@ -129,38 +129,9 @@ namespace CrmAdo.DdexProvider
             }
 
             // Register provider in machine config.           
-            var factoryType = typeof(CrmDbProviderFactory);
-            InstallUtils.RegisterDataProviderInMachineConfig(CrmDbProviderFactory.Invariant, CrmDbProviderFactory.Name, CrmDbProviderFactory.Description, factoryType.FullName, factoryType.Assembly.FullName);
+            //     var factoryType = typeof(CrmDbProviderFactory);
+            // InstallUtils.RegisterDataProviderInMachineConfig(CrmDbProviderFactory.Invariant, CrmDbProviderFactory.Name, CrmDbProviderFactory.Description, factoryType.FullName, factoryType.Assembly.FullName);
 
-        }
-
-        System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            AssemblyName askedAssembly = new AssemblyName(args.Name);
-
-            lock (this)
-            {
-                Assembly assembly = null;
-
-                //string resourceName = string.Format("Assets.Assemblies.{0}.dll", askedAssembly.Name);
-                //using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                //{
-                //    if (stream == null)
-                //    {
-                //        LogManager.Instance.Write(LogMessageTypes.Fatal, string.Format("Can not resolve asked assembly: {0}", askedAssembly.Name));
-                //        MessageBox.Show(i18n.CanNotLoadRequiredAssembliesMessage, i18n.CanNotLoadRequiredAssembliesTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //        Environment.Exit(-1);
-                //    }
-
-                //    byte[] assemblyData = new byte[stream.Length];
-                //    stream.Read(assemblyData, 0, assemblyData.Length);
-                //    assembly = Assembly.Load(assemblyData);
-                //}
-
-                //LogManager.Instance.Write(LogMessageTypes.Trace, "Loaded embedded assembly: " + askedAssembly.Name);
-
-                return assembly;
-            }
         }
 
         public override void Unregister(RegistrationAttribute.RegistrationContext context)
@@ -174,16 +145,16 @@ namespace CrmAdo.DdexProvider
             //objPub.GacRemove("AssemblyPath");
         }
 
-        public static string AssemblyDirectory
-        {
-            get
-            {
-                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
-                UriBuilder uri = new UriBuilder(codeBase);
-                string path = Uri.UnescapeDataString(uri.Path);
-                return Path.GetDirectoryName(path);
-            }
-        }
+        //public static string AssemblyDirectory
+        //{
+        //    get
+        //    {
+        //        string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+        //        UriBuilder uri = new UriBuilder(codeBase);
+        //        string path = Uri.UnescapeDataString(uri.Path);
+        //        return Path.GetDirectoryName(path);
+        //    }
+        //}
 
     }
 }

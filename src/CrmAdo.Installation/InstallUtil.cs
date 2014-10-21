@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -10,9 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace CrmAdo.DdexProvider
+namespace CrmAdo.Installation
 {
-    public class InstallUtils
+    public class Utils
     {
 
         private static string GetFrameworkFolder(bool x64)
@@ -60,6 +59,22 @@ namespace CrmAdo.DdexProvider
             if (!string.IsNullOrEmpty(configFilePath))
             {
                 RegisterDataProviderInConfigFile(configFilePath, invariant, name, description, assemblyQualifiedName);
+            }
+        }
+
+        public static void UnregisterDataProviderFromMachineConfig(string invariant)
+        {
+            string configFilePath = GetCurrentEnvironmentMachineConfigFilePath(true);          
+
+            if (!string.IsNullOrEmpty(configFilePath))
+            {
+                RemoveDataProviderFromMachineConfig(configFilePath, invariant);
+            }
+
+            configFilePath = GetCurrentEnvironmentMachineConfigFilePath(false);
+            if (!string.IsNullOrEmpty(configFilePath))
+            {
+                RemoveDataProviderFromMachineConfig(configFilePath, invariant);
             }
         }
 

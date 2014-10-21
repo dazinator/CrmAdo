@@ -151,7 +151,6 @@
     <Compile Include="GacHelper.cs" />
     <Compile Include="GACWrap.cs" />
     <Compile Include="Guids.cs" />
-    <Compile Include="InstallUtil.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -192,7 +191,9 @@
     <EmbeddedResource Include="CrmObjectSupport.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="CrmViewSupport.xml" />
+    <EmbeddedResource Include="CrmViewSupport.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <Content Include="ReleaseNotes.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
