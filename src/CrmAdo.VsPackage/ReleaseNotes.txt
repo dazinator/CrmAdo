@@ -1,2 +1,5 @@
-﻿v1.2.0
+﻿v1.2.1
+Fixed installation issue where CrmAdo was not being affed to the GAC!
+
+v1.2.0
 This is the initial release on the visual studio extensions store!

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Product Id="*" Name="CrmAdo ADO.NET Data Provider" Language="1033" Version="!(bind.FileVersion.CrmAdo.dll)" Manufacturer="CrmAdo" UpgradeCode="0dcf7b53-5dca-439c-b3a7-adf70da4ac5f">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+    <UIRef Id="WixUI_Mondo" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+    <WixVariable Id="WixUILicenseRtf" Value="Eula.rtf" />
+    <Feature Id="ProductFeature" Title="CrmAdo ADO.NET Data Provider" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+    </Feature>
+
+    <SetProperty Id="InvariantName"
+           Value="/configuration/connectionStrings/add[\[]@name='[CONNECTIONSTRING_NAME]'[\]]"
+           After="InstallInitialize" Sequence="execute" />
+  </Product>
+
+
+  <!-- Step 1: Define the directory structure -->
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <!--<Directory Id="INSTALLFOLDER" Name="CrmAdo.Setup" />-->
+        <Directory Id="ProductDirectory" Name="CrmAdo">
+          <Directory Id="GAC" Name="GAC">
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+
+  </Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="TARGETDIR">
+      <!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
+      <Component Id="CrmAdo.dll" Directory="GAC" Guid="D97A86CC-C9E4-47B7-BF04-2DEC44B16E84">
+        <!-- Add to GAC. -->
+        <File Id="CrmAdo.dll"
+            Source="$(var.CrmAdo.TargetDir)$(var.CrmAdo.TargetFileName)"
+            Assembly=".net"
+            KeyPath="yes" />
+      </Component>
+
+      <Component Id="MachineConfigNET40" Guid="E376BBD2-D000-4964-BF1C-2593F27FF7FD" Directory="TARGETDIR">
+        <util:XmlConfig
+        Id="AddDbProviderFactoryElement"
+        File="[WindowsFolder]Microsoft.NET\Framework\v4.0.30319\CONFIG\Machine.Config"
+        Action="create"
+        On="install"
+        VerifyPath="//configuration/system.data/DbProviderFactories/add[\[]@invariant='System.Data.DynamicsCrm.CrmAdo'[\]]"
+        ElementPath="//configuration/system.data/DbProviderFactories"
+        Name="add"
+        Node="element"
+        Sequence="1">
+        </util:XmlConfig>
+        <util:XmlConfig
+              Id="SetDbProviderInvariant"
+              File="[WindowsFolder]Microsoft.NET\Framework\v4.0.30319\CONFIG\Machine.Config"
+              ElementId="AddDbProviderFactoryElement"
+              Name="invariant"
+              Value="System.Data.DynamicsCrm.CrmAdo"
+              Sequence="1">
+        </util:XmlConfig>
+
+        <util:XmlConfig
+               Id="SetDbProviderName"
+               File="[WindowsFolder]Microsoft.NET\Framework\v4.0.30319\CONFIG\Machine.Config"
+               ElementId="AddDbProviderFactoryElement"
+               Name="name"
+               Value="CrmAdo Data Provider"
+               Sequence="3">
+        </util:XmlConfig>
+        <!--ElementPath="//configuration/system.data/DbProviderFactories/add[\[]@invariant='System.Data.DynamicsCrm.CrmAdo'[\]]"-->
+        <util:XmlConfig
+               Id="SetDbProviderDescription"
+               File="[WindowsFolder]Microsoft.NET\Framework\v4.0.30319\CONFIG\Machine.Config"
+               ElementId="AddDbProviderFactoryElement"
+               Name="description"
+               Value="CrmAdo Data Provider for Microsoft Dynamics Crm 2013"
+               Sequence="3">
+        </util:XmlConfig>
+        <util:XmlConfig
+               Id="SetDbProviderType"
+               File="[WindowsFolder]Microsoft.NET\Framework\v4.0.30319\CONFIG\Machine.Config"
+               ElementId="AddDbProviderFactoryElement"
+               Name="type"
+               Value="CrmAdo.CrmDbProviderFactory, CrmAdo, Version=!(bind.FileVersion.CrmAdo.dll), Culture=neutral, PublicKeyToken=ba966c247ee8fd34"
+               Sequence="3">
+        </util:XmlConfig>
+
+        <util:XmlConfig
+         Id="UninstallDbProviderConfig"
+         File="[WindowsFolder]Microsoft.NET\Framework\v4.0.30319\CONFIG\Machine.Config"
+         Sequence="1"
+         On="uninstall"
+         Action="delete"
+         ElementPath="/configuration/system.data/DbProviderFactories"
+         VerifyPath="/configuration/system.data/DbProviderFactories/add[\[]@invariant='System.Data.DynamicsCrm.CrmAdo'[\]]"
+         Node="element"
+        
+        
+        >
+        </util:XmlConfig>
+      </Component>
+      <!--ElementPath="//configuration/system.data/DbProviderFactories/add[\[]@invariant='System.Data.DynamicsCrm.CrmAdo'[\]]"-->
+           
+      <Component Id="UninstallMachineConfigNET40" Guid="AAD20E7F-BE52-4B17-AA73-671FE2723D9C" Directory="TARGETDIR">
+        <util:XmlConfig
+        Id="UninstallDbProvider"
+        File="[WindowsFolder]Microsoft.NET\Framework\v4.0.30319\CONFIG\Machine.Config"
+        Action="delete"
+        Node="element"
+        On="uninstall"       
+        VerifyPath="//configuration/system.data/DbProviderFactories/add[\[]@invariant='System.Data.DynamicsCrm.CrmAdo'[\]]"       
+        ElementPath="//configuration/system.data/DbProviderFactories"
+        Sequence="1">
+        </util:XmlConfig>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

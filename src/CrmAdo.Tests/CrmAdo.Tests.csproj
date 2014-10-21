@@ -189,6 +189,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CrmAdo.VsPackage\CrmAdo.DdexProvider2013.csproj">
+      <Project>{9024366d-45c9-47ba-8d20-f88975a7ed7c}</Project>
+      <Name>CrmAdo.DdexProvider2013</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CrmAdo\CrmAdo.csproj">
       <Project>{61D9051D-4C85-419F-97DC-D56D4A72C5E3}</Project>
       <Name>CrmAdo</Name>

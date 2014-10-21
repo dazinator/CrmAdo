@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="7a1193f1-db85-4bef-ba54-604efcb169a3" Version="1.2.7" Language="en-US" Publisher="CrmAdo" />
+    <Identity Id="7a1193f1-db85-4bef-ba54-604efcb169a3" Version="1.2.2" Language="en-US" Publisher="CrmAdo" />
     <DisplayName>CrmAdo.DdexProvider</DisplayName>
     <Description xml:space="preserve">Connect to Dynamics CRM 2011 &amp; 2013 via
       Adds design time support to visual studio so that the CrmAdo provider can be used at design time when generating EF models etc etc.
@@ -11,6 +11,7 @@
     <MoreInfo>http://dazinator.github.io/CrmAdo/</MoreInfo>
     <License>eula.txt</License>
     <GettingStartedGuide>https://github.com/dazinator/CrmAdo/wiki/Visual-Studio-Extension---Getting-Started</GettingStartedGuide>
+    <ReleaseNotes>ReleaseNotes.txt</ReleaseNotes>
     <Icon>Resources\Package.ico</Icon>
     <Tags>CrmAdo Ado EF DDEX Design Dynamics Crm DynamicsCrm</Tags>
   </Metadata>

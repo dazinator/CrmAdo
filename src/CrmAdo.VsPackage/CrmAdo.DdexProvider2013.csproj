@@ -68,6 +68,15 @@
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.10.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.11.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.12.0" />
+    <Reference Include="Microsoft.Xrm.Sdk, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Microsoft.CrmSdk.CoreAssemblies.6.1.1\lib\net45\Microsoft.Xrm.Sdk.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SQLGeneration, Version=2.5.5.0, Culture=neutral, PublicKeyToken=22ea15b5a3c0e6aa, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\lib\SQLGeneration.DazinatorFork.2.5.5\lib\net40\SQLGeneration.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -139,6 +148,8 @@
     <Compile Include="CrmObjectSelector.cs" />
     <Compile Include="CrmObjectTypes.cs" />
     <Compile Include="CrmSourceInformation.cs" />
+    <Compile Include="GacHelper.cs" />
+    <Compile Include="GACWrap.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="InstallUtil.cs" />
     <Compile Include="Resources.Designer.cs">
@@ -169,6 +180,7 @@
     <None Include="DataViewSupport.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="packages.config" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -181,7 +193,10 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="CrmViewSupport.xml" />
-    <Resource Include="ReleaseNotes.txt" />
+    <Content Include="ReleaseNotes.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="eula.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

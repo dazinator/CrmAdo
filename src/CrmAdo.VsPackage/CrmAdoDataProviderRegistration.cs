@@ -6,6 +6,7 @@ using System.Reflection;
 using System.EnterpriseServices.Internal;
 using System.IO;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace CrmAdo.DdexProvider
 {
@@ -14,7 +15,7 @@ namespace CrmAdo.DdexProvider
         public override void Register(RegistrationAttribute.RegistrationContext context)
         {
 
-        //    AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+            //    AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
             Key providerKey = null;
             Key supportedObjectsKey = null;
@@ -74,21 +75,38 @@ namespace CrmAdo.DdexProvider
                 assembliesList.Add("CrmAdo.dll");
                 assembliesList.Add("Microsoft.Xrm.Sdk.dll");
                 assembliesList.Add("SQLGeneration.dll");
-                
-                Publish objPub = new Publish();
+
+                // Install Ado.Net provider required assemblies into Gac.   
+
+                var dir = GacHelper.CurrentAssemblyDirectory;
                 foreach (var item in assembliesList)
                 {
-                    var assemblyDir = System.IO.Path.Combine(directory, item);
-                    objPub.GacInstall(assemblyDir);
+                    var assemblyDir = System.IO.Path.Combine(dir, item);
+                    if (System.IO.File.Exists(assemblyDir))
+                    {
+                        GacHelper.AddToGac(assemblyDir);
+                    }
+                    else
+                    {
+                        Trace.WriteLine("Could not find file: " + assemblyDir);
+                        throw new Exception("Could not register file into gac: " + assemblyDir);
+                    }
                 }
-               
+
+                //Publish objPub = new Publish();
+                //foreach (var item in assembliesList)
+                //{
+                //    var assemblyDir = System.IO.Path.Combine(directory, item);
+                //    objPub.GacInstall(assemblyDir);
+                //}
+
                 //   var assembly = File.ReadAllBytes(crmAdoDiretcory);
                 //  AppDomain.CurrentDomain.Load(assembly);
-          
-               
-               
+
+
+
                 //to add the assembly - use full path with file name
-               
+
 
 
             }
