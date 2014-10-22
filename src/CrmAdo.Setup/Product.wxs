@@ -11,6 +11,9 @@
       <ComponentGroupRef Id="ProductComponents" />
     </Feature>
     <Binary Id="CustomActionsDll" src="$(var.CrmAdo.Installation.TargetDir)$(var.CrmAdo.Installation.TargetName).CA.dll" />
+    <!--<CustomAction Id='AssignConfigFile'
+               Property='CRMADO_'
+               Value='[PRODUCTINSTALLFOLDER]pathtoconfigfile\web.config' />-->
     <CustomAction Id='ConfigureCrmAdoDataProvider' BinaryKey='CustomActionsDll' DllEntry='ConfigureCrmAdoDataProvider' Execute='immediate' Return='check'/>
     <CustomAction Id='RemoveCrmAdoDataProviderConfiguration' BinaryKey='CustomActionsDll' DllEntry='RemoveCrmAdoDataProviderConfiguration' Execute='immediate' Return='check'/>
     <InstallExecuteSequence>

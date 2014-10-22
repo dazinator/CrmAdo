@@ -139,6 +139,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ado\CrmAdoConstants.cs" />
     <Compile Include="Ado\CrmCommandBuilder.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -150,6 +151,7 @@
     <Compile Include="Ado\CrmDataAdaptorRowUpdatingEventArgs.cs" />
     <Compile Include="Ado\CrmDbMetadataReader.cs" />
     <Compile Include="ColumnMetadata.cs" />
+    <Compile Include="Properties\GeneralInfo.cs" />
     <Compile Include="CrmConnectionCache.cs" />
     <Compile Include="CrmConnectionInfo.cs" />
     <Compile Include="DesignTime\CrmConnectionStringBuilderConverter.cs" />

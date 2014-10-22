@@ -148,8 +148,6 @@
     <Compile Include="CrmObjectSelector.cs" />
     <Compile Include="CrmObjectTypes.cs" />
     <Compile Include="CrmSourceInformation.cs" />
-    <Compile Include="GacHelper.cs" />
-    <Compile Include="GACWrap.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>

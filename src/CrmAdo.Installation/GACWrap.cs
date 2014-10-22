@@ -8,7 +8,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace CrmAdo.DdexProvider
+namespace CrmAdo.Installation.GAC
 {
     //-------------------------------------------------------------
     // Interfaces defined by fusion

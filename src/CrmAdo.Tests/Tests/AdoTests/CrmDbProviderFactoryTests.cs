@@ -26,34 +26,34 @@ namespace CrmAdo.Tests
         [Test]
         public void Should_Be_Able_To_Create_A_New_CrmDbProviderFactory_Via_ProviderFactory()
         {
-            var dbprovider = DbProviderFactories.GetFactory(CrmDbProviderFactory.Invariant);
+            var dbprovider = DbProviderFactories.GetFactory(CrmAdoConstants.Invariant);
         }
 
         [Test]
         public void Should_Be_Able_To_Create_A_New_Connection()
         {
-            var dbprovider = DbProviderFactories.GetFactory(CrmDbProviderFactory.Invariant);
+            var dbprovider = DbProviderFactories.GetFactory(CrmAdoConstants.Invariant);
             var conn = dbprovider.CreateConnection();
         }
 
         [Test]
         public void Should_Be_Able_To_Create_A_New_Command_Via_Provider_Factory()
         {
-            var dbprovider = DbProviderFactories.GetFactory(CrmDbProviderFactory.Invariant);
+            var dbprovider = DbProviderFactories.GetFactory(CrmAdoConstants.Invariant);
             var command = dbprovider.CreateCommand();
         }
 
         [Test]
         public void Should_Be_Able_To_Create_A_New_DataAdaptor_Via_Provider_Factory()
         {
-            var dbprovider = DbProviderFactories.GetFactory(CrmDbProviderFactory.Invariant);
+            var dbprovider = DbProviderFactories.GetFactory(CrmAdoConstants.Invariant);
             var command = dbprovider.CreateDataAdapter();
         }
 
         [Test]
         public void Should_Be_Able_To_Create_A_New_CommandBuilder_Via_Provider_Factory()
         {
-            var dbprovider = DbProviderFactories.GetFactory(CrmDbProviderFactory.Invariant);
+            var dbprovider = DbProviderFactories.GetFactory(CrmAdoConstants.Invariant);
             var command = dbprovider.CreateCommandBuilder();
         }
 

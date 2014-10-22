@@ -12,7 +12,7 @@ using System.Xml;
 namespace CrmAdo.Installation
 {
     public class Utils
-    {
+    {        
 
         private static string GetFrameworkFolder(bool x64)
         {
@@ -159,6 +159,8 @@ namespace CrmAdo.Installation
                 Console.WriteLine("{0} updated successfully.", path);
             }
         }
+
+
 
     }
 }

@@ -33,7 +33,7 @@ namespace CrmAdo.DdexProvider
                 providerKey.SetValue("Description", "Provider_Description, " + resourcesNamespace);
                 providerKey.SetValue("DisplayName", "Provider_DisplayName, " + resourcesNamespace);
                 providerKey.SetValue("FactoryService", "{" + GuidList.guidCrmAdo_DdexProviderObjectFactoryString + "}");
-                providerKey.SetValue("InvariantName", CrmDbProviderFactory.Invariant);
+                providerKey.SetValue("InvariantName", CrmAdoConstants.Invariant);
                 providerKey.SetValue("PlatformVersion", "2.0");
                 providerKey.SetValue("ShortDisplayName", "Provider_ShortDisplayName, " + resourcesNamespace);
                 providerKey.SetValue("Technology", "{" + GuidList.guidCrmAdo_DdexProviderTechnologyString + "}");
