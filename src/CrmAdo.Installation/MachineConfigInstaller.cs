@@ -8,7 +8,7 @@ namespace CrmAdo.Installation
 {
     public class DataProviderConfigInstaller
     {
-        public virtual void UpdateConfig(Version currentVersion)
+        public virtual void UpdateConfig(string assemblyname, Version assemblyVersion, string culture, string publicKeyToken)
         {
             string invariant = CrmAdoConstants.Invariant;
             string name = CrmAdoConstants.Name;
@@ -17,16 +17,16 @@ namespace CrmAdo.Installation
 
             string typeFullName = string.Empty;
             string assemblyName = string.Empty;
-
             // var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
-            string fullyQualifiedAssemblyName = string.Format("CrmAdo, Version={0}", currentVersion.ToString());
+            // string macdetail = "CrmAdo, Version=1.2.5.0, Culture=neutral, PublicKeyToken=ba966c247ee8fd34";
+            string fullyQualifiedAssemblyName = string.Format("{0}, Version={1}, Culture={2}, PublicKeyToken={3}", assemblyname, assemblyVersion.ToString(), culture, publicKeyToken);
 
 
-          
 
 
 
-           // Assembly asm = Assembly.Load(fullyQualifiedAssemblyName);
+
+            // Assembly asm = Assembly.Load(fullyQualifiedAssemblyName);
 
             //   Assembly asm = Assembly.GetExecutingAssembly();
             //if (asm == null)
@@ -42,8 +42,8 @@ namespace CrmAdo.Installation
             //}
             //typeFullName = t.FullName;
 
-           // var info2 = string.Format("{0} {1} {2} {3} {4}", invariant, name, description, typeFullName, assemblyName);
-            Utils.RegisterDataProviderInMachineConfig(invariant, name, description, typeName, assemblyName);
+            // var info2 = string.Format("{0} {1} {2} {3} {4}", invariant, name, description, typeFullName, assemblyName);
+            Utils.RegisterDataProviderInMachineConfig(invariant, name, description, typeName, fullyQualifiedAssemblyName);
 
             #region nonsense
 

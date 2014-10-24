@@ -10,20 +10,35 @@
     <Feature Id="ProductFeature" Title="CrmAdo ADO.NET Data Provider" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
     </Feature>
+     <Feature Id="ProductFeature" Title="Visual Studio DDEX Provider" Level="1">
+      <ComponentGroupRef Id="VsixComponents" />
+    </Feature>
+
     <Binary Id="CustomActionsDll" src="$(var.CrmAdo.Installation.TargetDir)$(var.CrmAdo.Installation.TargetName).CA.dll" />
-    <!--<CustomAction Id='AssignConfigFile'
-               Property='CRMADO_'
-               Value='[PRODUCTINSTALLFOLDER]pathtoconfigfile\web.config' />-->
+
+    <CustomAction Id='AssignCrmAdoAssemblyCulture'
+               Property='CrmAdoAssemblyCulture'
+               Value='!(bind.assemblyCulture.CrmAdo.dll)' />
+    <CustomAction Id='AssignCrmAdoAssemblyName'
+              Property='CrmAdoAssemblyName'
+              Value='!(bind.assemblyName.CrmAdo.dll)' />
+    <CustomAction Id='AssignCrmAdoAssemblyPublicKeyToken'
+               Property='CrmAdoPublicKeyToken'
+               Value='!(bind.assemblyPublicKeyToken.CrmAdo.dll)' />
+
     <CustomAction Id='ConfigureCrmAdoDataProvider' BinaryKey='CustomActionsDll' DllEntry='ConfigureCrmAdoDataProvider' Execute='immediate' Return='check'/>
     <CustomAction Id='RemoveCrmAdoDataProviderConfiguration' BinaryKey='CustomActionsDll' DllEntry='RemoveCrmAdoDataProviderConfiguration' Execute='immediate' Return='check'/>
     <InstallExecuteSequence>
+      <Custom Action="AssignCrmAdoAssemblyCulture" After="CostFinalize" />
+      <Custom Action="AssignCrmAdoAssemblyName" After="CostFinalize" />
+      <Custom Action="AssignCrmAdoAssemblyPublicKeyToken" After="CostFinalize" />
       <Custom Action='ConfigureCrmAdoDataProvider' After='InstallFiles'>
         NOT Installed
       </Custom>
       <Custom Action='RemoveCrmAdoDataProviderConfiguration' Before='InstallFinalize'>
         Installed AND NOT UPGRADINGPRODUCTCODE
       </Custom>
-    </InstallExecuteSequence>    
+    </InstallExecuteSequence>
   </Product>
   <!--$(var.CrmAdo.Installation.TargetDir)$(var.CrmAdo.Installation.TargetName).CA.dll-->
   <!-- Step 1: Define the directory structure -->
@@ -44,13 +59,15 @@
     <ComponentGroup Id="ProductComponents">
       <!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
       <!--<Component Id="CrmAdo.Installation.CA.dll" Directory="TARGETDIR" Guid="954DEBCF-D06C-4638-887B-8356AC992091">
-        --><!-- Add to GAC. --><!--
+        -->
+      <!-- Add to GAC. -->
+      <!--
         <File Id="CrmAdo.Installation.CA.dll"
             Source="$(var.CrmAdo.Installation.TargetDir)$(var.CrmAdo.Installation.TargetName).CA.dll"
             Assembly="no"
             KeyPath="yes" />
       </Component>-->
-      
+
       <Component Id="CrmAdo.dll" Directory="GAC" Guid="D97A86CC-C9E4-47B7-BF04-2DEC44B16E84">
         <!-- Add to GAC. -->
         <File Id="CrmAdo.dll"

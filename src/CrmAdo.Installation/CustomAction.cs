@@ -28,16 +28,18 @@ namespace CrmAdo.Installation
         {
             try
             {
-                return ActionResult.Success;
+                // return ActionResult.Success;
                 DataProviderConfigInstaller configInstaller = new DataProviderConfigInstaller();
 
-                string msiPath = session["OriginalDatabase"];
-
-             
+                // string msiPath = session["OriginalDatabase"];
+                string assemblyName = session["CrmAdoAssemblyName"];
+                string culture = session["CrmAdoAssemblyCulture"];
+                string publicKeyToken = session["CrmAdoPublicKeyToken"];
 
                 // We share the same versioninfo file as CrmAdo so our version is always the same.
                 var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
-                configInstaller.UpdateConfig(currentVersion);
+                configInstaller.UpdateConfig(assemblyName, currentVersion, culture, publicKeyToken);
+
                 return ActionResult.Success;
             }
             catch (Exception ex)
@@ -55,7 +57,6 @@ namespace CrmAdo.Installation
         {
             try
             {
-                return ActionResult.Success;
                 //   session.Log("Begin Configure RemoveCrmAdoDataProviderConfiguration Custom Action");
                 DataProviderConfigInstaller configInstaller = new DataProviderConfigInstaller();
                 configInstaller.RemoveConfig();
