@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
      xmlns:util="http://schemas.microsoft.com/wix/UtilExtension"
-     xmlns:VSExtension="http://schemas.microsoft.com/wix/VSExtension">
+     xmlns:VSExtension="http://schemas.microsoft.com/wix/VSExtension"
+     xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
   <Product Id="*" Name="CrmAdo ADO.NET Data Provider" Language="1033" Version="!(bind.FileVersion.CrmAdo.dll)" Manufacturer="CrmAdo" UpgradeCode="0dcf7b53-5dca-439c-b3a7-adf70da4ac5f">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
     <UIRef Id="WixUI_Mondo" />
@@ -12,9 +13,14 @@
       <!--<ComponentRef Id="CrmAdoAssembly"/>-->
       <ComponentGroupRef Id="ProductComponents" />
     </Feature>
-    <Feature Id="DDEXFeature" Title="Visual Studio - DDEX Provider" Level="1">
+    <!--<Feature Id="DDEXFeature" Title="Visual Studio - DDEX Provider" Level="1">
       <ComponentGroupRef Id="DDEXComponents" />
-    </Feature>
+    </Feature>-->
+    <PropertyRef Id="NETFRAMEWORK40FULL"/>
+
+    <Condition Message="This application requires .NET Framework 4.0. Please install the .NET Framework then run this installer again.">
+      <![CDATA[Installed OR NETFRAMEWORK40FULL]]>
+    </Condition>
 
     <Binary Id="CustomActionsDll" src="$(var.CrmAdo.Installation.TargetDir)$(var.CrmAdo.Installation.TargetName).CA.dll" />
 
@@ -42,7 +48,9 @@
         <Directory Id="ProductDirectory" Name="CrmAdo">
           <Directory Id="GAC" Name="GAC">
             <!--<Component Id="CrmAdoAssembly" Guid="2DE124DB-0C50-4D18-AB4F-BE37FCF46215" DiskId="1">
-              --><!-- Registering assembly in GAC --><!--
+              -->
+            <!-- Registering assembly in GAC -->
+            <!--
               <File Id="CrmAdoAssemblyFile" LongName="CrmAdo.dll" Source="$(var.CrmAdo.TargetDir)$(var.CrmAdo.TargetFileName)" KeyPath="yes" Assembly=".net"/>
             </Component>-->
           </Directory>
@@ -85,7 +93,7 @@
 
     </ComponentGroup>
 
-    <ComponentGroup Id="DDEXComponents">
+    <!--<ComponentGroup Id="DDEXComponents">
 
       <Component Id="DDEXVsix" Directory="TARGETDIR" Guid="DCD772CE-68AE-419F-A0CB-DBD148059F76">
 
@@ -100,10 +108,10 @@
         <VSExtension:VsixPackage File="CrmAdo.DdexProvider.vsix" PackageId="7a1193f1-db85-4bef-ba54-604efcb169a3" Target="ultimate" TargetVersion="12.0" Vital="no" Permanent="no"/>
         <VSExtension:VsixPackage File="CrmAdo.DdexProvider.vsix" PackageId="7a1193f1-db85-4bef-ba54-604efcb169a3" Target="ultimate" TargetVersion="11.0" Vital="no" Permanent="no"/>
 
-        <File Id="CrmAdo.DdexProvider.vsix" Source="$(var.CrmAdo.DdexProvider2013.TargetDir)\CrmAdo.DdexProvider.vsix"   />
+        <File Id="CrmAdo.DdexProvider.vsix" Source="$(var.CrmAdo.DdexProvider.TargetDir)\CrmAdo.DdexProvider.vsix"  />
       </Component>
 
-    </ComponentGroup>
+    </ComponentGroup>-->
 
   </Fragment>
 

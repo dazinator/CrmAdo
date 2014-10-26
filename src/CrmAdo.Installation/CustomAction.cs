@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Microsoft.Deployment.WindowsInstaller;
 using System.Reflection;
 using System.Diagnostics;
-using System.Threading;
 using System.IO;
 
 namespace CrmAdo.Installation
@@ -27,7 +25,7 @@ namespace CrmAdo.Installation
                 string publicKeyToken = session.CustomActionData["CrmAdoPublicKeyToken"];
                 string versionstring = session.CustomActionData["CrmAdoVersion"];
             
-                var version = Version.Parse(versionstring);               
+                var version = new Version(versionstring);               
                 configInstaller.UpdateConfig(assemblyName, version, culture, publicKeyToken);           
 
             }

@@ -35,6 +35,15 @@
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'InstallationRelease|AnyCPU'">
+    <OutputPath>bin\InstallationRelease\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AntiXSSLibrary">
       <HintPath>..\..\lib\Microsoft.CrmSdk.Extensions.6.0.4.1\lib\net40\AntiXSSLibrary.dll</HintPath>
@@ -169,9 +178,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CrmAdo.VsPackage\CrmAdo.DdexProvider2013.csproj">
+    <ProjectReference Include="..\CrmAdo.Ddex\CrmAdo.DdexProvider.csproj">
       <Project>{9024366d-45c9-47ba-8d20-f88975a7ed7c}</Project>
-      <Name>CrmAdo.DdexProvider2013</Name>
+      <Name>CrmAdo.DdexProvider</Name>
     </ProjectReference>
     <ProjectReference Include="..\CrmAdo\CrmAdo.csproj">
       <Project>{61D9051D-4C85-419F-97DC-D56D4A72C5E3}</Project>

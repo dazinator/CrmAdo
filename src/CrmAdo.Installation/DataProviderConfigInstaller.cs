@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -16,13 +15,13 @@ namespace CrmAdo.Installation
             string description = CrmAdoConstants.Description;
             string typeName = CrmAdoConstants.DbProviderFactorTypeName;
             string fullyQualifiedAssemblyName = string.Format("{0}, Version={1}, Culture={2}, PublicKeyToken={3}", assemblyname, assemblyVersion.ToString(), culture, publicKeyToken);
-            Utils.RegisterDataProviderInMachineConfig(invariant, name, description, typeName, fullyQualifiedAssemblyName);
+            Utils.RegisterDataProviderInMachineConfig(Utils.GetNET40Version(), invariant, name, description, typeName, fullyQualifiedAssemblyName);
         }
 
         public virtual void RemoveConfig()
         {
             string invariant = CrmAdoConstants.Invariant;
-            Utils.UnregisterDataProviderFromMachineConfig(invariant);
+            Utils.UnregisterDataProviderFromMachineConfig(Utils.GetNET40Version(), invariant);
         }
 
     }

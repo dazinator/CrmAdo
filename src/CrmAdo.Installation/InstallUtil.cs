@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace CrmAdo.Installation
 {
     public class Utils
-    {        
+    {
 
         private static string GetFrameworkFolder(bool x64)
         {
@@ -30,6 +28,12 @@ namespace CrmAdo.Installation
         {
             Version version = Environment.Version;
             return GetMachineConfigFilePath(version, x64);
+        }       
+
+        private static string GetNET40MachineConfigFilePath(bool x64)
+        {
+            Version version = GetNET40Version();
+            return GetMachineConfigFilePath(version, x64);
         }
 
         private static string GetMachineConfigFilePath(Version clrVersion, bool x64)
@@ -45,9 +49,15 @@ namespace CrmAdo.Installation
             return frameworkMachineConfigFilePath;
         }
 
-        public static void RegisterDataProviderInMachineConfig(string invariant, string name, string description, string typeName, string assemblyName)
+        public static Version GetNET40Version()
         {
-            string configFilePath = GetCurrentEnvironmentMachineConfigFilePath(true);
+            Version version = new Version("4.0.30319");
+            return version;
+        }       
+
+        public static void RegisterDataProviderInMachineConfig(Version clrVersion, string invariant, string name, string description, string typeName, string assemblyName)
+        {
+            string configFilePath = GetMachineConfigFilePath(clrVersion, true);
             string assemblyQualifiedName = string.Format("{0}, {1}", typeName, assemblyName);
 
             if (!string.IsNullOrEmpty(configFilePath))
@@ -55,23 +65,22 @@ namespace CrmAdo.Installation
                 RegisterDataProviderInConfigFile(configFilePath, invariant, name, description, assemblyQualifiedName);
             }
 
-            configFilePath = GetCurrentEnvironmentMachineConfigFilePath(false);
+            configFilePath = GetMachineConfigFilePath(clrVersion, false);
             if (!string.IsNullOrEmpty(configFilePath))
             {
                 RegisterDataProviderInConfigFile(configFilePath, invariant, name, description, assemblyQualifiedName);
             }
         }
 
-        public static void UnregisterDataProviderFromMachineConfig(string invariant)
+        public static void UnregisterDataProviderFromMachineConfig(Version clrVersion, string invariant)
         {
-            string configFilePath = GetCurrentEnvironmentMachineConfigFilePath(true);          
-
+            string configFilePath = GetMachineConfigFilePath(clrVersion, true);
             if (!string.IsNullOrEmpty(configFilePath))
             {
                 RemoveDataProviderFromMachineConfig(configFilePath, invariant);
             }
 
-            configFilePath = GetCurrentEnvironmentMachineConfigFilePath(false);
+            configFilePath = GetMachineConfigFilePath(clrVersion, false);
             if (!string.IsNullOrEmpty(configFilePath))
             {
                 RemoveDataProviderFromMachineConfig(configFilePath, invariant);

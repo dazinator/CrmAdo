@@ -36,6 +36,15 @@
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'InstallationRelease|AnyCPU'">
+    <OutputPath>bin\InstallationRelease\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="envdte" />
     <Reference Include="envdte80" />
@@ -89,9 +98,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CrmAdo.DdexProvider2013.csproj">
+    <ProjectReference Include="..\CrmAdo.DdexProvider.csproj">
       <Project>{9024366D-45C9-47BA-8D20-F88975A7ED7C}</Project>
-      <Name>CrmAdo.DdexProvider2013</Name>
+      <Name>CrmAdo.DdexProvider</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
