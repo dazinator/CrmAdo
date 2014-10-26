@@ -46,6 +46,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo.Installation", "CrmA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo.InstallationTests", "CrmAdo.InstallationTests\CrmAdo.InstallationTests.csproj", "{FC2DFA1C-5AB3-482E-A5AE-DAB95DC802C0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{2A858BFF-59A3-43A8-9729-66A7D74BF277}"
+	ProjectSection(SolutionItems) = preProject
+		Images\VS\crmadoconnect.PNG = Images\VS\crmadoconnect.PNG
+		Images\VS\ServerExplorerEntitiesAndAttributes.PNG = Images\VS\ServerExplorerEntitiesAndAttributes.PNG
+		Images\VS\ServerExplorerPlugins.PNG = Images\VS\ServerExplorerPlugins.PNG
+		Images\VS\ServerExplorerProperties.PNG = Images\VS\ServerExplorerProperties.PNG
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
