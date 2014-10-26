@@ -67,18 +67,18 @@ namespace CrmAdo.Tests
 
             //   GacUtil.
 
-                List<string> assembliesList = new List<string>();
-                assembliesList.Add("CrmAdo.dll");
-                assembliesList.Add("Microsoft.Xrm.Sdk.dll");
-                assembliesList.Add("SQLGeneration.dll");                
+               // List<string> assembliesList = new List<string>();
+               // assembliesList.Add("CrmAdo.dll");
+               // assembliesList.Add("Microsoft.Xrm.Sdk.dll");
+               // assembliesList.Add("SQLGeneration.dll");                
              
-               var dir =  GacHelper.CurrentAssemblyDirectory;
+               //var dir =  GacHelper.CurrentAssemblyDirectory;
 
-                foreach (var item in assembliesList)
-                {
-                    var assemblyDir = System.IO.Path.Combine(dir, item);
-                    GacHelper.AddToGac(assemblyDir);
-                }
+               // foreach (var item in assembliesList)
+               // {
+               //     var assemblyDir = System.IO.Path.Combine(dir, item);
+               //     GacHelper.AddToGac(assemblyDir);
+               // }
           
 
         }

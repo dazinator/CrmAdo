@@ -50,5 +50,11 @@ namespace CrmAdo.Installation.GAC
 
         }
 
+        public static void RemoveFromGac(string assemblyPath)
+        {        
+            AssemblyCacheUninstallDisposition a;
+            AssemblyCache.UninstallAssembly(assemblyPath, null, out a);
+        }
+
     }
 }

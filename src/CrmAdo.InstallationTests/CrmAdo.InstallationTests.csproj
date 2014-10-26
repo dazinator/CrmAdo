@@ -11,6 +11,7 @@
     <AssemblyName>CrmAdo.InstallationTests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework">
@@ -48,8 +51,6 @@
     <Compile Include="..\CrmAdo\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="BaseTest.cs" />
-    <Compile Include="GACWrap.cs" />
     <Compile Include="Properties\GeneralInfo.cs" />
     <Compile Include="DataProviderConfigInstallerTests.cs" />
   </ItemGroup>
@@ -60,10 +61,6 @@
     <ProjectReference Include="..\CrmAdo.Installation\CrmAdo.Installation.csproj">
       <Project>{5fe4693b-2b74-46a9-b739-f5560e7c5990}</Project>
       <Name>CrmAdo.Installation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CrmAdo\CrmAdo.csproj">
-      <Project>{61d9051d-4c85-419f-97dc-d56d4a72c5e3}</Project>
-      <Name>CrmAdo</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

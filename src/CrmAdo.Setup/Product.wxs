@@ -9,6 +9,7 @@
     <MediaTemplate EmbedCab="yes" />
     <WixVariable Id="WixUILicenseRtf" Value="Eula.rtf" />
     <Feature Id="ProductFeature" Title="CrmAdo ADO.NET Data Provider" Level="1">
+      <!--<ComponentRef Id="CrmAdoAssembly"/>-->
       <ComponentGroupRef Id="ProductComponents" />
     </Feature>
     <Feature Id="DDEXFeature" Title="Visual Studio - DDEX Provider" Level="1">
@@ -17,22 +18,14 @@
 
     <Binary Id="CustomActionsDll" src="$(var.CrmAdo.Installation.TargetDir)$(var.CrmAdo.Installation.TargetName).CA.dll" />
 
-    <CustomAction Id='AssignCrmAdoAssemblyCulture'
-               Property='CrmAdoAssemblyCulture'
-               Value='!(bind.assemblyCulture.CrmAdo.dll)' />
-    <CustomAction Id='AssignCrmAdoAssemblyName'
-              Property='CrmAdoAssemblyName'
-              Value='!(bind.assemblyName.CrmAdo.dll)' />
-    <CustomAction Id='AssignCrmAdoAssemblyPublicKeyToken'
-               Property='CrmAdoPublicKeyToken'
-               Value='!(bind.assemblyPublicKeyToken.CrmAdo.dll)' />
+    <CustomAction Id='SetCustomActionData_ConfigureCrmAdoDataProvider'
+               Property='ConfigureCrmAdoDataProvider'
+               Value='CrmAdoAssemblyCulture=!(bind.assemblyCulture.CrmAdo.dll);CrmAdoAssemblyName=!(bind.assemblyName.CrmAdo.dll);CrmAdoPublicKeyToken=!(bind.assemblyPublicKeyToken.CrmAdo.dll);CrmAdoVersion=!(bind.FileVersion.CrmAdo.dll);' />
 
-    <CustomAction Id='ConfigureCrmAdoDataProvider' BinaryKey='CustomActionsDll' DllEntry='ConfigureCrmAdoDataProvider' Execute='immediate' Return='check'/>
-    <CustomAction Id='RemoveCrmAdoDataProviderConfiguration' BinaryKey='CustomActionsDll' DllEntry='RemoveCrmAdoDataProviderConfiguration' Execute='immediate' Return='check'/>
+    <CustomAction Id='ConfigureCrmAdoDataProvider' BinaryKey='CustomActionsDll' DllEntry='ConfigureCrmAdoDataProvider'  Return='check' Execute="deferred" Impersonate="no"/>
+    <CustomAction Id='RemoveCrmAdoDataProviderConfiguration' BinaryKey='CustomActionsDll' DllEntry='RemoveCrmAdoDataProviderConfiguration' Return='check' Execute='deferred' Impersonate="no"/>
     <InstallExecuteSequence>
-      <Custom Action="AssignCrmAdoAssemblyCulture" After="CostFinalize" />
-      <Custom Action="AssignCrmAdoAssemblyName" After="CostFinalize" />
-      <Custom Action="AssignCrmAdoAssemblyPublicKeyToken" After="CostFinalize" />
+      <Custom Action="SetCustomActionData_ConfigureCrmAdoDataProvider" After="CostFinalize" />
       <Custom Action='ConfigureCrmAdoDataProvider' After='InstallFiles'>
         NOT Installed
       </Custom>
@@ -41,7 +34,6 @@
       </Custom>
     </InstallExecuteSequence>
   </Product>
-  <!--$(var.CrmAdo.Installation.TargetDir)$(var.CrmAdo.Installation.TargetName).CA.dll-->
   <!-- Step 1: Define the directory structure -->
   <Fragment>
     <Directory Id="TARGETDIR" Name="SourceDir">
@@ -49,6 +41,10 @@
         <!--<Directory Id="INSTALLFOLDER" Name="CrmAdo.Setup" />-->
         <Directory Id="ProductDirectory" Name="CrmAdo">
           <Directory Id="GAC" Name="GAC">
+            <!--<Component Id="CrmAdoAssembly" Guid="2DE124DB-0C50-4D18-AB4F-BE37FCF46215" DiskId="1">
+              --><!-- Registering assembly in GAC --><!--
+              <File Id="CrmAdoAssemblyFile" LongName="CrmAdo.dll" Source="$(var.CrmAdo.TargetDir)$(var.CrmAdo.TargetFileName)" KeyPath="yes" Assembly=".net"/>
+            </Component>-->
           </Directory>
         </Directory>
       </Directory>
@@ -57,51 +53,52 @@
 
   <Fragment>
     <ComponentGroup Id="ProductComponents">
-      <!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
-      <!--<Component Id="CrmAdo.Installation.CA.dll" Directory="TARGETDIR" Guid="954DEBCF-D06C-4638-887B-8356AC992091">
-        -->
-      <!-- Add to GAC. -->
-      <!--
-        <File Id="CrmAdo.Installation.CA.dll"
-            Source="$(var.CrmAdo.Installation.TargetDir)$(var.CrmAdo.Installation.TargetName).CA.dll"
-            Assembly="no"
-            KeyPath="yes" />
-      </Component>-->
 
-      <Component Id="CrmAdo.dll" Directory="GAC" Guid="D97A86CC-C9E4-47B7-BF04-2DEC44B16E84">
+      <Component  Permanent="no" Id="CrmAdo.dll" Directory="GAC" Guid="D88A8BC2-4A24-4AD5-A6DD-44B33599E52D">
+
         <!-- Add to GAC. -->
         <File Id="CrmAdo.dll"
             Source="$(var.CrmAdo.TargetDir)$(var.CrmAdo.TargetFileName)"
             Assembly=".net"
-            KeyPath="yes" />
+            KeyPath="yes" Name="CrmAdo.dll" ProcessorArchitecture="msil" />
       </Component>
 
-      <Component Id="Microsoft.Xrm.Sdk.dll" Directory="GAC" Guid="A666F417-90E8-4EC6-9187-3C1B3CB4CA57">
+      <Component Permanent="no" Id="Microsoft.Xrm.Sdk.dll" Directory="GAC" Guid="C21A799C-12E6-4188-944D-31C1FC44C5F1">
+
         <!-- Add to GAC. -->
+
         <File Id="Microsoft.Xrm.Sdk.dll"
             Source="$(var.CrmAdo.TargetDir)Microsoft.Xrm.Sdk.dll"
             Assembly=".net"
-            KeyPath="yes" />
+            KeyPath="yes" Name="Microsoft.Xrm.Sdk.dll" ProcessorArchitecture="msil"/>
       </Component>
 
-      <Component Id="SQLGeneration.dll" Directory="GAC" Guid="E855ADC7-1F30-4CFF-A143-5BA3CCFC100F">
+      <Component  Permanent="no" Id="SQLGeneration.dll" Directory="GAC" Guid="69F8A934-9174-41A7-B2AA-A36A19B5607E">
+
         <!-- Add to GAC. -->
+
         <File Id="SQLGeneration.dll"
             Source="$(var.CrmAdo.TargetDir)SQLGeneration.dll"
-            Assembly=".net"
-            KeyPath="yes" />
+            Assembly=".net" KeyPath="yes"
+           />
       </Component>
 
     </ComponentGroup>
 
     <ComponentGroup Id="DDEXComponents">
 
-      <!--VSIXES-->
       <Component Id="DDEXVsix" Directory="TARGETDIR" Guid="DCD772CE-68AE-419F-A0CB-DBD148059F76">
+
+        <VSExtension:VsixPackage File="CrmAdo.DdexProvider.vsix" PackageId="7a1193f1-db85-4bef-ba54-604efcb169a3" Vital="no" Permanent="no" />
+
+        <VSExtension:VsixPackage File="CrmAdo.DdexProvider.vsix" PackageId="7a1193f1-db85-4bef-ba54-604efcb169a3" Target="vswinExpress" TargetVersion="12.0" Vital="no" Permanent="no"/>
+        <VSExtension:VsixPackage File="CrmAdo.DdexProvider.vsix" PackageId="7a1193f1-db85-4bef-ba54-604efcb169a3" Target="vswinExpress" TargetVersion="11.0" Vital="no" Permanent="no"/>
         <VSExtension:VsixPackage File="CrmAdo.DdexProvider.vsix" PackageId="7a1193f1-db85-4bef-ba54-604efcb169a3" Target="professional" TargetVersion="12.0" Vital="no" Permanent="no"/>
-        <VSExtension:VsixPackage File="CrmAdo.DdexProvider.vsix" PackageId="7a1193f1-db85-4bef-ba54-604efcb169a3" Target="professional" TargetVersion="13.0" Vital="no" Permanent="no"/>
+        <VSExtension:VsixPackage File="CrmAdo.DdexProvider.vsix" PackageId="7a1193f1-db85-4bef-ba54-604efcb169a3" Target="professional" TargetVersion="11.0" Vital="no" Permanent="no"/>
         <VSExtension:VsixPackage File="CrmAdo.DdexProvider.vsix" PackageId="7a1193f1-db85-4bef-ba54-604efcb169a3" Target="premium" TargetVersion="12.0" Vital="no" Permanent="no"/>
-        <VSExtension:VsixPackage File="CrmAdo.DdexProvider.vsix" PackageId="7a1193f1-db85-4bef-ba54-604efcb169a3" Target="premium" TargetVersion="13.0" Vital="no" Permanent="no"/>
+        <VSExtension:VsixPackage File="CrmAdo.DdexProvider.vsix" PackageId="7a1193f1-db85-4bef-ba54-604efcb169a3" Target="premium" TargetVersion="11.0" Vital="no" Permanent="no"/>
+        <VSExtension:VsixPackage File="CrmAdo.DdexProvider.vsix" PackageId="7a1193f1-db85-4bef-ba54-604efcb169a3" Target="ultimate" TargetVersion="12.0" Vital="no" Permanent="no"/>
+        <VSExtension:VsixPackage File="CrmAdo.DdexProvider.vsix" PackageId="7a1193f1-db85-4bef-ba54-604efcb169a3" Target="ultimate" TargetVersion="11.0" Vital="no" Permanent="no"/>
 
         <File Id="CrmAdo.DdexProvider.vsix" Source="$(var.CrmAdo.DdexProvider2013.TargetDir)\CrmAdo.DdexProvider.vsix"   />
       </Component>

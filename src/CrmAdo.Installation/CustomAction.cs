@@ -11,71 +11,85 @@ using System.IO;
 namespace CrmAdo.Installation
 {
 
-
-
     public class CustomActions
-    {
-
-        //public static CustomActions()
-        //{
-        //   // System.Diagnostics.Debugger.Launch();
-        //}
-
-
+    {      
 
         [CustomAction]
         public static ActionResult ConfigureCrmAdoDataProvider(Session session)
         {
             try
-            {
-                // return ActionResult.Success;
+            {              
                 DataProviderConfigInstaller configInstaller = new DataProviderConfigInstaller();
 
                 // string msiPath = session["OriginalDatabase"];
-                string assemblyName = session["CrmAdoAssemblyName"];
-                string culture = session["CrmAdoAssemblyCulture"];
-                string publicKeyToken = session["CrmAdoPublicKeyToken"];
+                string assemblyName = session.CustomActionData["CrmAdoAssemblyName"];
+                string culture = session.CustomActionData["CrmAdoAssemblyCulture"];
+                string publicKeyToken = session.CustomActionData["CrmAdoPublicKeyToken"];
+                string versionstring = session.CustomActionData["CrmAdoVersion"];
+            
+                var version = Version.Parse(versionstring);               
+                configInstaller.UpdateConfig(assemblyName, version, culture, publicKeyToken);           
 
-                // We share the same versioninfo file as CrmAdo so our version is always the same.
-                var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
-                configInstaller.UpdateConfig(assemblyName, currentVersion, culture, publicKeyToken);
-
-                return ActionResult.Success;
             }
             catch (Exception ex)
             {
-                session.Log("ERROR in custom action ConfigureCrmAdoDataProvider {0}", ex.ToString());
+                session.Log("ERROR in custom action ConfigureCrmAdoDataProvider {0}", ex.Message);        
                 return ActionResult.Failure;
             }
-
-        }
-
-
+            return ActionResult.Success;
+        }        
 
         [CustomAction]
         public static ActionResult RemoveCrmAdoDataProviderConfiguration(Session session)
         {
             try
-            {
-                //   session.Log("Begin Configure RemoveCrmAdoDataProviderConfiguration Custom Action");
+            {               
                 DataProviderConfigInstaller configInstaller = new DataProviderConfigInstaller();
                 configInstaller.RemoveConfig();
-                return ActionResult.Success;
-                // TODO: Make changes to config file
-                //  var factoryType = typeof(CrmDbProviderFactory);
-                // Utils.UnregisterDataProviderFromMachineConfig(CrmDbProviderFactory.Invariant);
-
-                //  session.Log("End Configure RemoveCrmAdoDataProviderConfiguration Custom Action");
+                return ActionResult.Success;             
             }
             catch (Exception ex)
             {
-                // session.Log("ERROR in custom action RemoveCrmAdoDataProviderConfiguration {0}",
-                //  ex.ToString());
+                session.Log("ERROR in custom action RemoveCrmAdoDataProviderConfiguration {0}", ex.Message);              
                 return ActionResult.Failure;
             }
 
-            return ActionResult.Success;
+
         }
+
+        //[CustomAction]
+        //public static ActionResult AddToGAC(Session session)
+        //{
+        //    try
+        //    {
+        //        var installdirectory = session.CustomActionData["InstallPath"];
+
+        //        var directory = installdirectory;
+
+        //        List<string> assembliesList = new List<string>();
+        //        assembliesList.Add("CrmAdo");
+        //        assembliesList.Add("Microsoft.Xrm.Sdk");
+        //        assembliesList.Add("SQLGeneration");
+
+        //        foreach (var item in assembliesList)
+        //        {
+        //            bool notInGac = EnsureRemovedFromGac(item);
+        //            if (!notInGac)
+        //            {
+        //                Console.WriteLine("Could not remove: " + item + " from GAC. This will effect unit tests and so SetUp will now fail. ");
+        //                throw new Exception("Could not remove: " + item + " from GAC");
+        //            }
+        //        }
+        //        return ActionResult.Success;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        session.Log("ERROR in custom action RemoveCrmAdoDataProviderConfiguration {0}", ex.Message);
+        //        return ActionResult.Failure;
+        //    }
+
+
+        //}
 
     }
 }
