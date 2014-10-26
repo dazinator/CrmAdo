@@ -1,0 +1,19 @@
+
+ the following config entry must be added to the config file. 
+
+  <system.data>
+    <DbProviderFactories>
+      <add name="Open Source Dynamics Crm Data Provider" invariant="System.Data.DynamicsCrm.2013" description=".NET Framework Data Provider for Microsoft Dynamics Crm 2013" type="DynamicsCrmDataProvider.CrmDbProviderFactory, DynamicsCrmDataProvider"/>
+    </DbProviderFactories>
+  </system.data>
+
+
+To add to GAC:-
+
+"G:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil" -i "$(TargetDir)$(TargetName).dll"
+"G:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil" -i "$(TargetDir)Microsoft.IdentityModel.dll"
+"G:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil" -i "$(TargetDir)Microsoft.Crm.Sdk.Proxy.dll"
+"G:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil" -i "$(TargetDir)Microsoft.Xrm.Client.dll"
+"G:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil" -i "$(TargetDir)Microsoft.Xrm.Sdk.Deployment.dll"
+"G:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil" -i "$(TargetDir)Microsoft.Xrm.Sdk.dll"
+"G:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\gacutil" -i "$(TargetDir)SQLGeneration.dll"

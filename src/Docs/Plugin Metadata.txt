@@ -1,0 +1,49 @@
+
+pluginassembly
+
+createdonbehalfbyyominame
+modifiedonbehalfby
+introducedversion
+createdby
+sourcetypename  virtual
+description
+supportingsolutionid   UniqueidentifierType
+createdonbehalfby
+ishidden  bool
+name
+isolationmode
+culture
+major    int
+organizationid
+customizationlevel   int
+createdbyname  string
+publickeytoken  string
+componentstate
+sourcetype    picklist
+pluginassemblyidunique   UniqueidentifierType
+version
+versionnumber  bigint
+modifiedbyname
+modifiedby
+minor
+ismanaged
+path
+overwritetime   DateTimeType (dateonly)
+solutionid   UniqueidentifierType
+modifiedon
+content
+modifiedonbehalfbyyominame
+pluginassemblyid
+createdon
+createdonbehalfbyname
+modifiedonbehalfbyname
+sourcehash  string
+ismanagedname  virtual
+isolationmodename  virtual
+
+
+component state option set:
+0 Published
+1 Unpublished
+2 Deleted
+3 Deleted Unpublished
