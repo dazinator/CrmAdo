@@ -1,10 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="7a1193f1-db85-4bef-ba54-604efcb169a3" Version="1.3.0" Language="en-US" Publisher="Darrell Tunnell"/>
+    <Identity Id="7a1193f1-db85-4bef-ba54-604efcb169a3" Version="1.3.1" Language="en-US" Publisher="Darrell Tunnell"/>
     <DisplayName>CrmAdo DDEX Provider</DisplayName>
-    <Description xml:space="preserve">This allows you to use the CrmAdo the Crmconnect to Dynamics CRM 2011 &amp; 2013 instances via Server Explorer. See entities, attributes, plugins etc.
-    See http://dazinator.github.io/CrmAdo/ for more information and upcoming features.
+    <Description xml:space="preserve">This allows you to connect to Dynamics CRM 2011 &amp; 2013 instances from within Visual Studio via Server Explorer. See entities, attributes, plugins etc. More features being added.
     </Description>
     <MoreInfo>https://github.com/dazinator/CrmAdo/wiki/Visual-Studio-Extension---Getting-Started</MoreInfo>
     <License>eula.txt</License>

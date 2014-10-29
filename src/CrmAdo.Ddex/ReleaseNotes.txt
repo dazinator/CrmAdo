@@ -1,4 +1,7 @@
-﻿v1.3.0
+﻿v1.3.1
+Minor correction to package metadata 'summary'.
+
+v1.3.0
 Completely revamped the installation process. Now has a dependency on a seperate CrmAdo package. 
 
 v1.2.0
