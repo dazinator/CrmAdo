@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="CrmAdo..844f4586-0bfb-44a2-874f-f464eb4f2ea1" Version="1.0" Language="en-US" Publisher="Darrell Tunnell" />
+    <Identity Id="CrmAdo..844f4586-0bfb-44a2-874f-f464eb4f2ea1" Version="1.2.5" Language="en-US" Publisher="Darrell Tunnell" />
     <DisplayName>CrmAdo </DisplayName>
-    <Description xml:space="preserve">This visual studio extension is installed via the CrmAdo msi installer. Other visual studio packages may be dependent upon this one as this one represents the underlying CrmAdo ADO.Net Data Provider.This package i
+    <Description xml:space="preserve">This visual studio extension is installed when the CrmAdo data installer is installed via the msi . Other visual studio packages may be dependent upon this one as this one.</Description>
     <MoreInfo>http://dazinator.github.io/CrmAdo/</MoreInfo>
     <GettingStartedGuide>http://dazinator.github.io/CrmAdo/</GettingStartedGuide>
     <Icon>CrmAdoIcon.ico</Icon>
-    <Tags>CrmAdo Ado  Dynamics Crm DynamicsCrm</Tags>ndicates that the</Description>
   </Metadata>
   <Installation>
-    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[12.0]" />
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[11.0,13.0)" />
+    <InstallationTarget Version="[11.0,13.0)" Id="Microsoft.VisualStudio.Premium" />
+    <InstallationTarget Version="[11.0,13.0)" Id="Microsoft.VisualStudio.Ultimate" />
   </Installation>
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />

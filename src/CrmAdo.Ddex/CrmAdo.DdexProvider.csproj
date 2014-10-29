@@ -216,6 +216,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CrmAdo.Vs\CrmAdo.Vs.csproj">
+      <Project>{9141EC44-32D7-4826-BB37-74B8E5B119BD}</Project>
+      <Name>CrmAdo.Vs</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
     <ProjectReference Include="..\CrmAdo\CrmAdo.csproj">
       <Project>{61d9051d-4c85-419f-97dc-d56d4a72c5e3}</Project>
       <Name>CrmAdo</Name>

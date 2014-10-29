@@ -3,19 +3,22 @@
      xmlns:util="http://schemas.microsoft.com/wix/UtilExtension"
      xmlns:VSExtension="http://schemas.microsoft.com/wix/VSExtension"
      xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
-  <Product Id="*" Name="CrmAdo ADO.NET Data Provider" Language="1033" Version="!(bind.FileVersion.CrmAdo.dll)" Manufacturer="CrmAdo" UpgradeCode="0dcf7b53-5dca-439c-b3a7-adf70da4ac5f">
+  <Product Id="*" Name="CrmAdo ADO.NET Data Provider" Language="1033" Version="!(bind.FileVersion.CrmAdo.dll)" Manufacturer="Darrell Tunnell" UpgradeCode="0dcf7b53-5dca-439c-b3a7-adf70da4ac5f">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
     <UIRef Id="WixUI_Mondo" />
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <MediaTemplate EmbedCab="yes" />
     <WixVariable Id="WixUILicenseRtf" Value="Eula.rtf" />
+    <Icon Id="icon.ico" SourceFile="..\images\CrmAdoIcon.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+    
     <Feature Id="ProductFeature" Title="CrmAdo ADO.NET Data Provider" Level="1">
       <!--<ComponentRef Id="CrmAdoAssembly"/>-->
       <ComponentGroupRef Id="ProductComponents" />
     </Feature>
-    <!--<Feature Id="DDEXFeature" Title="Visual Studio - DDEX Provider" Level="1">
-      <ComponentGroupRef Id="DDEXComponents" />
-    </Feature>-->
+    <Feature Id="VSIXFeature" Title="Visual Studio Package" Level="1">
+      <ComponentGroupRef Id="VSIX" />
+    </Feature>
     <PropertyRef Id="NETFRAMEWORK40FULL"/>
 
     <Condition Message="This application requires .NET Framework 4.0. Please install the .NET Framework then run this installer again.">
@@ -89,6 +92,26 @@
             Source="$(var.CrmAdo.TargetDir)SQLGeneration.dll"
             Assembly=".net" KeyPath="yes"
            />
+      </Component>
+
+    </ComponentGroup>
+
+    <ComponentGroup Id="VSIX">
+
+      <Component Id="CrmAdoVSIX" Directory="TARGETDIR" Guid="9B0ACDE4-CCA9-4BAC-9B69-A805427347C3">
+
+        <!--<VSExtension:VsixPackage File="CrmAdo.Vs.vsix" PackageId="7a1193f1-db85-4bef-ba54-604efcb169a3" Vital="no" Permanent="no" />-->
+
+        <VSExtension:VsixPackage File="CrmAdo.Vs.vsix" PackageId="CrmAdo..844f4586-0bfb-44a2-874f-f464eb4f2ea1" Target="vswinExpress" TargetVersion="12.0" Vital="no" Permanent="no"/>
+        <VSExtension:VsixPackage File="CrmAdo.Vs.vsix" PackageId="CrmAdo..844f4586-0bfb-44a2-874f-f464eb4f2ea1" Target="vswinExpress" TargetVersion="11.0" Vital="no" Permanent="no"/>
+        <VSExtension:VsixPackage File="CrmAdo.Vs.vsix" PackageId="CrmAdo..844f4586-0bfb-44a2-874f-f464eb4f2ea1" Target="professional" TargetVersion="12.0" Vital="no" Permanent="no"/>
+        <VSExtension:VsixPackage File="CrmAdo.Vs.vsix" PackageId="CrmAdo..844f4586-0bfb-44a2-874f-f464eb4f2ea1" Target="professional" TargetVersion="11.0" Vital="no" Permanent="no"/>
+        <VSExtension:VsixPackage File="CrmAdo.Vs.vsix" PackageId="CrmAdo..844f4586-0bfb-44a2-874f-f464eb4f2ea1" Target="premium" TargetVersion="12.0" Vital="no" Permanent="no"/>
+        <VSExtension:VsixPackage File="CrmAdo.Vs.vsix" PackageId="CrmAdo..844f4586-0bfb-44a2-874f-f464eb4f2ea1" Target="premium" TargetVersion="11.0" Vital="no" Permanent="no"/>
+        <VSExtension:VsixPackage File="CrmAdo.Vs.vsix" PackageId="CrmAdo..844f4586-0bfb-44a2-874f-f464eb4f2ea1" Target="ultimate" TargetVersion="12.0" Vital="no" Permanent="no"/>
+        <VSExtension:VsixPackage File="CrmAdo.Vs.vsix" PackageId="CrmAdo..844f4586-0bfb-44a2-874f-f464eb4f2ea1" Target="ultimate" TargetVersion="11.0" Vital="no" Permanent="no" />
+
+        <File Id="CrmAdo.Vs.vsix" Source="$(var.CrmAdo.Vs.TargetDir)\CrmAdo.Vs.vsix"  />
       </Component>
 
     </ComponentGroup>

@@ -21,6 +21,7 @@
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="4.5" />
     <Dependency Id="Microsoft.VisualStudio.MPF.11.0" DisplayName="Visual Studio MPF 11.0" d:Source="Installed" Version="11.0" />
+    <Dependency d:Source="Installed" d:ProjectName="CrmAdo.Vs" Version="[1.2.5,2.0)" d:InstallSource="Download" Id="CrmAdo..844f4586-0bfb-44a2-874f-f464eb4f2ea1" DisplayName="CrmAdo " Location="https://github.com/dazinator/CrmAdo/" />
   </Dependencies>
   <Assets>
     <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
