@@ -1,5 +1,11 @@
-﻿v1.2.1
-Fixed installation issue where CrmAdo was not being affed to the GAC!
+﻿v1.3.0
+Completely revamped the installation process. Now has a dependency on a seperate CrmAdo package. 
 
 v1.2.0
-This is the initial release on the visual studio extensions store!
+Added ability to see registered plugin assemblies.
+
+v1.1.0
+Added ability to see the options for option set attributes.
+
+v1.0.0
+Initial Release.
