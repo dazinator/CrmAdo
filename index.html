@@ -31,15 +31,9 @@
           <h3>
 <a name="huh" class="anchor" href="#huh"><span class="octicon octicon-link"></span></a>Huh?</h3>
 
-<p>So you want to write some code that interacts with some data / entities in Dynamics CRM? You need to retrieve contacts, linked to addresses, linked to some custom entity you say? Where the firstname is "Joe" you say? </p>
+<p>CrmAdo is an ADO.Net data provider for Dynamics Crm. It's goal is to allow you to use ordinary ADO.NET code to interact with Dynamics Crm, via the standard ADO.NET family of classes.</p>
 
-<p>So you reference the Dynamics SDK libraries, and you read through the documentation, and you start delving into the world of writing "QueryExpressions" and "FetchXml", and using an "OrganisationService", and building "FilterExpressions" and adding "Conditions" and getting "AliasedValues". </p>
-
-<p>Take a step back. Your code is now completely coupled to the Dynamics CRM SDK. Not only that, you have had to learn all sorts of SDK specific stuff to perform a simple query against a datasource. What happened to that wonderfully expressive query language that we allready have i.e SQL? What happened to the .NET standard way to interact with datasources i.e ADO.Net?</p>
-
-<p>CrmAdo is an ADO.Net data provider for Dynamics Crm that uses SQL as its query language. It's goal is to hide completely the Dynamics SDK from you, and to expose Dynamics Crm as if it were an ordinary SQL datasource, via the standard ADO.Net classes.</p>
-
-<p>It allows you to use the familiar SQL language to write your queries, just like you would against other ADO.Net data sources. CrmAdo will translate your SQL commands into the appropriate IOrganisation web service calls and interactions behind the scenes. </p>
+<p>It allows you to use the familiar SQL language to perform CRUD operations, just like you would against any other SQL datasource. CrmAdo translates your SQL commands into the appropriate Dynamics CRM SDK web service calls and interactions behind the scenes. </p>
 
  <h3>
 <a name="Getting Started" class="anchor" href="#Getting Started"><span class="octicon octicon-link"></span></a>Getting Started</h3>
