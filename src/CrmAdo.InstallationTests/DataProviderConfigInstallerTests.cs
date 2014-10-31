@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using NUnit.Framework;
-using Rhino.Mocks;
 using CrmAdo.Installation;
 using System.Reflection;
 
