@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{6F14A947
 		app.config.transform = app.config.transform
 		Build.targets = Build.targets
 		CrmAdo.nuspec = CrmAdo.nuspec
+		CrmAdoBuild.target = CrmAdoBuild.target
 		web.config.transform = web.config.transform
 	EndProjectSection
 EndProject
