@@ -11,9 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{31343D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{6F14A947-1316-4CF7-ADD6-8F20A2BB453E}"
 	ProjectSection(SolutionItems) = preProject
-		app.config.transform = app.config.transform
 		build.proj = build.proj
-		web.config.transform = web.config.transform
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo", "CrmAdo\CrmAdo.csproj", "{61D9051D-4C85-419F-97DC-D56D4A72C5E3}"
