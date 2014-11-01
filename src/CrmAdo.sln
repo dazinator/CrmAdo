@@ -13,7 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{6F14A947
 	ProjectSection(SolutionItems) = preProject
 		app.config.transform = app.config.transform
 		build.proj = build.proj
-		CrmAdo.nuspec = CrmAdo.nuspec
 		web.config.transform = web.config.transform
 	EndProjectSection
 EndProject
