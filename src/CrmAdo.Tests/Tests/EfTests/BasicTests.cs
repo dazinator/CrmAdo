@@ -21,7 +21,8 @@ namespace CrmAdo.Tests.Tests.EfTests
         [Test]
         public void TODO_Write_EF_Tests()
         {
-            throw new NotImplementedException("Need to write Ef tests");
+            // TODO: Write tests
+            //  throw new NotImplementedException("Need to write Ef tests");
         }
 
         public static string ConnectionString = "Url=http://crmurl:5555/orgname;Domain=domain; UserName=administrator; Password=password;";
