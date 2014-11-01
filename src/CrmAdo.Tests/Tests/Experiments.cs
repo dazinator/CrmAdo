@@ -3,7 +3,6 @@ using System.Text;
 using NUnit.Framework;
 using SQLGeneration.Builders;
 using SQLGeneration.Generators;
-using CrmAdo.DdexProvider;
 using System.Collections.Generic;
 
 namespace CrmAdo.Tests
@@ -59,29 +58,7 @@ namespace CrmAdo.Tests
             Console.Write(logBuilder.ToString());
 
         }
-
-        [Category("Experimentation")]
-        [Test]
-        public void Can_Install_To_Gac()
-        {
-
-            //   GacUtil.
-
-               // List<string> assembliesList = new List<string>();
-               // assembliesList.Add("CrmAdo.dll");
-               // assembliesList.Add("Microsoft.Xrm.Sdk.dll");
-               // assembliesList.Add("SQLGeneration.dll");                
-             
-               //var dir =  GacHelper.CurrentAssemblyDirectory;
-
-               // foreach (var item in assembliesList)
-               // {
-               //     var assemblyDir = System.IO.Path.Combine(dir, item);
-               //     GacHelper.AddToGac(assemblyDir);
-               // }
-          
-
-        }
+     
 
     }
 }

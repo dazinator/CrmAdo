@@ -29,20 +29,23 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'IntegrationTesting|AnyCPU'">
-    <OutputPath>bin\IntegrationTesting\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <DebugType>full</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'InstallationRelease|AnyCPU'">
-    <OutputPath>bin\InstallationRelease\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release 4.5|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\net45\</OutputPath>
+    <TargetFrameworkVersion>4.5</TargetFrameworkVersion>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release 4.0|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\net40\</OutputPath>
+    <TargetFrameworkVersion>4.0</TargetFrameworkVersion>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AntiXSSLibrary">
@@ -152,7 +155,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CrmObjectSelectorTests.cs" />
     <Compile Include="SelectMetadataIntegrationTests.cs" />
     <Compile Include="BaseTest.cs" />
     <Compile Include="AlterEntityIntegrationTests.cs" />
@@ -178,10 +180,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CrmAdo.Ddex\CrmAdo.DdexProvider.csproj">
-      <Project>{9024366d-45c9-47ba-8d20-f88975a7ed7c}</Project>
-      <Name>CrmAdo.DdexProvider</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CrmAdo\CrmAdo.csproj">
       <Project>{61D9051D-4C85-419F-97DC-D56D4A72C5E3}</Project>
       <Name>CrmAdo</Name>

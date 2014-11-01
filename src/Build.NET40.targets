@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<Project ToolsVersion="4.0"
+         DefaultTargets="AfterBuild"
+         xmlns="http://schemas.microsoft.com/developer/msbuild/2003">  
+
+  <!--After Build - Release|AnyCPU.-->
+  <Target Name="AfterBuild" DependsOnTargets="BuildNet40;BuildNet45;" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  </Target>
+
+  <!--Builds the project targeting .NET 4.0.-->
+  <Target Name="BuildNet40">
+    <Message  Importance="high" Text="Building .NET 4.0.."/>
+    <ItemGroup>
+      <ProjectReferences Include="$(ProjectPath)" />
+    </ItemGroup>
+    <MSBuild 
+        Projects="@(ProjectReferences)"
+        Properties="Configuration=Release 4.0"
+        Targets="Build">
+      <Output
+          TaskParameter="TargetOutputs"
+          ItemName="AssembliesBuiltByChildProjects" />
+    </MSBuild>
+  </Target>
+
+  <!--Builds the project targeting .NET 4.5.-->
+  <Target Name="BuildNet45">
+    <Message  Importance="high" Text="Building .NET 4.5.."/>
+    <ItemGroup>
+      <ProjectReferences Include="$(ProjectPath)" />
+    </ItemGroup>
+    <MSBuild
+        Projects="@(ProjectReferences)"
+        Properties="Configuration=Release 4.5"
+        Targets="Build">
+      <Output
+          TaskParameter="TargetOutputs"
+          ItemName="AssembliesBuiltByChildProjects" />
+    </MSBuild>
+  </Target>
+
+  
+
+</Project>
