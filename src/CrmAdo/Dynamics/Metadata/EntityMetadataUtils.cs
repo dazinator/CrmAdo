@@ -507,7 +507,12 @@ namespace CrmAdo.Dynamics.Metadata
                     }
                 }
 
-                var maxNumber = double.Parse(maxNumberBuilder.ToString());
+                double maxNumber;
+                if (!double.TryParse(maxNumberBuilder.ToString(), out maxNumber))
+                {
+                    throw new FormatException(string.Format("Unable to parse {0} as a double.", maxNumberBuilder.ToString()));
+                }    
+              
                 metadata.MaxValue = maxNumber;
                 metadata.MinValue = -maxNumber;
             }
