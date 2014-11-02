@@ -254,6 +254,12 @@ namespace CrmAdo.Dynamics.Metadata
                     }
                 }
 
+                decimal maxD;
+                if (!decimal.TryParse(maxNumberBuilder.ToString(), out maxD))
+                {
+                    throw new FormatException(string.Format("Unable to parse {0} as a decimal.", maxNumberBuilder.ToString()));
+                }               
+
                 var maxNumber = decimal.Parse(maxNumberBuilder.ToString());
                 metadata.MaxValue = maxNumber;
                 metadata.MinValue = -maxNumber;

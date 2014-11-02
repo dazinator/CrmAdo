@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <!--After Build - Release|AnyCPU.-->
-  <Target Name="ReleaseBuild" DependsOnTargets="BuildCrmAdoNet40;BuildCrmAdoNet45;GetVSIXVersionNumberFromAssembly;UpdateVSIXVersion;BuildSolution;CopyArtifacts;">
+  <Target Name="ReleaseBuild" DependsOnTargets="BuildCrmAdoNet40;BuildCrmAdoNet45;GetVSIXVersionNumberFromAssembly;UpdateVSIXVersion;BuildSolution;">
     <Message  Importance="high" Text="build proj --> BuildCrmAdo target.."/>
   </Target>
 
@@ -107,22 +107,6 @@
           ItemName="AssembliesBuiltByChildProjects" />
     </MSBuild>
   </Target>
-
-  <!-- Copy artifcats to dist folder. -->
-
-
-  <Target Name="CopyArtifacts">
-    <ItemGroup>
-      <MsiInstaller Include="CrmAdo.Setup\bin\Release\CrmAdo.Setup.msi;"/>
-    </ItemGroup>
-    <Copy
-        SourceFiles="@(MsiInstaller)"
-        DestinationFolder="..\Dist"
-        />
-  </Target>
-
-
-
 
 
 </Project>
