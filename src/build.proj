@@ -8,14 +8,13 @@
     <CrmAdoUnitTestsProject>CrmAdo.Tests\CrmAdo.Tests.csproj</CrmAdoUnitTestsProject>
     <CrmAdoIntegrationTestsProject>CrmAdo.IntegrationTests\CrmAdo.IntegrationTests.csproj</CrmAdoIntegrationTestsProject>
     <SolutionFile>CrmAdo.sln</SolutionFile>
-    <VSIXVersion Condition="$(BUILD_NUMBER) != '' And $(BUILD_NUMBER) != '*Undefined*'">$(BUILD_NUMBER)</VSIXVersion>  
+    <VSIXVersion Condition="$(BUILD_NUMBER) != '' And $(BUILD_NUMBER) != '*Undefined*'">$(BUILD_NUMBER)</VSIXVersion>
   </PropertyGroup>
-  
 
   <!--After Build - Release|AnyCPU.-->
-  <Target Name="ReleaseBuild" DependsOnTargets="BuildCrmAdoNet40;BuildCrmAdoNet45;GetVSIXVersionNumberFromAssembly;UpdateVSIXVersion;BuildSolution;">
+  <Target Name="ReleaseBuild" DependsOnTargets="BuildCrmAdoNet40;BuildCrmAdoNet45;GetVSIXVersionNumberFromAssembly;UpdateVSIXVersion;BuildSolution;CopyArtifacts;">
     <Message  Importance="high" Text="build proj --> BuildCrmAdo target.."/>
-  </Target>  
+  </Target>
 
   <!--Builds the CrmAdo, CrmAdo.UnitTests and CrmAdo.IntegrationTests projects targeting .NET 4.0.-->
   <Target Name="BuildCrmAdoNet40">
@@ -73,11 +72,10 @@
     <PropertyGroup>
       <AssemblyVersionNumber>%(OutputAssemblyInfo.Version)</AssemblyVersionNumber>
       <!-- If a BuildVersionNumber is supplied we can append that as the last digit of the package version number -->
-      <VSIXVersion>$(AssemblyVersionNumber)</VSIXVersion>   
+      <VSIXVersion>$(AssemblyVersionNumber)</VSIXVersion>
     </PropertyGroup>
     <Message Text="VSIX Version Number from assembly: $(VSIXVersion)"/>
   </Target>
-
 
   <Target
      Name="UpdateVSIXVersion"
@@ -91,7 +89,7 @@
         Value="$(VSIXVersion)"
         Namespaces="&lt;Namespace Prefix='n' Uri='http://schemas.microsoft.com/developer/vsx-schema/2011' Name='DoNotKnowWhatThisIsFor-ButItIsRequired' /&gt;">
     </XmlPoke>
-  </Target>  
+  </Target>
 
   <!--Builds the solution -->
   <Target Name="BuildSolution">
@@ -109,6 +107,22 @@
           ItemName="AssembliesBuiltByChildProjects" />
     </MSBuild>
   </Target>
+
+  <!-- Copy artifcats to dist folder. -->
+
+
+  <Target Name="CopyArtifacts">
+    <ItemGroup>
+      <MsiInstaller Include="CrmAdo.Setup\bin\Release\CrmAdo.Setup.msi;"/>
+    </ItemGroup>
+    <Copy
+        SourceFiles="@(MsiInstaller)"
+        DestinationFolder="..\Dist"
+        />
+  </Target>
+
+
+
 
 
 </Project>
