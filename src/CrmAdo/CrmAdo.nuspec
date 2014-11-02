@@ -12,7 +12,7 @@
     <projectUrl>http://dazinator.github.io/CrmAdo/</projectUrl>
     <copyright>Copyright � Darrell Tunnell 2014</copyright>
     <releaseNotes>
-     CrmDataAdapter class now implemented.
+     Moved to Automated builds via Team City.
     </releaseNotes>
     <tags>Dynamics Crm ADO ADO.Net Data Provider SQL T-SQL DynamicsCrm</tags>
     <dependencies>
