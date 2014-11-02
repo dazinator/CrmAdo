@@ -14,6 +14,12 @@
     <CrmAdoDdexProviderIntegrationTestsProject>CrmAdo.DdexProvider.IntegrationTests\CrmAdo.IntegrationTests.csproj</CrmAdoDdexProviderIntegrationTestsProject>
     <CrmAdoSetupProject>CrmAdo.Setup\CrmAdo.Setup.wixproj</CrmAdoSetupProject>-->
   </PropertyGroup>
+  
+
+  <Target Name="UpdateAssemblyInfo" DependsOnTargets="BuildSolution;BuildCrmAdoNet40;BuildCrmAdoNet45;">
+    <Message  Importance="high" Text="build proj --> BuildCrmAdo target.."/>
+  </Target>
+  
 
   <!--After Build - Release|AnyCPU.-->
   <Target Name="ReleaseBuild" DependsOnTargets="BuildSolution;BuildCrmAdoNet40;BuildCrmAdoNet45;">
