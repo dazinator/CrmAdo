@@ -1,6 +1,10 @@
 CrmAdo
 ======
 
+<a href="http://dazinator.ddns.net:81/viewType.html?buildTypeId=CrmAdo_Continuos&guest=1">
+<img src="http://dazinator.ddns.net:81/app/rest/builds/buildType:(id:CrmAdo_Continuos)/statusIcon"/>
+</a>
+
 An ADO.Net Data Provider for Dynamics Crm.
 
 Read more here: http://dazinator.github.io/CrmAdo 
