@@ -7,24 +7,15 @@
     <CrmAdoProject>CrmAdo\CrmAdo.csproj</CrmAdoProject>
     <CrmAdoUnitTestsProject>CrmAdo.Tests\CrmAdo.Tests.csproj</CrmAdoUnitTestsProject>
     <CrmAdoIntegrationTestsProject>CrmAdo.IntegrationTests\CrmAdo.IntegrationTests.csproj</CrmAdoIntegrationTestsProject>
-
     <SolutionFile>CrmAdo.sln</SolutionFile>
-
-    <!--<CrmAdoDdexProviderProject>CrmAdo.Ddex\CrmAdo.DdexProvider.csproj</CrmAdoDdexProviderProject>
-    <CrmAdoDdexProviderIntegrationTestsProject>CrmAdo.DdexProvider.IntegrationTests\CrmAdo.IntegrationTests.csproj</CrmAdoDdexProviderIntegrationTestsProject>
-    <CrmAdoSetupProject>CrmAdo.Setup\CrmAdo.Setup.wixproj</CrmAdoSetupProject>-->
+    <VSIXVersion Condition="$(BUILD_NUMBER) != '' And $(BUILD_NUMBER) != '*Undefined*'">$(BUILD_NUMBER)</VSIXVersion>  
   </PropertyGroup>
   
 
-  <Target Name="UpdateAssemblyInfo" DependsOnTargets="BuildSolution;BuildCrmAdoNet40;BuildCrmAdoNet45;">
-    <Message  Importance="high" Text="build proj --> BuildCrmAdo target.."/>
-  </Target>
-  
-
   <!--After Build - Release|AnyCPU.-->
-  <Target Name="ReleaseBuild" DependsOnTargets="BuildSolution;BuildCrmAdoNet40;BuildCrmAdoNet45;">
+  <Target Name="ReleaseBuild" DependsOnTargets="BuildCrmAdoNet40;BuildCrmAdoNet45;GetVSIXVersionNumberFromAssembly;UpdateVSIXVersion;BuildSolution;">
     <Message  Importance="high" Text="build proj --> BuildCrmAdo target.."/>
-  </Target>
+  </Target>  
 
   <!--Builds the CrmAdo, CrmAdo.UnitTests and CrmAdo.IntegrationTests projects targeting .NET 4.0.-->
   <Target Name="BuildCrmAdoNet40">
@@ -71,6 +62,36 @@
           ItemName="AssembliesBuiltByChildProjects" />
     </MSBuild>
   </Target>
+
+  <!--Reads the assembly version number.-->
+  <Target Name="GetVSIXVersionNumberFromAssembly" Condition="$(VSIXVersion) == ''">
+    <!-- Read the assembly version number and use that for the package version number -->
+    <GetAssemblyIdentity AssemblyFiles="CrmAdo\bin\release\net40\CrmAdo.dll">
+      <Output TaskParameter="Assemblies" ItemName="OutputAssemblyInfo" />
+    </GetAssemblyIdentity>
+    <Message Text="Info: %(OutputAssemblyInfo.Version)" />
+    <PropertyGroup>
+      <AssemblyVersionNumber>%(OutputAssemblyInfo.Version)</AssemblyVersionNumber>
+      <!-- If a BuildVersionNumber is supplied we can append that as the last digit of the package version number -->
+      <VSIXVersion>$(AssemblyVersionNumber)</VSIXVersion>   
+    </PropertyGroup>
+    <Message Text="VSIX Version Number from assembly: $(VSIXVersion)"/>
+  </Target>
+
+
+  <Target
+     Name="UpdateVSIXVersion"
+     Condition="$(VSIXVersion) != '' And $(VSIXVersion) != '*Undefined*'">
+
+    <Message Text= "Updating VSIX Version" />
+
+    <XmlPoke
+        XmlInputPath="CrmAdo.Vs\source.extension.vsixmanifest"
+        Query="/n:PackageManifest/n:Metadata/n:Identity/@Version"
+        Value="$(VSIXVersion)"
+        Namespaces="&lt;Namespace Prefix='n' Uri='http://schemas.microsoft.com/developer/vsx-schema/2011' Name='DoNotKnowWhatThisIsFor-ButItIsRequired' /&gt;">
+    </XmlPoke>
+  </Target>  
 
   <!--Builds the solution -->
   <Target Name="BuildSolution">
