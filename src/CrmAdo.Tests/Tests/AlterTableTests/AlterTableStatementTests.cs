@@ -369,7 +369,7 @@ namespace CrmAdo.Tests
             int scale = new Random().Next(DecimalAttributeMetadata.MinSupportedPrecision, DecimalAttributeMetadata.MaxSupportedPrecision);
 
             // Create a decimal field precision between 1 + s and 12 + s.
-            int precision = new Random().Next(0 + scale, maxCrmPrecisionValue + scale);
+            int precision = new Random().Next(1 + scale, maxCrmPrecisionValue + scale);
 
             Console.WriteLine("Precision is " + precision + ", scale is: " + scale);
 
@@ -521,7 +521,7 @@ namespace CrmAdo.Tests
             int maxCrmPrecisionValue = DoubleAttributeMetadata.MaxSupportedValue.ToString().Length;
             // Create random scale between min and max allowed.
             int scale = new Random().Next(DoubleAttributeMetadata.MinSupportedPrecision, DoubleAttributeMetadata.MaxSupportedPrecision);
-            int precision = new Random().Next(0 + scale, maxCrmPrecisionValue + scale);
+            int precision = new Random().Next(1 + scale, maxCrmPrecisionValue + scale);
 
             Console.WriteLine("Precision is " + precision + ", scale is: " + scale);
 
