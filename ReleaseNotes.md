@@ -1,4 +1,4 @@
-# vNext
+# v1.2.6 (03 November 2014)
 
  - [#32](https://github.com/dazinator/CrmAdo/issues/32) - Split DDEX Provider out into its own solution and build +enhancement
  - [#31](https://github.com/dazinator/CrmAdo/issues/31) - Adopt Team City for Builds
