@@ -1,3 +1,9 @@
+# 1.2.7 (03 November 2014)
+
+ - [#33](https://github.com/dazinator/CrmAdo/issues/33) - Get GitReleaseNotes to produce release notes. +enhancement
+
+Commits: [79360ed471...109c2b914a](https://github.com/dazinator/CrmAdo/compare/79360ed471...109c2b914a)
+
 # v1.2.6 (03 November 2014)
 
  - [#32](https://github.com/dazinator/CrmAdo/issues/32) - Split DDEX Provider out into its own solution and build +enhancement
