@@ -45,7 +45,7 @@
 <p>You can now use ADO.net to connect to and query CRM. Here is some quick sample code:</p>
 <pre><code>
 
-            var dbprovider = DbProviderFactories.GetFactory(CrmDbProviderFactory.Invariant);
+            var dbprovider = DbProviderFactories.GetFactory(CrmAdoConstants.Invariant);
             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
             using (var conn = dbprovider.CreateConnection())
             {
