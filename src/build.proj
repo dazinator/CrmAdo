@@ -81,7 +81,7 @@
      Name="UpdateVSIXVersion"
      Condition="$(VSIXVersion) != '' And $(VSIXVersion) != '*Undefined*'">
 
-    <Message Text= "Updating VSIX Version" />
+    <Message Text= "Updating VSIX Version to $(VSIXVersion)" />
 
     <XmlPoke
         XmlInputPath="CrmAdo.Vs\source.extension.vsixmanifest"
@@ -90,6 +90,22 @@
         Namespaces="&lt;Namespace Prefix='n' Uri='http://schemas.microsoft.com/developer/vsx-schema/2011' Name='DoNotKnowWhatThisIsFor-ButItIsRequired' /&gt;">
     </XmlPoke>
   </Target>
+
+  <Target
+     Name="UpdateWixInstallerVersion"
+     Condition="$(VSIXVersion) != '' And $(VSIXVersion) != '*Undefined*'">
+
+    <Message Text= "Updating WIX Installer Product Version to $(VSIXVersion)" />
+
+    <XmlPoke
+        XmlInputPath="CrmAdo.Setup\Product.wxs"
+        Query="/n:Wix/n:Product/@Version"
+        Value="$(VSIXVersion)"
+        Namespaces="&lt;Namespace Prefix='n' Uri='http://schemas.microsoft.com/wix/2006/wi' Name='DoNotKnowWhatThisIsFor-ButItIsRequired' /&gt;">
+    </XmlPoke>
+  </Target>
+  
+  
 
   <!--Builds the solution -->
   <Target Name="BuildSolution">
