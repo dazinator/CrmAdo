@@ -8,7 +8,7 @@
     <CrmAdoUnitTestsProject>CrmAdo.Tests\CrmAdo.Tests.csproj</CrmAdoUnitTestsProject>
     <CrmAdoIntegrationTestsProject>CrmAdo.IntegrationTests\CrmAdo.IntegrationTests.csproj</CrmAdoIntegrationTestsProject>
     <SolutionFile>CrmAdo.sln</SolutionFile>
-    <VSIXVersion Condition="$(BUILD_NUMBER) != '' And $(BUILD_NUMBER) != '*Undefined*'">$(BUILD_NUMBER)</VSIXVersion>
+    <VSIXVersion Condition="$(GitVersion.AssemblySemVer) != '' And $(GitVersion.AssemblySemVer) != '*Undefined*'">$(GitVersion.AssemblySemVer)</VSIXVersion>
   </PropertyGroup>
 
   <!--After Build - Release|AnyCPU.-->
