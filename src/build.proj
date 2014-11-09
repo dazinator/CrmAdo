@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <!--After Build - Release|AnyCPU.-->
-  <Target Name="ReleaseBuild" DependsOnTargets="BuildCrmAdoNet40;BuildCrmAdoNet45;GetVSIXVersionNumberFromAssembly;UpdateVSIXVersion;BuildSolution;">
+  <Target Name="ReleaseBuild" DependsOnTargets="BuildCrmAdoNet40;BuildCrmAdoNet45;GetVSIXVersionNumberFromAssembly;UpdateVSIXVersion;UpdateWixInstallerVersion;BuildSolution;">
     <Message  Importance="high" Text="build proj --> BuildCrmAdo target.."/>
   </Target>
 
