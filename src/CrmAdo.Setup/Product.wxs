@@ -84,6 +84,16 @@
             KeyPath="yes" Name="Microsoft.Xrm.Sdk.dll" ProcessorArchitecture="msil"/>
       </Component>
 
+      <Component Permanent="no" Id="Microsoft.Xrm.Client.dll" Directory="GAC" Guid="4E8861AC-E230-401E-81B0-11A15818CCDE">
+
+        <!-- Add to GAC. -->
+
+        <File Id="Microsoft.Xrm.Client.dll"
+            Source="$(var.CrmAdo.TargetDir)Microsoft.Xrm.Client.dll"
+            Assembly=".net"
+            KeyPath="yes" Name="Microsoft.Xrm.Client.dll" ProcessorArchitecture="msil"/>
+      </Component>
+
       <Component  Permanent="no" Id="SQLGeneration.dll" Directory="GAC" Guid="69F8A934-9174-41A7-B2AA-A36A19B5607E">
 
         <!-- Add to GAC. -->
