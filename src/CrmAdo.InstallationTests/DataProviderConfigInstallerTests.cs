@@ -23,6 +23,8 @@ namespace CrmAdo.InstallationTests
             var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
             var sut = new CrmAdo.Installation.DataProviderConfigInstaller();
             sut.UpdateConfig("CrmAdo", currentVersion, "en-gb", "abc");
+
+           
         }
 
         [Test]

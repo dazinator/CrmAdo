@@ -50,10 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\CrmAdo\Properties\AssemblyInfo.cs">
-      <Link>Properties\AssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="Properties\GeneralInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataProviderConfigInstallerTests.cs" />
   </ItemGroup>
   <ItemGroup>

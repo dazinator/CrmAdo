@@ -28,7 +28,7 @@ namespace CrmAdo.Installation
         {
             Version version = Environment.Version;
             return GetMachineConfigFilePath(version, x64);
-        }       
+        }
 
         private static string GetNET40MachineConfigFilePath(bool x64)
         {
@@ -36,7 +36,7 @@ namespace CrmAdo.Installation
             return GetMachineConfigFilePath(version, x64);
         }
 
-        private static string GetMachineConfigFilePath(Version clrVersion, bool x64)
+        public static string GetMachineConfigFilePath(Version clrVersion, bool x64)
         {
             string frameworkVersionFolder = string.Format("v{0}.{1}.{2}", clrVersion.Major, clrVersion.Minor, clrVersion.Build);
             string frameworkBaseFolder = GetFrameworkFolder(x64);
@@ -53,7 +53,7 @@ namespace CrmAdo.Installation
         {
             Version version = new Version("4.0.30319");
             return version;
-        }       
+        }
 
         public static void RegisterDataProviderInMachineConfig(Version clrVersion, string invariant, string name, string description, string typeName, string assemblyName)
         {
@@ -167,6 +167,104 @@ namespace CrmAdo.Installation
                 xmlDocument.Save(path);
                 Console.WriteLine("{0} updated successfully.", path);
             }
+        }
+
+        public static void RegisterAssemblyCodeBaseInMachineConfig(Version clrVersion, string assemblyName, string publicKeyToken, string culture, string version, string hrefLocation)
+        {
+            string configFilePath = GetMachineConfigFilePath(clrVersion, true);          
+            if (!string.IsNullOrEmpty(configFilePath))
+            {
+                RegisterAssemblyCodeBaseInMachineConfig(configFilePath, assemblyName, publicKeyToken, culture, version, hrefLocation);
+            }
+
+            configFilePath = GetMachineConfigFilePath(clrVersion, false);
+            if (!string.IsNullOrEmpty(configFilePath))
+            {
+                RegisterAssemblyCodeBaseInMachineConfig(configFilePath, assemblyName, publicKeyToken, culture, version, hrefLocation);
+            }
+
+        }
+
+        public static void RegisterAssemblyCodeBaseInMachineConfig(string configFilePath, string assemblyName, string publicKeyToken, string culture, string version, string hrefLocation)
+        {
+            XmlDocument configXmlDocument = new XmlDocument();
+            configXmlDocument.Load(configFilePath);
+
+            XmlNode configNode = configXmlDocument.SelectSingleNode("/configuration");
+            XmlNode runtimeNode = configXmlDocument.SelectSingleNode("/configuration/runtime");
+            if (runtimeNode == null)
+            {
+                // Need to create the runtime node because it doesn't already exist.
+                runtimeNode = configXmlDocument.CreateElement("runtime");
+                configNode.AppendChild(runtimeNode);
+            }
+
+            XmlNamespaceManager nsmgr = new XmlNamespaceManager(configXmlDocument.NameTable);
+            string namespaceUri = "urn:schemas-microsoft-com:asm.v1";
+            nsmgr.AddNamespace("ab", namespaceUri);
+
+            var xpathSelector = string.Format("/configuration/runtime/ab:assemblyBinding/ab:dependentAssembly/ab:assemblyIdentity[@name='{0}' and @publicKeyToken='{1}']", assemblyName, publicKeyToken);
+            XmlNode assemblyIdentityNode = configXmlDocument.SelectSingleNode(xpathSelector);
+
+            if (assemblyIdentityNode == null)
+            {
+                var abNode = configXmlDocument.CreateElement("assemblyBinding", namespaceUri);
+                runtimeNode.AppendChild(abNode);
+
+                var daNode = configXmlDocument.CreateElement("dependentAssembly", namespaceUri);
+                abNode.AppendChild(daNode);
+
+                var aiNode = configXmlDocument.CreateElement("assemblyIdentity ", namespaceUri);
+                aiNode.SetAttribute("name", assemblyName);
+                aiNode.SetAttribute("publicKeyToken", publicKeyToken);
+                aiNode.SetAttribute("culture", culture);
+
+                daNode.AppendChild(aiNode);
+                assemblyIdentityNode = aiNode;
+            }
+
+            XmlElement codeBaseElement = null;
+            var parent = assemblyIdentityNode.ParentNode;
+            foreach (var item in parent.ChildNodes)
+            {
+                var ele = item as XmlElement;
+                if (ele != null)
+                {
+                    if (ele.Name.ToLowerInvariant() == "codebase")
+                    {
+                        codeBaseElement = ele;
+                    }
+                }
+            }
+
+            if (codeBaseElement == null)
+            {
+                codeBaseElement = configXmlDocument.CreateElement("codeBase", namespaceUri);
+                assemblyIdentityNode.AppendChild(codeBaseElement);
+            }
+
+            codeBaseElement.SetAttribute("version", version);
+            codeBaseElement.SetAttribute("href", hrefLocation);           
+
+
+
+
+            //            <configuration>
+            //   <runtime>
+            //      <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+            //         <dependentAssembly>
+            //            <assemblyIdentity name="myAssembly"
+            //                              publicKeyToken="32ab4ba45e0a69a1"
+            //                              culture="neutral" />
+            //            <codeBase version="2.0.0.0"
+            //                      href="http://www.litwareinc.com/myAssembly.dll"/>
+            //         </dependentAssembly>
+            //      </assemblyBinding>
+            //   </runtime>
+            //</configuration>
+
+
+
         }
 
 
