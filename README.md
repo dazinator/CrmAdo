@@ -5,7 +5,7 @@ CrmAdo
 <img src="http://dazinator.ddns.net:81/app/rest/builds/buildType:(id:CrmAdo_Continuos)/statusIcon"/>
 </a>
 
-An ADO.Net Data Provider for Dynamics Crm.
+An ADO.NET Provider for Dynamics Crm.
 
 Read more here: http://dazinator.github.io/CrmAdo 
 
