@@ -130,6 +130,16 @@
            />
       </Component>
 
+      <Component Permanent="no" Id="Microsoft.Crm.Sdk.Proxy.dll" Directory="GAC" Guid="31506E30-C273-4C61-B602-6B61818D5616">
+
+        <!-- Add to GAC. -->
+
+        <File Id="Microsoft.Crm.Sdk.Proxy.dll"
+            Source="$(var.CrmAdo.TargetDir)Microsoft.Crm.Sdk.Proxy.dll"
+            Assembly=".net"
+            KeyPath="yes" Name="Microsoft.Crm.Sdk.Proxy.dll" ProcessorArchitecture="msil"/>
+      </Component>
+
       <Component Permanent="no" Id="Microsoft.Xrm.Client.dll" Directory="ProductDirectory" Guid="4E8861AC-E230-401E-81B0-11A15818CCDE">
 
         <!-- Add to GAC. -->
