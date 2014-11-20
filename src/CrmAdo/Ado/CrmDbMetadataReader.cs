@@ -44,7 +44,7 @@ namespace CrmAdo
         }
 
 
-        private int _Depth = 0;       
+        private int _Depth = 0;
         public override int Depth
         {
             get { return _Depth; }
@@ -107,22 +107,19 @@ namespace CrmAdo
             return new DbEnumerator(this, this._DbConnection != null);
         }
 
-        #region To Implement
-
         public override int FieldCount
         {
             get
             {
-                // throw new NotImplementedException();
                 return _Results.ColumnMetadata.Count;
             }
         }
 
         public override string GetName(int ordinal)
         {
-            //throw new NotImplementedException();
             return _Results.ColumnMetadata[ordinal].ColumnName;
         }
+
 
         public override int GetOrdinal(string name)
         {
@@ -158,7 +155,7 @@ namespace CrmAdo
         {
             var meta = _Results.ColumnMetadata[ordinal];
             var result = _Results.Results[_Position];
-            if(meta.AttributeMetadata == null)
+            if (meta.AttributeMetadata == null)
             {
                 // unknown property.
                 return null;
@@ -190,8 +187,7 @@ namespace CrmAdo
         /// <returns></returns>
         public override string GetDataTypeName(int ordinal)
         {
-            // retrun the data type name e.g 'varchar'
-            // throw new NotImplementedException();
+            // retrun the data type name e.g 'varchar'         
             return _Results.ColumnMetadata[ordinal].AttributeMetadata.GetSqlDataTypeName();
         }
 
@@ -202,7 +198,6 @@ namespace CrmAdo
         /// <returns></returns>
         public override Type GetFieldType(int ordinal)
         {
-            //  throw new NotImplementedException();
             return _Results.ColumnMetadata[ordinal].AttributeMetadata.GetFieldType();
         }
 
@@ -215,8 +210,6 @@ namespace CrmAdo
             // throw new NotImplementedException();
             return _SchemaTableProvider.GetSchemaTable(this._Results.ColumnMetadata);
         }
-
-        #endregion
 
         #region Field Value Retrieval
 

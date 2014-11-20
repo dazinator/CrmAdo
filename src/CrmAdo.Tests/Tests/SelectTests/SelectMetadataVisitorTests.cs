@@ -47,6 +47,35 @@ namespace CrmAdo.Tests
 
             
 
+        }
+
+        [Category("SELECT")]
+        [Test(Description = "Should support selecting attribute metadata")]
+        public void Should_Support_Selecting_Attribute_Metadata()
+        {                 
+
+            StringBuilder sqlBuilder = new StringBuilder();
+
+            sqlBuilder.AppendLine("SELECT a.* FROM EntityMetadata AS e INNER JOIN AttributeMetadata a ON e.MetadataId = a.MetadataId WHERE e.LogicalName = 'contact'");
+        
+            // Arrange
+            var sql = sqlBuilder.ToString();
+            // Act
+            var queryExpression = GetOrganizationRequest<RetrieveMetadataChangesRequest>(sql);
+            // Assert
+            Assert.That(queryExpression, Is.Not.Null);
+            Assert.That(queryExpression.Query, Is.Not.Null);
+
+
+            EntityQueryExpression query = queryExpression.Query;
+            Assert.That(query.Properties, Is.Not.Null);
+
+            MetadataPropertiesExpression props = query.Properties;
+            Assert.That(props.PropertyNames.Count, Is.GreaterThan(1));
+
+
+
+
         }    
 
 
