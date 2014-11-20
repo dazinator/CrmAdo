@@ -12,7 +12,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{6F14A947-1316-4CF7-ADD6-8F20A2BB453E}"
 	ProjectSection(SolutionItems) = preProject
 		build.proj = build.proj
-		GlobalAssemblyInfo.cs = GlobalAssemblyInfo.cs
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo", "CrmAdo\CrmAdo.csproj", "{61D9051D-4C85-419F-97DC-D56D4A72C5E3}"
