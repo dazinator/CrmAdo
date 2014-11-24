@@ -20,6 +20,6 @@ using System.Runtime.InteropServices;
 [assembly: Guid("71b18660-7aae-439f-ab15-eb10a6f99490")]
 
 //DO NOT MODIFY - THESE ARE SET BY TEAMCITY
-[assembly: AssemblyVersion("0.0.0.0")]
-[assembly: AssemblyFileVersion("0.0.0.0")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: AssemblyInformationalVersion("0.0.0.0")]

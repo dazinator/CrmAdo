@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="CrmAdo..844f4586-0bfb-44a2-874f-f464eb4f2ea1" Version="1.0.0.0" Language="en-US" Publisher="Darrell Tunnell" />
+    <Identity Id="CrmAdo..844f4586-0bfb-44a2-874f-f464eb4f2ea1" Version="1.0.1.0" Language="en-US" Publisher="Darrell Tunnell" />
     <DisplayName>CrmAdo </DisplayName>
     <Description xml:space="preserve">This visual studio extension is installed when the CrmAdo data installer is installed via the msi . Other visual studio packages may be dependent upon this one as this one.</Description>
     <MoreInfo>http://dazinator.github.io/CrmAdo/</MoreInfo>

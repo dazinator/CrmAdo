@@ -68,13 +68,13 @@
     <GetAssemblyIdentity AssemblyFiles="CrmAdo\bin\release\net40\CrmAdo.dll">
       <Output TaskParameter="Assemblies" ItemName="OutputAssemblyInfo" />
     </GetAssemblyIdentity>
-    <Message Text="Info: %(OutputAssemblyInfo.Version)" />
+    <Message Text="CrmAdo assembly version is: %(OutputAssemblyInfo.Version)" />
     <PropertyGroup>
       <AssemblyVersionNumber>%(OutputAssemblyInfo.Version)</AssemblyVersionNumber>
       <!-- If a BuildVersionNumber is supplied we can append that as the last digit of the package version number -->
       <VSIXVersion>$(AssemblyVersionNumber)</VSIXVersion>
     </PropertyGroup>
-    <Message Text="VSIX Version Number from assembly: $(VSIXVersion)"/>
+    <Message Text="VSIX Version Number from CrmAdo assembly: $(VSIXVersion)"/>
   </Target>
 
   <Target
