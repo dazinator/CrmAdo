@@ -213,7 +213,7 @@
     <Compile Include="Dynamics\Metadata\EntityMetadataRepository.cs" />
     <Compile Include="Dynamics\Metadata\EntityMetadataUtils.cs" />
     <Compile Include="Dynamics\Metadata\EntityQueryUtils.cs" />
-    <Compile Include="Dynamics\Metadata\ICrmMetaDataProvider.cs" />
+    <Compile Include="Core\ICrmMetaDataProvider.cs" />
     <Compile Include="Dynamics\Metadata\InMemoryCachedCrmMetaDataProvider.cs" />
     <Compile Include="Dynamics\CrmOrganisationManager.cs" />
     <Compile Include="Dynamics\CrmServiceProvider.cs" />
