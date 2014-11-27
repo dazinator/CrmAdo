@@ -5,6 +5,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using NUnit.Framework;
 using Rhino.Mocks;
+using CrmAdo.Metadata;
 
 namespace CrmAdo.Tests
 {
@@ -65,7 +66,7 @@ namespace CrmAdo.Tests
             //   var firstName = new AttributeMetadata();
             //  var lastname = new AttributeMetadata();
 
-            var firstNameAttInfo = new AttributeInfo();
+            var firstNameAttInfo = new StringAttributeInfo();
             firstNameAttInfo.AttributeType = AttributeTypeCode.String;
             firstNameAttInfo.LogicalName = "firstname";
             var firstNameC = new ColumnMetadata(firstNameAttInfo);
@@ -73,7 +74,7 @@ namespace CrmAdo.Tests
            // firstNameC.Stub(a => a.AttributeMetadata.GetSqlDataTypeName()).Return("string");
            // firstNameC.Stub(a => a.AttributeMetadata.AttributeType).Return(AttributeTypeCode.String);
 
-            var lastNameAttInfo = new AttributeInfo();
+            var lastNameAttInfo = new StringAttributeInfo();
             lastNameAttInfo.AttributeType = AttributeTypeCode.String;
             lastNameAttInfo.LogicalName = "lastname";
             var lastnameC = new ColumnMetadata(lastNameAttInfo);

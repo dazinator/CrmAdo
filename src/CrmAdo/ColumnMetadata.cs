@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using CrmAdo.Dynamics.Metadata;
 using Microsoft.Xrm.Sdk.Metadata;
+using CrmAdo.Metadata;
 
 namespace CrmAdo
 {

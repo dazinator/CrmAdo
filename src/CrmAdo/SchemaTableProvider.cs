@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Globalization;
 using Microsoft.Xrm.Sdk.Metadata;
 using CrmAdo.Dynamics.Metadata;
+using CrmAdo.Metadata;
 
 namespace CrmAdo
 {
@@ -73,7 +74,7 @@ namespace CrmAdo
                 row[SchemaTableColumn.IsUnique] = false;  //for timestamp columns only. //columnMetadata.AttributeMetadata.IsPrimaryId;
                 row[SchemaTableColumn.NonVersionedProviderType] = (int)attMeta.AttributeType;
 
-                var haveMinAndMax = attMeta as IHaveMinMaxAndScaleValues;
+                var haveMinAndMax = attMeta as IColumnMetadata;
                 if (haveMinAndMax != null)
                 {
                     row[SchemaTableColumn.NumericPrecision] = haveMinAndMax.GetNumericPrecision();

@@ -4,16 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrmAdo.Dynamics.Metadata
+namespace CrmAdo.Metadata
 {
-    public class MoneyAttributeInfo : AttributeInfo, IHaveMinMaxAndScaleValues<double>
+    public class MoneyAttributeInfo : AttributeInfo, IHaveMinMaxValues<double>, IHaveCrmPrecision
     {
         public double? MinValue { get; set; }
         public double? MaxValue { get; set; }
         public int? Precision { get; set; }
         public int? PrecisionSource { get; set; }
 
-        public int GetNumericPrecision()
+        public override int GetNumericPrecision()
         {
             switch (PrecisionSource.GetValueOrDefault())
             {
@@ -39,7 +39,7 @@ namespace CrmAdo.Dynamics.Metadata
             }
         }
 
-        public int GetNumericScale()
+        public override int GetNumericScale()
         {
             switch (PrecisionSource.GetValueOrDefault())
             {
@@ -60,7 +60,7 @@ namespace CrmAdo.Dynamics.Metadata
             }
         }
 
-        object IHaveMinMaxAndScaleValues.MinValue
+        object IHaveMinAndMaxValues.MinValue
         {
             get
             {
@@ -79,7 +79,7 @@ namespace CrmAdo.Dynamics.Metadata
             }
         }
 
-        object IHaveMinMaxAndScaleValues.MaxValue
+        object IHaveMinAndMaxValues.MaxValue
         {
             get
             {

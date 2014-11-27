@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Metadata.Query;
+using CrmAdo.Metadata;
 
 namespace CrmAdo.Dynamics.Metadata
 {

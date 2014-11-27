@@ -12,6 +12,7 @@ using Microsoft.Xrm.Sdk.Metadata.Query;
 using CrmAdo.Results;
 using CrmAdo.Util.DynamicLinq;
 using System.ComponentModel;
+using CrmAdo.Metadata;
 
 namespace CrmAdo
 {
@@ -403,12 +404,13 @@ namespace CrmAdo
 
                         //DataTable resultTable = BuildMetadataResultDataTable(resultSet.ColumnMetadata, t);
 
+                        var attFactory = new AttributeInfoFactory();
 
                         results = (from r in retrieveMultipleResponse.EntityMetadata
                                    from a in (r.Attributes ?? Enumerable.Empty<AttributeMetadata>()).DefaultIfEmpty()
                                    from o in (r.OneToManyRelationships ?? Enumerable.Empty<OneToManyRelationshipMetadata>()).Union(r.ManyToOneRelationships ?? Enumerable.Empty<OneToManyRelationshipMetadata>()).DefaultIfEmpty()
                                    from m in (r.ManyToManyRelationships ?? Enumerable.Empty<ManyToManyRelationshipMetadata>()).DefaultIfEmpty()
-                                   select new CrmAdo.EntityMetadataResultSet.DenormalisedMetadataResult { EntityMetadata = r, AttributeMetadata = a, OneToManyRelationship = o, ManyToManyRelationship = m }).ToArray();
+                                   select new CrmAdo.EntityMetadataResultSet.DenormalisedMetadataResult { EntityMetadata = r, AttributeMetadata = attFactory.Create(a), OneToManyRelationship = o, ManyToManyRelationship = m }).ToArray();
 
                         // var dataResults = resul
 

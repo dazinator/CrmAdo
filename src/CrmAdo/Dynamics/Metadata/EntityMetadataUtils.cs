@@ -138,7 +138,120 @@ namespace CrmAdo.Dynamics.Metadata
                     return attType.ToString();
             }
         }
-        
+
+        public static int GetLength(this AttributeMetadata attribute)
+        {
+            switch (attribute.AttributeType)
+            {
+                case AttributeTypeCode.BigInt:
+                    return 8;
+                case AttributeTypeCode.Boolean:
+                    return 1;
+                case AttributeTypeCode.CalendarRules:
+                    return 0;
+                case AttributeTypeCode.Customer:
+                    return 16;
+                case AttributeTypeCode.DateTime:
+                    return 8;
+                case AttributeTypeCode.Decimal:
+                    return 9;
+                case AttributeTypeCode.Double:
+                    return 8;
+                case AttributeTypeCode.EntityName:
+                    return 200;
+                case AttributeTypeCode.Integer:
+                    // var i = (IntegerAttributeMetadata)attribute;
+                    //  i.ma
+                    return 4;
+                case AttributeTypeCode.Lookup:
+                    return 16;
+                case AttributeTypeCode.ManagedProperty:
+                    return 1;
+                case AttributeTypeCode.Memo:
+                    var m = (MemoAttributeMetadata)attribute;
+                    return m.MaxLength.GetValueOrDefault();
+                case AttributeTypeCode.Money:
+                    return 8;
+                case AttributeTypeCode.Owner:
+                    return 16;
+                case AttributeTypeCode.PartyList:
+                    return 0;
+                case AttributeTypeCode.Picklist:
+                    return 4;
+                case AttributeTypeCode.State:
+                    return 4;
+                case AttributeTypeCode.Status:
+                    return 4;
+                case AttributeTypeCode.String:
+                    var s = (StringAttributeMetadata)attribute;
+                    return s.MaxLength.GetValueOrDefault();
+
+                case AttributeTypeCode.Uniqueidentifier:
+                    return 16;
+                case AttributeTypeCode.Virtual:
+                    return 0;
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        public static int GetSqlPrecision(this AttributeMetadata attribute)
+        {
+            switch (attribute.AttributeType)
+            {
+                case AttributeTypeCode.BigInt:
+                    return 19;
+                case AttributeTypeCode.Boolean:
+                    return 1;
+                case AttributeTypeCode.CalendarRules:
+                    return 255;
+                case AttributeTypeCode.Customer:
+                    return 255;
+                case AttributeTypeCode.DateTime:
+                    return 23;
+                case AttributeTypeCode.Decimal:
+                   // return GetSqlPrecision()
+                    return 9;
+                case AttributeTypeCode.Double:
+                    return 8;
+                case AttributeTypeCode.EntityName:
+                    return 200;
+                case AttributeTypeCode.Integer:
+                    // var i = (IntegerAttributeMetadata)attribute;
+                    //  i.ma
+                    return 4;
+                case AttributeTypeCode.Lookup:
+                    return 16;
+                case AttributeTypeCode.ManagedProperty:
+                    return 1;
+                case AttributeTypeCode.Memo:
+                    var m = (MemoAttributeMetadata)attribute;
+                    return m.MaxLength.GetValueOrDefault();
+                case AttributeTypeCode.Money:
+                    return 8;
+                case AttributeTypeCode.Owner:
+                    return 16;
+                case AttributeTypeCode.PartyList:
+                    return 0;
+                case AttributeTypeCode.Picklist:
+                    return 4;
+                case AttributeTypeCode.State:
+                    return 4;
+                case AttributeTypeCode.Status:
+                    return 4;
+                case AttributeTypeCode.String:
+                    var s = (StringAttributeMetadata)attribute;
+                    return s.MaxLength.GetValueOrDefault();
+
+                case AttributeTypeCode.Uniqueidentifier:
+                    return 16;
+                case AttributeTypeCode.Virtual:
+                    return 0;
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
         #region Decimal
 
         /// <summary>
@@ -258,7 +371,7 @@ namespace CrmAdo.Dynamics.Metadata
                 if (!decimal.TryParse(maxNumberBuilder.ToString(), out maxD))
                 {
                     throw new FormatException(string.Format("Unable to parse {0} as a decimal.", maxNumberBuilder.ToString()));
-                }               
+                }
 
                 var maxNumber = decimal.Parse(maxNumberBuilder.ToString());
                 metadata.MaxValue = maxNumber;
@@ -511,8 +624,8 @@ namespace CrmAdo.Dynamics.Metadata
                 if (!double.TryParse(maxNumberBuilder.ToString(), out maxNumber))
                 {
                     throw new FormatException(string.Format("Unable to parse {0} as a double.", maxNumberBuilder.ToString()));
-                }    
-              
+                }
+
                 metadata.MaxValue = maxNumber;
                 metadata.MinValue = -maxNumber;
             }
@@ -521,7 +634,7 @@ namespace CrmAdo.Dynamics.Metadata
 
         }
 
-        #endregion      
-       
+        #endregion
+
     }
 }

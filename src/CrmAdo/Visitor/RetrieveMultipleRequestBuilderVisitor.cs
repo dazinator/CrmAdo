@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CrmAdo.Dynamics.Metadata;
 using CrmAdo.Dynamics;
+using CrmAdo.Metadata;
 
 namespace CrmAdo.Visitor
 {

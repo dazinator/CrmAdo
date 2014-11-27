@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrmAdo.Dynamics.Metadata
+namespace CrmAdo.Metadata
 {
-    public class DecimalAttributeInfo : AttributeInfo, IHaveMinMaxAndScaleValues<decimal>
+    public class DoubleAttributeInfo : AttributeInfo, IHaveMinMaxValues<double>
     {
-        public decimal? MinValue { get; set; }
-        public decimal? MaxValue { get; set; }
-
+        public double? MinValue { get; set; }
+        public double? MaxValue { get; set; }
         public int? Precision { get; set; }
 
         public int GetNumericPrecision()
@@ -23,7 +22,7 @@ namespace CrmAdo.Dynamics.Metadata
             return Precision.GetValueOrDefault();
         }
 
-        object IHaveMinMaxAndScaleValues.MinValue
+        object IHaveMinAndMaxValues.MinValue
         {
             get
             {
@@ -37,12 +36,12 @@ namespace CrmAdo.Dynamics.Metadata
                 }
                 else
                 {
-                    MinValue = (decimal)value;
+                    MinValue = (double)value;
                 }
             }
         }
 
-        object IHaveMinMaxAndScaleValues.MaxValue
+        object IHaveMinAndMaxValues.MaxValue
         {
             get
             {
@@ -56,10 +55,9 @@ namespace CrmAdo.Dynamics.Metadata
                 }
                 else
                 {
-                    MaxValue = (decimal)value;
+                    MaxValue = (double)value;
                 }
             }
         }
-
     }
 }

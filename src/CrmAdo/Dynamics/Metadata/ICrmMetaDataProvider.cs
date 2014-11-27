@@ -1,4 +1,5 @@
-﻿namespace CrmAdo.Dynamics.Metadata
+﻿using CrmAdo.Metadata;
+namespace CrmAdo.Dynamics.Metadata
 {
     public interface ICrmMetaDataProvider
     {

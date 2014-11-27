@@ -1,4 +1,5 @@
 ﻿using CrmAdo.Dynamics.Metadata;
+using CrmAdo.Metadata;
 using CrmAdo.Results;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -19,7 +20,7 @@ namespace CrmAdo
         internal class DenormalisedMetadataResult
         {
             public EntityMetadata EntityMetadata { get; set; }
-            public AttributeMetadata AttributeMetadata { get; set; }
+            public AttributeInfo AttributeMetadata { get; set; }
             public OneToManyRelationshipMetadata OneToManyRelationship { get; set; }
             public ManyToManyRelationshipMetadata ManyToManyRelationship { get; set; }
 
@@ -159,10 +160,10 @@ namespace CrmAdo
                 {
                     case "attributeof":
                         return AttributeMetadata.AttributeOf;
-                    case "attributetype":                       
+                    case "attributetype":
                         return AttributeMetadata.AttributeType.Value.ToString();
                     case "attributetypename":
-                        return AttributeMetadata.AttributeTypeName.Value;
+                        return AttributeMetadata.AttributeTypeDisplayName.Value;
                     case "canbesecuredforcreate":
                         return AttributeMetadata.CanBeSecuredForCreate;
                     case "canbesecuredforread":
@@ -221,20 +222,10 @@ namespace CrmAdo
                         return AttributeMetadata.LogicalName == EntityMetadata.PrimaryIdAttribute;
                     case "optionsetoptions":
                         OptionSetMetadata opt = null;
-                        if (AttributeMetadata.AttributeType.HasValue)
+                        var hasOptions = AttributeMetadata as IHaveOptionSet;
+                        if (hasOptions != null)
                         {
-                            if (AttributeMetadata.AttributeType.Value == AttributeTypeCode.Picklist)
-                            {
-                                opt = ((PicklistAttributeMetadata)AttributeMetadata).OptionSet;
-                            }
-                            else if (AttributeMetadata.AttributeType.Value == AttributeTypeCode.State)
-                            {
-                                opt = ((StateAttributeMetadata)AttributeMetadata).OptionSet;
-                            }
-                            else if (AttributeMetadata.AttributeType.Value == AttributeTypeCode.Status)
-                            {
-                                opt = ((StatusAttributeMetadata)AttributeMetadata).OptionSet;
-                            }
+                            opt = hasOptions.Options;
                         }
                         if (opt != null)
                         {
@@ -242,25 +233,15 @@ namespace CrmAdo
                         }
                         return string.Empty;
                     case "optionsetname":
-                        OptionSetMetadata optset = null;
-                        if (AttributeMetadata.AttributeType.HasValue)
+                        OptionSetMetadata opts = null;
+                        var hasOptionset = AttributeMetadata as IHaveOptionSet;
+                        if (hasOptionset != null)
                         {
-                            if (AttributeMetadata.AttributeType.Value == AttributeTypeCode.Picklist)
-                            {
-                                optset = ((PicklistAttributeMetadata)AttributeMetadata).OptionSet;
-                            }
-                            else if (AttributeMetadata.AttributeType.Value == AttributeTypeCode.State)
-                            {
-                                optset = ((StateAttributeMetadata)AttributeMetadata).OptionSet;
-                            }
-                            else if (AttributeMetadata.AttributeType.Value == AttributeTypeCode.Status)
-                            {
-                                optset = ((StatusAttributeMetadata)AttributeMetadata).OptionSet;
-                            }
+                            opts = hasOptionset.Options;
                         }
-                        if (optset != null)
+                        if (opts != null)
                         {
-                            return optset.Name;
+                            return opts.Name;
                         }
                         return string.Empty;
                     default:

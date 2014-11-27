@@ -4,6 +4,7 @@ using System.Linq;
 using CrmAdo.Dynamics.Metadata;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
+using CrmAdo.Metadata;
 
 namespace CrmAdo.Dynamics
 {
@@ -110,7 +111,7 @@ namespace CrmAdo.Dynamics
             public EntityBuilder SetValue<T>(T val)
             {
                 this.EntityBuilder.Entity[AttributeMetadata.LogicalName] = val;
-                if (AttributeMetadata.IsPrimaryId)
+                if (AttributeMetadata.IsPrimaryId.GetValueOrDefault())
                 {
                     this.EntityBuilder.Entity.Id = AttributeTypeConverter.GetUniqueIdentifier(val);
                 }

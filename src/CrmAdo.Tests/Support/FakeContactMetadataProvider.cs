@@ -4,6 +4,7 @@ using System.IO;
 using System.Xml;
 using CrmAdo.Dynamics.Metadata;
 using Microsoft.Xrm.Sdk.Metadata;
+using CrmAdo.Metadata;
 
 namespace CrmAdo.Tests
 {
