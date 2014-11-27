@@ -8,15 +8,15 @@ namespace CrmAdo.Metadata
 {
     public class CustomerAttributeInfo : AttributeInfo
     {
-        public override int GetNumericPrecision()
-        {
-            return 0;
-        }
+        //protected override int GetNumericPrecision()
+        //{
+        //    return 0;
+        //}
 
-        public override int GetNumericScale()
-        {
-            return 0;
-        }
+        //protected override int GetNumericScale()
+        //{
+        //    return 0;
+        //}
 
         public override int Length
         {

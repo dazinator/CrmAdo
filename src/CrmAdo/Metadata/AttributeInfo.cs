@@ -8,8 +8,13 @@ using CrmAdo.Dynamics.Metadata;
 
 namespace CrmAdo.Metadata
 {
-    public abstract class AttributeInfo : IColumnMetadata      
+    public abstract class AttributeInfo : IColumnMetadata
     {
+
+        public AttributeInfo()
+        {
+            this.DefaultValue = null;
+        }
 
         public string AttributeOf { get; set; }
 
@@ -125,7 +130,7 @@ namespace CrmAdo.Metadata
             get
             {
                 return this.IsPrimaryId.GetValueOrDefault();
-            }          
+            }
         }
 
         private int _Length = 0;
@@ -153,20 +158,28 @@ namespace CrmAdo.Metadata
             }
         }
 
-        public virtual int GetNumericPrecision()
+        protected virtual int GetNumericPrecision()
         {
             return 255;
         }
 
-        public virtual int GetNumericScale()
+        protected virtual int GetNumericScale()
         {
             return 255;
         }
 
-        #endregion       
+        public virtual object DefaultValue { get; set; }
 
-       
-        
+        #endregion
 
+        public int NumericPrecision
+        {
+            get { return GetNumericPrecision(); }
+        }
+
+        public int NumericScale
+        {
+            get { return GetNumericScale(); }
+        }
     }
 }

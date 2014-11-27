@@ -33,14 +33,14 @@ namespace CrmAdo.Metadata
             {
                 _MaxValue = value;
             }
-        }         
+        }
 
-        public override int GetNumericPrecision()
+        protected override int GetNumericPrecision()
         {
             return 10;
         }
 
-        public override int GetNumericScale()
+        protected override int GetNumericScale()
         {
             return 0;
         }

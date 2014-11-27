@@ -12,7 +12,7 @@ namespace CrmAdo.Metadata
 
         protected virtual AttributeInfo CreateBigInt(AttributeMetadata attributeMetadata)
         {
-            var attMeta = (BigIntAttributeMetadata)attributeMetadata;
+            var attMeta = (BigIntAttributeMetadata)attributeMetadata;            
             var attInfo = new BigIntAttributeInfo();
             attInfo.MinValue = attMeta.MinValue;
             attInfo.MaxValue = attMeta.MaxValue;
@@ -21,21 +21,22 @@ namespace CrmAdo.Metadata
 
         protected virtual AttributeInfo CreateBoolean(AttributeMetadata attributeMetadata)
         {
-            var attMeta = (BooleanAttributeMetadata)attributeMetadata;
+            var attMeta = (BooleanAttributeMetadata)attributeMetadata;     
             var attInfo = new BooleanAttributeInfo();
+            attInfo.DefaultValue = attMeta.DefaultValue;
             return attInfo;
         }
 
         protected virtual AttributeInfo CreateDateTime(AttributeMetadata attributeMetadata)
         {
-            var attMeta = (DateTimeAttributeMetadata)attributeMetadata;
+            var attMeta = (DateTimeAttributeMetadata)attributeMetadata;        
             var attInfo = new DateTimeAttributeInfo();
             return attInfo;
         }
 
         protected virtual AttributeInfo CreateDecimal(AttributeMetadata attributeMetadata)
         {
-            var decimalMetadata = (DecimalAttributeMetadata)attributeMetadata;
+            var decimalMetadata = (DecimalAttributeMetadata)attributeMetadata;            
             var dec = new DecimalAttributeInfo();
             dec.MinValue = decimalMetadata.MinValue;
             dec.MaxValue = decimalMetadata.MaxValue;
@@ -45,7 +46,7 @@ namespace CrmAdo.Metadata
 
         protected virtual AttributeInfo CreateDouble(AttributeMetadata attributeMetadata)
         {
-            var doubleMetadata = (DoubleAttributeMetadata)attributeMetadata;
+            var doubleMetadata = (DoubleAttributeMetadata)attributeMetadata;         
             var doubleAttInfo = new DoubleAttributeInfo();
             doubleAttInfo.MinValue = doubleMetadata.MinValue;
             doubleAttInfo.MaxValue = doubleMetadata.MaxValue;
@@ -62,7 +63,7 @@ namespace CrmAdo.Metadata
 
         protected virtual AttributeInfo CreateInteger(AttributeMetadata attributeMetadata)
         {
-            var attMeta = (IntegerAttributeMetadata)attributeMetadata;
+            var attMeta = (IntegerAttributeMetadata)attributeMetadata;         
             var attInfo = new IntegerAttributeInfo();
             attInfo.MinValue = attMeta.MinValue;
             attInfo.MaxValue = attMeta.MaxValue;
@@ -71,7 +72,7 @@ namespace CrmAdo.Metadata
 
         protected virtual AttributeInfo CreateMoney(AttributeMetadata attributeMetadata)
         {
-            var moneyMetadata = (MoneyAttributeMetadata)attributeMetadata;
+            var moneyMetadata = (MoneyAttributeMetadata)attributeMetadata;         
             var moneyAttInfo = new MoneyAttributeInfo();
             moneyAttInfo.MinValue = moneyMetadata.MinValue;
             moneyAttInfo.MaxValue = moneyMetadata.MaxValue;
@@ -82,7 +83,7 @@ namespace CrmAdo.Metadata
 
         protected virtual AttributeInfo CreateString(AttributeMetadata attributeMetadata)
         {
-            var attMeta = (StringAttributeMetadata)attributeMetadata;
+            var attMeta = (StringAttributeMetadata)attributeMetadata;                  
             var attInfo = new StringAttributeInfo();
             attInfo.Length = attMeta.MaxLength.GetValueOrDefault();
             return attInfo;
@@ -90,7 +91,7 @@ namespace CrmAdo.Metadata
 
         protected virtual AttributeInfo CreateMemo(AttributeMetadata attributeMetadata)
         {
-            var attMeta = (MemoAttributeMetadata)attributeMetadata;
+            var attMeta = (MemoAttributeMetadata)attributeMetadata;          
             var attInfo = new MemoAttributeInfo();
             attInfo.Length = attMeta.MaxLength.GetValueOrDefault();
             return attInfo;
@@ -100,20 +101,23 @@ namespace CrmAdo.Metadata
         {
             var attMeta = (StatusAttributeMetadata)attributeMetadata;
             var attInfo = new StatusAttributeInfo(attMeta.OptionSet);
+            attInfo.DefaultValue = attMeta.DefaultFormValue;
             return attInfo;
         }
 
         protected virtual AttributeInfo CreateState(AttributeMetadata attributeMetadata)
         {
-            var attMeta = (StateAttributeMetadata)attributeMetadata;
+            var attMeta = (StateAttributeMetadata)attributeMetadata;          
             var attInfo = new StateAttributeInfo(attMeta.OptionSet);
+            attInfo.DefaultValue = attMeta.DefaultFormValue;
             return attInfo;
         }
 
         protected virtual AttributeInfo CreatePicklist(AttributeMetadata attributeMetadata)
         {
-            var attMeta = (PicklistAttributeMetadata)attributeMetadata;
+            var attMeta = (PicklistAttributeMetadata)attributeMetadata;           
             var attInfo = new PicklistAttributeInfo(attMeta.OptionSet);
+            attInfo.DefaultValue = attMeta.DefaultFormValue;
             return attInfo;
         }
 
@@ -138,22 +142,23 @@ namespace CrmAdo.Metadata
 
         protected virtual AttributeInfo CreateManagedProperty(AttributeMetadata attributeMetadata)
         {
-            var attMeta = (ManagedPropertyAttributeMetadata)attributeMetadata;
+            var attMeta = (ManagedPropertyAttributeMetadata)attributeMetadata;         
             var attInfo = new ManagedPropertyAttributeInfo();
             return attInfo;
         }
 
         protected virtual AttributeInfo CreateLookup(AttributeMetadata attributeMetadata)
         {
-            var attMeta = (LookupAttributeMetadata)attributeMetadata;
+            var attMeta = (LookupAttributeMetadata)attributeMetadata;           
             var attInfo = new LookupAttributeInfo();
             return attInfo;
         }
 
         protected virtual AttributeInfo CreateEntityName(AttributeMetadata attributeMetadata)
         {
-            var attMeta = (EntityNameAttributeMetadata)attributeMetadata;
+            var attMeta = (EntityNameAttributeMetadata)attributeMetadata;           
             var attInfo = new EntityNameAttributeInfo();
+            attInfo.DefaultValue = attMeta.DefaultFormValue;
             return attInfo;
         }
 

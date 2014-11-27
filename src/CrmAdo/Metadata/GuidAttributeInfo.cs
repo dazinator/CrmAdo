@@ -8,12 +8,12 @@ namespace CrmAdo.Metadata
 {
     public class GuidAttributeInfo : AttributeInfo
     {
-        public override int GetNumericPrecision()
+        protected override int GetNumericPrecision()
         {
             return 0;
         }
 
-        public override int GetNumericScale()
+        protected override int GetNumericScale()
         {
             return 0;
         }

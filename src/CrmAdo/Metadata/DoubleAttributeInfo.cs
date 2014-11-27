@@ -12,12 +12,12 @@ namespace CrmAdo.Metadata
         public double? MaxValue { get; set; }
         public int? Precision { get; set; }
 
-        public int GetNumericPrecision()
+        protected override int GetNumericPrecision()
         {
             var numericPrecision = Math.Max(MinValue.ToString().Length, MaxValue.ToString().Length) + Precision.GetValueOrDefault();
             return numericPrecision;
         }
-        public int GetNumericScale()
+        protected override int GetNumericScale()
         {
             return Precision.GetValueOrDefault();
         }

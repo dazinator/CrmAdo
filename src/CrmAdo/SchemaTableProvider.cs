@@ -74,13 +74,13 @@ namespace CrmAdo
                 row[SchemaTableColumn.IsUnique] = false;  //for timestamp columns only. //columnMetadata.AttributeMetadata.IsPrimaryId;
                 row[SchemaTableColumn.NonVersionedProviderType] = (int)attMeta.AttributeType;
 
-                var haveMinAndMax = attMeta as IColumnMetadata;
-                if (haveMinAndMax != null)
-                {
-                    row[SchemaTableColumn.NumericPrecision] = haveMinAndMax.GetNumericPrecision();
-                    row[SchemaTableColumn.NumericScale] = haveMinAndMax.GetNumericScale(); // dynamics uses the term precision in its metadata to refer to the number of decimal places - which is actually the "scale"!
-                }
-              
+                //var haveMinAndMax = attMeta as IColumnMetadata;
+                //if (haveMinAndMax != null)
+                //{
+                row[SchemaTableColumn.NumericPrecision] = attMeta.NumericPrecision;
+                row[SchemaTableColumn.NumericScale] = attMeta.NumericScale;
+                // }
+
                 row[SchemaTableColumn.ProviderType] = attMeta.AttributeType.ToString();
 
                 // some other optional columns..

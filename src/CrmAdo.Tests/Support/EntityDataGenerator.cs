@@ -77,14 +77,14 @@ namespace CrmAdo.Tests.Support
                             break;
                         case AttributeTypeCode.Decimal:
                             var decAtt = (DecimalAttributeInfo)a;
-                            var scale = decAtt.GetNumericScale();
+                            var scale = decAtt.NumericScale;
                             byte byteScale = (byte)scale;
                             var randomDecimal = rand.NextDecimal(byteScale);
                             ent[a.LogicalName] = randomDecimal;
                             break;
                         case AttributeTypeCode.Double:
                             var doubleAtt = (DoubleAttributeInfo)a;
-                            var doubleScale = doubleAtt.GetNumericScale();
+                            var doubleScale = doubleAtt.NumericScale;
                             byte byteDoubleScale = (byte)doubleScale;
                             // todo apply precision / scale
                             var randomDouble = rand.NextDouble();
@@ -105,7 +105,7 @@ namespace CrmAdo.Tests.Support
                             break;
                         case AttributeTypeCode.Money:
                             var moneyAtt = (MoneyAttributeInfo)a;
-                            var mscale = moneyAtt.GetNumericScale();
+                            var mscale = moneyAtt.NumericScale;
                             byte bytemScale = (byte)mscale;
                             var randomMoneyDecimal = rand.NextDecimal(bytemScale);
                             var randMoney = new Money(randomMoneyDecimal);

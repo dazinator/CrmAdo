@@ -15,8 +15,12 @@ namespace CrmAdo.Metadata
         bool IsIdentity { get; }
         int Length { get; set; }
         bool Nullable { get; set; }
-        int GetNumericPrecision();
-        int GetNumericScale();
+
+        int NumericPrecision { get; }
+        int NumericScale { get; }
+        //int GetNumericPrecision();
+        //int GetNumericScale();
+        object DefaultValue { get; set; }
     }
 
     public interface IHaveCrmPrecision
@@ -40,4 +44,5 @@ namespace CrmAdo.Metadata
     {
         OptionSetMetadata Options { get; set; }
     }
+
 }
