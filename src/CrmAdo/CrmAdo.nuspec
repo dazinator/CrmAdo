@@ -12,7 +12,7 @@
     <projectUrl>http://dazinator.github.io/CrmAdo/</projectUrl>
     <copyright>Copyright � Darrell Tunnell 2014</copyright>
     <releaseNotes>
-     Moved to Automated builds via Team City.
+     See here for latest release notes: https://github.com/dazinator/CrmAdo/releases
     </releaseNotes>
     <tags>Dynamics Crm ADO ADO.Net Data Provider SQL T-SQL DynamicsCrm</tags>
     <dependencies>
