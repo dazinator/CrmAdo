@@ -174,6 +174,8 @@ namespace CrmAdo
                         return AttributeMetadata.CanModifyAdditionalSettings.Value;
                     case "columnnumber":
                         return AttributeMetadata.ColumnNumber;
+                    case "datatype":
+                        return AttributeMetadata.DataType;
                     case "deprecatedversion":
                         return AttributeMetadata.DeprecatedVersion;
                     case "description":
@@ -212,12 +214,22 @@ namespace CrmAdo
                         return AttributeMetadata.LinkedAttributeId;
                     case "logicalname":
                         return AttributeMetadata.LogicalName;
+                    case "maxlength":
+                        return AttributeMetadata.Length;
                     case "metadataid":
                         return AttributeMetadata.MetadataId;
+                    case "numericprecision":
+                        return AttributeMetadata.NumericPrecision;
+                    case "numericscale":
+                        return AttributeMetadata.NumericScale;
                     case "requiredlevel":
                         return AttributeMetadata.RequiredLevel.Value.ToString();
                     case "schemaname":
                         return AttributeMetadata.SchemaName;
+                    case "isnullable":
+                        return AttributeMetadata.Nullable;
+                    case "defaultvalue":
+                        return AttributeMetadata.DefaultValue;
                     case "isprimarykey":
                         return AttributeMetadata.LogicalName == EntityMetadata.PrimaryIdAttribute;
                     case "optionsetoptions":
@@ -244,9 +256,21 @@ namespace CrmAdo
                             return opts.Name;
                         }
                         return string.Empty;
+                    case "ordinal":
+                        return AttributeMetadata.ColumnNumber.GetValueOrDefault();
                     default:
                         return null;
                 }
+
+
+//                Ordinal (System.Int16) --
+//DataType (string) --
+//MaxLength (System.Int32)
+//Precision (System.Byte)
+//Scale (System.Int32)
+//IsNullable (bool)
+//DefaultValue
+
             }
 
             public object GetOneToManyRelationshipValue(string propertyname)
