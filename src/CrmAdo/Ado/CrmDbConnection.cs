@@ -328,58 +328,58 @@ namespace CrmAdo
                     result = GetReservedWords();
                     break;
 
-                case "DataTypes":
+                case "datatypes":
                     throw new NotSupportedException();
 
-                case "Tables":
+                case "tables":
                     // return NpgsqlSchema.GetTables(tempConn, restrictions);
                     break;
 
-                case "Columns":
+                case "columns":
                     //  return NpgsqlSchema.GetColumns(tempConn, restrictions);
                     break;
 
-                case "Views":
+                case "views":
                     // return NpgsqlSchema.GetViews(tempConn, restrictions);
                     break;
 
-                case "Indexes":
+                case "indexes":
                     //  return NpgsqlSchema.GetIndexes(tempConn, restrictions);
                     break;
-                case "IndexColumns":
+                case "indexColumns":
                     //  return NpgsqlSchema.GetIndexColumns(tempConn, restrictions);
                     break;
 
-                case "ForeignKeys":
+                case "foreignkeys":
                     // return NpgsqlSchema.GetConstraints(tempConn, restrictions, collectionName);
                     break;
 
 
 
-                case "Restrictions":
+                case "restrictions":
                     // return NpgsqlSchema.GetRestrictions();
                     break;
 
 
                 // custom collections for npgsql
-                case "Databases":
+                case "databases":
                     //   return NpgsqlSchema.GetDatabases(tempConn, restrictions);
                     break;
-                case "Schemata":
+                case "schemata":
                     //  return NpgsqlSchema.GetSchemata(tempConn, restrictions);
                     break;
 
 
 
-                case "Users":
+                case "users":
                     //  return NpgsqlSchema.GetUsers(tempConn, restrictions);
                     break;
 
-                case "Constraints":
-                case "PrimaryKey":
-                case "UniqueKeys":
+                case "constraints":
+                case "primarykey":
+                case "uniquekeys":
 
-                case "ConstraintColumns":
+                case "constraintcolumns":
                     // return NpgsqlSchema.GetConstraintColumns(tempConn, restrictions);
                     break;
                 default:
