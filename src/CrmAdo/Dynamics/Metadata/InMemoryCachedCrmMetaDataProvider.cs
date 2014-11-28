@@ -73,7 +73,7 @@ namespace CrmAdo.Dynamics.Metadata
                     break;
                 default:
                     return null;
-            }         
+            }
             return metadata;
         }
 
@@ -89,8 +89,8 @@ namespace CrmAdo.Dynamics.Metadata
 
         private CrmEntityMetadata BuildPseudoAttributeMetadata()
         {
-         //   AttributeMetadata x;
-            
+            //   AttributeMetadata x;
+
             var metadata = new CrmEntityMetadata("attributemetadata");
             metadata.IsPseudo = true;
             metadata.AddPseudoAttribute("attributeof", AttributeTypeCode.String);
@@ -125,7 +125,15 @@ namespace CrmAdo.Dynamics.Metadata
             metadata.AddPseudoAttribute("schemaname", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("isprimarykey", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("optionsetname", AttributeTypeCode.String);
-            metadata.AddPseudoAttribute("optionsetoptions", AttributeTypeCode.String);                      
+            metadata.AddPseudoAttribute("optionsetoptions", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("defaultvalue", AttributeTypeCode.Virtual);
+            metadata.AddPseudoAttribute("defaultvalue", AttributeTypeCode.Virtual);
+            metadata.AddPseudoAttribute("ordinal", AttributeTypeCode.Integer);
+            metadata.AddPseudoAttribute("datatype", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("maxlength", AttributeTypeCode.Integer);
+            metadata.AddPseudoAttribute("numericprecision", AttributeTypeCode.Integer);
+            metadata.AddPseudoAttribute("numericscale", AttributeTypeCode.Integer);
+            metadata.AddPseudoAttribute("isnullable", AttributeTypeCode.Boolean);
             return metadata;
         }
 
@@ -190,7 +198,7 @@ namespace CrmAdo.Dynamics.Metadata
             //metadata.AddPseudoAttribut, "privileges", AttributeTypeCode.Uniqueidentifier)));
             metadata.AddPseudoAttribute("recurrencebaseentitylogicalname", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("reportviewname", AttributeTypeCode.String);
-            metadata.AddPseudoAttribute("schemaname", AttributeTypeCode.String);           
+            metadata.AddPseudoAttribute("schemaname", AttributeTypeCode.String);
             return metadata;
         }
 
