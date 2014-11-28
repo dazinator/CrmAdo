@@ -126,8 +126,7 @@ namespace CrmAdo.Dynamics.Metadata
             metadata.AddPseudoAttribute("isprimarykey", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("optionsetname", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("optionsetoptions", AttributeTypeCode.String);
-            metadata.AddPseudoAttribute("defaultvalue", AttributeTypeCode.Virtual);
-            metadata.AddPseudoAttribute("defaultvalue", AttributeTypeCode.Virtual);
+            metadata.AddPseudoAttribute("defaultvalue", AttributeTypeCode.Virtual);           
             metadata.AddPseudoAttribute("ordinal", AttributeTypeCode.Integer);
             metadata.AddPseudoAttribute("datatype", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("maxlength", AttributeTypeCode.Integer);
