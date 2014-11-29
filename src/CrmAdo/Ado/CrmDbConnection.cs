@@ -13,7 +13,7 @@ using System.Collections.Concurrent;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace CrmAdo
-{      
+{
 
     /// <summary>
     /// Represents a connection to Dynamics Crm.
@@ -49,7 +49,7 @@ namespace CrmAdo
         public CrmDbConnection(ICrmServiceProvider serviceProvider, ICrmMetaDataProvider metadataProvider)
         {
             _CrmServiceProvider = serviceProvider;
-            _MetadataProvider = metadataProvider;          
+            _MetadataProvider = metadataProvider;
             _ConnectionCache = new CrmConnectionCache();
         }
 
@@ -318,61 +318,46 @@ namespace CrmAdo
                 case "metadatacollections":
                     result = GetMetadataCollectionsDataTable();
                     break;
+
                 case "datasourceinformation":
-                    result = GetDataSourceInfoDataTable();
-                    //    return NpgsqlSchema.GetDataSourceInformation();
+                    result = GetDataSourceInfoDataTable();                   
                     break;
 
-                case "reservedwords":
-                    //   return NpgsqlSchema.GetReservedWords();              
+                case "reservedwords":                            
                     result = GetReservedWords();
                     break;
 
                 case "datatypes":
-                    throw new NotSupportedException();
+                    result = GetDataTypes();
+                    break;
 
                 case "tables":
-                    // return NpgsqlSchema.GetTables(tempConn, restrictions);
                     break;
 
                 case "columns":
-                    //  return NpgsqlSchema.GetColumns(tempConn, restrictions);
                     break;
 
                 case "views":
-                    // return NpgsqlSchema.GetViews(tempConn, restrictions);
                     break;
 
                 case "indexes":
-                    //  return NpgsqlSchema.GetIndexes(tempConn, restrictions);
                     break;
                 case "indexColumns":
-                    //  return NpgsqlSchema.GetIndexColumns(tempConn, restrictions);
                     break;
 
                 case "foreignkeys":
-                    // return NpgsqlSchema.GetConstraints(tempConn, restrictions, collectionName);
                     break;
-
-
 
                 case "restrictions":
-                    // return NpgsqlSchema.GetRestrictions();
                     break;
-
 
                 // custom collections for npgsql
                 case "databases":
-                    //   return NpgsqlSchema.GetDatabases(tempConn, restrictions);
                     break;
                 case "schemata":
-                    //  return NpgsqlSchema.GetSchemata(tempConn, restrictions);
                     break;
 
-
-
                 case "users":
-                    //  return NpgsqlSchema.GetUsers(tempConn, restrictions);
                     break;
 
                 case "constraints":
@@ -380,7 +365,6 @@ namespace CrmAdo
                 case "uniquekeys":
 
                 case "constraintcolumns":
-                    // return NpgsqlSchema.GetConstraintColumns(tempConn, restrictions);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("collectionName", collectionName, "Invalid collection name");
@@ -388,6 +372,14 @@ namespace CrmAdo
             }
 
             return result;
+        }
+
+        private DataTable GetDataTypes()
+        {
+            throw new NotSupportedException();
+            //  DataTable dataTable = new DataTable();      
+
+
         }
 
         //private static void AddMetadataCollectionRow(DataTable dataTable, DataColumn nameCol, DataColumn restrictionsCol, DataColumn identifiersCol, string collectionName, int restrictions, int identifiers)
