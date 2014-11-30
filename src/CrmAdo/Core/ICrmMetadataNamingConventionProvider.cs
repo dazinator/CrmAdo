@@ -64,7 +64,7 @@ namespace CrmAdo.Core
     /// <summary>
     /// Defines an object responsible for providing the schema names for dynamics crm objects.
     /// </summary>
-    public interface ICrmMetadataNamingProvider
+    public interface ICrmMetadataNamingConventionProvider
     {
         /// <summary>
         /// Gets the naming convention for namiing attributes.
@@ -75,7 +75,7 @@ namespace CrmAdo.Core
 
     }
 
-    public class CrmAdoCrmMetadataNamingProvider : ICrmMetadataNamingProvider
+    public class CrmAdoCrmMetadataNamingProvider : ICrmMetadataNamingConventionProvider
     {
         public static CrmMetadataNamingConvention Instance = new DefaultAttributeNamingConvention();
 

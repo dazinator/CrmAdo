@@ -23,7 +23,7 @@ namespace CrmAdo.Visitor
 
         public const int NameMaxLength = 4000;
         public const int DefaultNameMaxLength = 200;
-        public ICrmMetadataNamingProvider _SchemaNameProvider;
+        public ICrmMetadataNamingConventionProvider _SchemaNameProvider;
 
         private CrmMetadataNamingConvention _NamingConvention;
 
@@ -39,7 +39,7 @@ namespace CrmAdo.Visitor
 
         }
 
-        public CreateEntityRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider, ICrmMetadataNamingProvider schemaNameProvider)
+        public CreateEntityRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider, ICrmMetadataNamingConventionProvider schemaNameProvider)
         {
             Request = new CreateEntityRequest();
             Parameters = parameters;

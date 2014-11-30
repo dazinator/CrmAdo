@@ -145,6 +145,7 @@
     <Compile Include="Ado\CrmDataAdaptorRowUpdatingEventArgs.cs" />
     <Compile Include="Ado\CrmDbMetadataReader.cs" />
     <Compile Include="ColumnMetadata.cs" />
+    <Compile Include="Core\ISchemaCollectionsProvider.cs" />
     <Compile Include="Metadata\AttributeInfo.cs" />
     <Compile Include="Metadata\AttributeInfoFactory.cs" />
     <Compile Include="Metadata\BigIntAttributeInfo.cs" />
@@ -235,7 +236,7 @@
     <Compile Include="Util\DynamicLinq.cs" />
     <Compile Include="Util\Extensions.cs" />
     <Compile Include="Util\SystemCommandParameters.cs" />
-    <Compile Include="Core\ISchemaNameProvider.cs" />
+    <Compile Include="Core\ICrmMetadataNamingConventionProvider.cs" />
     <Compile Include="Util\EnumHelper.cs" />
     <Compile Include="Visitor\BaseOrganizationRequestBuilderVisitor.cs" />
     <Compile Include="Visitor\CreateEntityBuilderVisitor.cs" />

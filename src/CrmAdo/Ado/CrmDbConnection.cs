@@ -24,6 +24,7 @@ namespace CrmAdo
         private ICrmMetaDataProvider _MetadataProvider = null;
         private CrmConnectionCache _ConnectionCache = null;
         private CrmConnectionInfo _ConnectionInfo = null;
+        private ISchemaCollectionsProvider _SchemaCollectionsProvider = null;
 
         private bool _InitialisedVersion = false;
         // private string _CrmVersion = string.Empty;
@@ -47,9 +48,15 @@ namespace CrmAdo
         }
 
         public CrmDbConnection(ICrmServiceProvider serviceProvider, ICrmMetaDataProvider metadataProvider)
+            : this(serviceProvider, metadataProvider, new SchemaCollectionsProvider())
+        {
+        }
+
+        public CrmDbConnection(ICrmServiceProvider serviceProvider, ICrmMetaDataProvider metadataProvider, ISchemaCollectionsProvider schemaCollectionsProvider)
         {
             _CrmServiceProvider = serviceProvider;
             _MetadataProvider = metadataProvider;
+            _SchemaCollectionsProvider = schemaCollectionsProvider;
             _ConnectionCache = new CrmConnectionCache();
         }
 
@@ -276,14 +283,6 @@ namespace CrmAdo
 
         #endregion
 
-        #region Not Implemented
-
-        public override void ChangeDatabase(string databaseName)
-        {
-            // TODO: change crm organisation for connection?
-            throw new NotImplementedException();
-        }
-
         #region Schema
 
         /// <summary>
@@ -316,56 +315,58 @@ namespace CrmAdo
             switch (collectionName.ToLower())
             {
                 case "metadatacollections":
-                    result = GetMetadataCollectionsDataTable();
+                    result = _SchemaCollectionsProvider.GetMetadataCollections();
                     break;
 
                 case "datasourceinformation":
-                    result = GetDataSourceInfoDataTable();                   
+                    result = _SchemaCollectionsProvider.GetDataSourceInfo(this);
                     break;
 
-                case "reservedwords":                            
-                    result = GetReservedWords();
+                case "reservedwords":
+                    result = _SchemaCollectionsProvider.GetReservedWords();
                     break;
 
                 case "datatypes":
-                    result = GetDataTypes();
-                    break;
-
-                case "tables":
-                    break;
-
-                case "columns":
-                    break;
-
-                case "views":
-                    break;
-
-                case "indexes":
-                    break;
-                case "indexColumns":
-                    break;
-
-                case "foreignkeys":
+                    result = _SchemaCollectionsProvider.GetDataTypes();
                     break;
 
                 case "restrictions":
+                    _SchemaCollectionsProvider.GetRestrictions(this);
                     break;
 
-                // custom collections for npgsql
-                case "databases":
-                    break;
-                case "schemata":
+                case "tables":
+                    result = _SchemaCollectionsProvider.GetTables(this);
                     break;
 
-                case "users":
+                case "columns":
+                    _SchemaCollectionsProvider.GetColumns(this);
                     break;
 
-                case "constraints":
-                case "primarykey":
-                case "uniquekeys":
-
-                case "constraintcolumns":
+                case "views":
+                    _SchemaCollectionsProvider.GetViews(this);
                     break;
+
+                //case "indexes":
+                //    _SchemaCollectionsProvider.GetIndexes(this);
+                //    break;
+                //case "indexColumns":
+                //    _SchemaCollectionsProvider.GetIndexColumns(this);
+                //    break;
+
+                //case "foreignkeys":
+                //    _SchemaCollectionsProvider.GetForeginKeys(this);
+                //    break;             
+
+
+                //case "users":
+                //    break;
+
+                //case "constraints":
+                //case "primarykey":
+                //case "uniquekeys":
+
+                //case "constraintcolumns":
+                //    break;
                 default:
                     throw new ArgumentOutOfRangeException("collectionName", collectionName, "Invalid collection name");
                 // }
@@ -374,205 +375,15 @@ namespace CrmAdo
             return result;
         }
 
-        private DataTable GetDataTypes()
-        {
-            throw new NotSupportedException();
-            //  DataTable dataTable = new DataTable();      
-
-
-        }
-
-        //private static void AddMetadataCollectionRow(DataTable dataTable, DataColumn nameCol, DataColumn restrictionsCol, DataColumn identifiersCol, string collectionName, int restrictions, int identifiers)
-        //{
-        //    var row = dataTable.Rows.Add();
-        //    row.SetField<string>(nameCol, collectionName);
-        //    row.SetField<int>(restrictionsCol, restrictions);
-        //    row.SetField<int>(identifiersCol, identifiers);
-        //}
-
-        private static DataTable GetMetadataCollectionsDataTable()
-        {
-            throw new NotSupportedException();
-            //DataTable dataTable = new DataTable("MetaDataCollections")
-            //{
-            //    Locale = CultureInfo.InvariantCulture
-            //};
-            //var nameCol = dataTable.Columns.Add("CollectionName", typeof(string));
-            //var restrictionsCol = dataTable.Columns.Add("NumberOfRestrictions", typeof(int));
-            //var identifiersCol = dataTable.Columns.Add("NumberOfIdentifierParts", typeof(int));
-            //dataTable.BeginLoadData();
-
-            //AddMetadataCollectionRow(dataTable, nameCol, restrictionsCol, identifiersCol, "MetaDataCollections", 0, 0);
-            //AddMetadataCollectionRow(dataTable, nameCol, restrictionsCol, identifiersCol, "DataSourceInformation", 0, 0);
-            //AddMetadataCollectionRow(dataTable, nameCol, restrictionsCol, identifiersCol, "DataTypes", 0, 0);
-            //AddMetadataCollectionRow(dataTable, nameCol, restrictionsCol, identifiersCol, "ReservedWords", 0, 0);
-            //AddMetadataCollectionRow(dataTable, nameCol, restrictionsCol, identifiersCol, "Tables", 4, 3);
-            //AddMetadataCollectionRow(dataTable, nameCol, restrictionsCol, identifiersCol, "Columns", 4, 4);
-
-            //dataTable.AcceptChanges();
-            //dataTable.EndLoadData();
-            //// dataTable.DefaultView.Sort = "Category ASC";
-            //return dataTable;
-        }
-
-        private static DataTable GetDataSourceInfoDataTable()
-        {
-            //throw new NotSupportedException();
-            DataTable dataTable = new DataTable();
-
-            dataTable.Columns.Add(DbMetaDataColumnNames.SupportedJoinOperators, typeof(int));
-            dataTable.Columns.Add(DbMetaDataColumnNames.ParameterNamePattern, typeof(string));
-            dataTable.Columns.Add(DbMetaDataColumnNames.ParameterMarkerFormat, typeof(string));
-            dataTable.Columns.Add(DbMetaDataColumnNames.ParameterNameMaxLength, typeof(int));
-            dataTable.Columns.Add(DbMetaDataColumnNames.DataSourceProductName, typeof(string));
-            dataTable.Columns.Add(DbMetaDataColumnNames.DataSourceProductVersion, typeof(string));
-            dataTable.Columns.Add(DbMetaDataColumnNames.NumberOfIdentifierParts, typeof(int));
-            dataTable.Columns.Add("IdentifierOpenQuote", typeof(string));
-            dataTable.Columns.Add("IdentifierCloseQuote", typeof(string));
-            dataTable.Columns.Add("SupportsAnsi92Sql", typeof(bool));
-            dataTable.Columns.Add("SupportsQuotedIdentifierParts", typeof(bool));
-            dataTable.Columns.Add("ParameterPrefix", typeof(string));
-            dataTable.Columns.Add("ParameterPrefixInName", typeof(bool));
-            dataTable.Columns.Add("ColumnAliasSupported", typeof(bool));
-            dataTable.Columns.Add("TableAliasSupported", typeof(bool));
-            dataTable.Columns.Add("TableSupported", typeof(bool));
-            dataTable.Columns.Add("UserSupported", typeof(bool));
-            dataTable.Columns.Add("SchemaSupported", typeof(bool));
-            dataTable.Columns.Add("CatalogSupported", typeof(bool));
-            dataTable.Columns.Add("SupportsVerifySQL", typeof(bool));
-
-            DataRow dataRow = dataTable.NewRow();
-
-            dataRow[DbMetaDataColumnNames.SupportedJoinOperators] = 3; // Inner join and Left joins
-            dataRow[DbMetaDataColumnNames.ParameterNamePattern] = @"^[\p{Lo}\p{Lu}\p{Ll}\p{Lm}_@#][\p{Lo}\p{Lu}\p{Ll}\p{Lm}\p{Nd}\uff3f_@#\$]*(?=\s+|$)";
-            dataRow[DbMetaDataColumnNames.ParameterMarkerFormat] = "{0}";
-            dataRow[DbMetaDataColumnNames.ParameterNameMaxLength] = 128;
-            dataRow[DbMetaDataColumnNames.DataSourceProductName] = "CrmAdo Provider for Dynamics CRM";
-            var version = Assembly.GetExecutingAssembly().GetName().Version;
-            dataRow[DbMetaDataColumnNames.DataSourceProductVersion] = version.ToString();
-            dataRow[DbMetaDataColumnNames.NumberOfIdentifierParts] = 1;
-            dataRow["IdentifierOpenQuote"] = "[";
-            dataRow["IdentifierCloseQuote"] = "]";
-            dataRow["SupportsAnsi92Sql"] = false;
-            dataRow["SupportsQuotedIdentifierParts"] = true;
-            dataRow["ParameterPrefix"] = "@";
-            dataRow["ParameterPrefixInName"] = true;
-            dataRow["ColumnAliasSupported"] = false;
-            dataRow["TableAliasSupported"] = true;
-            dataRow["TableSupported"] = true;
-            dataRow["UserSupported"] = false;
-            dataRow["SchemaSupported"] = false;
-            dataRow["CatalogSupported"] = false;
-            dataRow["SupportsVerifySQL"] = false;
-            dataTable.Rows.Add(dataRow);
-            return dataTable;
-        }
-
-        public static DataTable GetReservedWords()
-        {
-            DataTable table = new DataTable("ReservedWords");
-            table.Locale = CultureInfo.InvariantCulture;
-            table.Columns.Add("ReservedWord", typeof(string));
-
-            // List of keywords taken from SQLGeneration library token registry grammer.
-            string[] keywords = new[]
-            {
-                "TOP",
-                "UPDATE",
-                "VALUES",
-                "WHERE",
-                "WITH",
-                "BETWEEN",
-                "AND",
-                "OR",
-                "DELETE",
-                "ALL",
-                "ANY",
-                "SOME",
-                "FROM",
-                "GROUP",
-                "BY",
-                "HAVING",
-                "INSERT",
-                "INTO",
-                "IS",
-                "FULL",
-                "OUTER",
-                "JOIN",
-                "INNER",
-                "LEFT",
-                "RIGHT",
-                "CROSS",
-                "IN",
-                "LIKE",
-                "NOT",
-                "NULLS",
-                "NULL",
-                "ORDER",
-                "ASC",
-                "DESC",
-                "PERCENT",
-                "SELECT",
-                "UNION",
-                "INTERSECT",
-                "EXCEPT",
-                "MINUS",
-                "SET",
-                "ON",
-                "AS",
-                "EXISTS",
-                "OVER",
-                "PARTITION",
-                "ROWS",
-                "RANGE",
-                "UNBOUNDED",
-                "PRECEDING",
-                "FOLLOWING",
-                "CURRENT",
-                "ROW",
-                "CASE",
-                "WHEN",
-                "THEN",
-                "ELSE",
-                "END",
-                "CREATE", /// DDL
-                "DATABASE",
-                "TABLE",
-                "PRIMARY",
-                "KEY",
-                "COLLATE",
-                "CONSTRAINT",
-                "IDENTITY",
-                "DEFAULT",
-                "ROWGUIDCOL",
-                "UNIQUE",
-                "CLUSTERED",
-                "NONCLUSTERED",
-                "FOREIGN",
-                "REFERENCES",
-                "NO",
-                "ACTION",
-                "CASCADE",
-                "FOR",
-                "REPLICATION",
-                "CHECK",
-                "ALTER",
-                "MODIFY",
-                "CURRENT",
-                "COLUMN",
-                "ADD",
-                "DROP",
-                "PERSISTED",
-                "SPARSE"               
-            };
-            foreach (string keyword in keywords)
-            {
-                table.Rows.Add(keyword);
-            }
-            return table;
-        }
-
         #endregion
+
+        #region Not Implemented
+
+        public override void ChangeDatabase(string databaseName)
+        {
+            // TODO: change crm organisation for connection?
+            throw new NotImplementedException();
+        }        
 
         #endregion
 
