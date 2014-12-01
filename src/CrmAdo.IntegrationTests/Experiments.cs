@@ -15,6 +15,8 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata.Query;
 using Microsoft.Xrm.Sdk.Metadata;
 using System.IO;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace CrmAdo.IntegrationTests
 {
@@ -694,7 +696,7 @@ namespace CrmAdo.IntegrationTests
                 account["name"] = "test";
                 orgService.Create(account);
             }
-        }    
+        }
 
 
         [Category("Experimentation")]
@@ -715,6 +717,33 @@ namespace CrmAdo.IntegrationTests
                 //assigns the version to a string
                 string versionNumber = resp.Version;
                 Console.WriteLine(versionNumber);
+            }
+
+        }
+
+        [Category("Experimentation")]
+        [Test]
+        [TestCase(TestName = "Experiment for sql connection get datatyoes schema collection")]
+        public void Experiment_For_Sql_Connection_Schema()
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["SqlConnection"];
+
+            using (var conn = new SqlConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var dataTypes = conn.GetSchema("DataTypes");
+                dataTypes.WriteXml("DataTypes.xml",XmlWriteMode.WriteSchema);
+
+                //Console.WriteLine(dataTypes.Rows.Count);
+                //foreach (DataRow dataRow in dataTypes.Rows)
+                //{
+                //    foreach (var item in dataRow.ItemArray)
+                //    {
+                //        Console.WriteLine(item);
+                //    }
+                //}
+                conn.Close();
+
             }
 
         }

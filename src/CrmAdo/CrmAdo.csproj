@@ -183,6 +183,11 @@
     <Compile Include="Ado\CrmDbTransaction.cs" />
     <Compile Include="Ado\CrmParameter.cs" />
     <Compile Include="Ado\CrmDbProviderFactory.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Util\CrmDbTypeConverter.cs" />
     <Compile Include="Ado\CrmParameterCollection.cs" />
     <Compile Include="Dynamics\EntityBuilder.cs" />
@@ -269,7 +274,13 @@
     <None Include="packages.config" />
     <None Include="web.config.transform" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="DataTypes.xml" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

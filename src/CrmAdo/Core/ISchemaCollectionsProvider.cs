@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -157,7 +158,7 @@ namespace CrmAdo
             AddMetadataCollectionRow(dataTable, nameCol, restrictionsCol, identifiersCol, "Views", 1, 0);
             AddMetadataCollectionRow(dataTable, nameCol, restrictionsCol, identifiersCol, "Columns", 2, 1);
             AddMetadataCollectionRow(dataTable, nameCol, restrictionsCol, identifiersCol, "Restrictions", 0, 0);
-            
+
 
             dataTable.AcceptChanges();
             dataTable.EndLoadData();
@@ -178,7 +179,7 @@ namespace CrmAdo
 
             //   http://msdn.microsoft.com/en-us/library/ms254501%28v=vs.110%29.aspx
 
-            DataTable dataTable = new DataTable();          
+            DataTable dataTable = new DataTable();
 
             dataTable.Columns.Add(DbMetaDataColumnNames.CompositeIdentifierSeparatorPattern, typeof(string));
             dataTable.Columns.Add(DbMetaDataColumnNames.DataSourceProductName, typeof(string));
@@ -196,7 +197,7 @@ namespace CrmAdo
             dataTable.Columns.Add(DbMetaDataColumnNames.QuotedIdentifierCase, typeof(IdentifierCase));
             dataTable.Columns.Add(DbMetaDataColumnNames.StatementSeparatorPattern, typeof(string));
             dataTable.Columns.Add(DbMetaDataColumnNames.StringLiteralPattern, typeof(string));
-            dataTable.Columns.Add(DbMetaDataColumnNames.SupportedJoinOperators, typeof(SupportedJoinOperators));          
+            dataTable.Columns.Add(DbMetaDataColumnNames.SupportedJoinOperators, typeof(SupportedJoinOperators));
 
             DataRow dataRow = dataTable.NewRow();
             dataRow[DbMetaDataColumnNames.CompositeIdentifierSeparatorPattern] = @"\.";
@@ -256,15 +257,20 @@ namespace CrmAdo
             //dataRow["CatalogSupported"] = false;
             //dataRow["SupportsVerifySQL"] = false;
 
-            #endregion 
+            #endregion
 
             dataTable.Rows.Add(dataRow);
             return dataTable;
         }
-        
+
         public DataTable GetDataTypes()
         {
-            throw new NotImplementedException();
+            var dt = new DataTable();
+            using (var reader = new StringReader(Properties.Resources.DataTypes))
+            {
+                dt.ReadXml(reader);
+                return dt;
+            }            
         }
 
 
