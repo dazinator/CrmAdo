@@ -49,6 +49,22 @@ namespace CrmAdo.Tests
 
 
 
+        }
+
+        [Test]
+        public void Should_Be_Able_To_Get_DataTypeCollection()
+        {
+            // Arrange
+            var sut = CreateTestSubject();
+            // Act
+            var collection = sut.GetTables();
+            // Assert
+            Assert.That(collection, Is.Not.Null);
+            Assert.That(collection.Columns, Is.Not.Null);
+            Assert.That(collection.Columns.Count, Is.EqualTo(22));
+
+
+
         }    
 
 
