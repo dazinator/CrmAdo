@@ -34,7 +34,7 @@ namespace CrmAdo
 
         DataTable GetViewColumns(CrmDbConnection crmDbConnection, string[] restrictions);
 
-        DataTable GetForeignKeys(CrmDbConnection crmDbConnection, string[] restrictions);        
+        DataTable GetForeignKeys(CrmDbConnection crmDbConnection, string[] restrictions);
 
 
     }
@@ -49,7 +49,7 @@ namespace CrmAdo
             {
                 dt.ReadXml(reader);
                 return dt;
-            }          
+            }
         }
 
         public DataTable GetDataSourceInfo(CrmDbConnection connection)
@@ -268,11 +268,11 @@ namespace CrmAdo
         public DataTable GetUsers(CrmDbConnection crmDbConnection, string[] restrictions)
         {
             var command = new CrmDbCommand(crmDbConnection);
-            command.CommandText = "SELECT su.systemuserid, su.fullname, su.domainname, su.createdon, su.modifiedon FROM systemuser su";         
+            command.CommandText = "SELECT su.systemuserid, su.fullname, su.domainname, su.createdon, su.modifiedon FROM systemuser su";
             var adapter = new CrmDataAdapter(command);
             var dataTable = new DataTable();
             adapter.Fill(dataTable);
-            return dataTable;          
+            return dataTable;
         }
 
         public DataTable GetTables(CrmDbConnection crmDbConnection, string[] restrictions)
@@ -298,16 +298,114 @@ namespace CrmAdo
             dataTable.Columns.Add("table_catalog", typeof(string), "''");
             dataTable.Columns.Add("table_schema", typeof(string), "''");
             dataTable.Columns["logicalname"].ColumnName = "table_name";
-            dataTable.Columns.Add("table_type", typeof(string), "'BASE TABLE'");        
-            return dataTable;    
+            dataTable.Columns.Add("table_type", typeof(string), "'BASE TABLE'");
+            return dataTable;
 
 
-           
+
         }
 
         public DataTable GetColumns(CrmDbConnection crmDbConnection, string[] restrictions)
         {
-            throw new NotImplementedException();
+
+
+            //TABLE_CATALOG
+            //TABLE_SCHEMA
+            //TABLE_NAME
+            //COLUMN_NAME
+            //ORDINAL_POSITION
+            //COLUMN_DEFAULT
+            //IS_NULLABLE
+            //DATA_TYPE
+            //CHARACTER_MAXIMUM_LENGTH
+            //CHARACTER_OCTET_LENGTH
+            //NUMERIC_PRECISION
+            //NUMERIC_PRECISION_RADIX
+            //NUMERIC_SCALE
+            //DATETIME_PRECISION
+            //CHARACTER_SET_CATALOG
+            //CHARACTER_SET_SCHEMA
+            //CHARACTER_SET_NAME
+            //COLLATION_CATALOG
+            //IS_SPARSE
+            //IS_COLUMN_SET
+            //IS_FILESTREAM
+
+            string entityName = null;
+            string attributeName = null;
+            bool hasEntityFilter = false;
+            bool hasAttributeFilter = false;
+
+            if (restrictions != null)
+            {
+                if (restrictions.Length > 0)
+                {
+                    entityName = restrictions[0];
+                }
+                if (restrictions.Length > 1)
+                {
+                    attributeName = restrictions[1];
+                }
+            }
+
+            hasEntityFilter = !string.IsNullOrEmpty(entityName);
+            hasAttributeFilter = !string.IsNullOrEmpty(attributeName);
+
+            var commandText = "SELECT entitymetadata.PrimaryIdAttribute, attributemetadata.* FROM entitymetadata INNER JOIN attributemetadata ON entitymetadata.MetadataId = attributemetadata.MetadataId ";
+
+            if (hasEntityFilter || hasAttributeFilter)
+            {
+                commandText += "WHERE ";
+                if (hasEntityFilter)
+                {
+                    commandText += " entitymetadata.LogicalName = '" + entityName + "'";
+                }
+                if (hasEntityFilter && hasAttributeFilter)
+                {
+                    commandText += " AND ";
+                }
+                if (hasAttributeFilter)
+                {
+                    commandText += " attributemetadata.LogicalName = '" + attributeName + "'";
+                }
+            }
+
+            var command = new CrmDbCommand(crmDbConnection);
+            command.CommandText = commandText;
+            var adapter = new CrmDataAdapter(command);
+            var dataTable = new DataTable();
+            adapter.Fill(dataTable);
+            dataTable.Columns.Add("table_catalog", typeof(string), "''");
+            dataTable.Columns.Add("table_schema", typeof(string), "''");
+            dataTable.Columns["entitylogicalname"].ColumnName = "table_name";
+            dataTable.Columns["logicalname"].ColumnName = "column_name";
+            dataTable.Columns["columnnumber"].ColumnName = "ordinal_position";
+            dataTable.Columns["defaultvalue"].ColumnName = "column_default";
+            dataTable.Columns["isnullable"].ColumnName = "is_nullable";
+            dataTable.Columns["datatype"].ColumnName = "data_type";
+
+            // dataTable.Columns["attributemetadata.length"].ColumnName = "character_maximum_length";
+            dataTable.Columns.Add("character_maximum_length", typeof(int), "IIF(data_type = 'nvarchar', [maxlength], NULL)");
+            dataTable.Columns.Add("character_octet_length", typeof(int), "IIF(data_type ='nvarchar',ISNULL(character_maximum_length, 0) * 2, character_maximum_length)");
+
+            dataTable.Columns["numericprecision"].ColumnName = "numeric_precision";
+            dataTable.Columns["numericprecisionradix"].ColumnName = "numeric_precision_radix";
+            dataTable.Columns["numericscale"].ColumnName = "numeric_scale";
+
+            dataTable.Columns.Add("datetime_precision", typeof(int), "IIF(data_type = 'datetime', 3, NULL)");
+
+            dataTable.Columns.Add("character_set_catalog", typeof(string), "NULL");
+            dataTable.Columns.Add("character_set_schema", typeof(string), "NULL");
+
+            dataTable.Columns.Add("character_set_name", typeof(string), "IIF(data_type ='nvarchar', 'UNICODE', NULL)");
+
+            dataTable.Columns.Add("collation_catalog", typeof(string), "NULL");
+            dataTable.Columns.Add("is_sparse", typeof(bool), "false");
+            dataTable.Columns.Add("is_column_set", typeof(bool), "false");
+            dataTable.Columns.Add("is_filestream", typeof(bool), "false");
+
+            return dataTable;
+
         }
 
         public DataTable GetViews(CrmDbConnection crmDbConnection, string[] restrictions)

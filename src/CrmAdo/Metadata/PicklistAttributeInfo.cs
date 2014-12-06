@@ -40,12 +40,12 @@ namespace CrmAdo.Metadata
             }
         }
 
-        protected override int GetNumericPrecision()
+        protected override int? GetNumericPrecision()
         {
             return 10;
         }
 
-        protected override int GetNumericScale()
+        protected override int? GetNumericScale()
         {
             return 0;
         }

@@ -134,8 +134,10 @@ namespace CrmAdo.Dynamics.Metadata
                     return "integer";
                 case AttributeTypeCode.Boolean:
                     return "bit";
+                case AttributeTypeCode.DateTime:
+                    return "datetime";
                 default:
-                    return attType.ToString();
+                    return attType.ToString().ToLower();
             }
         }
 
@@ -210,7 +212,7 @@ namespace CrmAdo.Dynamics.Metadata
                 case AttributeTypeCode.DateTime:
                     return 23;
                 case AttributeTypeCode.Decimal:
-                   // return GetSqlPrecision()
+                    // return GetSqlPrecision()
                     return 9;
                 case AttributeTypeCode.Double:
                     return 8;

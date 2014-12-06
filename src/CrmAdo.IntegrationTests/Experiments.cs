@@ -732,14 +732,17 @@ namespace CrmAdo.IntegrationTests
             {
                 conn.Open();
                 var dataTypes = conn.GetSchema("DataTypes");
-                dataTypes.WriteXml("DataTypes.xml",XmlWriteMode.WriteSchema);
+                dataTypes.WriteXml("DataTypes.xml", XmlWriteMode.WriteSchema);
 
                 var resrictions = conn.GetSchema("Restrictions");
                 resrictions.WriteXml("Restrictions.xml", XmlWriteMode.WriteSchema);
 
                 var collections = conn.GetSchema("MetaDataCollections");
                 collections.WriteXml("MetaDataCollections.xml", XmlWriteMode.WriteSchema);
-               
+
+                var columns = conn.GetSchema("Columns", new string[] { null, null, "Table", null });
+                columns.WriteXml("Columns.xml", XmlWriteMode.WriteSchema);
+
                 conn.Close();
             }
 

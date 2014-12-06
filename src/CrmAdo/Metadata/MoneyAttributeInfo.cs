@@ -13,7 +13,7 @@ namespace CrmAdo.Metadata
         public int? Precision { get; set; }
         public int? PrecisionSource { get; set; }
 
-        protected override int GetNumericPrecision()
+        protected override int? GetNumericPrecision()
         {
             switch (PrecisionSource.GetValueOrDefault())
             {
@@ -39,7 +39,12 @@ namespace CrmAdo.Metadata
             }
         }
 
-        protected override int GetNumericScale()
+        protected override int? GetNumericPrecisionRadix()
+        {
+            return 10;
+        }
+
+        protected override int? GetNumericScale()
         {
             switch (PrecisionSource.GetValueOrDefault())
             {

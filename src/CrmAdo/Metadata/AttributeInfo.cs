@@ -158,28 +158,42 @@ namespace CrmAdo.Metadata
             }
         }
 
-        protected virtual int GetNumericPrecision()
+        protected virtual int? GetNumericPrecision()
         {
-            return 255;
+            return null;
         }
 
-        protected virtual int GetNumericScale()
+        protected virtual int? GetNumericScale()
         {
-            return 255;
+            return null;
+        }
+
+        protected virtual int? GetNumericPrecisionRadix()
+        {
+            return null;
         }
 
         public virtual object DefaultValue { get; set; }
 
         #endregion
 
-        public int NumericPrecision
+        public int? NumericPrecision
         {
             get { return GetNumericPrecision(); }
         }
 
-        public int NumericScale
+        public int? NumericScale
         {
             get { return GetNumericScale(); }
         }
+
+        public int? NumericPrecisionRadix
+        {
+            get { return GetNumericPrecisionRadix(); }
+        }
+
+
+
+
     }
 }

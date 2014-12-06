@@ -16,8 +16,9 @@ namespace CrmAdo.Metadata
         int Length { get; set; }
         bool Nullable { get; set; }
 
-        int NumericPrecision { get; }
-        int NumericScale { get; }
+        int? NumericPrecision { get; }
+        int? NumericPrecisionRadix { get; }
+        int? NumericScale { get; }
         //int GetNumericPrecision();
         //int GetNumericScale();
         object DefaultValue { get; set; }

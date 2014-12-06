@@ -219,8 +219,22 @@ namespace CrmAdo
                     case "metadataid":
                         return AttributeMetadata.MetadataId;
                     case "numericprecision":
-                        return AttributeMetadata.NumericPrecision;
+                        if (AttributeMetadata.NumericPrecision == null)
+                        {
+                            return DBNull.Value;
+                        }
+                        return AttributeMetadata.NumericPrecision;                       
+                    case "numericprecisionradix":                      
+                        if (AttributeMetadata.NumericPrecisionRadix == null)
+                        {
+                            return DBNull.Value;
+                        }
+                        return AttributeMetadata.NumericPrecisionRadix;   
                     case "numericscale":
+                        if (AttributeMetadata.NumericScale == null)
+                        {
+                            return DBNull.Value;
+                        }
                         return AttributeMetadata.NumericScale;
                     case "requiredlevel":
                         return AttributeMetadata.RequiredLevel.Value.ToString();
@@ -263,13 +277,13 @@ namespace CrmAdo
                 }
 
 
-//                Ordinal (System.Int16) --
-//DataType (string) --
-//MaxLength (System.Int32)
-//Precision (System.Byte)
-//Scale (System.Int32)
-//IsNullable (bool)
-//DefaultValue
+                //                Ordinal (System.Int16) --
+                //DataType (string) --
+                //MaxLength (System.Int32)
+                //Precision (System.Byte)
+                //Scale (System.Int32)
+                //IsNullable (bool)
+                //DefaultValue
 
             }
 

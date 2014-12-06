@@ -9,15 +9,15 @@ namespace CrmAdo.Metadata
 {
     public class BooleanAttributeInfo : AttributeInfo
     {
-        protected override int GetNumericPrecision()
+        protected override int? GetNumericPrecision()
         {
             return 1;
         }
 
-        protected override int GetNumericScale()
+        protected override int? GetNumericScale()
         {
             return 0;
-        }
+        }      
 
         public override int Length
         {

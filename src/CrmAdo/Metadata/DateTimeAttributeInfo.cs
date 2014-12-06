@@ -8,12 +8,12 @@ namespace CrmAdo.Metadata
 {
     public class DateTimeAttributeInfo : AttributeInfo
     {
-        protected override int GetNumericPrecision()
+        protected override int? GetNumericPrecision()
         {
             return 23;
         }
 
-        protected override int GetNumericScale()
+        protected override int? GetNumericScale()
         {
             return 3;
         }

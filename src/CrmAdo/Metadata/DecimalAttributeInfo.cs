@@ -13,13 +13,18 @@ namespace CrmAdo.Metadata
 
         public int? Precision { get; set; }
 
-        protected override int GetNumericPrecision()
+        protected override int? GetNumericPrecision()
         {
             var numericPrecision = Math.Max(MinValue.ToString().Length, MaxValue.ToString().Length) + Precision.GetValueOrDefault();
             return numericPrecision;
         }
 
-        protected override int GetNumericScale()
+        protected override int? GetNumericPrecisionRadix()
+        {
+            return 10;
+        }
+
+        protected override int? GetNumericScale()
         {
             return Precision.GetValueOrDefault();
         }

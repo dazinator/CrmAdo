@@ -131,6 +131,7 @@ namespace CrmAdo.Dynamics.Metadata
             metadata.AddPseudoAttribute("datatype", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("maxlength", AttributeTypeCode.Integer);
             metadata.AddPseudoAttribute("numericprecision", AttributeTypeCode.Integer);
+            metadata.AddPseudoAttribute("numericprecisionradix", AttributeTypeCode.Integer);
             metadata.AddPseudoAttribute("numericscale", AttributeTypeCode.Integer);
             metadata.AddPseudoAttribute("isnullable", AttributeTypeCode.Boolean);
             return metadata;
