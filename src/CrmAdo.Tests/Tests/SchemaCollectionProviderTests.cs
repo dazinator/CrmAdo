@@ -29,9 +29,31 @@ namespace CrmAdo.Tests
             // Assert
             Assert.That(metadataCollections, Is.Not.Null);
             Assert.That(metadataCollections.Columns, Is.Not.Null);
-            Assert.That(metadataCollections.Columns.Count, Is.EqualTo(3));         
+            Assert.That(metadataCollections.Columns.Count, Is.EqualTo(3));
 
-            
+
+
+        }
+
+        [Test]
+        public void Should_Be_Able_To_Get_DataSourceInfo()
+        {
+            // Arrange
+            var sut = CreateTestSubject();
+            // Act
+
+            var fakeMetadataProvider = new FakeContactMetadataProvider();
+            var typeProvider = new DynamicsAttributeTypeProvider();
+
+            var fakeConn = MockRepository.GenerateMock<CrmDbConnection>();
+            fakeConn.Stub(a => a.MetadataProvider).Return(fakeMetadataProvider);
+            fakeConn.Stub(a => a.ServerVersion).Return("1.0.0.0");
+
+            var collection = sut.GetDataSourceInfo(fakeConn);
+            // Assert
+            Assert.That(collection, Is.Not.Null);
+            Assert.That(collection.Columns, Is.Not.Null);
+            Assert.That(collection.Columns.Count, Is.EqualTo(17));
 
         }
 
@@ -46,26 +68,39 @@ namespace CrmAdo.Tests
             Assert.That(collection, Is.Not.Null);
             Assert.That(collection.Columns, Is.Not.Null);
             Assert.That(collection.Columns.Count, Is.EqualTo(22));
-
-
-
         }
 
         [Test]
-        public void Should_Be_Able_To_Get_DataTypeCollection()
+        public void Should_Be_Able_To_Get_ReservedWords()
         {
             // Arrange
             var sut = CreateTestSubject();
             // Act
-            var collection = sut.GetTables();
+            var collection = sut.GetReservedWords();
             // Assert
             Assert.That(collection, Is.Not.Null);
             Assert.That(collection.Columns, Is.Not.Null);
-            Assert.That(collection.Columns.Count, Is.EqualTo(22));
+            Assert.That(collection.Columns.Count, Is.EqualTo(1));
+        }
 
 
 
-        }    
+        [Test]
+        public void Should_Be_Able_To_Get_Restrictions()
+        {
+            // Arrange
+            var sut = CreateTestSubject();
+          
+            // Act
+            var collection = sut.GetRestrictions();
+            // Assert
+            Assert.That(collection, Is.Not.Null);
+            Assert.That(collection.Columns, Is.Not.Null);
+            Assert.That(collection.Columns.Count, Is.EqualTo(4));
+
+
+
+        }
 
 
     }

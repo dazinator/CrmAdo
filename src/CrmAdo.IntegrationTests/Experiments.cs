@@ -734,16 +734,13 @@ namespace CrmAdo.IntegrationTests
                 var dataTypes = conn.GetSchema("DataTypes");
                 dataTypes.WriteXml("DataTypes.xml",XmlWriteMode.WriteSchema);
 
-                //Console.WriteLine(dataTypes.Rows.Count);
-                //foreach (DataRow dataRow in dataTypes.Rows)
-                //{
-                //    foreach (var item in dataRow.ItemArray)
-                //    {
-                //        Console.WriteLine(item);
-                //    }
-                //}
-                conn.Close();
+                var resrictions = conn.GetSchema("Restrictions");
+                resrictions.WriteXml("Restrictions.xml", XmlWriteMode.WriteSchema);
 
+                var collections = conn.GetSchema("MetaDataCollections");
+                collections.WriteXml("MetaDataCollections.xml", XmlWriteMode.WriteSchema);
+               
+                conn.Close();
             }
 
         }

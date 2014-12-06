@@ -331,19 +331,19 @@ namespace CrmAdo
                     break;
 
                 case "restrictions":
-                    _SchemaCollectionsProvider.GetRestrictions(this);
+                    _SchemaCollectionsProvider.GetRestrictions();
                     break;
 
                 case "tables":
-                    result = _SchemaCollectionsProvider.GetTables(this);
+                    result = _SchemaCollectionsProvider.GetTables(this, restrictions);
                     break;
 
                 case "columns":
-                    _SchemaCollectionsProvider.GetColumns(this);
+                    _SchemaCollectionsProvider.GetColumns(this, restrictions);
                     break;
 
                 case "views":
-                    _SchemaCollectionsProvider.GetViews(this);
+                    _SchemaCollectionsProvider.GetViews(this, restrictions);
                     break;
 
                 //case "indexes":

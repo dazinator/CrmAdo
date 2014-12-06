@@ -62,23 +62,54 @@ namespace CrmAdo.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; standalone=&quot;yes&quot;?&gt;
-        ///&lt;DocumentElement&gt;
-        ///  &lt;DataTypes&gt;
-        ///    &lt;TypeName&gt;smallint&lt;/TypeName&gt;
-        ///    &lt;ProviderDbType&gt;16&lt;/ProviderDbType&gt;
-        ///    &lt;ColumnSize&gt;5&lt;/ColumnSize&gt;
-        ///    &lt;CreateFormat&gt;smallint&lt;/CreateFormat&gt;
-        ///    &lt;DataType&gt;System.Int16&lt;/DataType&gt;
-        ///    &lt;IsAutoIncrementable&gt;true&lt;/IsAutoIncrementable&gt;
-        ///    &lt;IsBestMatch&gt;true&lt;/IsBestMatch&gt;
-        ///    &lt;IsCaseSensitive&gt;false&lt;/IsCaseSensitive&gt;
-        ///    &lt;IsFixedLength&gt;true&lt;/IsFixedLength&gt;
-        ///    &lt;IsFixedPrecisionScale&gt;true&lt;/IsFixedPrecisionScale&gt;
-        ///    &lt;IsLong&gt;fa [rest of string was truncated]&quot;;.
+        ///&lt;NewDataSet&gt;
+        ///  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;
+        ///    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;DataTypes&quot; msdata:Locale=&quot;&quot;&gt;
+        ///      &lt;xs:complexType&gt;
+        ///        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;
+        ///          &lt;xs:element name=&quot;DataTypes&quot; msdata:Locale=&quot;&quot;&gt;
+        ///            &lt;xs:complexType&gt;
+        ///              &lt;xs:sequence&gt;
+        ///               [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DataTypes {
             get {
                 return ResourceManager.GetString("DataTypes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; standalone=&quot;yes&quot;?&gt;
+        ///&lt;NewDataSet&gt;
+        ///  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;
+        ///    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;MetaDataCollections&quot; msdata:Locale=&quot;&quot;&gt;
+        ///      &lt;xs:complexType&gt;
+        ///        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;
+        ///          &lt;xs:element name=&quot;MetaDataCollections&quot; msdata:Locale=&quot;&quot;&gt;
+        ///            &lt;xs:complexType&gt;
+        ///              &lt;xs:seque [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string MetaDataCollections {
+            get {
+                return ResourceManager.GetString("MetaDataCollections", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; standalone=&quot;yes&quot;?&gt;
+        ///&lt;NewDataSet&gt;
+        ///  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;
+        ///    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;Restrictions&quot; msdata:Locale=&quot;&quot;&gt;
+        ///      &lt;xs:complexType&gt;
+        ///        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;
+        ///          &lt;xs:element name=&quot;Restrictions&quot; msdata:Locale=&quot;&quot;&gt;
+        ///            &lt;xs:complexType&gt;
+        ///              &lt;xs:sequence&gt;
+        ///         [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Restrictions {
+            get {
+                return ResourceManager.GetString("Restrictions", resourceCulture);
             }
         }
     }
