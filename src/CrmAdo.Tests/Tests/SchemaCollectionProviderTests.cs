@@ -83,24 +83,44 @@ namespace CrmAdo.Tests
             Assert.That(collection.Columns.Count, Is.EqualTo(1));
         }
 
-
-
         [Test]
         public void Should_Be_Able_To_Get_Restrictions()
         {
             // Arrange
             var sut = CreateTestSubject();
-          
+
             // Act
             var collection = sut.GetRestrictions();
             // Assert
             Assert.That(collection, Is.Not.Null);
             Assert.That(collection.Columns, Is.Not.Null);
-            Assert.That(collection.Columns.Count, Is.EqualTo(4));
-
-
+            Assert.That(collection.Columns.Count, Is.EqualTo(5));
 
         }
+
+        //[Test]
+        //public void Should_Be_Able_To_Get_Users()
+        //{
+        //    // Arrange
+        //    var sut = CreateTestSubject();
+
+        //    var fakeMetadataProvider = new FakeContactMetadataProvider();
+        //    var typeProvider = new DynamicsAttributeTypeProvider();
+
+        //    var fakeConn = MockRepository.GenerateMock<CrmDbConnection>();
+        //    fakeConn.Stub(a => a.MetadataProvider).Return(fakeMetadataProvider);
+        //    fakeConn.Stub(a => a.ServerVersion).Return("1.0.0.0");        
+
+        //    var restrictions = new string[]{""};
+
+        //    // Act
+        //    var collection = sut.GetUsers(fakeConn, restrictions);
+        //    // Assert
+        //    Assert.That(collection, Is.Not.Null);
+        //    Assert.That(collection.Columns, Is.Not.Null);
+        //    Assert.That(collection.Columns.Count, Is.EqualTo(4));
+
+        //}
 
 
     }

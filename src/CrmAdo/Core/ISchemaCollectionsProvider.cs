@@ -267,12 +267,42 @@ namespace CrmAdo
 
         public DataTable GetUsers(CrmDbConnection crmDbConnection, string[] restrictions)
         {
-            throw new NotImplementedException();
+            var command = new CrmDbCommand(crmDbConnection);
+            command.CommandText = "SELECT su.systemuserid, su.fullname, su.domainname, su.createdon, su.modifiedon FROM systemuser su";         
+            var adapter = new CrmDataAdapter(command);
+            var dataTable = new DataTable();
+            adapter.Fill(dataTable);
+            return dataTable;          
         }
 
         public DataTable GetTables(CrmDbConnection crmDbConnection, string[] restrictions)
         {
-            throw new NotImplementedException();
+            //            table_catalog
+
+
+            //table_schema
+
+
+            //table_name
+
+
+            //table_type
+
+            //Type of table. Can be VIEW or BASE TABLE.
+
+            var command = new CrmDbCommand(crmDbConnection);
+            command.CommandText = "SELECT * FROM EntityMetadata";
+            var adapter = new CrmDataAdapter(command);
+            var dataTable = new DataTable();
+            adapter.Fill(dataTable);
+            dataTable.Columns.Add("table_catalog", typeof(string), "''");
+            dataTable.Columns.Add("table_schema", typeof(string), "''");
+            dataTable.Columns["logicalname"].ColumnName = "table_name";
+            dataTable.Columns.Add("table_type", typeof(string), "'BASE TABLE'");        
+            return dataTable;    
+
+
+           
         }
 
         public DataTable GetColumns(CrmDbConnection crmDbConnection, string[] restrictions)

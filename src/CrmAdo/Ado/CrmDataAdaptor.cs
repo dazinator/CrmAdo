@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrmAdo.Ado
+namespace CrmAdo
 {
     //[Designer("CrmAdo.DesignTime.DataAdapterDesigner, CrmAdo")]
     //[ToolboxItem("CrmAdo.DesignTime.DataAdapterToolboxItem, CrmAdo")]
