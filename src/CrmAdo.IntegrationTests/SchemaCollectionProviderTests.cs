@@ -162,7 +162,7 @@ namespace CrmAdo.IntegrationTests
 
         [Test]
         [TestCase("account")]
-        public void Should_Be_Able_To_Get_Columns(string entityname)
+        public void Should_Be_Able_To_Get_A_Table(string tableName)
         {
             // Arrange
             var sut = new SchemaCollectionsProvider();
@@ -170,7 +170,53 @@ namespace CrmAdo.IntegrationTests
             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
             using (var conn = new CrmDbConnection(connectionString.ConnectionString))
             {
-                var restrictions = new string[] { entityname };
+                var restrictions = new string[] { tableName };
+                // Act
+                var collection = sut.GetTables(conn, restrictions);
+                // Assert
+                Assert.That(collection, Is.Not.Null);
+                Assert.That(collection.Columns, Is.Not.Null);
+                Assert.That(collection.Rows.Count, Is.EqualTo(1));
+
+                var firstRow = collection.Rows[0];
+
+                var col = collection.Columns["table_catalog"];
+
+                Assert.That(col, Is.Not.Null);
+                Assert.That(firstRow[col], Is.EqualTo(""));
+
+                col = collection.Columns["table_schema"];
+                Assert.That(col, Is.Not.Null);
+                Assert.That(firstRow[col], Is.EqualTo(""));
+
+                col = collection.Columns["table_name"];
+                Assert.That(col, Is.Not.Null);
+                Assert.That(firstRow[col], Is.EqualTo(tableName));
+
+                col = collection.Columns["table_type"];
+                Assert.That(col, Is.Not.Null);
+                Assert.That(firstRow[col], Is.EqualTo("BASE TABLE"));
+
+
+            }
+
+
+
+
+
+        }
+
+        [Test]
+        [TestCase("account")]
+        public void Should_Be_Able_To_Get_Columns(string tableName)
+        {
+            // Arrange
+            var sut = new SchemaCollectionsProvider();
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                var restrictions = new string[] { tableName };
                 // Act
                 var collection = sut.GetColumns(conn, restrictions);
 
@@ -190,7 +236,104 @@ namespace CrmAdo.IntegrationTests
                     Assert.That(val, Is.EqualTo(""));
 
                     val = AssertColVal(collection, row, "table_name");
-                    Assert.That(val, Is.EqualTo(entityname));
+                    Assert.That(val, Is.EqualTo(tableName));
+
+                    val = AssertColVal(collection, row, "column_default");
+                    val = AssertColVal(collection, row, "is_nullable");
+                    string dataType = (string)AssertColVal(collection, row, "data_type");
+
+                    var charMaxLength = AssertColVal(collection, row, "character_maximum_length");
+                    var octetVal = AssertColVal(collection, row, "character_octet_length");
+                    if (dataType == "nvarchar")
+                    {
+                        var charMax = (int)charMaxLength;
+                        var octetMax = (int)octetVal;
+                        Assert.That(octetMax, Is.EqualTo(charMax * 2));
+                    }
+                    else
+                    {
+                        Assert.That(charMaxLength, Is.EqualTo(DBNull.Value));
+                        Assert.That(octetVal, Is.EqualTo(DBNull.Value));
+                    }
+
+                    val = AssertColVal(collection, row, "numeric_precision");
+                    val = AssertColVal(collection, row, "numeric_precision_radix");
+                    val = AssertColVal(collection, row, "numeric_scale");
+
+                    val = AssertColVal(collection, row, "datetime_precision");
+                    if (dataType == "datetime")
+                    {
+                        Assert.That(val, Is.EqualTo(3));
+                    }
+                    else
+                    {
+                        Assert.That(val, Is.EqualTo(DBNull.Value));
+                    }
+
+                    val = AssertColVal(collection, row, "character_set_catalog");
+                    val = AssertColVal(collection, row, "character_set_schema");
+                    var charSetName = AssertColVal(collection, row, "character_set_name");
+
+                    if (dataType == "nvarchar")
+                    {
+                        Assert.That(charSetName, Is.EqualTo("UNICODE"));
+                    }
+                    else
+                    {
+                        Assert.That(charSetName, Is.EqualTo(DBNull.Value));
+                    }
+
+                    val = AssertColVal(collection, row, "collation_catalog");
+
+
+                    val = AssertColVal(collection, row, "is_sparse");
+                    Assert.That(val, Is.EqualTo(false));
+
+                    val = AssertColVal(collection, row, "is_column_set");
+                    Assert.That(val, Is.EqualTo(false));
+
+                    val = AssertColVal(collection, row, "is_filestream");
+                    Assert.That(val, Is.EqualTo(false));
+                }
+
+            }
+
+        }
+
+        [Test]
+        [TestCase("account", "accountid")]
+        public void Should_Be_Able_To_Get_A_Column(string tableName, string columnName)
+        {
+            // Arrange
+            var sut = new SchemaCollectionsProvider();
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                var restrictions = new string[] { tableName, columnName };
+                // Act
+                var collection = sut.GetColumns(conn, restrictions);
+
+                // Assert
+                Assert.That(collection, Is.Not.Null);
+                Assert.That(collection.Columns, Is.Not.Null);
+                Assert.That(collection.Rows.Count, Is.EqualTo(1));
+
+
+                foreach (DataRow row in collection.Rows)
+                {
+
+                    var val = AssertColVal(collection, row, "table_catalog");
+                    Assert.That(val, Is.EqualTo(""));
+
+                    val = AssertColVal(collection, row, "table_schema");
+                    Assert.That(val, Is.EqualTo(""));
+
+                    val = AssertColVal(collection, row, "table_name");
+                    Assert.That(val, Is.EqualTo(tableName));
+
+                    val = AssertColVal(collection, row, "column_name");
+                    Assert.That(val, Is.EqualTo(columnName));
 
                     val = AssertColVal(collection, row, "column_default");
                     val = AssertColVal(collection, row, "is_nullable");

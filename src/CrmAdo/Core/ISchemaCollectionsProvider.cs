@@ -278,20 +278,30 @@ namespace CrmAdo
         public DataTable GetTables(CrmDbConnection crmDbConnection, string[] restrictions)
         {
             //            table_catalog
-
-
             //table_schema
-
-
             //table_name
-
-
             //table_type
-
             //Type of table. Can be VIEW or BASE TABLE.
 
             var command = new CrmDbCommand(crmDbConnection);
-            command.CommandText = "SELECT * FROM EntityMetadata";
+            string commandText = "SELECT * FROM EntityMetadata";
+
+            string tableName = null;
+            if (restrictions != null)
+            {
+                if (restrictions.Length > 0)
+                {
+                    tableName = restrictions[0];
+                }
+            }
+
+            if (!string.IsNullOrEmpty(tableName))
+            {
+                commandText = commandText + " WHERE LogicalName = '" + tableName + "'";
+            }
+
+            command.CommandText = commandText;
+
             var adapter = new CrmDataAdapter(command);
             var dataTable = new DataTable();
             adapter.Fill(dataTable);
@@ -358,7 +368,7 @@ namespace CrmAdo
                 commandText += "WHERE ";
                 if (hasEntityFilter)
                 {
-                    commandText += " entitymetadata.LogicalName = '" + entityName + "'";
+                    commandText += " (entitymetadata.LogicalName = '" + entityName + "')";
                 }
                 if (hasEntityFilter && hasAttributeFilter)
                 {
@@ -366,7 +376,7 @@ namespace CrmAdo
                 }
                 if (hasAttributeFilter)
                 {
-                    commandText += " attributemetadata.LogicalName = '" + attributeName + "'";
+                    commandText += " (attributemetadata.LogicalName = '" + attributeName + "')";
                 }
             }
 
@@ -420,7 +430,18 @@ namespace CrmAdo
 
         public DataTable GetForeignKeys(CrmDbConnection crmDbConnection, string[] restrictions)
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
+
+            var command = new CrmDbCommand(crmDbConnection);
+            command.CommandText = "SELECT * FROM EntityMetadata";
+            var adapter = new CrmDataAdapter(command);
+            var dataTable = new DataTable();
+            adapter.Fill(dataTable);
+            dataTable.Columns.Add("table_catalog", typeof(string), "''");
+            dataTable.Columns.Add("table_schema", typeof(string), "''");
+            dataTable.Columns["logicalname"].ColumnName = "table_name";
+            dataTable.Columns.Add("table_type", typeof(string), "'BASE TABLE'");
+            return dataTable;
         }
     }
 }

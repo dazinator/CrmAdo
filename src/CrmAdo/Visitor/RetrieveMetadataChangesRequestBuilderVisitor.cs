@@ -14,6 +14,26 @@ using CrmAdo.Metadata;
 
 namespace CrmAdo.Visitor
 {
+    public enum MetadataFilterType
+    {
+        Entity = 0,
+        Attribute = 1,
+        Relationship = 2
+
+    }
+
+    public class MetadataFilterGroupExpression
+    {
+        public MetadataFilterGroupExpression(MetadataFilterType filterType)
+        {
+            Filter = new MetadataFilterExpression();
+
+        }
+        public MetadataFilterExpression Filter { get; set; }
+        public MetadataFilterType FilterType { get; set; }
+    }
+
+
     /// <summary>
     /// A <see cref="BuilderVisitor"/> that builds a <see cref="RetrieveMetadataChangesRequest"/> when it visits a <see cref="SelectBuilder"/> 
     /// </summary>
@@ -23,6 +43,8 @@ namespace CrmAdo.Visitor
         public const string AttributeMetadadataTableLogicalName = "attributemetadata";
         public const string OneToManyRelationshipMetadadataTableLogicalName = "onetomanyrelationshipmetadata";
         public const string ManyToManyRelationshipMetadadataTableLogicalName = "manytomanyrelationshipmetadata";
+
+
 
         private ICrmMetaDataProvider _MetadataProvider;
 
@@ -79,7 +101,7 @@ namespace CrmAdo.Visitor
         #endregion
 
         #region Filter Context
-        public MetadataFilterExpression FilterExpression { get; set; }
+        public MetadataFilterGroupExpression FilterExpression { get; set; }
         public bool NegateOperator { get; set; }
         #endregion
 
@@ -359,15 +381,16 @@ namespace CrmAdo.Visitor
             if (item.HasFilters)
             {
 
-                var newFilterExpression = new MetadataFilterExpression();
+                var newFilterExpression = new MetadataFilterGroupExpression(MetadataFilterType.Entity);
+
                 var conjunction = item.Conjunction;
                 if (conjunction == Conjunction.Or)
                 {
-                    newFilterExpression.FilterOperator = LogicalOperator.Or;
+                    newFilterExpression.Filter.FilterOperator = LogicalOperator.Or;
                 }
                 else
                 {
-                    newFilterExpression.FilterOperator = LogicalOperator.And;
+                    newFilterExpression.Filter.FilterOperator = LogicalOperator.And;
                 }
 
                 var existingFilter = this.FilterExpression;
@@ -381,16 +404,31 @@ namespace CrmAdo.Visitor
 
                 this.FilterExpression = existingFilter;
 
-                // if there is a filter expression, chain this filter to that one..
-                if (existingFilter != null)
+                // if there is a filter expression, chain this filter to that one (only if compatible type)
+
+                if (existingFilter != null && existingFilter.FilterType == newFilterExpression.FilterType)
                 {
-                    existingFilter.Filters.Add(newFilterExpression);
+                    existingFilter.Filter.Filters.Add(newFilterExpression.Filter);
                     //  existingFilter.AddFilter(newFilterExpression);
                 }
                 else
                 {
-                    // this is top level filter expression, add it directly to query.
-                    QueryExpression.Criteria.Filters.Add(newFilterExpression);
+                    // this is top level filter expression, add it directly to query in correct location
+                    switch (existingFilter.FilterType)
+                    {
+                        case MetadataFilterType.Entity:
+                            QueryExpression.Criteria.Filters.Add(newFilterExpression.Filter);
+                            break;
+                        case MetadataFilterType.Attribute:
+                            QueryExpression.AttributeQuery.Criteria.Filters.Add(newFilterExpression.Filter);
+                            break;
+                        case MetadataFilterType.Relationship:
+                            QueryExpression.RelationshipQuery.Criteria.Filters.Add(newFilterExpression.Filter);
+                            break;
+                    }
+
+                    //  QueryExpression.Criteria.Filters.Add(newFilterExpression);
+
                 }
 
             }
@@ -644,35 +682,61 @@ namespace CrmAdo.Visitor
         {
 
             var sourceTable = (Table)attColumn.Source.Source;
-            // var sourceEntityName = GetEntityNameOrAliasForSource(attColumn.Source, out isAlias, out link);
+            var sourceTableName = sourceTable.GetTableLogicalEntityName();
+
+            MetadataFilterType filterType = MetadataFilterType.Entity;
+
+            switch (sourceTableName)
+            {
+                case "entitymetadata":
+                    filterType = MetadataFilterType.Entity;
+                    break;
+
+                case "attributemetadata":
+                    filterType = MetadataFilterType.Attribute;
+                    break;
+
+                case "onetomanyrelationshipmetadata":
+                    filterType = MetadataFilterType.Relationship;
+                    break;
+
+                case "manytomanyrelationshipmetadata":
+                    filterType = MetadataFilterType.Relationship;
+                    break;
+            }
+          
+            //  var sourceEntityName = GetEntityNameOrAliasForSource(attColumn.Source, out isAlias, out link);
             //  condition.EntityName = sourceEntityName;
 
             // if filter expression present, add it to that.
             if (FilterExpression != null)
             {
-                FilterExpression.Conditions.Add(condition);
-            }
-            else
-            {
-                switch (sourceTable.GetTableLogicalEntityName())
+                if (FilterExpression.FilterType == filterType)
                 {
-                    case "entitymetadata":
-                        QueryExpression.Criteria.Conditions.Add(condition);
-                        break;
-
-                    case "attributemetadata":
-                        QueryExpression.AttributeQuery.Criteria.Conditions.Add(condition);
-                        break;
-
-                    case "onetomanyrelationshipmetadata":
-                        QueryExpression.RelationshipQuery.Criteria.Conditions.Add(condition);
-                        break;
-
-                    case "manytomanyrelationshipmetadata":
-                        QueryExpression.RelationshipQuery.Criteria.Conditions.Add(condition);
-                        break;
+                    FilterExpression.Filter.Conditions.Add(condition);
+                    return;
+                }
+                else
+                {
+                    // incompatible filter group type..
                 }
             }
+
+            switch (filterType)
+            {
+                case MetadataFilterType.Entity:
+                    QueryExpression.Criteria.Conditions.Add(condition);
+                    break;
+
+                case MetadataFilterType.Attribute:
+                    QueryExpression.AttributeQuery.Criteria.Conditions.Add(condition);
+                    break;
+
+                case MetadataFilterType.Relationship:
+                    QueryExpression.RelationshipQuery.Criteria.Conditions.Add(condition);
+                    break;
+            }
+
         }
 
         private MetadataConditionExpression GetCondition(Function functionFilter, out Column attColumn)
@@ -978,6 +1042,6 @@ namespace CrmAdo.Visitor
             }
             var entMeta = EntityMetadata[entityName];
             return entMeta;
-        }        
+        }
     }
 }
