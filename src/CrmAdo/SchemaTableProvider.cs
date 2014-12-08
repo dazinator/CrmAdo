@@ -77,9 +77,24 @@ namespace CrmAdo
                 //var haveMinAndMax = attMeta as IColumnMetadata;
                 //if (haveMinAndMax != null)
                 //{
-                row[SchemaTableColumn.NumericPrecision] = attMeta.NumericPrecision;
-                row[SchemaTableColumn.NumericScale] = attMeta.NumericScale;
-                // }
+                if (attMeta.NumericPrecision == null)
+                {
+                     row[SchemaTableColumn.NumericPrecision] = DBNull.Value;
+                }
+                else
+                {
+                    row[SchemaTableColumn.NumericPrecision] = attMeta.NumericPrecision;
+                }
+
+                if (attMeta.NumericScale == null)
+                {
+                    row[SchemaTableColumn.NumericScale] = DBNull.Value;
+                }
+                else
+                {
+                    row[SchemaTableColumn.NumericScale] = attMeta.NumericScale;
+                }           
+              
 
                 row[SchemaTableColumn.ProviderType] = attMeta.AttributeType.ToString();
 
