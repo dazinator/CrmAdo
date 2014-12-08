@@ -78,7 +78,7 @@ namespace CrmAdo
                 row[SchemaTableColumn.BaseSchemaName] = "";
                 row[SchemaTableColumn.BaseTableName] = attMeta.EntityLogicalName;
                 row[SchemaTableColumn.ColumnName] = columnMetadata.ColumnName;
-                row[SchemaTableColumn.ColumnOrdinal] = columnMetadata.AttributeMetadata.ColumnNumber;
+                row[SchemaTableColumn.ColumnOrdinal] = ordinal; // columnMetadata.AttributeMetadata.ColumnNumber;
 
                 // set column size
                 row[SchemaTableColumn.ColumnSize] = columnMetadata.AttributeMetadata.Length;
