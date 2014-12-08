@@ -331,7 +331,7 @@ namespace CrmAdo
                     break;
 
                 case "restrictions":
-                    _SchemaCollectionsProvider.GetRestrictions();
+                    result = _SchemaCollectionsProvider.GetRestrictions();
                     break;
 
                 case "tables":
@@ -339,15 +339,15 @@ namespace CrmAdo
                     break;
 
                 case "columns":
-                    _SchemaCollectionsProvider.GetColumns(this, restrictions);
+                    result = _SchemaCollectionsProvider.GetColumns(this, restrictions);
                     break;
 
                 case "views":
-                    _SchemaCollectionsProvider.GetViews(this, restrictions);
+                    result = _SchemaCollectionsProvider.GetViews(this, restrictions);
                     break;
 
                 case "viewcolumns":
-                    _SchemaCollectionsProvider.GetViewColumns(this, restrictions);
+                    result = _SchemaCollectionsProvider.GetViewColumns(this, restrictions);
                     break;
 
                 //case "indexes":
@@ -358,12 +358,12 @@ namespace CrmAdo
                 //    break;
 
                 case "foreignkeys":
-                    _SchemaCollectionsProvider.GetForeignKeys(this, restrictions);
+                    result = _SchemaCollectionsProvider.GetForeignKeys(this, restrictions);
                     break;             
 
 
                 case "users":
-                    _SchemaCollectionsProvider.GetUsers(this, restrictions);
+                    result = _SchemaCollectionsProvider.GetUsers(this, restrictions);
                     break;
 
                 //case "constraints":
