@@ -27,7 +27,7 @@ namespace CrmAdo.Visitor
         public MetadataFilterGroupExpression(MetadataFilterType filterType)
         {
             Filter = new MetadataFilterExpression();
-
+            this.FilterType = FilterType;
         }
         public MetadataFilterExpression Filter { get; set; }
         public MetadataFilterType FilterType { get; set; }
@@ -102,6 +102,10 @@ namespace CrmAdo.Visitor
 
         #region Filter Context
         public MetadataFilterGroupExpression FilterExpression { get; set; }
+      //  public MetadataFilterGroupExpression EntityFilterExpression { get; set; }
+      //  public MetadataFilterGroupExpression AttributeFilterExpression { get; set; }
+       // public MetadataFilterGroupExpression RelationshipFilterExpression { get; set; }
+
         public bool NegateOperator { get; set; }
         #endregion
 
@@ -394,6 +398,10 @@ namespace CrmAdo.Visitor
                 }
 
                 var existingFilter = this.FilterExpression;
+              //  var existingEntityFilter = this.EntityFilterExpression;
+              //  var existingAttributeFilter = this.AttributeFilterExpression;
+               // var existingRelationshyipFilter = this.RelationshipFilterExpression;
+
                 this.FilterExpression = newFilterExpression;
 
                 //TODO: Should only be one where clause?
@@ -403,33 +411,47 @@ namespace CrmAdo.Visitor
                 }
 
                 this.FilterExpression = existingFilter;
+               // this.EntityFilterExpression = existingEntityFilter;
+               // this.AttributeFilterExpression = existingAttributeFilter;
+               // this.RelationshipFilterExpression = existingRelationshyipFilter;
 
                 // if there is a filter expression, chain this filter to that one (only if compatible type)
 
-                if (existingFilter != null && existingFilter.FilterType == newFilterExpression.FilterType)
+                if (existingFilter != null)
                 {
-                    existingFilter.Filter.Filters.Add(newFilterExpression.Filter);
+                    if (existingFilter.FilterType == newFilterExpression.FilterType)
+                    {
+                        existingFilter.Filter.Filters.Add(newFilterExpression.Filter);
+                        return;
+                    }
+                    else
+                    {
+
+
+                    }
                     //  existingFilter.AddFilter(newFilterExpression);
                 }
-                else
+
+
+
+
+                // this is top level filter expression, add it directly to query in correct location
+                switch (newFilterExpression.FilterType)
                 {
-                    // this is top level filter expression, add it directly to query in correct location
-                    switch (existingFilter.FilterType)
-                    {
-                        case MetadataFilterType.Entity:
-                            QueryExpression.Criteria.Filters.Add(newFilterExpression.Filter);
-                            break;
-                        case MetadataFilterType.Attribute:
-                            QueryExpression.AttributeQuery.Criteria.Filters.Add(newFilterExpression.Filter);
-                            break;
-                        case MetadataFilterType.Relationship:
-                            QueryExpression.RelationshipQuery.Criteria.Filters.Add(newFilterExpression.Filter);
-                            break;
-                    }
-
-                    //  QueryExpression.Criteria.Filters.Add(newFilterExpression);
-
+                    case MetadataFilterType.Entity:
+                        QueryExpression.Criteria.Filters.Add(newFilterExpression.Filter);
+                        break;
+                    case MetadataFilterType.Attribute:
+                        QueryExpression.AttributeQuery.Criteria.Filters.Add(newFilterExpression.Filter);
+                        break;
+                    case MetadataFilterType.Relationship:
+                        QueryExpression.RelationshipQuery.Criteria.Filters.Add(newFilterExpression.Filter);
+                        break;
                 }
+
+                //  QueryExpression.Criteria.Filters.Add(newFilterExpression);
+
+
 
             }
         }
@@ -704,7 +726,7 @@ namespace CrmAdo.Visitor
                     filterType = MetadataFilterType.Relationship;
                     break;
             }
-          
+
             //  var sourceEntityName = GetEntityNameOrAliasForSource(attColumn.Source, out isAlias, out link);
             //  condition.EntityName = sourceEntityName;
 
@@ -725,14 +747,17 @@ namespace CrmAdo.Visitor
             switch (filterType)
             {
                 case MetadataFilterType.Entity:
+                   // this.FilterExpression.Filter.Conditions.Add(condition);
                     QueryExpression.Criteria.Conditions.Add(condition);
                     break;
 
                 case MetadataFilterType.Attribute:
+                   // this.AttributeFilterExpression.Filter.Conditions.Add(condition);
                     QueryExpression.AttributeQuery.Criteria.Conditions.Add(condition);
                     break;
 
                 case MetadataFilterType.Relationship:
+                 //   this.RelationshipFilterExpression.Filter.Conditions.Add(condition);
                     QueryExpression.RelationshipQuery.Criteria.Conditions.Add(condition);
                     break;
             }
