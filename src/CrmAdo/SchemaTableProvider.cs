@@ -19,36 +19,54 @@ namespace CrmAdo
             //Note to self: See here for an alternate implementation info: http://msdn.microsoft.com/en-us/library/system.data.sqlclient.sqldatareader.getschematable(v=vs.110).aspx
 
             var schemaTable = new DataTable("SchemaTable");
-            schemaTable.Locale = CultureInfo.InvariantCulture;
+            schemaTable.Locale = CultureInfo.InvariantCulture;        
 
 
-            schemaTable.Columns.Add(new DataColumn("DataTypeName", typeof(string)));
-            schemaTable.Columns.Add(new DataColumn("IsIdentity", typeof(bool)));
             schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.AllowDBNull, typeof(bool)));
+            schemaTable.Columns.Add(new DataColumn(SchemaTableOptionalColumn.BaseCatalogName, typeof(string)));
             schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.BaseColumnName, typeof(string)));
             schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.BaseSchemaName, typeof(string)));
+            schemaTable.Columns.Add(new DataColumn(SchemaTableOptionalColumn.BaseServerName, typeof(string)));
             schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.BaseTableName, typeof(string)));
+
+
             schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.ColumnName, typeof(string)));
             schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.ColumnOrdinal, typeof(int)));
             schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.ColumnSize, typeof(int)));
-            schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.DataType, typeof(Type)));
+            schemaTable.Columns.Add(new DataColumn("DataTypeName", typeof(string)));
+
+            schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.DataType, typeof(Type))); // THIS was not present in documentation.
             schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.IsAliased, typeof(bool)));
+            schemaTable.Columns.Add(new DataColumn(SchemaTableOptionalColumn.IsAutoIncrement, typeof(bool)));
+            schemaTable.Columns.Add(new DataColumn("IsColumnSet", typeof(bool)));
             schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.IsExpression, typeof(bool)));
+            schemaTable.Columns.Add(new DataColumn(SchemaTableOptionalColumn.IsHidden, typeof(bool)));
+            schemaTable.Columns.Add(new DataColumn("IsIdentity", typeof(bool)));
             schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.IsKey, typeof(bool)));
             schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.IsLong, typeof(bool)));
+            schemaTable.Columns.Add(new DataColumn(SchemaTableOptionalColumn.IsReadOnly, typeof(bool)));
+            schemaTable.Columns.Add(new DataColumn(SchemaTableOptionalColumn.IsRowVersion, typeof(bool)));
             schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.IsUnique, typeof(bool)));
+
+
+
+
             schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.NonVersionedProviderType, typeof(int)));
             schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.NumericPrecision, typeof(short)));
             schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.NumericScale, typeof(short)));
-            schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.ProviderType, typeof(string)));
-            //  table.Columns.Add(new DataColumn(SchemaTableColumn.ProviderType, typeof(int)));
-            schemaTable.Columns.Add(new DataColumn(SchemaTableOptionalColumn.IsReadOnly, typeof(bool)));
-            schemaTable.Columns.Add(new DataColumn(SchemaTableOptionalColumn.IsAutoIncrement, typeof(bool)));
             schemaTable.Columns.Add(new DataColumn(SchemaTableOptionalColumn.ProviderSpecificDataType, typeof(Type)));
-            schemaTable.Columns.Add(new DataColumn(SchemaTableOptionalColumn.IsRowVersion, typeof(bool)));
-            schemaTable.Columns.Add(new DataColumn(SchemaTableOptionalColumn.IsHidden, typeof(bool)));
-            schemaTable.Columns.Add(new DataColumn(SchemaTableOptionalColumn.BaseCatalogName, typeof(string)));
-            schemaTable.Columns.Add(new DataColumn(SchemaTableOptionalColumn.BaseServerName, typeof(string)));
+            schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.ProviderType, typeof(string)));
+
+            schemaTable.Columns.Add(new DataColumn("UdtAssemblyQualifiedName", typeof(string)));
+            schemaTable.Columns.Add(new DataColumn("XmlSchemaCollectionDatabase", typeof(string)));
+            schemaTable.Columns.Add(new DataColumn("XmlSchemaCollectionName", typeof(string)));
+            schemaTable.Columns.Add(new DataColumn("XmlSchemaCollectionOwningSchema", typeof(string)));
+            //  table.Columns.Add(new DataColumn(SchemaTableColumn.ProviderType, typeof(int)));  
+
+
+
+
+
 
             int ordinal = 0;
             foreach (var columnMetadata in columns)
@@ -57,19 +75,28 @@ namespace CrmAdo
                 var attMeta = columnMetadata.AttributeMetadata;
                 row[SchemaTableColumn.AllowDBNull] = !attMeta.IsPrimaryId;
                 row[SchemaTableColumn.BaseColumnName] = attMeta.LogicalName;
-                row[SchemaTableColumn.BaseSchemaName] = null;
+                row[SchemaTableColumn.BaseSchemaName] = "";
                 row[SchemaTableColumn.BaseTableName] = attMeta.EntityLogicalName;
                 row[SchemaTableColumn.ColumnName] = columnMetadata.ColumnName;
-                row[SchemaTableColumn.ColumnOrdinal] = ordinal;
+                row[SchemaTableColumn.ColumnOrdinal] = columnMetadata.AttributeMetadata.ColumnNumber;
 
                 // set column size
-                row[SchemaTableColumn.ColumnSize] = int.MaxValue;
-                row[SchemaTableColumn.DataType] = attMeta.GetFieldType();
+                row[SchemaTableColumn.ColumnSize] = columnMetadata.AttributeMetadata.Length;
+                row["DataTypeName"] = attMeta.GetSqlDataTypeName();
                 row[SchemaTableColumn.IsAliased] = columnMetadata.HasAlias;
+                row["IsColumnSet"] = false;
                 row[SchemaTableColumn.IsExpression] = false;
+
+
+                row[SchemaTableColumn.DataType] = attMeta.GetFieldType();
+                row[SchemaTableOptionalColumn.IsAutoIncrement] = false;
+                row["IsHidden"] = false; // !attMeta.IsValidForRead;
+                row["IsIdentity"] = attMeta.IsPrimaryId;
+
                 row[SchemaTableColumn.IsKey] = false; //for multi part keys // columnMetadata.AttributeMetadata.IsPrimaryId;
                 row[SchemaTableColumn.IsLong] = false;
-                // only id must be unique.
+                row[SchemaTableOptionalColumn.IsReadOnly] = !columnMetadata.AttributeMetadata.IsValidForUpdate.GetValueOrDefault() && !columnMetadata.AttributeMetadata.IsValidForCreate.GetValueOrDefault();
+                row[SchemaTableOptionalColumn.IsRowVersion] = false; //columnMetadata.AttributeMetadata.LogicalName == "versionnumber";
 
                 row[SchemaTableColumn.IsUnique] = false;  //for timestamp columns only. //columnMetadata.AttributeMetadata.IsPrimaryId;
                 row[SchemaTableColumn.NonVersionedProviderType] = (int)attMeta.AttributeType;
@@ -79,7 +106,7 @@ namespace CrmAdo
                 //{
                 if (attMeta.NumericPrecision == null)
                 {
-                     row[SchemaTableColumn.NumericPrecision] = DBNull.Value;
+                    row[SchemaTableColumn.NumericPrecision] = 0;// DBNull.Value;
                 }
                 else
                 {
@@ -88,21 +115,23 @@ namespace CrmAdo
 
                 if (attMeta.NumericScale == null)
                 {
-                    row[SchemaTableColumn.NumericScale] = DBNull.Value;
+                    row[SchemaTableColumn.NumericScale] = 0; // DBNull.Value;
                 }
                 else
                 {
                     row[SchemaTableColumn.NumericScale] = attMeta.NumericScale;
-                }           
-              
+                }
 
-                row[SchemaTableColumn.ProviderType] = attMeta.AttributeType.ToString();
+                row[SchemaTableOptionalColumn.ProviderSpecificDataType] = null; // attMeta.AttributeType;
+                row[SchemaTableColumn.ProviderType] = attMeta.GetSqlDataTypeName();
 
+                row["UdtAssemblyQualifiedName"] = null;
+                row["XmlSchemaCollectionDatabase"] = null;
+                row["XmlSchemaCollectionName"] = null;
+                row["XmlSchemaCollectionOwningSchema"] = null;
+               
                 // some other optional columns..
-                row["DataTypeName"] = attMeta.GetSqlDataTypeName();
-                row[SchemaTableOptionalColumn.IsReadOnly] = !columnMetadata.AttributeMetadata.IsValidForUpdate.GetValueOrDefault() && !columnMetadata.AttributeMetadata.IsValidForCreate.GetValueOrDefault();
-                row["IsIdentity"] = attMeta.IsPrimaryId;
-                row[SchemaTableOptionalColumn.IsAutoIncrement] = false;
+
                 // row[SchemaTableOptionalColumn.IsRowVersion] = false;
                 // row[SchemaTableOptionalColumn.IsHidden] = false;
                 // could possibly add a column with correct datatype etc..
