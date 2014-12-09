@@ -397,6 +397,120 @@ namespace CrmAdo.IntegrationTests
 
         }
 
+        [Test]
+        [TestCase("account")]
+        public void Should_Be_Able_To_Get_ForeignKeys_For_A_Table(string tableName)
+        {
+            // Arrange
+            var sut = new SchemaCollectionsProvider();
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                var restrictions = new string[] { tableName };
+                // Act
+                var collection = sut.GetForeignKeys(conn, restrictions);
+
+                // Assert
+                Assert.That(collection, Is.Not.Null);
+                Assert.That(collection.Columns, Is.Not.Null);
+                Assert.That(collection.Rows.Count, Is.GreaterThan(0));
+
+
+                foreach (DataRow row in collection.Rows)
+                {
+
+                    var val = AssertColVal(collection, row, "constraint_catalog");
+                    Assert.That(val, Is.EqualTo(""));
+
+                    val = AssertColVal(collection, row, "constraint_schema");
+                    Assert.That(val, Is.EqualTo(""));
+
+                    val = AssertColVal(collection, row, "constraint_name");
+                    Assert.IsFalse(string.IsNullOrEmpty((string)val));
+                    Console.WriteLine(val);
+
+                    val = AssertColVal(collection, row, "table_catalog");
+                    Assert.That(val, Is.EqualTo(""));
+
+                    val = AssertColVal(collection, row, "table_schema");
+                    Assert.That(val, Is.EqualTo(""));
+
+                    val = AssertColVal(collection, row, "table_name");
+                    Assert.That(val, Is.EqualTo(tableName));
+
+                    val = AssertColVal(collection, row, "constraint_type");
+                    Assert.That(val, Is.EqualTo("FOREIGN KEY"));
+
+                    val = AssertColVal(collection, row, "is_deferrable");
+                    Assert.That(val, Is.EqualTo("NO"));
+
+                    val = AssertColVal(collection, row, "initially_deferred");
+                    Assert.That(val, Is.EqualTo("NO"));
+
+                }
+
+            }
+
+        }
+
+        //[Test]
+        //public void Should_Be_Able_To_Get_All_ForeignKeys()
+        //{
+        //    // Arrange
+        //    var sut = new SchemaCollectionsProvider();
+
+        //    var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+        //    using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+        //    {
+        //        var restrictions = new string[] { };
+        //        // Act
+        //        var collection = sut.GetForeignKeys(conn, restrictions);
+
+        //        // Assert
+        //        Assert.That(collection, Is.Not.Null);
+        //        Assert.That(collection.Columns, Is.Not.Null);
+        //        Assert.That(collection.Rows.Count, Is.GreaterThan(0));
+
+
+        //        foreach (DataRow row in collection.Rows)
+        //        {
+
+        //            var val = AssertColVal(collection, row, "constraint_catalog");
+        //            Assert.That(val, Is.EqualTo(""));
+
+        //            val = AssertColVal(collection, row, "constraint_schema");
+        //            Assert.That(val, Is.EqualTo(""));
+
+        //            val = AssertColVal(collection, row, "constraint_name");
+        //            Assert.IsFalse(string.IsNullOrEmpty((string)val));
+        //            Console.WriteLine(val);
+
+        //            val = AssertColVal(collection, row, "table_catalog");
+        //            Assert.That(val, Is.EqualTo(""));
+
+        //            val = AssertColVal(collection, row, "table_schema");
+        //            Assert.That(val, Is.EqualTo(""));
+
+        //            val = AssertColVal(collection, row, "table_name");
+        //            Assert.IsFalse(string.IsNullOrEmpty((string)val));
+        //            Console.Write(" : " + val);
+
+        //            val = AssertColVal(collection, row, "constraint_type");
+        //            Assert.That(val, Is.EqualTo("FOREIGN KEY"));
+
+        //            val = AssertColVal(collection, row, "is_deferrable");
+        //            Assert.That(val, Is.EqualTo("NO"));
+
+        //            val = AssertColVal(collection, row, "initially_deferred");
+        //            Assert.That(val, Is.EqualTo("NO"));
+
+        //        }
+
+        //    }
+
+        //}
+
         private object AssertColVal(DataTable table, DataRow row, string columnName)
         {
             var col = table.Columns[columnName];

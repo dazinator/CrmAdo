@@ -432,15 +432,82 @@ namespace CrmAdo
         {
             // throw new NotImplementedException();
 
+            string entityName = null;
+            string constraintName = null;
+            bool hasEntityFilter = false;
+            bool hasConstraintNameFilter = false;
+
+            if (restrictions != null)
+            {
+                if (restrictions.Length > 0)
+                {
+                    entityName = restrictions[0];
+                }
+                if (restrictions.Length > 1)
+                {
+                    constraintName = restrictions[1];
+                }
+            }
+
+            hasEntityFilter = !string.IsNullOrEmpty(entityName);
+            hasConstraintNameFilter = !string.IsNullOrEmpty(constraintName);
+
+            string commandText = "SELECT o.* FROM entitymetadata e INNER JOIN onetomanyrelationshipmetadata o ON e.MetadataId = o.MetadataId ";
+
+
+            if (hasEntityFilter || hasConstraintNameFilter)
+            {
+                commandText += "WHERE ";
+                if (hasEntityFilter)
+                {
+                    commandText += " (e.LogicalName = '" + entityName + "')";
+                }
+                if (hasEntityFilter && hasConstraintNameFilter)
+                {
+                    commandText += " AND ";
+                }
+                if (hasConstraintNameFilter)
+                {
+                    commandText += " (o.SchemaName = '" + constraintName + "')";
+                }
+            }
+
+
             var command = new CrmDbCommand(crmDbConnection);
-            command.CommandText = "SELECT * FROM EntityMetadata";
+            command.CommandText = commandText;
             var adapter = new CrmDataAdapter(command);
             var dataTable = new DataTable();
             adapter.Fill(dataTable);
+
+            //  dataTable.AsDataView().RowFilter = "ReferencingEntity = '" + entityName + 
+
+            dataTable.Columns.Add("constraint_catalog", typeof(string), "''");
+            dataTable.Columns.Add("constraint_schema", typeof(string), "''");
+            dataTable.Columns["o.schemaname"].ColumnName = "constraint_name";
+
+            //   dataTable.Columns.Add("CONSTRAINT_NAME", typeof(string), "''");
+
             dataTable.Columns.Add("table_catalog", typeof(string), "''");
             dataTable.Columns.Add("table_schema", typeof(string), "''");
-            dataTable.Columns["logicalname"].ColumnName = "table_name";
-            dataTable.Columns.Add("table_type", typeof(string), "'BASE TABLE'");
+
+            dataTable.Columns["o.referencingentity"].ColumnName = "table_name";
+            dataTable.Columns.Add("constraint_type", typeof(string), "'FOREIGN KEY'");
+
+            dataTable.Columns.Add("is_deferrable", typeof(string), "'NO'");
+            dataTable.Columns.Add("initially_deferred", typeof(string), "'NO'");
+
+            var filteredView = dataTable.AsDataView();
+            if (hasEntityFilter)
+            {
+                filteredView.RowFilter = "table_name = '" + entityName + "'";
+            }
+            dataTable = filteredView.ToTable(true);
+
+            //else
+            //{               
+            //    dataTable = filteredView.ToTable(true);  
+            //}
+
             return dataTable;
         }
     }

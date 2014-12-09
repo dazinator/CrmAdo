@@ -239,9 +239,16 @@ namespace CrmAdo.Visitor
             this.QueryExpression.AttributeQuery = new AttributeQueryExpression();
         }
 
+        public void InitialiseRelationshipQuery()
+        {
+            this.QueryExpression.RelationshipQuery.Properties = new MetadataPropertiesExpression();
+            this.QueryExpression.RelationshipQuery = new RelationshipQueryExpression();
+        }
+
         protected override void VisitTable(Table item)
         {
-            switch (item.GetTableLogicalEntityName())
+            var name = item.GetTableLogicalEntityName();
+            switch (name)
             {
                 case EntityMetadadataTableLogicalName:
                     //  this.QueryExpression.Properties = new MetadataPropertiesExpression();
@@ -1063,6 +1070,10 @@ namespace CrmAdo.Visitor
                 if (entityName == AttributeMetadadataTableLogicalName)
                 {
                     InitialiseAttributeQuery();
+                }
+                else if(entityName == OneToManyRelationshipMetadadataTableLogicalName)
+                {
+                    InitialiseRelationshipQuery();
                 }
             }
             var entMeta = EntityMetadata[entityName];

@@ -211,6 +211,39 @@ namespace CrmAdo.IntegrationTests
 
         }
 
+
+        [Test(Description = "Integration test that selects one to many relationship metadata for a particular entity from crm.")]
+        public void Should_Be_Able_To_Select_One_To_Many_Relationship_Metadata_For_Entity()
+        {
+            // create a random name for the entity. We use half a guid because names cant be too long.
+            //  string attributeSchemaName = "boolField";
+            //string lookupToEntity = "contact";
+            var sql = "SELECT o.* FROM entitymetadata e INNER JOIN onetomanyrelationshipmetadata o ON e.MetadataId = o.MetadataId WHERE e.LogicalName = 'account'";
+            Console.WriteLine(sql);
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var command = conn.CreateCommand();
+
+                //   Console.WriteLine("Executing command " + sql);
+                command.CommandText = sql;
+                //   command.CommandType = CommandType.Text;
+                var results = command.ExecuteReader();
+                while (results.Read())
+                {
+                    for (int i = 0; i < results.FieldCount; i++)
+                    {
+                        Console.Write(results[i]);
+                        Console.Write(',');
+                    }
+                    Console.WriteLine("");
+                }
+            }
+
+        }
+
         //[Test(Description = "Integration test that selects entity metadata joined to attribute metadata all columns.")]
         //public void Should_Be_Able_To_Select_EntityMetadata_Joined_To_Attribute_Metadata_All_Columns()
         //{

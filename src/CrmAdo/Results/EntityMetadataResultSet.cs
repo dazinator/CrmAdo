@@ -146,7 +146,9 @@ namespace CrmAdo
                         return EntityMetadata.SchemaName;
 
                     default:
-                        return null;
+                        throw new ArgumentException(propertyname.ToLower() + " is not a recognised property of EntityMetadata");
+
+                       // return null;
                 }
             }
 
@@ -223,13 +225,13 @@ namespace CrmAdo
                         {
                             return DBNull.Value;
                         }
-                        return AttributeMetadata.NumericPrecision;                       
-                    case "numericprecisionradix":                      
+                        return AttributeMetadata.NumericPrecision;
+                    case "numericprecisionradix":
                         if (AttributeMetadata.NumericPrecisionRadix == null)
                         {
                             return DBNull.Value;
                         }
-                        return AttributeMetadata.NumericPrecisionRadix;   
+                        return AttributeMetadata.NumericPrecisionRadix;
                     case "numericscale":
                         if (AttributeMetadata.NumericScale == null)
                         {
@@ -273,7 +275,9 @@ namespace CrmAdo
                     case "ordinal":
                         return AttributeMetadata.ColumnNumber.GetValueOrDefault();
                     default:
-                        return null;
+                        throw new ArgumentException(propertyname.ToLower() + " is not a recognised property of AttributeMetadata");
+
+                    //     return null;
                 }
 
 
@@ -293,9 +297,34 @@ namespace CrmAdo
                 {
                     case "metadataid":
                         return OneToManyRelationship.MetadataId;
-
+                    case "haschanged":
+                        return OneToManyRelationship.HasChanged;
+                    case "introducedversion":
+                        return  OneToManyRelationship.IntroducedVersion;
+                    case "iscustomizable":
+                        return GetBooleanManagedValue(OneToManyRelationship.IsCustomizable);
+                    case "iscustomrelationship":
+                        return OneToManyRelationship.IsCustomRelationship;
+                    case "ismanaged":
+                        return OneToManyRelationship.IsManaged;
+                    case "isvalidforadvancedfind":
+                        return OneToManyRelationship.IsValidForAdvancedFind;
+                    case "relationshiptype":
+                        return OneToManyRelationship.RelationshipType;
+                    case "schemaname":
+                        return OneToManyRelationship.SchemaName;
+                    case "securitytypes":
+                        return OneToManyRelationship.SecurityTypes.GetValueOrDefault();
+                    case "referencedattribute":
+                        return OneToManyRelationship.ReferencedAttribute;
+                    case "referencedentity":
+                        return OneToManyRelationship.ReferencedEntity;
+                    case "referencingattribute":
+                        return OneToManyRelationship.ReferencingAttribute;
+                    case "referencingentity":
+                        return OneToManyRelationship.ReferencingEntity;
                     default:
-                        return null;
+                        throw new ArgumentException(propertyname.ToLower() + " is not a recognised property of OneToManyRelationship");
                 }
             }
 
@@ -309,6 +338,15 @@ namespace CrmAdo
                     default:
                         return null;
                 }
+            }
+
+            private bool? GetBooleanManagedValue(Microsoft.Xrm.Sdk.BooleanManagedProperty booleanManagedProperty)
+            {
+                if (booleanManagedProperty != null)
+                {
+                    return booleanManagedProperty.Value;
+                }
+                return null;
             }
 
         }

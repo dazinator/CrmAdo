@@ -743,6 +743,21 @@ namespace CrmAdo.IntegrationTests
                 var columns = conn.GetSchema("Columns", new string[] { null, null, "Table", null });
                 columns.WriteXml("Columns.xml", XmlWriteMode.WriteSchema);
 
+                var fks = conn.GetSchema("ForeignKeys", new string[] { null, null, "Table", null });
+                fks.WriteXml("ForeignKeys.xml", XmlWriteMode.WriteSchema);
+
+                var usersfks = conn.GetSchema("ForeignKeys", new string[] { null, null, "Users", null });
+                usersfks.WriteXml("UsersForeignKeys.xml", XmlWriteMode.WriteSchema);
+
+                var indexes = conn.GetSchema("Indexes", new string[] { null, null, "Table", null });
+                indexes.WriteXml("Indexes.xml", XmlWriteMode.WriteSchema);
+
+                var indexColumns = conn.GetSchema("IndexColumns", new string[] { null, null, "Table", null });
+                indexColumns.WriteXml("IndexColumns.xml", XmlWriteMode.WriteSchema);
+
+                //var indexColumns = conn.GetSchema("IndexColumns", new string[] { null, null, "Table", null });
+                //indexColumns.WriteXml("IndexColumns.xml", XmlWriteMode.WriteSchema);
+
                 conn.Close();
             }
 

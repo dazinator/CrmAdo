@@ -65,10 +65,10 @@ namespace CrmAdo.Dynamics.Metadata
                 case "attributemetadata":
                     metadata = BuildPseudoAttributeMetadata();
                     break;
-                case "onetomanyrelationship":
+                case "onetomanyrelationshipmetadata":
                     metadata = BuildPseudoOneToManyMetadata();
                     break;
-                case "manytomanyrelationship":
+                case "manytomanyrelationshipmetadata":
                     metadata = BuildPseudoManyToManyMetadata();
                     break;
                 default:
@@ -84,7 +84,23 @@ namespace CrmAdo.Dynamics.Metadata
 
         private CrmEntityMetadata BuildPseudoOneToManyMetadata()
         {
-            throw new NotImplementedException();
+            var metadata = new CrmEntityMetadata("onetomanyrelationshipmetadata");
+            metadata.IsPseudo = true;
+            metadata.AddPseudoAttribute("metadataid", AttributeTypeCode.Uniqueidentifier);
+            metadata.AddPseudoAttribute("haschanged", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("introducedversion", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("iscustomizable", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("iscustomrelationship", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("ismanaged", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("isvalidforadvancedfind", AttributeTypeCode.Boolean);
+            metadata.AddPseudoAttribute("relationshiptype", AttributeTypeCode.Integer);
+            metadata.AddPseudoAttribute("schemaname", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("securitytypes", AttributeTypeCode.Integer);
+            metadata.AddPseudoAttribute("referencedattribute", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("referencedentity", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("referencingattribute", AttributeTypeCode.String);
+            metadata.AddPseudoAttribute("referencingentity", AttributeTypeCode.String);               
+            return metadata;         
         }
 
         private CrmEntityMetadata BuildPseudoAttributeMetadata()
