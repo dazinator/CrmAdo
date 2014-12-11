@@ -102,16 +102,16 @@
     <NumberOfRestrictions>2</NumberOfRestrictions>
     <NumberOfIdentifierParts>1</NumberOfIdentifierParts>
   </MetaDataCollections>
-  <!--<MetaDataCollections>
+  <MetaDataCollections>
     <CollectionName>IndexColumns</CollectionName>
-    <NumberOfRestrictions>5</NumberOfRestrictions>
-    <NumberOfIdentifierParts>4</NumberOfIdentifierParts>
-  </MetaDataCollections>-->
-  <!--<MetaDataCollections>
+    <NumberOfRestrictions>2</NumberOfRestrictions>
+    <NumberOfIdentifierParts>1</NumberOfIdentifierParts>
+  </MetaDataCollections>
+  <MetaDataCollections>
     <CollectionName>Indexes</CollectionName>
-    <NumberOfRestrictions>4</NumberOfRestrictions>
-    <NumberOfIdentifierParts>3</NumberOfIdentifierParts>
-  </MetaDataCollections>-->
+    <NumberOfRestrictions>2</NumberOfRestrictions>
+    <NumberOfIdentifierParts>1</NumberOfIdentifierParts>
+  </MetaDataCollections>
   <!--<MetaDataCollections>
     <CollectionName>UserDefinedTypes</CollectionName>
     <NumberOfRestrictions>2</NumberOfRestrictions>

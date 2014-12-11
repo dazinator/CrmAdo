@@ -36,7 +36,9 @@ namespace CrmAdo
 
         DataTable GetForeignKeys(CrmDbConnection crmDbConnection, string[] restrictions);
 
+        DataTable GetIndexes(CrmDbConnection crmDbConnection, string[] restrictions);
 
+        DataTable GetIndexColumns(CrmDbConnection crmDbConnection, string[] restrictions);
     }
 
     public class SchemaCollectionsProvider : ISchemaCollectionsProvider
@@ -508,6 +510,166 @@ namespace CrmAdo
             //    dataTable = filteredView.ToTable(true);  
             //}
 
+            return dataTable;
+        }
+
+        public DataTable GetIndexes(CrmDbConnection crmDbConnection, string[] restrictions)
+        {
+
+            string entityName = null;
+            string constraintName = null;
+            bool hasEntityFilter = false;
+            bool hasConstraintNameFilter = false;
+
+            if (restrictions != null)
+            {
+                if (restrictions.Length > 0)
+                {
+                    entityName = restrictions[0];
+                }
+                if (restrictions.Length > 1)
+                {
+                    constraintName = restrictions[1];
+                }
+            }
+
+            hasEntityFilter = !string.IsNullOrEmpty(entityName);
+            hasConstraintNameFilter = !string.IsNullOrEmpty(constraintName);
+
+            string commandText = "SELECT LogicalName, PrimaryIdAttribute FROM entitymetadata ";
+
+
+            if (hasEntityFilter || hasConstraintNameFilter)
+            {
+                commandText += "WHERE ";
+                if (hasEntityFilter)
+                {
+                    commandText += " (LogicalName = '" + entityName + "')";
+                }
+                if (hasEntityFilter && hasConstraintNameFilter)
+                {
+                    commandText += " AND ";
+                }
+                if (hasConstraintNameFilter)
+                {
+                    commandText += " (PrimaryIdAttribute = '" + constraintName + "')";
+                }
+            }
+
+            var command = new CrmDbCommand(crmDbConnection);
+            command.CommandText = commandText;
+            var adapter = new CrmDataAdapter(command);
+            var dataTable = new DataTable();
+            adapter.Fill(dataTable);
+
+
+            //          <Indexes>
+            //  <constraint_catalog>PortalDarrellDev</constraint_catalog>
+            //  <constraint_schema>dbo</constraint_schema>
+            //  <constraint_name>PK__tmp_ms_x__3214EC0737311087</constraint_name>
+            //  <table_catalog>PortalDarrellDev</table_catalog>
+            //  <table_schema>dbo</table_schema>
+            //  <table_name>Table</table_name>
+            //  <index_name>PK__tmp_ms_x__3214EC0737311087</index_name>
+            //  <type_desc>CLUSTERED</type_desc>
+            //</Indexes>
+
+            dataTable.Columns.Add("constraint_catalog", typeof(string), "''");
+            dataTable.Columns.Add("constraint_schema", typeof(string), "''");
+            dataTable.Columns["LogicalName"].ColumnName = "table_name";
+            dataTable.Columns.Add("constraint_name", typeof(string), "'PK__' + table_name + '_' + primaryidattribute");
+            dataTable.Columns.Add("table_catalog", typeof(string), "''");
+            dataTable.Columns.Add("table_schema", typeof(string), "''");
+            dataTable.Columns.Add("index_name", typeof(string), "constraint_name");
+            dataTable.Columns.Add("type_desc", typeof(string), "'CLUSTERED'");
+
+            return dataTable;
+        }
+        
+        public DataTable GetIndexColumns(CrmDbConnection crmDbConnection, string[] restrictions)
+        {
+
+            string entityName = null;
+            string constraintName = null;           
+            bool hasEntityFilter = false;
+            bool hasConstraintNameFilter = false;
+
+            if (restrictions != null)
+            {
+                if (restrictions.Length > 0)
+                {
+                    entityName = restrictions[0];
+                }
+                if (restrictions.Length > 1)
+                {
+                    constraintName = restrictions[1];                    
+                }
+            }
+
+            hasEntityFilter = !string.IsNullOrEmpty(entityName);
+            hasConstraintNameFilter = !string.IsNullOrEmpty(constraintName);
+
+
+            string commandText = "SELECT entitymetadata.PrimaryIdAttribute, entitymetadata.LogicalName, a.LogicalName, a.ColumnNumber FROM entitymetadata JOIN attributemetadata a on entitymetadata.MetadataId = a.MetadataId WHERE (a.isprimaryid = @isPrimaryId)";
+
+
+            if (hasEntityFilter || hasConstraintNameFilter)
+            {
+                commandText += "AND ";
+                if (hasEntityFilter)
+                {
+                    commandText += " (entitymetadata.LogicalName = '" + entityName + "')";
+                }
+                if (hasEntityFilter && hasConstraintNameFilter)
+                {
+                    commandText += " AND ";
+                }
+                if (hasConstraintNameFilter)
+                {
+                    commandText += " (a.LogicalName = '" + constraintName + "')";
+                }
+            }
+
+            var command = new CrmDbCommand(crmDbConnection);
+            var param = command.CreateParameter();
+            param.DbType = DbType.Boolean;
+            param.Direction = ParameterDirection.Input;
+            param.ParameterName = "@isPrimaryId";
+            param.Value = true;
+            command.Parameters.Add(param);
+            command.CommandText = commandText;
+            var adapter = new CrmDataAdapter(command);
+            var dataTable = new DataTable();
+            adapter.Fill(dataTable);
+
+
+  //         <IndexColumns>
+  //  <constraint_catalog>PortalDarrellDev</constraint_catalog>
+  //  <constraint_schema>dbo</constraint_schema>
+  //  <constraint_name>PK__tmp_ms_x__3214EC0737311087</constraint_name>
+  //  <table_catalog>PortalDarrellDev</table_catalog>
+  //  <table_schema>dbo</table_schema>
+  //  <table_name>Table</table_name>
+  //  <column_name>Id</column_name>
+  //  <ordinal_position>1</ordinal_position>
+  //  <KeyType>36</KeyType>
+  //  <index_name>PK__tmp_ms_x__3214EC0737311087</index_name>
+  //</IndexColumns>
+
+            dataTable.Columns.Add("constraint_catalog", typeof(string), "''");
+            dataTable.Columns.Add("constraint_schema", typeof(string), "''");
+            dataTable.Columns["LogicalName"].ColumnName = "table_name";
+            dataTable.Columns["a.LogicalName"].ColumnName = "column_name";
+            dataTable.Columns.Add("constraint_name", typeof(string), "'PK__' + IsNull(table_name, '') + '_' + IsNull(column_name, PrimaryIdAttribute)");
+            dataTable.Columns.Add("table_catalog", typeof(string), "''");
+            dataTable.Columns.Add("table_schema", typeof(string), "''");
+
+            dataTable.Columns["a.columnnumber"].ColumnName = "ordinal_position";
+            dataTable.Columns.Add("KeyType", typeof(Byte), "36"); // 36 = uniqueidentitifer datatype - all pk indexes in crm are uniqueidentifiers.
+
+          //  dataTable.Columns.Add("type_desc", typeof(string), "'CLUSTERED'");
+
+            dataTable.Columns.Add("index_name", typeof(string), "constraint_name");    
             return dataTable;
         }
     }

@@ -350,17 +350,17 @@ namespace CrmAdo
                     result = _SchemaCollectionsProvider.GetViewColumns(this, restrictions);
                     break;
 
-                //case "indexes":
-                //    _SchemaCollectionsProvider.GetIndexes(this);
-                //    break;
-                //case "indexColumns":
-                //    _SchemaCollectionsProvider.GetIndexColumns(this);
-                //    break;
+                case "indexes":
+                    result = _SchemaCollectionsProvider.GetIndexes(this, restrictions);
+                    break;
+
+                case "indexcolumns":
+                    result = _SchemaCollectionsProvider.GetIndexColumns(this, restrictions);
+                    break;
 
                 case "foreignkeys":
                     result = _SchemaCollectionsProvider.GetForeignKeys(this, restrictions);
-                    break;             
-
+                    break;
 
                 case "users":
                     result = _SchemaCollectionsProvider.GetUsers(this, restrictions);
@@ -388,7 +388,7 @@ namespace CrmAdo
         {
             // TODO: change crm organisation for connection?
             throw new NotImplementedException();
-        }        
+        }
 
         #endregion
 

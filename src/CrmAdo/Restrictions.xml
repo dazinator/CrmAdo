@@ -319,21 +319,21 @@
     <ParameterName>@Owner</ParameterName>
     <RestrictionDefault>user_name()</RestrictionDefault>
     <RestrictionNumber>2</RestrictionNumber>
-  </Restrictions>
-  <Restrictions>
-    <CollectionName>Indexes</CollectionName>
-    <RestrictionName>Table</RestrictionName>
-    <ParameterName>@Table</ParameterName>
-    <RestrictionDefault>o.name</RestrictionDefault>
-    <RestrictionNumber>3</RestrictionNumber>
-  </Restrictions>
-  <Restrictions>
-    <CollectionName>Indexes</CollectionName>
-    <RestrictionName>Name</RestrictionName>
-    <ParameterName>@Name</ParameterName>
-    <RestrictionDefault>x.name</RestrictionDefault>
-    <RestrictionNumber>4</RestrictionNumber>
   </Restrictions>-->
+    <Restrictions>
+      <CollectionName>Indexes</CollectionName>
+      <RestrictionName>Table</RestrictionName>
+      <ParameterName>@Table</ParameterName>
+      <RestrictionDefault>o.name</RestrictionDefault>
+      <RestrictionNumber>1</RestrictionNumber>
+    </Restrictions>
+    <Restrictions>
+      <CollectionName>Indexes</CollectionName>
+      <RestrictionName>Name</RestrictionName>
+      <ParameterName>@Name</ParameterName>
+      <RestrictionDefault>x.name</RestrictionDefault>
+      <RestrictionNumber>2</RestrictionNumber>
+    </Restrictions>
   <!--<Restrictions>
     <CollectionName>UserDefinedTypes</CollectionName>
     <RestrictionName>assembly_name</RestrictionName>

@@ -454,6 +454,217 @@ namespace CrmAdo.IntegrationTests
 
         }
 
+        [Test]
+        public void Should_Be_Able_To_Get_Indexes()
+        {
+            // Arrange
+            var sut = new SchemaCollectionsProvider();
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                var restrictions = new string[] { };
+                // Act
+                var collection = sut.GetIndexes(conn, restrictions);
+
+                // Assert
+                Assert.That(collection, Is.Not.Null);
+                Assert.That(collection.Columns, Is.Not.Null);
+                Assert.That(collection.Rows.Count, Is.GreaterThan(0));
+
+
+
+
+                foreach (DataRow row in collection.Rows)
+                {
+
+                    //<constraint_catalog>PortalDarrellDev</constraint_catalog>
+                    //<constraint_schema>dbo</constraint_schema>
+                    //<constraint_name>PK__Table__3214EC07326C5B6A</constraint_name>
+                    //<table_catalog>PortalDarrellDev</table_catalog>
+                    //<table_schema>dbo</table_schema>
+                    //<table_name>Table</table_name>
+                    //<index_name>PK__Table__3214EC07326C5B6A</index_name>
+                    //<type_desc>CLUSTERED</type_desc>
+
+                    var val = AssertColVal(collection, row, "constraint_catalog");
+                    Assert.That(val, Is.EqualTo(""));
+
+                    val = AssertColVal(collection, row, "constraint_schema");
+                    Assert.That(val, Is.EqualTo(""));
+
+                    var constraintName = AssertColVal(collection, row, "constraint_name");
+                    Assert.IsFalse(string.IsNullOrEmpty((string)constraintName));
+                    Assert.That((string)constraintName, Is.StringStarting("PK__"));
+
+                    Console.WriteLine(constraintName);
+
+                    val = AssertColVal(collection, row, "table_catalog");
+                    Assert.That(val, Is.EqualTo(""));
+
+                    val = AssertColVal(collection, row, "table_schema");
+                    Assert.That(val, Is.EqualTo(""));
+
+                    val = AssertColVal(collection, row, "table_name");
+                    Assert.That(val, Is.Not.EqualTo(""));
+                    Console.Write(" - ");
+                    Console.Write(val);
+
+                    val = AssertColVal(collection, row, "index_name");
+                    Assert.That(val, Is.EqualTo(constraintName));
+
+                    val = AssertColVal(collection, row, "type_desc");
+                    Assert.That(val, Is.EqualTo("CLUSTERED"));
+
+                }
+
+            }
+
+        }
+
+        [Test]
+        [TestCase("account")]
+        public void Should_Be_Able_To_Get_Indexes_For_A_Table(string tableName)
+        {
+            // Arrange
+            var sut = new SchemaCollectionsProvider();
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                var restrictions = new string[] { tableName };
+                // Act
+                var collection = sut.GetIndexes(conn, restrictions);
+
+                // Assert
+                Assert.That(collection, Is.Not.Null);
+                Assert.That(collection.Columns, Is.Not.Null);
+                Assert.That(collection.Rows.Count, Is.EqualTo(1));
+
+                foreach (DataRow row in collection.Rows)
+                {
+
+                    //<constraint_catalog>PortalDarrellDev</constraint_catalog>
+                    //<constraint_schema>dbo</constraint_schema>
+                    //<constraint_name>PK__Table__3214EC07326C5B6A</constraint_name>
+                    //<table_catalog>PortalDarrellDev</table_catalog>
+                    //<table_schema>dbo</table_schema>
+                    //<table_name>Table</table_name>
+                    //<index_name>PK__Table__3214EC07326C5B6A</index_name>
+                    //<type_desc>CLUSTERED</type_desc>
+
+                    var val = AssertColVal(collection, row, "constraint_catalog");
+                    Assert.That(val, Is.EqualTo(""));
+
+                    val = AssertColVal(collection, row, "constraint_schema");
+                    Assert.That(val, Is.EqualTo(""));
+
+                    var constraintName = AssertColVal(collection, row, "constraint_name");
+                    Assert.IsFalse(string.IsNullOrEmpty((string)constraintName));
+                    Assert.That((string)constraintName, Is.StringStarting("PK__"));
+
+                    Console.WriteLine(constraintName);
+
+                    val = AssertColVal(collection, row, "table_catalog");
+                    Assert.That(val, Is.EqualTo(""));
+
+                    val = AssertColVal(collection, row, "table_schema");
+                    Assert.That(val, Is.EqualTo(""));
+
+                    val = AssertColVal(collection, row, "table_name");
+                    Assert.That(val, Is.Not.EqualTo(""));
+                    Console.Write(" - ");
+                    Console.Write(val);
+
+                    val = AssertColVal(collection, row, "index_name");
+                    Assert.That(val, Is.EqualTo(constraintName));
+
+                    val = AssertColVal(collection, row, "type_desc");
+                    Assert.That(val, Is.EqualTo("CLUSTERED"));
+
+                }
+
+            }
+        }
+
+
+        [Test]
+        public void Should_Be_Able_To_Get_IndexColumns()
+        {
+            // Arrange
+            var sut = new SchemaCollectionsProvider();
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                var restrictions = new string[] { };
+                // Act
+                var collection = sut.GetIndexColumns(conn, restrictions);
+
+                // Assert
+                Assert.That(collection, Is.Not.Null);
+                Assert.That(collection.Columns, Is.Not.Null);
+                Assert.That(collection.Rows.Count, Is.GreaterThan(0));
+
+                foreach (DataRow row in collection.Rows)
+                {
+
+                    //         <IndexColumns>
+                    //  <constraint_catalog>PortalDarrellDev</constraint_catalog>
+                    //  <constraint_schema>dbo</constraint_schema>
+                    //  <constraint_name>PK__tmp_ms_x__3214EC0737311087</constraint_name>
+                    //  <table_catalog>PortalDarrellDev</table_catalog>
+                    //  <table_schema>dbo</table_schema>
+                    //  <table_name>Table</table_name>
+                    //  <column_name>Id</column_name>
+                    //  <ordinal_position>1</ordinal_position>
+                    //  <KeyType>36</KeyType>
+                    //  <index_name>PK__tmp_ms_x__3214EC0737311087</index_name>
+                    //</IndexColumns>
+
+                    var val = AssertColVal(collection, row, "constraint_catalog");
+                    Assert.That(val, Is.EqualTo(""));
+
+                    val = AssertColVal(collection, row, "constraint_schema");
+                    Assert.That(val, Is.EqualTo(""));
+
+                    var constraintName = AssertColVal(collection, row, "constraint_name");
+                    Assert.IsFalse(string.IsNullOrEmpty((string)constraintName));
+                    Assert.That((string)constraintName, Is.StringStarting("PK__"));
+
+                    Console.WriteLine(constraintName);
+
+                    val = AssertColVal(collection, row, "table_catalog");
+                    Assert.That(val, Is.EqualTo(""));
+
+                    val = AssertColVal(collection, row, "table_schema");
+                    Assert.That(val, Is.EqualTo(""));
+
+                    val = AssertColVal(collection, row, "table_name");
+                    Assert.That(val, Is.Not.EqualTo(""));
+                    Console.Write(" - ");
+                    Console.Write(val);
+
+                    val = AssertColVal(collection, row, "column_name");
+                    Assert.That(val, Is.Not.EqualTo(""));
+
+                    val = AssertColVal(collection, row, "ordinal_position");
+                    Assert.That(val, Is.Not.EqualTo(default(int)));
+
+                    val = AssertColVal(collection, row, "KeyType");
+                    Assert.That(val, Is.EqualTo(36)); // unique identifier.
+
+                    val = AssertColVal(collection, row, "index_name");
+                    Assert.That(val, Is.EqualTo(constraintName));
+
+
+
+                }
+
+            }
+
+        }
+
         //[Test]
         //public void Should_Be_Able_To_Get_All_ForeignKeys()
         //{

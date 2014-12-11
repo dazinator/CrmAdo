@@ -184,74 +184,81 @@ namespace CrmAdo.Metadata
 
             AttributeInfo newAtt;
 
-            switch (attributeMetadata.AttributeType.GetValueOrDefault())
+            if (attributeMetadata.AttributeType.HasValue)
             {
-                case AttributeTypeCode.Decimal:
-                    newAtt = CreateDecimal(attributeMetadata);
-                    break;
-                case AttributeTypeCode.Double:
-                    newAtt = CreateDouble(attributeMetadata);
-                    break;
-                case AttributeTypeCode.Money:
-                    newAtt = CreateMoney(attributeMetadata);
-                    break;
-                case AttributeTypeCode.BigInt:
-                    newAtt = CreateBigInt(attributeMetadata);
-                    break;
-                case AttributeTypeCode.Boolean:
-                    newAtt = CreateBoolean(attributeMetadata);
-                    break;
-                case AttributeTypeCode.CalendarRules:
-                    newAtt = CreateCalendarRules(attributeMetadata);
-                    break;
-                case AttributeTypeCode.Customer:
-                    newAtt = CreateCustomer(attributeMetadata);
-                    break;
-                case AttributeTypeCode.DateTime:
-                    newAtt = CreateDateTime(attributeMetadata);
-                    break;
-                case AttributeTypeCode.EntityName:
-                    newAtt = CreateEntityName(attributeMetadata);
-                    break;
-                case AttributeTypeCode.Integer:
-                    newAtt = CreateInteger(attributeMetadata);
-                    break;
-                case AttributeTypeCode.Lookup:
-                    newAtt = CreateLookup(attributeMetadata);
-                    break;
-                case AttributeTypeCode.ManagedProperty:
-                    newAtt = CreateManagedProperty(attributeMetadata);
-                    break;
-                case AttributeTypeCode.Memo:
-                    newAtt = CreateMemo(attributeMetadata);
-                    break;
-                case AttributeTypeCode.Owner:
-                    newAtt = CreateOwner(attributeMetadata);
-                    break;
-                case AttributeTypeCode.PartyList:
-                    newAtt = CreatePartyList(attributeMetadata);
-                    break;
-                case AttributeTypeCode.Picklist:
-                    newAtt = CreatePicklist(attributeMetadata);
-                    break;
-                case AttributeTypeCode.State:
-                    newAtt = CreateState(attributeMetadata);
-                    break;
-                case AttributeTypeCode.Status:
-                    newAtt = CreateStatus(attributeMetadata);
-                    break;
-                case AttributeTypeCode.String:
-                    newAtt = CreateString(attributeMetadata);
-                    break;
-                case AttributeTypeCode.Uniqueidentifier:
-                    newAtt = CreateGuid(attributeMetadata);
-                    break;
-                case AttributeTypeCode.Virtual:
-                    newAtt = CreateVirtual(attributeMetadata);
-                    break;
-                default:
-                    throw new NotSupportedException();
+                switch (attributeMetadata.AttributeType.GetValueOrDefault())
+                {
+                    case AttributeTypeCode.Decimal:
+                        newAtt = CreateDecimal(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.Double:
+                        newAtt = CreateDouble(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.Money:
+                        newAtt = CreateMoney(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.BigInt:
+                        newAtt = CreateBigInt(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.Boolean:
+                        newAtt = CreateBoolean(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.CalendarRules:
+                        newAtt = CreateCalendarRules(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.Customer:
+                        newAtt = CreateCustomer(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.DateTime:
+                        newAtt = CreateDateTime(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.EntityName:
+                        newAtt = CreateEntityName(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.Integer:
+                        newAtt = CreateInteger(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.Lookup:
+                        newAtt = CreateLookup(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.ManagedProperty:
+                        newAtt = CreateManagedProperty(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.Memo:
+                        newAtt = CreateMemo(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.Owner:
+                        newAtt = CreateOwner(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.PartyList:
+                        newAtt = CreatePartyList(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.Picklist:
+                        newAtt = CreatePicklist(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.State:
+                        newAtt = CreateState(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.Status:
+                        newAtt = CreateStatus(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.String:
+                        newAtt = CreateString(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.Uniqueidentifier:
+                        newAtt = CreateGuid(attributeMetadata);
+                        break;
+                    case AttributeTypeCode.Virtual:
+                        newAtt = CreateVirtual(attributeMetadata);
+                        break;
+                    default:
+                        throw new NotSupportedException();
+                }
             }
+            else
+            {
+                newAtt = CreateVirtual(attributeMetadata);
+            }           
 
             newAtt.AttributeOf = attributeMetadata.AttributeOf;
             newAtt.AttributeType = attributeMetadata.AttributeType;
@@ -259,7 +266,7 @@ namespace CrmAdo.Metadata
             newAtt.CanBeSecuredForCreate = attributeMetadata.CanBeSecuredForCreate;
             newAtt.CanBeSecuredForRead = attributeMetadata.CanBeSecuredForRead;
             newAtt.CanBeSecuredForUpdate = attributeMetadata.CanBeSecuredForUpdate;
-            newAtt.CanModifyAdditionalSettings = attributeMetadata.CanModifyAdditionalSettings.Value;
+            newAtt.CanModifyAdditionalSettings = GetBooleanManagedValue(attributeMetadata.CanModifyAdditionalSettings);
             newAtt.ColumnNumber = attributeMetadata.ColumnNumber;
             //newAtt.DataType = attributeMetadata.GetSqlDataType
             newAtt.DeprecatedVersion = attributeMetadata.DeprecatedVersion;

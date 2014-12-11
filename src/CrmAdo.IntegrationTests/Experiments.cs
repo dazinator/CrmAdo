@@ -755,6 +755,9 @@ namespace CrmAdo.IntegrationTests
                 var indexColumns = conn.GetSchema("IndexColumns", new string[] { null, null, "Table", null });
                 indexColumns.WriteXml("IndexColumns.xml", XmlWriteMode.WriteSchema);
 
+                var udts = conn.GetSchema("UserDefinedTypes", new string[] {  });
+                udts.WriteXml("UserDefinedTypes.xml", XmlWriteMode.WriteSchema);
+
                 //var indexColumns = conn.GetSchema("IndexColumns", new string[] { null, null, "Table", null });
                 //indexColumns.WriteXml("IndexColumns.xml", XmlWriteMode.WriteSchema);
 
