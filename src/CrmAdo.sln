@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{31343D89-C6F5-4397-91EC-2DF4CCAA849B}"
 	ProjectSection(SolutionItems) = preProject
@@ -33,6 +33,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{0E26FC62-2
 		Docs\AttributeMetadata.txt = Docs\AttributeMetadata.txt
 		Docs\Plugin Metadata.txt = Docs\Plugin Metadata.txt
 		Docs\Query Metadata.txt = Docs\Query Metadata.txt
+		Docs\SQLQuery1.sql = Docs\SQLQuery1.sql
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrmAdo.Vs", "CrmAdo.Vs\CrmAdo.Vs.csproj", "{9141EC44-32D7-4826-BB37-74B8E5B119BD}"
