@@ -39,6 +39,10 @@ namespace CrmAdo.Dynamics.Metadata
                     return pseudoMetadata;
                 }
                 var metadata = _repository.GetChanges(entityName, null);
+                if(metadata.EntityMetadata == null || metadata.EntityMetadata.Count == 0)
+                {
+                    throw new ArgumentException("Could not find metadata for entity named: " + entityName);
+                }
                 var entMeta = metadata.EntityMetadata[0];
                 var atts = _metadataConverter.ConvertAttributeInfoList(entMeta.Attributes);
                 var result = new CrmEntityMetadata(entityName, atts);
@@ -99,8 +103,8 @@ namespace CrmAdo.Dynamics.Metadata
             metadata.AddPseudoAttribute("referencedattribute", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("referencedentity", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("referencingattribute", AttributeTypeCode.String);
-            metadata.AddPseudoAttribute("referencingentity", AttributeTypeCode.String);               
-            return metadata;         
+            metadata.AddPseudoAttribute("referencingentity", AttributeTypeCode.String);
+            return metadata;
         }
 
         private CrmEntityMetadata BuildPseudoAttributeMetadata()
@@ -142,7 +146,7 @@ namespace CrmAdo.Dynamics.Metadata
             metadata.AddPseudoAttribute("isprimarykey", AttributeTypeCode.Boolean);
             metadata.AddPseudoAttribute("optionsetname", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("optionsetoptions", AttributeTypeCode.String);
-            metadata.AddPseudoAttribute("defaultvalue", AttributeTypeCode.Virtual);           
+            metadata.AddPseudoAttribute("defaultvalue", AttributeTypeCode.Virtual);
             metadata.AddPseudoAttribute("ordinal", AttributeTypeCode.Integer);
             metadata.AddPseudoAttribute("datatype", AttributeTypeCode.String);
             metadata.AddPseudoAttribute("maxlength", AttributeTypeCode.Integer);

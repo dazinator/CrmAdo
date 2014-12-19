@@ -237,6 +237,7 @@ namespace CrmAdo
             var updateResponse = response as UpdateResponse;
             if (updateResponse != null)
             {
+               
                 AssignResponseParameter(command, response);
                 var result = updateRequest.Target;
                 resultSet.Results = new EntityCollection(new List<Entity>(new Entity[] { result }));
@@ -253,11 +254,11 @@ namespace CrmAdo
             if (createResponse != null)
             {
                 AssignResponseParameter(command, response);
-                // for execute reader and execute scalar purposes, we provide a result that just ahs the newly created id of the entity.
+                // for execute reader and execute scalar purposes, we provide a result that has the newly created id of the entity.
                 var result = new Entity(createRequest.Target.LogicalName);
                 var idattname = string.Format("{0}id", createRequest.Target.LogicalName);
                 result[idattname] = createResponse.id;
-                result.Id = createResponse.id;
+                result.Id = createResponse.id;                
                 resultSet.Results = new EntityCollection(new List<Entity>(new Entity[] { result }));
 
                 // We populate metadata regarding the columns in the results. In this case its just the id attribute column for the inserted record.
