@@ -45,6 +45,64 @@ namespace CrmAdo.Tests
 
         }
 
+        [Test(Description = "Should support Insert of a single entity with quoted table name")]
+        public void Should_Support_Insert_Statement_Of_Single_Entity_With_Quoted_Table_Name()
+        {
+            // Arrange
+            var sql = "INSERT INTO [contact] (contactid, firstname, lastname) VALUES ('9bf20a16-6034-48e2-80b4-8349bb80c3e2','billy','bob')";
+
+            // set up fake metadata provider.
+            // var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
+            // var fakeMetadata = GetFakeContactMetadata();
+            //  fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
+            var fakeConn = MockRepository.GenerateMock<CrmDbConnection>();
+            fakeConn.Stub(a => a.MetadataProvider).Return(new FakeContactMetadataProvider());
+
+            var cmd = new CrmDbCommand(fakeConn);
+            cmd.CommandText = sql;
+
+            // Act
+            var createRequest = GetOrganizationRequest<CreateRequest>(cmd);
+
+            // Assert
+            Entity targetEntity = createRequest.Target;
+
+            Assert.That(targetEntity.LogicalName == "contact");
+            Assert.That(targetEntity.Attributes.ContainsKey("contactid"));
+            Assert.That(targetEntity.Attributes.ContainsKey("firstname"));
+            Assert.That(targetEntity.Attributes.ContainsKey("lastname"));
+
+        }
+
+        [Test(Description = "Should support Insert of a single entity with quoted table name")]
+        public void Should_Support_Insert_Statement_Of_Single_Entity_With_Quoted_Table_Name_And_Quoted_ColumnNames()
+        {
+            // Arrange
+            var sql = "INSERT INTO [contact] ([contactid], firstname, [lastname]) VALUES ('9bf20a16-6034-48e2-80b4-8349bb80c3e2','billy','bob')";
+
+            // set up fake metadata provider.
+            // var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
+            // var fakeMetadata = GetFakeContactMetadata();
+            //  fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
+            var fakeConn = MockRepository.GenerateMock<CrmDbConnection>();
+            fakeConn.Stub(a => a.MetadataProvider).Return(new FakeContactMetadataProvider());
+
+            var cmd = new CrmDbCommand(fakeConn);
+            cmd.CommandText = sql;
+
+            // Act
+            var createRequest = GetOrganizationRequest<CreateRequest>(cmd);
+
+            // Assert
+            Entity targetEntity = createRequest.Target;
+
+            Assert.That(targetEntity.LogicalName == "contact");
+            Assert.That(targetEntity.Attributes.ContainsKey("contactid"));
+            Assert.That(targetEntity.Attributes.ContainsKey("firstname"));
+            Assert.That(targetEntity.Attributes.ContainsKey("lastname"));
+
+        }
+
         [ExpectedException(typeof(InvalidOperationException))]
         [Test(Description = "Does not support Insert of an entity with all default values")]
         public void Does_Not_Support_Insert_Of_An_Entity_With_All_Default_Values()

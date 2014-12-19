@@ -1,4 +1,5 @@
-﻿using SQLGeneration.Builders;
+﻿using CrmAdo.Util;
+using SQLGeneration.Builders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,9 @@ namespace CrmAdo.Visitor
         /// <returns></returns>
         public static string GetTableLogicalEntityName(this Table table)
         {
-            return table.Name.ToLower();
+            var tableName = table.Name;
+            var unQuoted = SqlUtils.GetUnquotedIdentifier(tableName);
+            return unQuoted.ToLower();
         }
 
         /// <summary>
@@ -26,7 +29,9 @@ namespace CrmAdo.Visitor
         /// <returns></returns>
         public static string GetColumnLogicalAttributeName(this Column column)
         {
-            return column.Name.ToLower();
+            var columnName = column.Name;
+            var unQuoted = SqlUtils.GetUnquotedIdentifier(columnName);
+            return unQuoted.ToLower();
         }
 
         /// <summary>

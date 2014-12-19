@@ -33,7 +33,7 @@ namespace CrmAdo.IntegrationTests
 
         // NOTE: THESE TESTS REQUIRE A CONNECTION STRING TO BE SET IN THE CONFIG FILE, WITH A NAME OF 'CrmOrganisation'
         // ============================================================================================================
-      
+
         [Category("Insert Statement")]
         [Test(Description = "Integration tests that inserts a new contact into Dynamics CRM contacts.")]
         [TestCase("INSERT INTO contact (firstname, lastname) Values('{0}','{1}')")]
@@ -68,7 +68,61 @@ namespace CrmAdo.IntegrationTests
         }
 
 
-   
+        [Category("Insert Statement")]
+        [Test(Description = "Integration tests that inserts a new contact into Dynamics CRM contacts.")]
+        [TestCase("INSERT INTO [contact] ([contactid],[fullname]) VALUES (@0,@1)", "96fa62d5-9c6a-4178-ae44-1497d0732b7f", "Gödel")]
+        public void Should_Be_Able_To_Insert_A_Contact_With_IndexedParamters(string insertSql, string id, string name)
+        {           
+
+         //   var sql = string.Format(insertSql, "Derren", "Brown");
+            Console.WriteLine(insertSql);
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var command = conn.CreateCommand();
+
+                Console.WriteLine("Executing command " + insertSql);
+                command.CommandText = insertSql;
+               
+                var param =  command.CreateParameter();
+                param.ParameterName = "@0";
+                param.DbType = System.Data.DbType.String;
+                param.Direction = System.Data.ParameterDirection.Input;
+                param.Size = 40;
+                param.Value = id;
+                command.Parameters.Add(param);
+
+                var param2 = command.CreateParameter();
+                param2.ParameterName = "@1";
+                param2.DbType = System.Data.DbType.String;
+                param2.Direction = System.Data.ParameterDirection.Input;
+                param2.Size = 4000;
+                param2.Value = id;
+                command.Parameters.Add(param2);
+
+                //   command.CommandType = CommandType.Text;
+
+                using (var reader = command.ExecuteReader())
+                {
+                    int resultCount = 0;
+                    foreach (var result in reader)
+                    {
+                        resultCount++;
+                        var contactId = (Guid)reader["contactid"];
+                        Console.WriteLine(string.Format("{0}", contactId));
+                    }
+                    Console.WriteLine("There were " + resultCount + " results..");
+                }
+            }
+
+        }
+
+
+
+
+
+
         [Category("Insert Statement")]
         [Category("Performance")]
         [Test(Description = "Integration tests that inserts 1000 contacts into Dynamics CRM.")]
@@ -100,15 +154,15 @@ namespace CrmAdo.IntegrationTests
         }
 
 
-   
+
         [Category("Select Statement")]
         [Category("Performance")]
         [TestCase(-1, Description = "Can select all contacts")]
-        [TestCase(10000, Description = "Can select TOP 10000 contacts",ExpectedException = typeof(NotSupportedException))]
+        [TestCase(10000, Description = "Can select TOP 10000 contacts", ExpectedException = typeof(NotSupportedException))]
         [TestCase(5000, Description = "Can select TOP 5000 contacts")]
         public void Can_Select_Large_Number_Of_Contacts(int total)
         {
-          
+
             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
             using (var conn = new CrmDbConnection(connectionString.ConnectionString))
             {
@@ -118,7 +172,7 @@ namespace CrmAdo.IntegrationTests
                 watch.Start();
 
                 string sql;
-                if (total!= -1)
+                if (total != -1)
                 {
                     sql = string.Format("select top " + total + " contactid, firstname, lastname from contact");
                 }

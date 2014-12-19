@@ -32,4 +32,26 @@ namespace CrmAdo.Util
             return table;
         }
     }
+
+    public static class SqlUtils
+    {
+        /// <summary>
+        /// Returns the unquoted identifier from a quoted identifier (removes the quotes) 
+        /// </summary>
+        /// <param name="quotedIdentifier"></param>
+        public static string GetUnquotedIdentifier(string quotedIdentifier)
+        {
+            if (quotedIdentifier[0] == '[')
+            {
+                quotedIdentifier = quotedIdentifier.Remove(0, 1);
+            }
+            var length = quotedIdentifier.Length;
+            if (quotedIdentifier[length - 1] == ']')
+            {
+                quotedIdentifier = quotedIdentifier.Remove(length - 1);
+            }
+            return quotedIdentifier;
+        }
+
+    }
 }
