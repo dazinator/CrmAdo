@@ -755,11 +755,53 @@ namespace CrmAdo.IntegrationTests
                 var indexColumns = conn.GetSchema("IndexColumns", new string[] { null, null, "Table", null });
                 indexColumns.WriteXml("IndexColumns.xml", XmlWriteMode.WriteSchema);
 
-                var udts = conn.GetSchema("UserDefinedTypes", new string[] {  });
+                var udts = conn.GetSchema("UserDefinedTypes", new string[] { });
                 udts.WriteXml("UserDefinedTypes.xml", XmlWriteMode.WriteSchema);
 
                 //var indexColumns = conn.GetSchema("IndexColumns", new string[] { null, null, "Table", null });
                 //indexColumns.WriteXml("IndexColumns.xml", XmlWriteMode.WriteSchema);
+
+                conn.Close();
+            }
+
+        }
+
+
+        [Category("Experimentation")]
+        [Test]
+        [TestCase(TestName = "Experiment for sql command with an output clause")]
+        public void Experiment_For_Sql_Command_With_An_Output_Clause()
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["SqlConnection"];
+
+            using (var conn = new SqlConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+
+                var dropTableSql = "IF OBJECT_ID('dbo.ExperimentWithOutputClause', 'U') IS NOT NULL DROP TABLE dbo.ExperimentWithOutputClause";
+
+                var dropTableSqlCommand = conn.CreateCommand();
+                dropTableSqlCommand.CommandText = dropTableSql;
+                dropTableSqlCommand.ExecuteNonQuery();
+
+
+                var createTableSql = "CREATE TABLE ExperimentWithOutputClause (ID UniqueIdentifier NOT NULL PRIMARY KEY DEFAULT NewSequentialId(), CreatedOn DateTime NOT NULL DEFAULT GetUtcDate(), ModifiedOn DATETIME NULL)";
+                
+                var createTableCommand = conn.CreateCommand();
+                createTableCommand.CommandText = createTableSql;
+                createTableCommand.ExecuteNonQuery();
+
+                var insertWithOutputSql = "INSERT INTO ExperimentWithOutputClause OUTPUT Inserted.ID, Inserted.CreatedOn DEFAULT VALUES";
+
+                var insertCommand = conn.CreateCommand();
+                insertCommand.CommandText = insertWithOutputSql;
+                // Commands with output clause should use ExecuteReader as opposed to execute non query - as the returned reader will contain the results.
+                var outputResults = insertCommand.ExecuteReader();
+                while (outputResults.Read())
+                {
+                    Console.WriteLine(outputResults.GetGuid(0));
+                    Console.WriteLine(outputResults.GetDateTime(1));
+                }               
 
                 conn.Close();
             }

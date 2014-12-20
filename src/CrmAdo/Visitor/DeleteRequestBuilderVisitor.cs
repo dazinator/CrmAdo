@@ -73,7 +73,7 @@ namespace CrmAdo.Visitor
                 throw new NotSupportedException("The update statement has an unsupported filter in it's where clause. The'equal to' filter should specify the entity id column on one side.");
             }
             var idAttName = IdFilterColumn.GetColumnLogicalAttributeName();
-           
+
             var expectedIdAttributeName = string.Format("{0}id", EntityName.ToLower());
             if (idAttName != expectedIdAttributeName)
             {
@@ -151,8 +151,9 @@ namespace CrmAdo.Visitor
 
         protected override void VisitPlaceholder(Placeholder item)
         {
-            var paramVal = GetParamaterValue(item.Value);
-            if (IsVisitingFilterItem)
+            bool hasParam;
+            var paramVal = GetParamaterValue(item.Value, out hasParam);
+            if (IsVisitingFilterItem && hasParam)
             {
                 IdFilterValue = paramVal;
             }
@@ -177,14 +178,18 @@ namespace CrmAdo.Visitor
             }
         }
 
-        private object GetParamaterValue(string paramName)
+        private object GetParamaterValue(string paramName, out bool paramFound)
         {
-            if (!Parameters.Contains(paramName))
+            if (Parameters.Contains(paramName))
             {
-                throw new InvalidOperationException("Missing parameter value for parameter named: " + paramName);
+                paramFound = true;
+                var param = Parameters[paramName];
+                return param.Value;
+                // throw new InvalidOperationException("Missing parameter value for parameter named: " + paramName);
             }
-            var param = Parameters[paramName];
-            return param.Value;
+            paramFound = false;
+            return null;
+
         }
 
     }
