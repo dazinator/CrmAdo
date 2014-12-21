@@ -14,6 +14,8 @@ namespace CrmAdo
     public interface ISchemaCollectionsProvider
     {
 
+        DataTable GetSchema(CrmDbConnection crmDbConnection, string collectionName, string[] restrictions);
+
         DataTable GetMetadataCollections();
 
         DataTable GetDataSourceInfo(CrmDbConnection connection);
@@ -585,12 +587,12 @@ namespace CrmAdo
 
             return dataTable;
         }
-        
+
         public DataTable GetIndexColumns(CrmDbConnection crmDbConnection, string[] restrictions)
         {
 
             string entityName = null;
-            string constraintName = null;           
+            string constraintName = null;
             bool hasEntityFilter = false;
             bool hasConstraintNameFilter = false;
 
@@ -602,7 +604,7 @@ namespace CrmAdo
                 }
                 if (restrictions.Length > 1)
                 {
-                    constraintName = restrictions[1];                    
+                    constraintName = restrictions[1];
                 }
             }
 
@@ -643,18 +645,18 @@ namespace CrmAdo
             adapter.Fill(dataTable);
 
 
-  //         <IndexColumns>
-  //  <constraint_catalog>PortalDarrellDev</constraint_catalog>
-  //  <constraint_schema>dbo</constraint_schema>
-  //  <constraint_name>PK__tmp_ms_x__3214EC0737311087</constraint_name>
-  //  <table_catalog>PortalDarrellDev</table_catalog>
-  //  <table_schema>dbo</table_schema>
-  //  <table_name>Table</table_name>
-  //  <column_name>Id</column_name>
-  //  <ordinal_position>1</ordinal_position>
-  //  <KeyType>36</KeyType>
-  //  <index_name>PK__tmp_ms_x__3214EC0737311087</index_name>
-  //</IndexColumns>
+            //         <IndexColumns>
+            //  <constraint_catalog>PortalDarrellDev</constraint_catalog>
+            //  <constraint_schema>dbo</constraint_schema>
+            //  <constraint_name>PK__tmp_ms_x__3214EC0737311087</constraint_name>
+            //  <table_catalog>PortalDarrellDev</table_catalog>
+            //  <table_schema>dbo</table_schema>
+            //  <table_name>Table</table_name>
+            //  <column_name>Id</column_name>
+            //  <ordinal_position>1</ordinal_position>
+            //  <KeyType>36</KeyType>
+            //  <index_name>PK__tmp_ms_x__3214EC0737311087</index_name>
+            //</IndexColumns>
 
             dataTable.Columns.Add("constraint_catalog", typeof(string), "''");
             dataTable.Columns.Add("constraint_schema", typeof(string), "''");
@@ -667,10 +669,87 @@ namespace CrmAdo
             dataTable.Columns["a.columnnumber"].ColumnName = "ordinal_position";
             dataTable.Columns.Add("KeyType", typeof(Byte), "36"); // 36 = uniqueidentitifer datatype - all pk indexes in crm are uniqueidentifiers.
 
-          //  dataTable.Columns.Add("type_desc", typeof(string), "'CLUSTERED'");
+            //  dataTable.Columns.Add("type_desc", typeof(string), "'CLUSTERED'");
 
-            dataTable.Columns.Add("index_name", typeof(string), "constraint_name");    
+            dataTable.Columns.Add("index_name", typeof(string), "constraint_name");
             return dataTable;
+        }
+
+        public DataTable GetSchema(CrmDbConnection crmDbConnection, string collectionName, string[] restrictions)
+        {
+            DataTable result = null;
+
+            if (restrictions == null)
+            {
+                restrictions = new string[] { "" };
+            }
+
+            switch (collectionName.ToLower())
+            {
+                case "metadatacollections":
+                    result = GetMetadataCollections();
+                    break;
+
+                case "datasourceinformation":
+                    result = GetDataSourceInfo(crmDbConnection);
+                    break;
+
+                case "reservedwords":
+                    result = GetReservedWords();
+                    break;
+
+                case "datatypes":
+                    result = GetDataTypes();
+                    break;
+
+                case "restrictions":
+                    result = GetRestrictions();
+                    break;
+
+                case "tables":
+                    result = GetTables(crmDbConnection, restrictions);
+                    break;
+
+                case "columns":
+                    result = GetColumns(crmDbConnection, restrictions);
+                    break;
+
+                case "views":
+                    result = GetViews(crmDbConnection, restrictions);
+                    break;
+
+                case "viewcolumns":
+                    result = GetViewColumns(crmDbConnection, restrictions);
+                    break;
+
+                case "indexes":
+                    result = GetIndexes(crmDbConnection, restrictions);
+                    break;
+
+                case "indexcolumns":
+                    result = GetIndexColumns(crmDbConnection, restrictions);
+                    break;
+
+                case "foreignkeys":
+                    result = GetForeignKeys(crmDbConnection, restrictions);
+                    break;
+
+                case "users":
+                    result = GetUsers(crmDbConnection, restrictions);
+                    break;
+
+                //case "constraints":
+                //case "primarykey":
+                //case "uniquekeys":
+
+                //case "constraintcolumns":
+                //    break;
+                default:
+                    throw new ArgumentOutOfRangeException("collectionName", collectionName, "Invalid collection name");
+                // }
+            }
+
+            return result;
         }
     }
 }

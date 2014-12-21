@@ -144,7 +144,12 @@
     <Compile Include="Ado\CrmDataAdaptorRowUpdatingEventArgs.cs" />
     <Compile Include="Ado\CrmDbMetadataReader.cs" />
     <Compile Include="ColumnMetadata.cs" />
+    <Compile Include="IoC\Container.cs" />
     <Compile Include="Core\ISchemaCollectionsProvider.cs" />
+    <Compile Include="IoC\ContainerServices.cs" />
+    <Compile Include="IoC\DefaultContainerProvider.cs" />
+    <Compile Include="IoC\IContainerProvider.cs" />
+    <Compile Include="IoC\TinyIoCContainer.cs" />
     <Compile Include="Metadata\AttributeInfo.cs" />
     <Compile Include="Metadata\AttributeInfoFactory.cs" />
     <Compile Include="Metadata\BigIntAttributeInfo.cs" />
@@ -187,6 +192,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="IoC\TinyIoC.cs" />
     <Compile Include="Util\CrmDbTypeConverter.cs" />
     <Compile Include="Ado\CrmParameterCollection.cs" />
     <Compile Include="Dynamics\EntityBuilder.cs" />

@@ -19,15 +19,10 @@ namespace CrmAdo
     /// Represents a connection to Dynamics Crm.
     /// </summary>
     public class CrmDbConnection : DbConnection
-    {
-        private ICrmServiceProvider _CrmServiceProvider = null;
-        private ICrmMetaDataProvider _MetadataProvider = null;
-        private CrmConnectionCache _ConnectionCache = null;
-        private CrmConnectionInfo _ConnectionInfo = null;
-        private ISchemaCollectionsProvider _SchemaCollectionsProvider = null;
+    {     
 
-        private bool _InitialisedVersion = false;
-        // private string _CrmVersion = string.Empty;
+        private CrmConnectionCache _ConnectionCache = null;
+        private CrmConnectionInfo _ConnectionInfo = null;     
 
         #region Constructor
 
@@ -38,27 +33,26 @@ namespace CrmAdo
         }
 
         public CrmDbConnection(string connectionString)
-            : this(new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString }, new CrmClientCredentialsProvider()))
         {
-        }
-
-        public CrmDbConnection(ICrmServiceProvider serviceProvider)
-            : this(serviceProvider, new InMemoryCachedCrmMetaDataProvider(new EntityMetadataRepository(serviceProvider)))
-        {
-        }
-
-        public CrmDbConnection(ICrmServiceProvider serviceProvider, ICrmMetaDataProvider metadataProvider)
-            : this(serviceProvider, metadataProvider, new SchemaCollectionsProvider())
-        {
-        }
-
-        public CrmDbConnection(ICrmServiceProvider serviceProvider, ICrmMetaDataProvider metadataProvider, ISchemaCollectionsProvider schemaCollectionsProvider)
-        {
-            _CrmServiceProvider = serviceProvider;
-            _MetadataProvider = metadataProvider;
-            _SchemaCollectionsProvider = schemaCollectionsProvider;
+            this.BuildUp();
+            this.CrmServiceProvider.ConnectionProvider.OrganisationServiceConnectionString = connectionString;
             _ConnectionCache = new CrmConnectionCache();
         }
+
+        private void BuildUp()
+        {
+            IoC.ContainerServices.CurrentContainer().BuildUp(this);
+        }    
+
+        #endregion
+
+        #region Dependencies
+
+        public ICrmMetaDataProvider MetadataProvider { get; set; }        
+
+        public ICrmServiceProvider CrmServiceProvider { get; set; }
+
+        public ISchemaCollectionsProvider SchemaCollectionsProvider { get; set; }
 
         #endregion
 
@@ -78,8 +72,8 @@ namespace CrmAdo
 
         public override string ConnectionString
         {
-            get { return _CrmServiceProvider.ConnectionProvider.OrganisationServiceConnectionString; }
-            set { _CrmServiceProvider.ConnectionProvider.OrganisationServiceConnectionString = value; }
+            get { return CrmServiceProvider.ConnectionProvider.OrganisationServiceConnectionString; }
+            set { CrmServiceProvider.ConnectionProvider.OrganisationServiceConnectionString = value; }
         }
 
         #endregion
@@ -92,7 +86,7 @@ namespace CrmAdo
                     ConnectionState.Connecting,
                     f =>
                     {
-                        _OrganizationService = _CrmServiceProvider.GetOrganisationService();
+                        _OrganizationService = CrmServiceProvider.GetOrganisationService();
                         _ConnectionInfo = _ConnectionCache.GetConnectionInfo(this);
                     },
                     ConnectionState.Open);
@@ -142,7 +136,7 @@ namespace CrmAdo
             get
             {
                 var connStringBuilder = new CrmConnectionStringBuilder();
-                connStringBuilder.ConnectionString = _CrmServiceProvider.ConnectionProvider.OrganisationServiceConnectionString;
+                connStringBuilder.ConnectionString = CrmServiceProvider.ConnectionProvider.OrganisationServiceConnectionString;
                 return connStringBuilder.Url;
             }
         }
@@ -179,15 +173,7 @@ namespace CrmAdo
             }
         }
 
-        public ICrmMetaDataProvider MetadataProvider
-        {
-            get { return _MetadataProvider; }
-        }
-
-        public ICrmServiceProvider CrmServiceProvider
-        {
-            get { return _CrmServiceProvider; }
-        }
+        
 
         #region StateWrappers
 
@@ -305,79 +291,7 @@ namespace CrmAdo
 
         public override DataTable GetSchema(string collectionName, string[] restrictions)
         {
-            DataTable result = null;
-
-            if (restrictions == null)
-            {
-                restrictions = new string[] { "" };
-            }
-
-            switch (collectionName.ToLower())
-            {
-                case "metadatacollections":
-                    result = _SchemaCollectionsProvider.GetMetadataCollections();
-                    break;
-
-                case "datasourceinformation":
-                    result = _SchemaCollectionsProvider.GetDataSourceInfo(this);
-                    break;
-
-                case "reservedwords":
-                    result = _SchemaCollectionsProvider.GetReservedWords();
-                    break;
-
-                case "datatypes":
-                    result = _SchemaCollectionsProvider.GetDataTypes();
-                    break;
-
-                case "restrictions":
-                    result = _SchemaCollectionsProvider.GetRestrictions();
-                    break;
-
-                case "tables":
-                    result = _SchemaCollectionsProvider.GetTables(this, restrictions);
-                    break;
-
-                case "columns":
-                    result = _SchemaCollectionsProvider.GetColumns(this, restrictions);
-                    break;
-
-                case "views":
-                    result = _SchemaCollectionsProvider.GetViews(this, restrictions);
-                    break;
-
-                case "viewcolumns":
-                    result = _SchemaCollectionsProvider.GetViewColumns(this, restrictions);
-                    break;
-
-                case "indexes":
-                    result = _SchemaCollectionsProvider.GetIndexes(this, restrictions);
-                    break;
-
-                case "indexcolumns":
-                    result = _SchemaCollectionsProvider.GetIndexColumns(this, restrictions);
-                    break;
-
-                case "foreignkeys":
-                    result = _SchemaCollectionsProvider.GetForeignKeys(this, restrictions);
-                    break;
-
-                case "users":
-                    result = _SchemaCollectionsProvider.GetUsers(this, restrictions);
-                    break;
-
-                //case "constraints":
-                //case "primarykey":
-                //case "uniquekeys":
-
-                //case "constraintcolumns":
-                //    break;
-                default:
-                    throw new ArgumentOutOfRangeException("collectionName", collectionName, "Invalid collection name");
-                // }
-            }
-
-            return result;
+            return SchemaCollectionsProvider.GetSchema(this, collectionName, restrictions);
         }
 
         #endregion
