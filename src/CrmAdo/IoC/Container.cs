@@ -17,6 +17,8 @@ namespace CrmAdo.IoC
     public interface IContainer
     {
         void BuildUp(object instance);
+
+        TService Resolve<TService>() where TService : class;
     }
 }
 

@@ -14,7 +14,8 @@ namespace CrmAdo.Dynamics.Metadata
         private static readonly ConcurrentDictionary<string, CrmEntityMetadata> _Metadata = new ConcurrentDictionary<string, CrmEntityMetadata>();
 
         private IEntityMetadataRepository _repository;
-        private MetadataConverter _metadataConverter;
+
+        private MetadataConverter _metadataConverter;      
 
         public InMemoryCachedCrmMetaDataProvider(IEntityMetadataRepository repository)
         {

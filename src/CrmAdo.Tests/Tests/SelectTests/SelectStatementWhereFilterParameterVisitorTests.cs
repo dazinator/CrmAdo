@@ -52,7 +52,7 @@ namespace CrmAdo.Tests
             param.Value = value;
             cmd.Parameters.Add(param);
             // Create test subject.
-            var subject = CreateTestSubject();
+            var subject = ResolveTestSubjectInstance();
 
             // Act
             // Ask our test subject to Convert the SelectBuilder to a Query Expression.

@@ -24,8 +24,12 @@ namespace CrmAdo.Dynamics
         private ICrmConnectionProvider _CrmConnectionProvider;
         private ICrmClientCredentialsProvider _credentialsProvider;
 
-        public CrmServiceProvider(ICrmConnectionProvider connectionProvider,
-                                  ICrmClientCredentialsProvider credentialsProvider)
+        public CrmServiceProvider(string connectionString) :
+            this(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString }, new CrmClientCredentialsProvider())
+        {
+        }
+
+        public CrmServiceProvider(ICrmConnectionProvider connectionProvider, ICrmClientCredentialsProvider credentialsProvider)
         {
             _CrmConnectionProvider = connectionProvider;
             _credentialsProvider = credentialsProvider;
@@ -124,8 +128,5 @@ namespace CrmAdo.Dynamics
         {
             get { return _CrmConnectionProvider; }
         }
-
-       
-
     }
 }

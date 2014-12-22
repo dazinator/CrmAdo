@@ -11,6 +11,7 @@ using System.IO;
 using System.Reflection;
 using System.Collections.Concurrent;
 using Microsoft.Xrm.Sdk.Query;
+using CrmAdo.IoC;
 
 namespace CrmAdo
 {
@@ -19,10 +20,17 @@ namespace CrmAdo
     /// Represents a connection to Dynamics Crm.
     /// </summary>
     public class CrmDbConnection : DbConnection
-    {     
+    {
+
+        private ICrmMetaDataProvider _MetadataProvider = null;
+        private ICrmServiceProvider _CrmServiceProvider = null;
+        private ISchemaCollectionsProvider _SchemaCollectionsProvider = null;
+
+        private IOrganizationService _OrganizationService = null;
+        private ConnectionState _State = ConnectionState.Closed;
 
         private CrmConnectionCache _ConnectionCache = null;
-        private CrmConnectionInfo _ConnectionInfo = null;     
+        private CrmConnectionInfo _ConnectionInfo = null;
 
         #region Constructor
 
@@ -33,38 +41,65 @@ namespace CrmAdo
         }
 
         public CrmDbConnection(string connectionString)
+            : this(new CrmServiceProvider(connectionString))
         {
-            this.BuildUp();
-            this.CrmServiceProvider.ConnectionProvider.OrganisationServiceConnectionString = connectionString;
-            _ConnectionCache = new CrmConnectionCache();
         }
 
-        private void BuildUp()
+        public CrmDbConnection(ICrmServiceProvider serviceProvider)
+            : this(serviceProvider, new InMemoryCachedCrmMetaDataProvider(new EntityMetadataRepository(serviceProvider)))
         {
-            IoC.ContainerServices.CurrentContainer().BuildUp(this);
-        }    
+        }
+
+        public CrmDbConnection(ICrmServiceProvider serviceProvider, ICrmMetaDataProvider metadataProvider)
+            : this(serviceProvider, metadataProvider, new SchemaCollectionsProvider())
+        {
+        }
+
+        public CrmDbConnection(ICrmServiceProvider serviceProvider, ICrmMetaDataProvider metadataProvider, ISchemaCollectionsProvider schemaCollectionsProvider)
+        {
+            if (serviceProvider == null)
+            {
+                throw new ArgumentNullException("serviceProvider");
+            }
+            if (metadataProvider == null)
+            {
+                throw new ArgumentNullException("metadataProvider");
+            }
+            if (schemaCollectionsProvider == null)
+            {
+                throw new ArgumentNullException("schemaCollectionsProvider");
+            }
+
+            CrmServiceProvider = serviceProvider;
+            MetadataProvider = metadataProvider;
+            SchemaCollectionsProvider = schemaCollectionsProvider;
+            _ConnectionCache = new CrmConnectionCache();
+        }
 
         #endregion
 
         #region Dependencies
 
-        public ICrmMetaDataProvider MetadataProvider { get; set; }        
+        //private void BuildUp()
+        //{
+        //    ContainerServices.CurrentContainer().BuildUp(this);
+        //}
 
-        public ICrmServiceProvider CrmServiceProvider { get; set; }
+        public ICrmMetaDataProvider MetadataProvider { get { return _MetadataProvider; } private set { _MetadataProvider = value; } }
 
-        public ISchemaCollectionsProvider SchemaCollectionsProvider { get; set; }
+        public ICrmServiceProvider CrmServiceProvider { get { return _CrmServiceProvider; } private set { _CrmServiceProvider = value; } }
+
+        public ISchemaCollectionsProvider SchemaCollectionsProvider { get { return _SchemaCollectionsProvider; } private set { _SchemaCollectionsProvider = value; } }
 
         #endregion
 
         #region Properties
-
-        private ConnectionState _State = ConnectionState.Closed;
+       
         public override ConnectionState State
         {
             get { return _State; }
         }
-
-        private IOrganizationService _OrganizationService = null;
+              
         public IOrganizationService OrganizationService
         {
             get { return _OrganizationService; }
@@ -172,8 +207,6 @@ namespace CrmAdo
                 return ConnectionInfo.OrganisationName;
             }
         }
-
-        
 
         #region StateWrappers
 

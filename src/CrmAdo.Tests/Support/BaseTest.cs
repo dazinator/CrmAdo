@@ -5,12 +5,14 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using System.GACManagedAccess;
+using CrmAdo.IoC;
 
 namespace CrmAdo.Tests
 {
     [TestFixture]
     [Category("Unit Test")]
     public abstract class BaseTest<TTestSubject>
+        where TTestSubject : class
     {
 
         private bool EnsureRemovedFromGac(string assemblyName)
@@ -40,12 +42,12 @@ namespace CrmAdo.Tests
             List<string> assembliesList = new List<string>();
             assembliesList.Add("CrmAdo");
             assembliesList.Add("Microsoft.Xrm.Sdk");
-            assembliesList.Add("SQLGeneration");          
-     
+            assembliesList.Add("SQLGeneration");
+
             foreach (var item in assembliesList)
             {
-               bool notInGac = EnsureRemovedFromGac(item);
-                if(!notInGac)
+                bool notInGac = EnsureRemovedFromGac(item);
+                if (!notInGac)
                 {
                     Console.WriteLine("Could not remove: " + item + " from GAC. This will effect unit tests and so SetUp will now fail. ");
                     throw new Exception("Could not remove: " + item + " from GAC");
@@ -54,14 +56,14 @@ namespace CrmAdo.Tests
 
         }
 
-        protected virtual TTestSubject CreateTestSubject()
+        /// <summary>
+        /// Resolves an instance of the Test Subject from the Current IoC Container.
+        /// </summary>
+        /// <returns></returns>
+        protected virtual TTestSubject ResolveTestSubjectInstance()
         {
-            return Activator.CreateInstance<TTestSubject>();
-        }
-
-        protected virtual TTestSubject CreateTestSubject(params object[] args)
-        {
-            return (TTestSubject)Activator.CreateInstance(typeof(TTestSubject), args);
+            var instance = ContainerServices.CurrentContainer().Resolve<TTestSubject>();
+            return instance;
         }
 
         public static string AssemblyDirectory

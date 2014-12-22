@@ -6,6 +6,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 using NUnit.Framework;
 using Rhino.Mocks;
 using CrmAdo.Metadata;
+using CrmAdo.Tests.Sandbox;
 
 namespace CrmAdo.Tests
 {
@@ -14,7 +15,6 @@ namespace CrmAdo.Tests
     [TestFixture()]
     public class CrmDbDataReaderTests : BaseTest<CrmDbDataReader>
     {
-
         [Test]
         [ExpectedException(typeof(ArgumentNullException))]
         public void Should_Throw_Argument_Null_When_Constructed_With_Null_Results()
@@ -29,132 +29,52 @@ namespace CrmAdo.Tests
             var results = new EntityResultSet(null, null, null);
             results.ColumnMetadata = new List<ColumnMetadata>();
             results.Results = new EntityCollection(new List<Entity>());
-            var subject = CreateTestSubject(results);
+            var subject = new CrmDbDataReader(results);
         }
 
         [Test]
         public void Should_Be_Able_To_Create_A_New_Data_Reader_With_Connection_And_Results()
         {
-            var conn = MockRepository.GenerateMock<CrmDbConnection>();
-            var results = new EntityResultSet(null, null, null);
-            results.ColumnMetadata = new List<ColumnMetadata>();
-
-            var firstName = MockRepository.GenerateMock<AttributeInfo>();
-            var lastname = MockRepository.GenerateMock<AttributeInfo>();
-            var firstNameC = new ColumnMetadata(firstName);
-            var lastnameC = new ColumnMetadata(lastname);
-
-
-            results.ColumnMetadata.Add(firstNameC);
-            results.ColumnMetadata.Add(lastnameC);
-            results.Results = new EntityCollection(new List<Entity>());
-            var result = new Entity("contact");
-            result.Id = Guid.NewGuid();
-            result["firstname"] = "joe";
-            result["lastname"] = "schmoe";
-            results.Results.Entities.Add(result);
-            var subject = CreateTestSubject(results, conn);
+            // Arrange
+            using (var sandbox = DataReaderTestsSandbox.Create())
+            {
+                // Act
+                var subject = new CrmDbDataReader(sandbox.FakeResultSet, sandbox.FakeCrmDbConnection);
+            }
         }
 
         [Test]
         public void Should_Close_Connection_When_Finished_Reading()
         {
-            var conn = MockRepository.GenerateMock<CrmDbConnection>();
-            var results = new EntityResultSet(null, null, null);
-            results.ColumnMetadata = new List<ColumnMetadata>();
-
-            //   var firstName = new AttributeMetadata();
-            //  var lastname = new AttributeMetadata();
-
-            var firstNameAttInfo = new StringAttributeInfo();
-            firstNameAttInfo.AttributeType = AttributeTypeCode.String;
-            firstNameAttInfo.LogicalName = "firstname";
-            var firstNameC = new ColumnMetadata(firstNameAttInfo);
-
-           // firstNameC.Stub(a => a.AttributeMetadata.GetSqlDataTypeName()).Return("string");
-           // firstNameC.Stub(a => a.AttributeMetadata.AttributeType).Return(AttributeTypeCode.String);
-
-            var lastNameAttInfo = new StringAttributeInfo();
-            lastNameAttInfo.AttributeType = AttributeTypeCode.String;
-            lastNameAttInfo.LogicalName = "lastname";
-            var lastnameC = new ColumnMetadata(lastNameAttInfo);
-
-            //var lastnameC = MockRepository.GenerateMock<ColumnMetadata>();
-            //lastnameC.Stub(a => a.ColumnName).Return("lastname");
-            //lastnameC.Stub(a => a.AttributeMetadata.GetSqlDataTypeName()).Return("string");
-            //lastnameC.Stub(a => a.AttributeMetadata.AttributeType).Return(AttributeTypeCode.String);
-            //  lastnameC.AttributeMetadata
-
-            // var firstName = MockRepository.GenerateMock<AttributeMetadata>();
-            //var lastname = MockRepository.GenerateMock<AttributeMetadata>();
-            //  firstName.LogicalName = "firstname";
-            //  lastname.LogicalName = "lastname";
-
-            //lastname.Stub(a => a.LogicalName).Return("lastname");
-            //firstName.Stub(a => a.AttributeType).Return(AttributeTypeCode.String);
-            //lastname.Stub(a => a.AttributeType).Return(AttributeTypeCode.String);
-
-            results.ColumnMetadata.Add(firstNameC);
-            results.ColumnMetadata.Add(lastnameC);
-            results.Results = new EntityCollection(new List<Entity>());
-            var result = new Entity("contact");
-            result.Id = Guid.NewGuid();
-            result["firstname"] = "joe";
-            result["lastname"] = "schmoe";
-            results.Results.Entities.Add(result);
-            var subject = new CrmDbDataReader(results, conn);
-            foreach (var r in subject)
+            // Arrange
+            using (var sandbox = DataReaderTestsSandbox.Create())
             {
+                var subject = ResolveTestSubjectInstance();
+                // Act
+                foreach (var r in subject)
+                {
 
+                }
+                // Assert
+                sandbox.FakeCrmDbConnection.AssertWasCalled(o => o.Close(), options => options.Repeat.Once());
             }
-            conn.AssertWasCalled(o => o.Close(), options => options.Repeat.Once());
-
         }
-
 
         [Test]
         public void Should_Be_Able_To_Get_Schema_Data_Table()
         {
-            var conn = MockRepository.GenerateMock<CrmDbConnection>();
-            var results = new EntityResultSet(null, null, null);
-            results.ColumnMetadata = new List<ColumnMetadata>();
+            // Arrange
+            using (var sandbox = DataReaderTestsSandbox.Create())
+            {
+                var subject = ResolveTestSubjectInstance();
 
-            // set up fake metadata provider.
-            var fakeMetadataProvider = new FakeContactMetadataProvider();
-            var fakeConn = MockRepository.GenerateMock<CrmDbConnection>();
-            fakeConn.Stub(a => a.MetadataProvider).Return(fakeMetadataProvider);
-            var contactMetadata = fakeMetadataProvider.GetEntityMetadata("contact");
+                // Act
+                var schema = subject.GetSchemaTable();
 
-            var contactIdMetadata = contactMetadata.Attributes.Find(a => a.LogicalName == "contactid");
-            var firstNameMetadata = contactMetadata.Attributes.Find(a => a.LogicalName == "firstname");
+                // Assert
+                Assert.That(schema, Is.Not.Null);
 
-            var contactIdColumnMetadata = new ColumnMetadata(contactIdMetadata);
-            var firstNameColumnMetadata = new ColumnMetadata(firstNameMetadata);
-
-            results.ColumnMetadata.Add(contactIdColumnMetadata);
-            results.ColumnMetadata.Add(firstNameColumnMetadata);
-
-            results.Results = new EntityCollection(new List<Entity>());
-
-            //var result = new Entity("contact");
-            //result.Id = Guid.NewGuid();
-            //result["firstname"] = "joe";
-            //result["lastname"] = "schmoe";
-            //results.Results.Entities.Add(result);
-            var subject = CreateTestSubject(results, conn);
-
-            var schema = subject.GetSchemaTable();
-
-
-
-
-
-
+            }
         }
-
-
-
-
-
     }
 }

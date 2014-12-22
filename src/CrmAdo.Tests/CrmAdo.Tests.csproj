@@ -161,6 +161,9 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Sandbox\DataReaderTestsSandbox.cs" />
+    <Compile Include="Sandbox\CrmRequestProviderSandbox.cs" />
+    <Compile Include="Sandbox\CommandTestsSandbox.cs" />
     <Compile Include="Support\BaseOrganisationRequestBuilderVisitorTest.cs" />
     <Compile Include="Sandbox\ConnectionTestsSandbox.cs" />
     <Compile Include="Support\EfModel\Blog.cs" />

@@ -5,6 +5,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using NUnit.Framework;
 using Rhino.Mocks;
+using CrmAdo.Tests.Sandbox;
 
 namespace CrmAdo.Tests
 {
@@ -16,37 +17,50 @@ namespace CrmAdo.Tests
         [Test]
         public void Should_Be_Able_To_Create_A_New_Command()
         {
-            var subject = CreateTestSubject();
+            var subject = new CrmDbCommand();
         }
-        
+
         [Test]
         public void Should_Be_Able_To_Create_A_New_Command_With_Connection()
         {
-            var conn = MockRepository.GenerateMock<CrmDbConnection>();
-            var subject = CreateTestSubject(conn);
-            Assert.That(subject.Connection, Is.SameAs(conn));
+            using (var sandbox = CommandTestsSandbox.Create())
+            {
+                var subject = ResolveTestSubjectInstance();
+                Assert.That(subject.Connection, Is.SameAs(sandbox.FakeCrmDbConnection));
+            }
         }
-        
+
         [Test]
         public void Should_Be_Able_To_Create_A_New_Command_With_Connection_And_Command_Text()
         {
-            var conn = MockRepository.GenerateMock<CrmDbConnection>();
-            var commandText = "TESTCOMMAND";
-            var subject = CreateTestSubject(conn, commandText);
-            Assert.That(subject.Connection, Is.SameAs(conn));
-            Assert.That(subject.CommandText, Is.EqualTo(commandText));
+            using (var sandbox = CommandTestsSandbox.Create())
+            {
+                var commandText = "TESTCOMMAND";
+
+                var subject = new CrmDbCommand(sandbox.FakeCrmDbConnection, commandText);
+
+                Assert.That(subject.Connection, Is.SameAs(sandbox.FakeCrmDbConnection));
+                Assert.That(subject.CommandText, Is.EqualTo(commandText));
+
+            }
+
         }
-        
+
         [Test]
         [ExpectedException(typeof(InvalidOperationException))]
         public void Should_Throw_When_It_Has_An_Unopen_Connection_And_ExecuteDbDataReader_Is_Called_()
         {
             // Arrange
-            var conn = MockRepository.GenerateMock<CrmDbConnection>();
-            conn.Stub(c => c.State).Return(ConnectionState.Closed);
-            var subject = CreateTestSubject(conn);
-            // Act
-            subject.ExecuteReader();
+            using (var sandbox = CommandTestsSandbox.Create())
+            {
+                sandbox.FakeCrmDbConnection.Stub(c => c.State).Return(ConnectionState.Closed);
+                var subject = ResolveTestSubjectInstance();
+
+                // Act
+                subject.ExecuteReader();
+
+            }
+
         }
 
         [Test]
@@ -54,11 +68,15 @@ namespace CrmAdo.Tests
         public void Should_Throw_When_It_Has_An_Unopen_Connection_And_ExecuteNonQuery_Is_Called_()
         {
             // Arrange
-            var conn = MockRepository.GenerateMock<CrmDbConnection>();
-            conn.Stub(c => c.State).Return(ConnectionState.Closed);
-            var subject = CreateTestSubject(conn);
-            // Act
-            subject.ExecuteNonQuery();
+            using (var sandbox = CommandTestsSandbox.Create())
+            {
+                sandbox.FakeCrmDbConnection.Stub(c => c.State).Return(ConnectionState.Closed);
+                var subject = ResolveTestSubjectInstance();
+
+                // Act
+                subject.ExecuteNonQuery();
+
+            }
         }
 
         [Test]
@@ -66,11 +84,14 @@ namespace CrmAdo.Tests
         public void Should_Throw_When_It_Has_An_Unopen_Connection_And_ExecuteScalar_Is_Called_()
         {
             // Arrange
-            var conn = MockRepository.GenerateMock<CrmDbConnection>();
-            conn.Stub(c => c.State).Return(ConnectionState.Closed);
-            var subject = CreateTestSubject(conn);
-            // Act
-            subject.ExecuteScalar();
+            using (var sandbox = CommandTestsSandbox.Create())
+            {
+                sandbox.FakeCrmDbConnection.Stub(c => c.State).Return(ConnectionState.Closed);
+                var subject = ResolveTestSubjectInstance();
+
+                // Act
+                subject.ExecuteScalar();
+            }
         }
 
         [Test]
@@ -78,11 +99,14 @@ namespace CrmAdo.Tests
         public void Should_Throw_When_It_Has_Empty_CommandText_And_ExecuteDbDataReader_Is_Called_()
         {
             // Arrange
-            var conn = MockRepository.GenerateMock<CrmDbConnection>();
-            conn.Stub(c => c.State).Return(ConnectionState.Open);
-            var subject = CreateTestSubject(conn);
-            // Act
-            subject.ExecuteReader();
+            using (var sandbox = CommandTestsSandbox.Create())
+            {
+                sandbox.FakeCrmDbConnection.Stub(c => c.State).Return(ConnectionState.Open);
+                var subject = ResolveTestSubjectInstance();
+
+                // Act
+                subject.ExecuteReader();
+            }
         }
 
         [Test]
@@ -90,11 +114,14 @@ namespace CrmAdo.Tests
         public void Should_Throw_When_It_Has_Empty_CommandText_And_ExecuteNonQuery_Is_Called_()
         {
             // Arrange
-            var conn = MockRepository.GenerateMock<CrmDbConnection>();
-            conn.Stub(c => c.State).Return(ConnectionState.Open);
-            var subject = CreateTestSubject(conn);
-            // Act
-            subject.ExecuteNonQuery();
+            using (var sandbox = CommandTestsSandbox.Create())
+            {
+                sandbox.FakeCrmDbConnection.Stub(c => c.State).Return(ConnectionState.Open);
+                var subject = ResolveTestSubjectInstance();
+
+                // Act
+                subject.ExecuteNonQuery();
+            }          
         }
 
         [Test]
@@ -102,12 +129,15 @@ namespace CrmAdo.Tests
         public void Should_Throw_When_It_Has_Empty_CommandText_And_ExecuteScalar_Is_Called_()
         {
             // Arrange
-            var conn = MockRepository.GenerateMock<CrmDbConnection>();
-            conn.Stub(c => c.State).Return(ConnectionState.Open);
-            var subject = CreateTestSubject(conn);
-            // Act
-            subject.ExecuteScalar();
+            using (var sandbox = CommandTestsSandbox.Create())
+            {
+                sandbox.FakeCrmDbConnection.Stub(c => c.State).Return(ConnectionState.Open);
+                var subject = ResolveTestSubjectInstance();
+
+                // Act
+                subject.ExecuteScalar();
+            }                
         }
-        
+
     }
 }

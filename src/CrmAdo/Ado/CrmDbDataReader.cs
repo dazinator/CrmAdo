@@ -36,9 +36,17 @@ namespace CrmAdo
             {
                 throw new ArgumentNullException("results");
             }
+
+            if (schemaTableProvider == null)
+            {
+                throw new ArgumentNullException("schemaTableProvider");
+            }
+
             this._Results = results;
-            this._DbConnection = dbConnection;
             this._SchemaTableProvider = schemaTableProvider;
+
+            this._DbConnection = dbConnection; // optional.
+           
             _IsOpen = true;
         }
 

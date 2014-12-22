@@ -17,7 +17,7 @@ namespace CrmAdo.Tests
         [Test]
         public void Should_Be_Able_To_Create_And_Restore_A_Connection_String_With_All_Properties_Set()
         {
-            var sut = CreateTestSubject();
+            var sut = ResolveTestSubjectInstance();
             sut.CallerId = "testuser";
             sut.DeviceId = "testdeviceid";
             sut.DevicePassword = "testpassword";

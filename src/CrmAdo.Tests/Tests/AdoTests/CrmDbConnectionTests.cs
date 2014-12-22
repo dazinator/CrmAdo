@@ -19,7 +19,7 @@ namespace CrmAdo.Tests
         {
             using (ConnectionTestsSandbox.Create())
             {
-                var dbConnection = CreateTestSubject();
+                var dbConnection = ResolveTestSubjectInstance();
             }
         }
 
@@ -29,7 +29,7 @@ namespace CrmAdo.Tests
             // Arrange
             using (ConnectionTestsSandbox.Create())
             {
-                var dbConnection = new CrmDbConnection();
+                var dbConnection = ResolveTestSubjectInstance();
                 // Act
                 dbConnection.Open();
                 // Assert
@@ -46,7 +46,7 @@ namespace CrmAdo.Tests
             // Arrange
             using (var sandbox = ConnectionTestsSandbox.Create())
             {
-                var dbConnection = new CrmDbConnection();
+                var dbConnection = ResolveTestSubjectInstance();
 
                 // Act
                 dbConnection.Open();
@@ -63,7 +63,7 @@ namespace CrmAdo.Tests
             // Arrange
             using (var sandbox = ConnectionTestsSandbox.Create())
             {
-                var dbConnection = new CrmDbConnection();
+                var dbConnection = ResolveTestSubjectInstance();
 
                 // Act
                 using (dbConnection)
@@ -85,7 +85,7 @@ namespace CrmAdo.Tests
             // Arrange
             using (var sandbox = ConnectionTestsSandbox.Create())
             {
-                var dbConnection = new CrmDbConnection();
+                var dbConnection = ResolveTestSubjectInstance();
 
                 // Act
                 dbConnection.Open();
@@ -105,7 +105,7 @@ namespace CrmAdo.Tests
             // Arrange
             using (var sandbox = ConnectionTestsSandbox.Create())
             {
-                var dbConnection = new CrmDbConnection();
+                var dbConnection = ResolveTestSubjectInstance();
 
                 // Act
                 dbConnection.Open();
@@ -120,7 +120,7 @@ namespace CrmAdo.Tests
             // Arrange           
             using (var sandbox = ConnectionTestsSandbox.Create())
             {
-                var dbConnection = new CrmDbConnection();
+                var dbConnection = ResolveTestSubjectInstance();
 
                 // Act
                 var command = dbConnection.CreateCommand();

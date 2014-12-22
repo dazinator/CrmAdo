@@ -73,7 +73,8 @@ namespace CrmAdo
             {
                 var row = schemaTable.Rows.Add();
                 var attMeta = columnMetadata.AttributeMetadata;
-                row[SchemaTableColumn.AllowDBNull] = !attMeta.IsPrimaryId;
+               bool isPrimaryId  = attMeta.IsPrimaryId.HasValue && attMeta.IsPrimaryId.Value;
+               row[SchemaTableColumn.AllowDBNull] = !isPrimaryId;
                 row[SchemaTableColumn.BaseColumnName] = attMeta.LogicalName;
                 row[SchemaTableColumn.BaseSchemaName] = "";
                 row[SchemaTableColumn.BaseTableName] = attMeta.EntityLogicalName;
@@ -91,7 +92,9 @@ namespace CrmAdo
                 row[SchemaTableColumn.DataType] = attMeta.GetFieldType();
                 row[SchemaTableOptionalColumn.IsAutoIncrement] = false;
                 row["IsHidden"] = false; // !attMeta.IsValidForRead;
-                row["IsIdentity"] = attMeta.IsPrimaryId;
+
+
+                row["IsIdentity"] = isPrimaryId;
 
                 row[SchemaTableColumn.IsKey] = false; //for multi part keys // columnMetadata.AttributeMetadata.IsPrimaryId;
                 row[SchemaTableColumn.IsLong] = false;

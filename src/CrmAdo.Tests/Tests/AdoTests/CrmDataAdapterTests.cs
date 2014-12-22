@@ -58,14 +58,14 @@ namespace CrmAdo.Tests
         [Test]
         public void Should_Be_Able_To_Create_A_New_CrmDataAdapter()
         {
-            var subject = CreateTestSubject();
+            var subject = new CrmDataAdapter();
         }
 
         [ExpectedException(typeof(InvalidOperationException))]
         [Test]
         public void Should_Throw_When_Filling_DataSet_With_No_Select_Command()
         {
-            var subject = CreateTestSubject();
+            var subject = new CrmDataAdapter();
             var ds = new DataSet();
             var result = subject.Fill(ds);
         }
@@ -74,7 +74,7 @@ namespace CrmAdo.Tests
         [Test]
         public void Should_Throw_When_Filling_DataSet_And_No_Select_Command_Connection()
         {
-            var subject = CreateTestSubject();
+            var subject = new CrmDataAdapter();
             var mockSelectCommand = MockRepository.GenerateMock<CrmDbCommand>();
             subject.SelectCommand = mockSelectCommand;
             var ds = new DataSet();
@@ -89,7 +89,8 @@ namespace CrmAdo.Tests
             using (var sandbox = ConnectionTestsSandbox.Create())
             {
 
-                var dbConnection = new CrmDbConnection();
+                var dbConnection = sandbox.Container.Resolve<CrmDbConnection>();
+
                 var selectCommand = new CrmDbCommand(dbConnection);
                 selectCommand.CommandText = "SELECT * FROM contact";
 
@@ -116,7 +117,7 @@ namespace CrmAdo.Tests
 
                 // Act
                 var ds = new DataSet();
-                var subject = CreateTestSubject();
+                var subject = ResolveTestSubjectInstance();
                 subject.SelectCommand = selectCommand;
                 var result = subject.Fill(ds);
 
@@ -142,7 +143,7 @@ namespace CrmAdo.Tests
             using (var sandbox = ConnectionTestsSandbox.Create())
             {
 
-                var dbConnection = new CrmDbConnection();
+                var dbConnection =  sandbox.Container.Resolve<CrmDbConnection>();
                 var selectCommand = new CrmDbCommand(dbConnection);
                 selectCommand.CommandText = "SELECT * FROM contact";
 
@@ -169,7 +170,7 @@ namespace CrmAdo.Tests
 
                 // Act
                 var dt = new DataTable();
-                var subject = CreateTestSubject();
+                var subject = ResolveTestSubjectInstance();
                 subject.SelectCommand = selectCommand;
                 var result = subject.Fill(dt);
 
@@ -189,7 +190,7 @@ namespace CrmAdo.Tests
             using (var sandbox = ConnectionTestsSandbox.Create())
             {
 
-                var dbConnection = new CrmDbConnection();
+                var dbConnection = sandbox.Container.Resolve<CrmDbConnection>();
                 var selectCommand = new CrmDbCommand(dbConnection);
                 selectCommand.CommandText = "SELECT * FROM contact";
 
@@ -216,7 +217,7 @@ namespace CrmAdo.Tests
 
                 // Act
                 var ds = new DataSet();
-                var subject = CreateTestSubject();
+                var subject = ResolveTestSubjectInstance();
                 subject.SelectCommand = selectCommand;
                 subject.FillSchema(ds, SchemaType.Source);
 
@@ -245,7 +246,7 @@ namespace CrmAdo.Tests
             using (var sandbox = ConnectionTestsSandbox.Create())
             {
 
-                var dbConnection = new CrmDbConnection();
+                var dbConnection = sandbox.Container.Resolve<CrmDbConnection>();
                 var selectCommand = new CrmDbCommand(dbConnection);
                 selectCommand.CommandText = "SELECT * FROM contact";
 
@@ -272,7 +273,7 @@ namespace CrmAdo.Tests
 
                 // Act
                 var dt = new DataTable();
-                var subject = CreateTestSubject();
+                var subject = ResolveTestSubjectInstance();
                 subject.SelectCommand = selectCommand;
                 subject.FillSchema(dt, SchemaType.Source);
 
@@ -301,13 +302,13 @@ namespace CrmAdo.Tests
             using (var sandbox = ConnectionTestsSandbox.Create())
             {
 
-                var dbConnection = new CrmDbConnection();
+                var dbConnection = sandbox.Container.Resolve<CrmDbConnection>();
                 var selectCommand = new CrmDbCommand(dbConnection);
                 selectCommand.CommandText = "SELECT contactid, firstname, lastname FROM contact";
 
                 // Create a dataset, fill with schema.
                 var ds = new DataSet();
-                var subject = CreateTestSubject();
+                var subject = ResolveTestSubjectInstance();
                 subject.SelectCommand = selectCommand;
                 var result = subject.FillSchema(ds, SchemaType.Source);
 

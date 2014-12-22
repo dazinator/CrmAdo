@@ -16,9 +16,9 @@ namespace CrmAdo.Tests.Support
 
         public string ConnectionString { get; set; }
 
-        protected override T CreateTestSubject()
+        protected override T ResolveTestSubjectInstance()
         {
-            return base.CreateTestSubject(ConnectionString);
+            return (T)Activator.CreateInstance(typeof(T), this.ConnectionString);
         }
 
 

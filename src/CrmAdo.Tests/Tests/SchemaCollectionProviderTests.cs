@@ -15,7 +15,7 @@ namespace CrmAdo.Tests
         [Test]
         public void Should_Be_Able_To_Create_SchemaCollectionsProvider()
         {
-            var sut = CreateTestSubject();
+            var sut = ResolveTestSubjectInstance();
 
         }
 
@@ -23,7 +23,7 @@ namespace CrmAdo.Tests
         public void Should_Be_Able_To_Get_MetaDataCollections()
         {
             // Arrange
-            var sut = CreateTestSubject();
+            var sut = ResolveTestSubjectInstance();
             // Act
             var metadataCollections = sut.GetMetadataCollections();
             // Assert
@@ -39,7 +39,7 @@ namespace CrmAdo.Tests
         public void Should_Be_Able_To_Get_DataSourceInfo()
         {
             // Arrange
-            var sut = CreateTestSubject();
+            var sut = ResolveTestSubjectInstance();
             // Act
 
             var fakeMetadataProvider = new FakeContactMetadataProvider();
@@ -61,7 +61,7 @@ namespace CrmAdo.Tests
         public void Should_Be_Able_To_Get_DataTypeCollection()
         {
             // Arrange
-            var sut = CreateTestSubject();
+            var sut = ResolveTestSubjectInstance();
             // Act
             var collection = sut.GetDataTypes();
             // Assert
@@ -74,7 +74,7 @@ namespace CrmAdo.Tests
         public void Should_Be_Able_To_Get_ReservedWords()
         {
             // Arrange
-            var sut = CreateTestSubject();
+            var sut = ResolveTestSubjectInstance();
             // Act
             var collection = sut.GetReservedWords();
             // Assert
@@ -87,7 +87,7 @@ namespace CrmAdo.Tests
         public void Should_Be_Able_To_Get_Restrictions()
         {
             // Arrange
-            var sut = CreateTestSubject();
+            var sut = ResolveTestSubjectInstance();
 
             // Act
             var collection = sut.GetRestrictions();
