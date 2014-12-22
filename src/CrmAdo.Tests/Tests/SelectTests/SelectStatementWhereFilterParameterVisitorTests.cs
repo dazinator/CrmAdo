@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using CrmAdo.Tests.Support;
+using CrmAdo.Tests.Sandbox;
 
 namespace CrmAdo.Tests
 {
@@ -8,7 +9,7 @@ namespace CrmAdo.Tests
     public class SelectStatementWhereFilterParameterVisitorTests : BaseOrganisationRequestBuilderVisitorTest
     {
 
-       [Category("Filtering")]
+        [Category("Filtering")]
         [Test]
         [TestCase("=", "SomeValue", "{0} {1} @param1", TestName = "Should support Equals a String paramater")]
         [TestCase("=", 1, "{0} {1}  @param1", TestName = "Should support Equals a Numeric paramater")]
@@ -44,7 +45,7 @@ namespace CrmAdo.Tests
                 throw new NotImplementedException();
             }
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} ", filterFormatString);
-          
+
             var cmd = new CrmDbCommand(null);
             cmd.CommandText = sql;
             var param = cmd.CreateParameter();
@@ -52,28 +53,32 @@ namespace CrmAdo.Tests
             param.Value = value;
             cmd.Parameters.Add(param);
             // Create test subject.
-            var subject = ResolveTestSubjectInstance();
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                // Act
+                var subject = ResolveTestSubjectInstance();
 
-            // Act
-            // Ask our test subject to Convert the SelectBuilder to a Query Expression.
-            var queryExpression = base.GetQueryExpression(cmd);
+                // Act
+                // Ask our test subject to Convert the SelectBuilder to a Query Expression.
+                var queryExpression = base.GetQueryExpression(cmd);
 
-            // Assert
-            // Verify that the Query Expression looks as expected in order to work agaisnt the Dynamics SDK.
-            Assert.That(queryExpression.ColumnSet.AllColumns == false);
-            Assert.That(queryExpression.ColumnSet.Columns[0] == "contactid");
-            Assert.That(queryExpression.ColumnSet.Columns[1] == "firstname");
-            Assert.That(queryExpression.EntityName == "contact");
+                // Assert
+                // Verify that the Query Expression looks as expected in order to work agaisnt the Dynamics SDK.
+                Assert.That(queryExpression.ColumnSet.AllColumns == false);
+                Assert.That(queryExpression.ColumnSet.Columns[0] == "contactid");
+                Assert.That(queryExpression.ColumnSet.Columns[1] == "firstname");
+                Assert.That(queryExpression.EntityName == "contact");
 
-            //var defaultConditons = queryExpression.Criteria.Conditions;
-            var defaultConditons = queryExpression.Criteria.Filters[0].Conditions;
+                //var defaultConditons = queryExpression.Criteria.Conditions;
+                var defaultConditons = queryExpression.Criteria.Filters[0].Conditions;
 
-            Assert.That(defaultConditons.Count, Is.EqualTo(1));
-            //Assert.That(defaultFilterGroup.FilterOperator, Is.EqualTo(LogicalOperator.And));
-            Assert.That(defaultConditons[0].AttributeName == "firstname");
+                Assert.That(defaultConditons.Count, Is.EqualTo(1));
+                //Assert.That(defaultFilterGroup.FilterOperator, Is.EqualTo(LogicalOperator.And));
+                Assert.That(defaultConditons[0].AttributeName == "firstname");
 
-            var condition = defaultConditons[0];
-            AssertUtils.AssertFilterExpressionContion("firstname", filterOperator, value, condition);
+                var condition = defaultConditons[0];
+                AssertUtils.AssertFilterExpressionContion("firstname", filterOperator, value, condition);
+            }
         }
 
 

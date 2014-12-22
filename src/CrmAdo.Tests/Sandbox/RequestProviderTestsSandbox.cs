@@ -4,19 +4,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Rhino.Mocks;
 
 namespace CrmAdo.Tests.Sandbox
 {
-    public class CrmRequestProviderTestsSandbox : UnitTestSandboxContainer
+    public class RequestProviderTestsSandbox : UnitTestSandboxContainer
     {
 
-        public CrmRequestProviderTestsSandbox()
+        public RequestProviderTestsSandbox()
             : base()
         {
             FakeMetadataProvider = new FakeContactMetadataProvider();
             this.Container.Register<ICrmMetaDataProvider>(FakeMetadataProvider);
 
             this.Container.Register<IDynamicsAttributeTypeProvider, DynamicsAttributeTypeProvider>();   // singleton
+
+            FakeCrmDbConnection = this.RegisterMockInstance<CrmDbConnection>();
+            FakeCrmDbConnection.Stub(a => a.MetadataProvider).Return(FakeMetadataProvider);
         }
 
 
@@ -24,9 +28,11 @@ namespace CrmAdo.Tests.Sandbox
 
         public IDynamicsAttributeTypeProvider DynamicsAttributeTypeProvider { get; private set; }
 
-        public static CrmRequestProviderTestsSandbox Create()
+        public CrmDbConnection FakeCrmDbConnection { get; private set; }
+
+        public static RequestProviderTestsSandbox Create()
         {
-            return new CrmRequestProviderTestsSandbox();
+            return new RequestProviderTestsSandbox();
         }
 
 

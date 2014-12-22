@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
 using CrmAdo.Tests.Support;
+using CrmAdo.Tests.Sandbox;
 
 namespace CrmAdo.Tests
 {
@@ -21,7 +22,7 @@ namespace CrmAdo.Tests
         [TestCase("LIKE", "Albert%", TestName = "Should support Column Like Starts With a String Literal")]
         [TestCase("LIKE", "%Albert", TestName = "Should support Column Like Ends With a String Literal")]
         [TestCase("LIKE", "%Albert%", TestName = "Should support Column Like Contains a String Literal")]
-        [TestCase("NOT LIKE","", TestName = "Should support Column Not Like a String Literal")]
+        [TestCase("NOT LIKE", "", TestName = "Should support Column Not Like a String Literal")]
         [TestCase("NOT LIKE", "Albert%", TestName = "Should support Column Not Like Starts With a String Literal")]
         [TestCase("NOT LIKE", "%Albert", TestName = "Should support Column Not Like Ends With a String Literal")]
         [TestCase("NOT LIKE", "%Albert%", TestName = "Should support Column Not Like Contains a String Literal")]
@@ -31,8 +32,13 @@ namespace CrmAdo.Tests
             var columnName = "firstname";
             var conditionValue = string.IsNullOrEmpty(literalValue) ? "Albert" : literalValue;
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} {1} '{2}'", columnName, sqlOperator, conditionValue);
-            var queryExpression = GetQueryExpression(sql);
-            AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, conditionValue);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                // Act
+                var queryExpression = GetQueryExpression(sql);
+                // Assert
+                AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, conditionValue);
+            }
         }
 
         [Category("Filtering")]
@@ -50,8 +56,13 @@ namespace CrmAdo.Tests
             args.Add(sqlOperator);
             args.AddRange(valuesArray);
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} {1} ('{2}', '{3}')", args.ToArray());
-            var queryExpression = GetQueryExpression(sql);
-            AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, valuesArray);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                // Act
+                var queryExpression = GetQueryExpression(sql);
+                // Assert
+                AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, valuesArray);
+            }
         }
 
         [Category("Filtering")]
@@ -64,8 +75,14 @@ namespace CrmAdo.Tests
             var columnName = "firstname";
             var conditionValue = "Albert"; //string.IsNullOrEmpty(literalValue) ? "Albert" : literalValue;
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {1}({0},  '{2}'))", columnName, sqlOperator, conditionValue);
-            var queryExpression = GetQueryExpression(sql);
-            AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, conditionValue);
+
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                // Act
+                var queryExpression = GetQueryExpression(sql);
+                // Assert
+                AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, conditionValue);
+            }
         }
 
         [Category("Filtering")]
@@ -82,8 +99,13 @@ namespace CrmAdo.Tests
             var columnName = "firstname";
             var conditionValue = 1;
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} {1} {2}", columnName, sqlOperator, conditionValue);
-            var queryExpression = GetQueryExpression(sql);
-            AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, conditionValue);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                // Act
+                var queryExpression = GetQueryExpression(sql);
+                // Assert
+                AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, conditionValue);
+            }
         }
 
         [Category("Filtering")]
@@ -103,8 +125,13 @@ namespace CrmAdo.Tests
                 args.Add(i.ToString());
             }
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} {1} ({2}, {3})", args.ToArray());
-            var queryExpression = GetQueryExpression(sql);
-            AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, valuesArray);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                // Act
+                var queryExpression = GetQueryExpression(sql);
+                // Assert
+                AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, valuesArray);
+            }
         }
 
         [Category("Filtering")]
@@ -116,8 +143,13 @@ namespace CrmAdo.Tests
         {
             var columnName = "firstname";
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} {1}", columnName, sqlOperator);
-            var queryExpression = GetQueryExpression(sql);
-            AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, null);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                // Act
+                var queryExpression = GetQueryExpression(sql);
+                // Assert
+                AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, null);
+            }
         }
 
 

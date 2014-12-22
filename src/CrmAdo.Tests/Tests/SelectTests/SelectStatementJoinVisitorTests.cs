@@ -8,9 +8,10 @@ using CrmAdo.Tests.Support;
 using Microsoft.Xrm.Sdk;
 using System.Collections.Generic;
 using System.Collections;
+using CrmAdo.Tests.Sandbox;
 
 namespace CrmAdo.Tests
-{  
+{
 
     [TestFixture()]
     public class SelectStatementJoinVisitorTests : BaseOrganisationRequestBuilderVisitorTest
@@ -22,6 +23,8 @@ namespace CrmAdo.Tests
         [TestCase("LEFT", TestName = "Should support Left Join")]
         public void Should_Support_Joins(String joinType)
         {
+
+            // Arrange
             var join = JoinOperator.Natural;
 
             switch (joinType)
@@ -38,22 +41,28 @@ namespace CrmAdo.Tests
 
             var sql = string.Format("Select C.contactid, C.firstname, C.lastname, A.addressline1 From contact C {0} JOIN customeraddress A on C.contactid = A.contactid", joinType);
 
-            // Act
-            var queryExpression = GetQueryExpression(sql);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
 
-            //Assert
+                // Act
+                var queryExpression = GetQueryExpression(sql);
 
-            Assert.That(queryExpression.LinkEntities, Is.Not.Null);
-            Assert.That(queryExpression.LinkEntities[0], Is.Not.Null);
-            Assert.That(queryExpression.LinkEntities[0].LinkFromEntityName, Is.EqualTo("contact"));
-            Assert.That(queryExpression.LinkEntities[0].LinkToEntityName, Is.EqualTo("customeraddress"));
-            Assert.That(queryExpression.LinkEntities[0].LinkFromAttributeName, Is.EqualTo("contactid"));
-            Assert.That(queryExpression.LinkEntities[0].LinkToAttributeName, Is.EqualTo("contactid"));
-            Assert.That(queryExpression.LinkEntities[0].EntityAlias, Is.EqualTo("A"));
-            Assert.That(queryExpression.LinkEntities[0].JoinOperator, Is.EqualTo(join));
-            Assert.That(queryExpression.LinkEntities[0].Columns, Is.Not.Null);
-            Assert.That(queryExpression.LinkEntities[0].Columns.Columns, Contains.Item("addressline1"));
-            Assert.That(queryExpression.ColumnSet.Columns.Count, Is.EqualTo(3));
+                //Assert
+
+                Assert.That(queryExpression.LinkEntities, Is.Not.Null);
+                Assert.That(queryExpression.LinkEntities[0], Is.Not.Null);
+                Assert.That(queryExpression.LinkEntities[0].LinkFromEntityName, Is.EqualTo("contact"));
+                Assert.That(queryExpression.LinkEntities[0].LinkToEntityName, Is.EqualTo("customeraddress"));
+                Assert.That(queryExpression.LinkEntities[0].LinkFromAttributeName, Is.EqualTo("contactid"));
+                Assert.That(queryExpression.LinkEntities[0].LinkToAttributeName, Is.EqualTo("contactid"));
+                Assert.That(queryExpression.LinkEntities[0].EntityAlias, Is.EqualTo("A"));
+                Assert.That(queryExpression.LinkEntities[0].JoinOperator, Is.EqualTo(join));
+                Assert.That(queryExpression.LinkEntities[0].Columns, Is.Not.Null);
+                Assert.That(queryExpression.LinkEntities[0].Columns.Columns, Contains.Item("addressline1"));
+                Assert.That(queryExpression.ColumnSet.Columns.Count, Is.EqualTo(3));
+
+            }
+
         }
 
         [Category("Joins")]
@@ -78,33 +87,37 @@ namespace CrmAdo.Tests
                     break;
             }
 
-            // Act
-            var queryExpression = GetQueryExpression(sql);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
 
-            Assert.That(queryExpression.ColumnSet.Columns.Count, Is.EqualTo(3));
-            Assert.That(queryExpression.LinkEntities, Is.Not.Null);
-            Assert.That(queryExpression.LinkEntities[0], Is.Not.Null);
-            Assert.That(queryExpression.LinkEntities[0].LinkFromEntityName, Is.EqualTo("contact"));
-            Assert.That(queryExpression.LinkEntities[0].LinkToEntityName, Is.EqualTo("customeraddress"));
-            Assert.That(queryExpression.LinkEntities[0].LinkFromAttributeName, Is.EqualTo("contactid"));
-            Assert.That(queryExpression.LinkEntities[0].LinkToAttributeName, Is.EqualTo("contactid"));
-            Assert.That(queryExpression.LinkEntities[0].EntityAlias, Is.EqualTo("A"));
-            Assert.That(queryExpression.LinkEntities[0].JoinOperator, Is.EqualTo(join));
-            Assert.That(queryExpression.LinkEntities[0].Columns, Is.Not.Null);
-            Assert.That(queryExpression.LinkEntities[0].Columns.Columns, Contains.Item("addressline1"));
+                // Act
+                var queryExpression = GetQueryExpression(sql);
 
-            var addressEntity = queryExpression.LinkEntities[0];
-            Assert.That(addressEntity.LinkEntities, Is.Not.Null);
-            Assert.That(addressEntity.LinkEntities[0], Is.Not.Null);
-            Assert.That(addressEntity.LinkEntities[0].LinkFromEntityName, Is.EqualTo("customeraddress"));
-            Assert.That(addressEntity.LinkEntities[0].LinkToEntityName, Is.EqualTo("account"));
-            Assert.That(addressEntity.LinkEntities[0].LinkFromAttributeName, Is.EqualTo("addressid"));
-            Assert.That(addressEntity.LinkEntities[0].LinkToAttributeName, Is.EqualTo("addressid"));
-            Assert.That(addressEntity.LinkEntities[0].EntityAlias, Is.EqualTo("AC"));
-            Assert.That(addressEntity.LinkEntities[0].JoinOperator, Is.EqualTo(join));
-            Assert.That(addressEntity.LinkEntities[0].Columns, Is.Not.Null);
-            Assert.That(addressEntity.LinkEntities[0].Columns.Columns, Contains.Item("name"));
+                Assert.That(queryExpression.ColumnSet.Columns.Count, Is.EqualTo(3));
+                Assert.That(queryExpression.LinkEntities, Is.Not.Null);
+                Assert.That(queryExpression.LinkEntities[0], Is.Not.Null);
+                Assert.That(queryExpression.LinkEntities[0].LinkFromEntityName, Is.EqualTo("contact"));
+                Assert.That(queryExpression.LinkEntities[0].LinkToEntityName, Is.EqualTo("customeraddress"));
+                Assert.That(queryExpression.LinkEntities[0].LinkFromAttributeName, Is.EqualTo("contactid"));
+                Assert.That(queryExpression.LinkEntities[0].LinkToAttributeName, Is.EqualTo("contactid"));
+                Assert.That(queryExpression.LinkEntities[0].EntityAlias, Is.EqualTo("A"));
+                Assert.That(queryExpression.LinkEntities[0].JoinOperator, Is.EqualTo(join));
+                Assert.That(queryExpression.LinkEntities[0].Columns, Is.Not.Null);
+                Assert.That(queryExpression.LinkEntities[0].Columns.Columns, Contains.Item("addressline1"));
 
+                var addressEntity = queryExpression.LinkEntities[0];
+                Assert.That(addressEntity.LinkEntities, Is.Not.Null);
+                Assert.That(addressEntity.LinkEntities[0], Is.Not.Null);
+                Assert.That(addressEntity.LinkEntities[0].LinkFromEntityName, Is.EqualTo("customeraddress"));
+                Assert.That(addressEntity.LinkEntities[0].LinkToEntityName, Is.EqualTo("account"));
+                Assert.That(addressEntity.LinkEntities[0].LinkFromAttributeName, Is.EqualTo("addressid"));
+                Assert.That(addressEntity.LinkEntities[0].LinkToAttributeName, Is.EqualTo("addressid"));
+                Assert.That(addressEntity.LinkEntities[0].EntityAlias, Is.EqualTo("AC"));
+                Assert.That(addressEntity.LinkEntities[0].JoinOperator, Is.EqualTo(join));
+                Assert.That(addressEntity.LinkEntities[0].Columns, Is.Not.Null);
+                Assert.That(addressEntity.LinkEntities[0].Columns.Columns, Contains.Item("name"));
+
+            }
         }
 
         [Category("Joins")]
@@ -116,19 +129,24 @@ namespace CrmAdo.Tests
             var sql = GetTestSqlWithJoinAndFilters(joinType, filterOperator, filterValue, filterFormatString);
 
             // Ask our test subject to Convert the SelectBuilder to a Query Expression.
-            // Act
-            var queryExpression = GetQueryExpression(sql);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
 
-            // There should be filter criteria on the main entity and also on the link entity.
-            //var defaultConditons = queryExpression.Criteria.Conditions;
-            var defaultConditons = queryExpression.Criteria.Filters[0].Conditions;
-            Assert.That(defaultConditons.Count, Is.EqualTo(2), "There should be two conditions.");
+                // Act
+                var queryExpression = GetQueryExpression(sql);
 
-            var condition = defaultConditons[0];
-            AssertUtils.AssertFilterExpressionContion("firstname", filterOperator, filterValue, condition);
+                // There should be filter criteria on the main entity and also on the link entity.
+                //var defaultConditons = queryExpression.Criteria.Conditions;
+                var defaultConditons = queryExpression.Criteria.Filters[0].Conditions;
+                Assert.That(defaultConditons.Count, Is.EqualTo(2), "There should be two conditions.");
 
-            var joinCondition = defaultConditons[1];
-            AssertUtils.AssertFilterExpressionContion("name", filterOperator, filterValue, joinCondition);
+                var condition = defaultConditons[0];
+                AssertUtils.AssertFilterExpressionContion("firstname", filterOperator, filterValue, condition);
+
+                var joinCondition = defaultConditons[1];
+                AssertUtils.AssertFilterExpressionContion("name", filterOperator, filterValue, joinCondition);
+
+            }
         }
 
         [Category("Joins")]
@@ -140,29 +158,33 @@ namespace CrmAdo.Tests
 
             var sql = GenerateTestSqlWithNestedJoinAndFilters(joinType, filterOperator, filterValue, filterFormatString);
 
-            // Act
-            var queryExpression = GetQueryExpression(sql);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
 
-            // Assert
-            // the filter should have 3 conditions, one for main entity attribue, and others for the linked entities..
-            // var defaultFilter = queryExpression.Criteria; //.Filters[0];
-            var defaultFilter = queryExpression.Criteria.Filters[0];
-            var defaultFilterConditions = defaultFilter.Conditions;
+                // Act
+                var queryExpression = GetQueryExpression(sql);
 
-            Assert.That(defaultFilterConditions.Count, Is.EqualTo(3), "Wrong number of conditions.");
+                // Assert
+                // the filter should have 3 conditions, one for main entity attribue, and others for the linked entities..
+                // var defaultFilter = queryExpression.Criteria; //.Filters[0];
+                var defaultFilter = queryExpression.Criteria.Filters[0];
+                var defaultFilterConditions = defaultFilter.Conditions;
 
-            var condition = defaultFilterConditions[0];
-            Assert.That(condition.EntityName, Is.EqualTo("contact"));
-            AssertUtils.AssertFilterExpressionContion("firstname", filterOperator, filterValue, condition);
+                Assert.That(defaultFilterConditions.Count, Is.EqualTo(3), "Wrong number of conditions.");
 
-            var joinCondition = defaultFilterConditions[1];
-            Assert.That(joinCondition.EntityName, Is.EqualTo("A"));
-            AssertUtils.AssertFilterExpressionContion("name", filterOperator, filterValue, joinCondition);
+                var condition = defaultFilterConditions[0];
+                Assert.That(condition.EntityName, Is.EqualTo("contact"));
+                AssertUtils.AssertFilterExpressionContion("firstname", filterOperator, filterValue, condition);
 
-            var nestedjoinCondition = defaultFilterConditions[2];
-            Assert.That(nestedjoinCondition.EntityName, Is.EqualTo("AC"));
-            AssertUtils.AssertFilterExpressionContion("firstname", filterOperator, filterValue, nestedjoinCondition);
+                var joinCondition = defaultFilterConditions[1];
+                Assert.That(joinCondition.EntityName, Is.EqualTo("A"));
+                AssertUtils.AssertFilterExpressionContion("name", filterOperator, filterValue, joinCondition);
 
+                var nestedjoinCondition = defaultFilterConditions[2];
+                Assert.That(nestedjoinCondition.EntityName, Is.EqualTo("AC"));
+                AssertUtils.AssertFilterExpressionContion("firstname", filterOperator, filterValue, nestedjoinCondition);
+
+            }
         }
 
 

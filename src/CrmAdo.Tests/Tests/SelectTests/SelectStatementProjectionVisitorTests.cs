@@ -1,4 +1,5 @@
-﻿using CrmAdo.Tests.Support;
+﻿using CrmAdo.Tests.Sandbox;
+using CrmAdo.Tests.Support;
 using NUnit.Framework;
 
 namespace CrmAdo.Tests
@@ -14,11 +15,15 @@ namespace CrmAdo.Tests
         {
             // Arrange
             var sql = "Select * From contact";
-            // Act
-            var queryExpression = GetQueryExpression(sql);
-            // Assert
-            Assert.That(queryExpression.ColumnSet.AllColumns == true);
-            Assert.That(queryExpression.EntityName == "contact");
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+
+                // Act
+                var queryExpression = GetQueryExpression(sql);
+                // Assert
+                Assert.That(queryExpression.ColumnSet.AllColumns == true);
+                Assert.That(queryExpression.EntityName == "contact");
+            }
         }
 
         [Category("Projecting")]
@@ -27,14 +32,18 @@ namespace CrmAdo.Tests
         {
             // Arrange
             var sql = "Select contactid, firstname, lastname From contact";
-            // Act
-            var queryExpression = GetQueryExpression(sql);
-            // Assert
-            Assert.That(queryExpression.ColumnSet.AllColumns == false);
-            Assert.That(queryExpression.ColumnSet.Columns[0] == "contactid");
-            Assert.That(queryExpression.ColumnSet.Columns[1] == "firstname");
-            Assert.That(queryExpression.ColumnSet.Columns[2] == "lastname");
-            Assert.That(queryExpression.EntityName == "contact");
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+
+                // Act
+                var queryExpression = GetQueryExpression(sql);
+                // Assert
+                Assert.That(queryExpression.ColumnSet.AllColumns == false);
+                Assert.That(queryExpression.ColumnSet.Columns[0] == "contactid");
+                Assert.That(queryExpression.ColumnSet.Columns[1] == "firstname");
+                Assert.That(queryExpression.ColumnSet.Columns[2] == "lastname");
+                Assert.That(queryExpression.EntityName == "contact");
+            }
         }
 
     }

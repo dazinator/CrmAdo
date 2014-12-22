@@ -38,9 +38,9 @@ namespace CrmAdo.Tests.Support
         }
 
         protected T GetOrganizationRequest<T>(CrmDbCommand command) where T : OrganizationRequest
-        {          
-            var subject = ResolveTestSubjectInstance();
+        {                     
             List<ColumnMetadata> columnMetadata;
+            var subject = IoC.ContainerServices.CurrentContainer().Resolve<VisitingCrmRequestProvider>();
             var request = subject.GetOrganizationRequest(command, out columnMetadata) as T;
             return request as T;
         }

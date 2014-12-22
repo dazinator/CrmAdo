@@ -9,6 +9,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 using NUnit.Framework;
 using Rhino.Mocks;
 using CrmAdo.Tests.Support;
+using CrmAdo.Tests.Sandbox;
 
 namespace CrmAdo.Tests
 {
@@ -22,26 +23,21 @@ namespace CrmAdo.Tests
         {
             // Arrange
             var sql = "UPDATE contact SET firstname = 'john', lastname = 'doe' WHERE contactid = '9bf20a16-6034-48e2-80b4-8349bb80c3e2'";
-         
-            // set up fake metadata provider.
-          //  var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
-           // var fakeMetadata = GetFakeContactMetadata();
-           // fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
-            var fakeConn = MockRepository.GenerateMock<CrmDbConnection>();
-            fakeConn.Stub(a => a.MetadataProvider).Return(new FakeContactMetadataProvider());
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var cmd = new CrmDbCommand(sandbox.FakeCrmDbConnection);
+                cmd.CommandText = sql;
 
-            var cmd = new CrmDbCommand(fakeConn);
-            cmd.CommandText = sql;
+                // Act
+                var request = GetOrganizationRequest<UpdateRequest>(cmd);
 
-            // Act
-            var request = GetOrganizationRequest<UpdateRequest>(cmd);
-            
-            // Assert
-            Entity targetEntity = request.Target;
-            Assert.That(targetEntity.Attributes.ContainsKey("firstname"));
-            Assert.That((string)targetEntity.Attributes["firstname"], Is.EqualTo("john"));
-            Assert.That(targetEntity.Attributes.ContainsKey("lastname"));
-            Assert.That((string)targetEntity.Attributes["lastname"], Is.EqualTo("doe"));
+                // Assert
+                Entity targetEntity = request.Target;
+                Assert.That(targetEntity.Attributes.ContainsKey("firstname"));
+                Assert.That((string)targetEntity.Attributes["firstname"], Is.EqualTo("john"));
+                Assert.That(targetEntity.Attributes.ContainsKey("lastname"));
+                Assert.That((string)targetEntity.Attributes["lastname"], Is.EqualTo("doe"));
+            }
 
         }
 
@@ -154,19 +150,16 @@ namespace CrmAdo.Tests
             string sqlFormatString = "UPDATE contact SET " + fieldname + " = {0} WHERE contactid = '{1}'";
             var sqlWithValue = string.Format(sqlFormatString, sqlLiteralValue, existingContactGuid);
 
-            // set up fake metadata provider.
-           // var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
-           // var fakeMetadata = GetFakeContactMetadata();
-           // fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
-            var fakeConn = MockRepository.GenerateMock<CrmDbConnection>();
-            fakeConn.Stub(a => a.MetadataProvider).Return(new FakeContactMetadataProvider());
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
 
-            var cmd = new CrmDbCommand(fakeConn);
-            cmd.CommandText = sqlWithValue;
-            var request = GetOrganizationRequest<UpdateRequest>(cmd);
+                var cmd = new CrmDbCommand(sandbox.FakeCrmDbConnection);
+                cmd.CommandText = sqlWithValue;
+                var request = GetOrganizationRequest<UpdateRequest>(cmd);
 
-            Entity targetEntity = request.Target;
-            AssertAttributeIsValue<T>(targetEntity, fieldname, assertValue);
+                Entity targetEntity = request.Target;
+                AssertAttributeIsValue<T>(targetEntity, fieldname, assertValue);
+            }
         }
 
         //private CrmEntityMetadata GetFakeContactMetadata()

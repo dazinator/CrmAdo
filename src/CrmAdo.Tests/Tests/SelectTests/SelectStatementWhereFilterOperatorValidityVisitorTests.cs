@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using CrmAdo.Tests.Support;
+using CrmAdo.Tests.Sandbox;
 
 namespace CrmAdo.Tests
 {
-    [TestFixture(Category = "Select Statement", 
+    [TestFixture(Category = "Select Statement",
         Description = "Tests for ensuring suitable errors are thrown if unsupported filter operators are encountered in the sql.")]
     public class SelectStatementWhereFilterOperatorValidityVisitorTests : BaseOrganisationRequestBuilderVisitorTest
     {
@@ -26,9 +27,12 @@ namespace CrmAdo.Tests
             // Arrange
             var sql = "Select contactid, firstname, lastname From contact Where 'Julius' {0} 'Julius' and lastname {0} 'Caeser'";
             sql = string.Format(sql, sqlOperator);
-          
-            // Act
-            var queryExpression = base.GetQueryExpression(sql);
+
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                // Act
+                var queryExpression = base.GetQueryExpression(sql);
+            }
 
         }
 
