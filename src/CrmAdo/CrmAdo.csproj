@@ -207,7 +207,7 @@
     <Compile Include="Metadata\DecimalAttributeInfo.cs" />
     <Compile Include="Metadata\DoubleAttributeInfo.cs" />
     <Compile Include="Metadata\IColumnMetadata.cs" />
-    <Compile Include="Dynamics\MetadataConverter.cs" />
+    <Compile Include="Metadata\MetadataConverter.cs" />
     <Compile Include="Metadata\MoneyAttributeInfo.cs" />
     <Compile Include="Dynamics\EntityMetadataDataSet.cs">
       <DependentUpon>EntityMetadataDataSet.xsd</DependentUpon>
@@ -238,7 +238,7 @@
     <Compile Include="Dynamics\EntityMetadataBuilder.cs" />
     <Compile Include="Util\EntityUtils.cs" />
     <Compile Include="Dynamics\ExplicitConnectionStringProviderWithFallbackToConfig.cs" />
-    <Compile Include="Dynamics\FailedToConnectToCrmException.cs" />
+    <Compile Include="Exceptions\FailedToConnectToCrmException.cs" />
     <Compile Include="Dynamics\ICrmClientCredentialsProvider.cs" />
     <Compile Include="Dynamics\ICrmConnectionProvider.cs" />
     <Compile Include="Dynamics\ICrmOrganisationManager.cs" />
@@ -252,17 +252,16 @@
     <Compile Include="Util\SystemCommandParameters.cs" />
     <Compile Include="Core\ICrmMetadataNamingConventionProvider.cs" />
     <Compile Include="Util\EnumHelper.cs" />
-    <Compile Include="Visitor\BaseOrganizationRequestBuilderVisitor.cs" />
-    <Compile Include="Visitor\CreateEntityBuilderVisitor.cs" />
-    <Compile Include="Visitor\CreateAttributeRequestBuilderVisitor.cs" />
-    <Compile Include="Visitor\CreateRequestBuilderVisitor.cs" />
-    <Compile Include="Visitor\DeleteRequestBuilderVisitor.cs" />
-    <Compile Include="Visitor\OrganizationRequestBuilderVisitor.cs" />
-    <Compile Include="Visitor\RetrieveMetadataChangesRequestBuilderVisitor.cs" />
-    <Compile Include="Visitor\RetrieveMultipleRequestBuilderVisitor.cs" />
-    <Compile Include="Visitor\SqlGenerationCrmExtensions.cs" />
-    <Compile Include="Visitor\UpdateRequestBuilderVisitor.cs" />
-    <Compile Include="Visitor\VisitingCrmRequestProvider.cs" />
+    <Compile Include="Builder\BaseOrganizationRequestBuilderVisitor.cs" />
+    <Compile Include="Builder\CreateEntityBuilderVisitor.cs" />
+    <Compile Include="Builder\CreateAttributeRequestBuilderVisitor.cs" />
+    <Compile Include="Builder\CreateRequestBuilderVisitor.cs" />
+    <Compile Include="Builder\DeleteRequestBuilderVisitor.cs" />
+    <Compile Include="Builder\OrganizationRequestBuilderVisitor.cs" />
+    <Compile Include="Builder\RetrieveMetadataChangesRequestBuilderVisitor.cs" />
+    <Compile Include="Builder\RetrieveMultipleRequestBuilderVisitor.cs" />
+    <Compile Include="Builder\SqlGenerationCrmExtensions.cs" />
+    <Compile Include="Builder\UpdateRequestBuilderVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
