@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Xml;
-using CrmAdo.Dynamics.Metadata;
+using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -253,6 +253,54 @@ namespace CrmAdo.Tests
                 Assert.That(targetEntity["contactid"], Is.EqualTo(id));
 
             }
+
+
+
+        }
+
+
+        [Test(Description = "Should support Insert of a single entity with output columns")]
+        public void Should_Support_Insert_Statement_Of_Single_Entity_With_Output_Columns()
+        {
+            // Arrange
+            var sql = "INSERT INTO contact (contactid, firstname, lastname) OUTPUT INSERTED.createdon VALUES ('9bf20a16-6034-48e2-80b4-8349bb80c3e2','billy','bob')";
+
+            // set up fake metadata provider.
+            // var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
+            // var fakeMetadata = GetFakeContactMetadata();
+            //  fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
+
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+
+                var cmd = new CrmDbCommand(sandbox.FakeCrmDbConnection);
+                cmd.CommandText = sql;
+
+                // Act
+                var req = GetOrganizationRequest<ExecuteMultipleRequest>(cmd);
+                Assert.That(req, Is.Not.Null);
+                Assert.That(req.Requests.Count, Is.EqualTo(2));
+
+                var createRequest = (CreateRequest)req.Requests[0];
+                var retrieveRequest = (RetrieveRequest)req.Requests[1];
+
+                //  GetOrganizationRequest<CreateRequest>(cmd);
+
+                // Assert
+                Entity targetEntity = createRequest.Target;
+
+                Assert.That(targetEntity.Attributes.ContainsKey("contactid"));
+                Assert.That(targetEntity.Attributes.ContainsKey("firstname"));
+                Assert.That(targetEntity.Attributes.ContainsKey("lastname"));
+
+                var targetRetrieve = retrieveRequest.Target;
+                Assert.That(targetRetrieve.LogicalName, Is.EqualTo("contact"));
+                var idGuid = Guid.Parse("9bf20a16-6034-48e2-80b4-8349bb80c3e2");
+                Assert.That(targetRetrieve.Id, Is.EqualTo(idGuid));
+                Assert.That(retrieveRequest.ColumnSet.Columns.Contains("createdon"));
+
+            }
+
 
 
 

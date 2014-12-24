@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using CrmAdo.Dynamics.Metadata;
+using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk.Metadata;
 using CrmAdo.Metadata;
 using CrmAdo.Dynamics;
 using CrmAdo.Core;
+using CrmAdo.Util;
 
 namespace CrmAdo.Tests
 {
