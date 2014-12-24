@@ -8,7 +8,6 @@ using Rhino.Mocks;
 using CrmAdo.Dynamics;
 using Rhino.Mocks.Constraints;
 using Microsoft.Xrm.Sdk.Messages;
-using CrmAdo.Dynamics;
 using CrmAdo.Tests.Support;
 using CrmAdo.IoC;
 using TinyIoC;

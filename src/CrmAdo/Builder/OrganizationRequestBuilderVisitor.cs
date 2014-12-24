@@ -74,7 +74,14 @@ namespace CrmAdo.Visitor
             IVisitableBuilder visitable = item;
             visitable.Accept(visitor);
             OrgCommand.Request = visitor.Request;
-            OrgCommand.OperationType = CrmOperation.Create;
+            if(visitor.IsExecuteMultiple)
+            {
+                OrgCommand.OperationType = CrmOperation.CreateWithOutput;
+            }
+            else
+            {
+                OrgCommand.OperationType = CrmOperation.Create;
+            }          
 
         }
 
@@ -174,6 +181,17 @@ namespace CrmAdo.Visitor
             {
                 item.RightHand.Source.Accept(this);
             }
+        }
+
+        private void AddRequest(OrganizationRequest request)
+        {
+            // intelligently 
+            if(this.OrgCommand.Request == null)
+            {
+                this.OrgCommand.Request = request;
+            }
+
+
         }
 
     }

@@ -25,7 +25,7 @@ namespace CrmAdo.Tests.Tests.EfTests
             //  throw new NotImplementedException("Need to write Ef tests");
         }
 
-        public static string ConnectionString = "Url=http://crmurl:5555/orgname;Domain=domain; UserName=administrator; Password=password;";
+        public static new string ConnectionString = "Url=http://crmurl:5555/orgname;Domain=domain; UserName=administrator; Password=password;";
 
         public EntityFrameworkBasicTests()
             : base(ConnectionString)

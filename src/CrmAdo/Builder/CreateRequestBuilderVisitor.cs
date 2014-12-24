@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk;
 using CrmAdo.Core;
+using CrmAdo.Enums;
 
 namespace CrmAdo.Visitor
 {
@@ -27,17 +28,25 @@ namespace CrmAdo.Visitor
 
         public CreateRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider)
         {
-            Request = new CreateRequest();
+          
+            this.CreateRequest = new CreateRequest();
+            Request = this.CreateRequest;
             Parameters = parameters;
             MetadataProvider = metadataProvider;
         }
 
-        public CreateRequest Request { get; set; }
+        public OrganizationRequest Request { get; set; }
+        public CreateRequest CreateRequest { get; set; }
+        public RetrieveRequest RetrieveOutputRequest { get; set; }       
+
         public DbParameterCollection Parameters { get; set; }
         private ICrmMetaDataProvider MetadataProvider { get; set; }
         private EntityBuilder EntityBuilder { get; set; }
         private Column[] Columns { get; set; }
         private Column CurrentColumn { get; set; }
+        private Column[] OutputColumns { get; set; }
+
+        public bool IsExecuteMultiple { get; set; }
 
         #region Visit Methods
 
@@ -48,8 +57,39 @@ namespace CrmAdo.Visitor
             Columns = item.Columns.ToArray();
             item.Values.Accept(this);
             Columns = null;
-            Request.Target = EntityBuilder.Build();
+            CreateRequest.Target = EntityBuilder.Build();
             EntityBuilder = null;
+            OutputColumns = item.OutputColumns.ToArray();
+            // Visit output columns
+            if (OutputColumns.Any())
+            {
+                var targetEntity = CreateRequest.Target;
+                if (targetEntity.Id == Guid.Empty)
+                {
+                    throw new NotSupportedException("An OUTPUT clause can only be used in an Insert statement, if the INSERT specifies the ID for the new entity.");
+                }
+                RetrieveOutputRequest = new RetrieveRequest();
+                RetrieveOutputRequest.Target = new EntityReference(targetEntity.LogicalName, targetEntity.Id);
+
+                // Upgrade to an ExecuteMultiple.
+                var executeMultipleRequest = new ExecuteMultipleRequest();
+                executeMultipleRequest.Settings = new ExecuteMultipleSettings();
+                executeMultipleRequest.Settings.ContinueOnError = false;
+                executeMultipleRequest.Settings.ReturnResponses = true;
+                executeMultipleRequest.Requests = new OrganizationRequestCollection();
+                executeMultipleRequest.Requests.Add(CreateRequest);
+                executeMultipleRequest.Requests.Add(RetrieveOutputRequest);
+                RetrieveOutputRequest.ColumnSet = new ColumnSet();
+
+                foreach (IVisitableBuilder c in OutputColumns)
+                {
+                    c.Accept(this);
+                }
+
+                Request = executeMultipleRequest;
+                IsExecuteMultiple = true;
+            }
+
         }
 
         protected override void VisitTable(Table item)
@@ -95,6 +135,12 @@ namespace CrmAdo.Visitor
             var paramVal = GetParamaterValue(item.Value);
             var attName = this.CurrentColumn.GetColumnLogicalAttributeName();
             this.EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(paramVal);
+        }
+
+        protected override void VisitColumn(Column item)
+        {
+            RetrieveOutputRequest.ColumnSet.AddColumn(item.GetColumnLogicalAttributeName());
+            // base.VisitColumn(item);
         }
 
         #endregion

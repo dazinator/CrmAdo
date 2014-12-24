@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using CrmAdo.Dynamics;
-using CrmAdo.Dynamics.Metadata;
 using Microsoft.Xrm.Sdk.Query;
 using NUnit.Framework;
 

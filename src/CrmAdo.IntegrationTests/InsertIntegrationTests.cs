@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using CrmAdo.Dynamics;
-using CrmAdo.Dynamics.Metadata;
 using Microsoft.Xrm.Sdk.Query;
 using NUnit.Framework;
 
@@ -24,12 +23,12 @@ namespace CrmAdo.IntegrationTests
             _NewContactIds = new List<Guid>();
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            // remove the created contacts from dynamics..
+        //[TearDown]
+        //public void TearDown()
+        //{
+        //    // remove the created contacts from dynamics..
 
-        }
+        //}
 
         // NOTE: THESE TESTS REQUIRE A CONNECTION STRING TO BE SET IN THE CONFIG FILE, WITH A NAME OF 'CrmOrganisation'
         // ============================================================================================================

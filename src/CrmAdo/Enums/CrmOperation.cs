@@ -16,6 +16,7 @@ namespace CrmAdo.Enums
         Delete = 5,
         CreateEntity = 6,
         CreateAttribute = 7,
-        CreateOneToMany = 8
+        CreateOneToMany = 8,
+        CreateWithOutput = 9 // Uses an ExecuteMultiple
     }
 }

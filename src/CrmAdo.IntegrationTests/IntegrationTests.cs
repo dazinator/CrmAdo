@@ -6,10 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using CrmAdo.Dynamics;
-using CrmAdo.Dynamics.Metadata;
 using Microsoft.Xrm.Sdk.Query;
 using NUnit.Framework;
 using CrmAdo.Core;
+using CrmAdo.Util;
 
 namespace CrmAdo.IntegrationTests
 {
@@ -284,8 +284,8 @@ namespace CrmAdo.IntegrationTests
             catch (Exception e)
             {
                 // throw;
+                Console.Write(e.Message);
             }
-
 
             var deleteMaxPlanck = string.Format(sqlFormatString, Guid.Parse("5f90afbb-41b1-e311-9351-6c3be5be9f98"));
             try

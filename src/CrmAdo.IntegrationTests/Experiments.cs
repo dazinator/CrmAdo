@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using CrmAdo.Dynamics;
-using CrmAdo.Dynamics.Metadata;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Client;
 using Microsoft.Xrm.Sdk;
@@ -17,6 +16,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 using System.IO;
 using System.Data.SqlClient;
 using System.Data;
+using CrmAdo.Util;
 
 namespace CrmAdo.IntegrationTests
 {
