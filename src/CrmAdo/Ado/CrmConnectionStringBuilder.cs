@@ -13,7 +13,7 @@ using Microsoft.Xrm.Client.Configuration;
 using System.Diagnostics;
 using CrmAdo.DesignTime;
 
-namespace CrmAdo.Ado
+namespace CrmAdo
 {
     /// <summary>
     /// A Connection string builder for Dynamics Crm connection strings.

@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrmAdo
+namespace CrmAdo.Core
 {
     public interface ISchemaCollectionsProvider
     {

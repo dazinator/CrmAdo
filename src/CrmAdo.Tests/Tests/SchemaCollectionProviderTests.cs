@@ -4,6 +4,7 @@ using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk;
 using NUnit.Framework;
 using Rhino.Mocks;
+using CrmAdo.Core;
 
 namespace CrmAdo.Tests
 {

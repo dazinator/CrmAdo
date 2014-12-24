@@ -17,12 +17,9 @@ namespace CrmAdo.IoC
         {
             var container = new TinyIoCContainer();
             container.Register<ICrmServiceProvider, CrmServiceProvider>().AsMultiInstance();
-            container.Register<ICrmMetaDataProvider, InMemoryCachedCrmMetaDataProvider>().AsMultiInstance(); 
+            container.Register<ICrmMetaDataProvider, InMemoryCachedCrmMetaDataProvider>().AsMultiInstance();
 
-            container.Register<ISchemaCollectionsProvider, SchemaCollectionsProvider>(); // singleton instance.
-
-            container.Register<ICrmCommandExecutor, CrmCommandExecutor>().AsMultiInstance(); ;
-            container.Register<ICrmRequestProvider, VisitingCrmRequestProvider>().AsMultiInstance(); ;
+            container.Register<ISchemaCollectionsProvider, SchemaCollectionsProvider>(); // singleton instance.         
 
             container.Register<IDynamicsAttributeTypeProvider, DynamicsAttributeTypeProvider>(); // singleton instance.
             container.Register<ICrmMetadataNamingConventionProvider, CrmAdoCrmMetadataNamingProvider>(); // singleton instance.
@@ -30,8 +27,19 @@ namespace CrmAdo.IoC
             container.Register<ICrmClientCredentialsProvider, CrmClientCredentialsProvider>();  // singleton instance.
             container.Register<ICrmConnectionProvider, ExplicitConnectionStringProviderWithFallbackToConfig>(); // singleton instance.
 
+            IOrgCommandExecutor commandExecutor = CrmOrgCommandExecutor.Instance;
+            container.Register<IOrgCommandExecutor>(commandExecutor); // singleton instance.
+
+            container.Register<IOrganisationCommandProvider, SqlGenerationOrganizationCommandProvider>().AsMultiInstance(); ;
+
             container.Register<ICrmOrganisationManager, CrmOrganisationManager>();
             container.Register<IEntityMetadataRepository, EntityMetadataRepository>();
+
+            // When CrmDbCommands are resolved, use the contructor that specifies a null connection, but provide rest of dependencies from container.
+            // Issue raised: https://github.com/grumpydev/TinyIoC/issues/70
+            //container.Register<CrmDbCommand>().UsingConstructor(() => new CrmDbCommand(null as CrmDbConnection, container.Resolve<IOrgCommandExecutor>(), container.Resolve<IOrganisationCommandProvider>()));
+            //var resolve = container.Resolve<CrmDbCommand>();
+
             return container;
         }
     }

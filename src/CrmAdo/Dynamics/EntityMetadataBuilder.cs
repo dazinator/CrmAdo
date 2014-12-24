@@ -4,7 +4,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 using System;
 using System.Collections.Generic;
 
-namespace CrmAdo.Dynamics.Metadata
+namespace CrmAdo.Dynamics
 {
     /// <summary>
     /// Single responsbility: To provide a fluent API for constructing Crm Entity Metadata.

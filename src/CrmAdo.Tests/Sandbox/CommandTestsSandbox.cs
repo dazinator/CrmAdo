@@ -16,9 +16,7 @@ namespace CrmAdo.Tests.Sandbox
             FakeCrmDbConnection = this.RegisterMockInstance<CrmDbConnection>();           
         }
 
-
         public CrmDbConnection FakeCrmDbConnection { get; private set; }
-
 
         public static CommandTestsSandbox Create()
         {

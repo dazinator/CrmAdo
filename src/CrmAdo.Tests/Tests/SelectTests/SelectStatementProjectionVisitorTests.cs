@@ -19,7 +19,7 @@ namespace CrmAdo.Tests
             {
 
                 // Act
-                var queryExpression = GetQueryExpression(sql);
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
                 // Assert
                 Assert.That(queryExpression.ColumnSet.AllColumns == true);
                 Assert.That(queryExpression.EntityName == "contact");
@@ -36,7 +36,7 @@ namespace CrmAdo.Tests
             {
 
                 // Act
-                var queryExpression = GetQueryExpression(sql);
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
                 // Assert
                 Assert.That(queryExpression.ColumnSet.AllColumns == false);
                 Assert.That(queryExpression.ColumnSet.Columns[0] == "contactid");

@@ -5,6 +5,7 @@ using CrmAdo.Dynamics.Metadata;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using CrmAdo.Metadata;
+using CrmAdo.Core;
 
 namespace CrmAdo.Dynamics
 {

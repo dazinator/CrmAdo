@@ -1,4 +1,4 @@
-﻿namespace CrmAdo.Dynamics.Metadata
+﻿namespace CrmAdo.Dynamics
 {
     /// <summary>
     /// Single responsbility: To provide an entrance point into the fluent API for constructing / building metadata for an entity.

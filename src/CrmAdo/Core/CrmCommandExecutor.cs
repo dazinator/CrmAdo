@@ -13,49 +13,68 @@ using CrmAdo.Results;
 using CrmAdo.Util.DynamicLinq;
 using System.ComponentModel;
 using CrmAdo.Metadata;
+using CrmAdo.Dynamics;
+using SQLGeneration.Generators;
+using SQLGeneration.Builders;
+using CrmAdo.Core;
+using CrmAdo.Enums;
 
-namespace CrmAdo
+namespace CrmAdo.Core
 {
 
-    public class CrmCommandExecutor : ICrmCommandExecutor
+    public class CrmOrgCommandExecutor : IOrgCommandExecutor
     {
-        private ICrmRequestProvider _CrmRequestProvider;
-        private ICrmMetaDataProvider _MetadataProvider;
+        //   private ICrmMetaDataProvider _MetadataProvider;
+
+        private static readonly CrmOrgCommandExecutor _Instance = new CrmOrgCommandExecutor();
+
+        private CrmOrgCommandExecutor() { }
+
+        public static CrmOrgCommandExecutor Instance
+        {
+            get
+            {
+                return _Instance;
+            }
+        }
 
         #region Constructor
 
-        public CrmCommandExecutor(CrmDbConnection connection)
-            : this(new VisitingCrmRequestProvider(), connection)
-        {
-        }
+        //public CrmOrgCommandExecutor(ICrmMetaDataProvider metadataProvider)
+        //{
+        //    if (metadataProvider == null)
+        //    {
+        //        throw new ArgumentNullException("metadataProvider");
+        //        // 
+        //    }
+        //    _MetadataProvider = metadataProvider;
+        //}
 
-        public CrmCommandExecutor(ICrmRequestProvider requestProvider, CrmDbConnection connection)
-        {
-            _CrmRequestProvider = requestProvider;
-            // _SqlStatementTypeChecker = sqlStatementTypeChecker;
-            if (connection != null)
-            {
-                _MetadataProvider = connection.MetadataProvider;
-            }
-        }
         #endregion
 
         #region ICrmCommandExecutor
 
-        public ResultSet ExecuteCommand(CrmDbCommand command, CommandBehavior behavior)
+        public ResultSet ExecuteCommand(IOrgCommand command, CommandBehavior behaviour)
         {
             //TODO: Should process the command text, and execute a query to dynamics, returning the Entity Collection results.
             // what would these command types mean in terms of dynamics queries?
+            if (command == null)
+            {
+                throw new ArgumentNullException("command");
+            }
+            if (command.DbCommand == null)
+            {
+                throw new InvalidOperationException("CrmDbCommand is null");
+            }
+            var dbCommand = command.DbCommand;
             ResultSet results = null;
-            
+
             // if ((behavior & CommandBehavior.KeyInfo) > 0)
-            switch (command.CommandType)
+            switch (command.DbCommand.CommandType)
             {
                 case CommandType.Text:
-                    results = ProcessTextCommand(command, behavior);
-                    break;
                 case CommandType.TableDirect:
-                    results = ProcessTableDirectCommand(command, behavior);
+                    results = ExecuteOrganisationCommand(command, command.CommandBehavior);
                     break;
                 case CommandType.StoredProcedure:
                     results = ProcessStoredProcedureCommand(command);
@@ -65,57 +84,58 @@ namespace CrmAdo
             return results;
         }
 
-        public int ExecuteNonQueryCommand(CrmDbCommand command)
+        public EntityResultSet CreateEntityResultSet(IOrgCommand command)
+        {
+            var resultSet = new EntityResultSet(command.DbCommand, command.Request, command.Columns);
+            return resultSet;
+        }
+
+        public int ExecuteNonQueryCommand(IOrgCommand command)
         {
             // You can use ExecuteNonQuery to perform catalog operations (for example, querying the structure of a database or creating database objects such as tables), or to change the data in a database by executing UPDATE, INSERT, or DELETE statements.
             // Although ExecuteNonQuery does not return any rows, any output parameters or return values mapped to parameters are populated with data.
             // For UPDATE, INSERT, and DELETE statements, the return value is the number of rows affected by the command. For all other types of statements, the return value is -1.
-            List<ColumnMetadata> columnMetadata = null;
-            var request = _CrmRequestProvider.GetOrganizationRequest(command, out columnMetadata);
-            var createRequest = request as CreateRequest;
-            if (createRequest != null)
+            if (command == null)
             {
-                //todo check for output paramater named after id, and set it..
-                var results = ProcessCreateRequest(command, createRequest);
-                return results.ResultCount();
+                throw new ArgumentNullException("command");
+            }
+            if (command.DbCommand == null)
+            {
+                throw new InvalidOperationException("CrmDbCommand is null");
             }
 
-            var updateRequest = request as UpdateRequest;
-            if (updateRequest != null)
+            switch (command.OperationType)
             {
-                var results = ProcessUpdateRequest(command, updateRequest);
-                return results.ResultCount();
+                case CrmOperation.Create:
+                    var createResult = ProcessCreateRequest(command);
+                    return createResult.ResultCount();
+
+                case CrmOperation.Update:
+
+                    var updateResult = ProcessUpdateRequest(command);
+                    return updateResult.ResultCount();
+
+                case CrmOperation.Delete:
+
+                    var deleteResult = ProcessDeleteRequest(command);
+                    return deleteResult.ResultCount();
+
+                case CrmOperation.CreateAttribute:
+
+                    ProcessCreateAttributeRequest(command);
+                    return -1;
+
+                case CrmOperation.CreateEntity:
+
+                    ProcessCreateEntityRequest(command);
+                    return -1;
+
+                case CrmOperation.CreateOneToMany:
+
+                    ProcessCreateOnetoManyRequest(command);
+                    return -1;
             }
 
-            var deleteRequest = request as DeleteRequest;
-            if (deleteRequest != null)
-            {
-                var results = ProcessDeleteRequest(command, deleteRequest);
-                return results.ResultCount();
-            }
-
-            var createEntityRequest = request as CreateEntityRequest;
-            if (createEntityRequest != null)
-            {
-                var results = ProcessCreateEntityRequest(command, createEntityRequest);
-                return -1;
-            }
-
-            var createAttributeRequest = request as CreateAttributeRequest;
-            if (createAttributeRequest != null)
-            {
-                var results = ProcessCreateAttributeRequest(command, createAttributeRequest);
-                return -1;
-            }
-
-            var createOneToManyRequest = request as CreateOneToManyRequest;
-            if (createOneToManyRequest != null)
-            {
-                var results = ProcessCreateOnetoManyRequest(command, createOneToManyRequest);
-                return -1;
-            }
-
-            // we don't yet support other crm messages.
             throw new NotSupportedException();
 
             // return -1;
@@ -131,92 +151,79 @@ namespace CrmAdo
             }
         }
 
-        private ResultSet ProcessTableDirectCommand(CrmDbCommand command, CommandBehavior behavior)
-        {
-            // The command should be the name of a single entity.
-            var entityName = command.CommandText;
-            if (entityName.Contains(" "))
-            {
-                throw new ArgumentException("When CommandType is TableDirect, CommandText should be the name of an entity.");
-            }
-
-            var orgService = command.CrmDbConnection.OrganizationService;
-            EntityResultSet resultSet;
-            // Todo: possibly support paging by returning a PagedEntityCollection implementation? 
-            bool schemaOnly = (behavior & CommandBehavior.SchemaOnly) > 0;
-            if (!schemaOnly)
-            {
-                var request = new RetrieveMultipleRequest()
-                    {
-                        Query = new QueryExpression(entityName) { ColumnSet = new ColumnSet(true), PageInfo = new PagingInfo() { ReturnTotalRecordCount = true } }
-                    };
-                var response = (RetrieveMultipleResponse)orgService.Execute(request);
-                resultSet = new EntityResultSet(command, request, null);
-                AssignResponseParameter(command, response);
-                resultSet.Results = response.EntityCollection;
-            }
-            else
-            {
-                resultSet = new EntityResultSet(command, null, null);
-            }
-            if (_MetadataProvider != null)
-            {
-                resultSet.ColumnMetadata = new List<ColumnMetadata>();
-                resultSet.ColumnMetadata.AddRange(from a in _MetadataProvider.GetEntityMetadata(entityName).Attributes select new ColumnMetadata(a));
-                resultSet.ColumnMetadata.Reverse();
-            }
-            return resultSet;
-        }
-
-        private ResultSet ProcessTextCommand(CrmDbCommand command, CommandBehavior behavior)
+        private ResultSet ExecuteOrganisationCommand(IOrgCommand orgCommand, CommandBehavior behavior)
         {
             //  string commandText = "SELECT CustomerId, FirstName, LastName, Created FROM Customer";
+            //   List<ColumnMetadata> columnMetadata = null;
 
+            var command = orgCommand.DbCommand;
             bool schemaOnly = (behavior & CommandBehavior.SchemaOnly) > 0;
-            List<ColumnMetadata> columnMetadata = null;
-            var request = _CrmRequestProvider.GetOrganizationRequest(command, out columnMetadata);
 
-            var retrieveMultipleRequest = request as RetrieveMultipleRequest;
-            if (retrieveMultipleRequest != null)
+            var request = orgCommand.Request;
+            ResultSet resultSet = null; // = CreateEntityResultSet(orgCommand);
+
+            switch (orgCommand.OperationType)
             {
-                var resultSet = new EntityResultSet(command, retrieveMultipleRequest, columnMetadata);
-                ProcessRetrieveMultiple(command, retrieveMultipleRequest, resultSet, schemaOnly);
-                return resultSet;
+                case CrmOperation.RetrieveMultiple:
+                    resultSet = ExecuteRetrieveMultipleCommand(orgCommand, schemaOnly);
+                    break;
+                case CrmOperation.RetrieveMetadataChanges:
+                    resultSet = ProcessRetrieveMetadataChangesRequest(orgCommand, schemaOnly);
+                    break;
+                case CrmOperation.Create:
+                    resultSet = ProcessCreateRequest(orgCommand);
+                    break;
+                case CrmOperation.Update:
+                    resultSet = ProcessUpdateRequest(orgCommand);
+                    break;
+                case CrmOperation.Delete:
+                    resultSet = ProcessDeleteRequest(orgCommand);
+                    break;
+                case CrmOperation.CreateAttribute:
+                    resultSet = ProcessCreateAttributeRequest(orgCommand);
+                    break;
+                case CrmOperation.CreateEntity:
+                    resultSet = ProcessCreateEntityRequest(orgCommand);
+                    break;
+                case CrmOperation.CreateOneToMany:
+                    resultSet = ProcessCreateOnetoManyRequest(orgCommand);
+                    break;
             }
 
-            var createRequest = request as CreateRequest;
-            if (createRequest != null)
+            if (resultSet == null)
             {
-                return ProcessCreateRequest(command, createRequest);
+                throw new NotSupportedException("Sorry, was not able to translate the command into the appropriate CRM SDK Organization Request message.");
             }
 
-            var updateRequest = request as UpdateRequest;
-            if (updateRequest != null)
-            {
-                return ProcessUpdateRequest(command, updateRequest);
-            }
-
-            var deleteRequest = request as DeleteRequest;
-            if (deleteRequest != null)
-            {
-                return ProcessDeleteRequest(command, deleteRequest);
-            }
-
-            var retrieveMetadataChangesRequest = request as RetrieveMetadataChangesRequest;
-            if (retrieveMetadataChangesRequest != null)
-            {
-                var resultSet = new EntityMetadataResultSet(command, retrieveMetadataChangesRequest, columnMetadata);
-                ProcessRetrieveMetadataChangesRequest(command, retrieveMetadataChangesRequest, resultSet, schemaOnly);
-                return resultSet;
-            }
-
-            throw new NotSupportedException("Sorry, was not able to turn your command into the appropriate Dynamics SDK Organization Request message.");
+            return resultSet;
 
         }
 
-        private ResultSet ProcessDeleteRequest(CrmDbCommand command, DeleteRequest deleteRequest)
+        private ResultSet ExecuteRetrieveMultipleCommand(IOrgCommand orgCommand, bool schemaOnly = false)
         {
+            var orgService = orgCommand.DbCommand.CrmDbConnection.OrganizationService;
+            var entityResultSet = CreateEntityResultSet(orgCommand);
+            if (!schemaOnly)
+            {
+                var response = orgService.Execute(orgCommand.Request);
+                var retrieveMultipleResponse = response as RetrieveMultipleResponse;
+                if (retrieveMultipleResponse != null)
+                {
+                    AssignResponseParameter(orgCommand.DbCommand, response);
+                    entityResultSet.Results = retrieveMultipleResponse.EntityCollection;
+                }
+            }
+            return entityResultSet;
+            //PopulateMetadata(resultSet, retrieveMultipleRequest.Query as QueryExpression);
+            // return resultSet;
+        }
+
+        private ResultSet ProcessDeleteRequest(IOrgCommand orgCommand)
+        {
+            var command = orgCommand.DbCommand;
             var orgService = command.CrmDbConnection.OrganizationService;
+            var deleteRequest = (DeleteRequest)orgCommand.Request;
+
             var response = orgService.Execute(deleteRequest);
             AssignResponseParameter(command, response);
             var resultSet = new EntityResultSet(command, deleteRequest, null);
@@ -229,15 +236,17 @@ namespace CrmAdo
             return resultSet;
         }
 
-        private ResultSet ProcessUpdateRequest(CrmDbCommand command, UpdateRequest updateRequest)
+        private ResultSet ProcessUpdateRequest(IOrgCommand orgCommand)
         {
+            var command = orgCommand.DbCommand;
             var orgService = command.CrmDbConnection.OrganizationService;
+            var updateRequest = (UpdateRequest)orgCommand.Request;
+
             var response = orgService.Execute(updateRequest);
             var resultSet = new EntityResultSet(command, updateRequest, null);
             var updateResponse = response as UpdateResponse;
             if (updateResponse != null)
             {
-               
                 AssignResponseParameter(command, response);
                 var result = updateRequest.Target;
                 resultSet.Results = new EntityCollection(new List<Entity>(new Entity[] { result }));
@@ -245,60 +254,71 @@ namespace CrmAdo
             return resultSet;
         }
 
-        private ResultSet ProcessCreateRequest(CrmDbCommand command, CreateRequest createRequest)
+        private ResultSet ProcessCreateRequest(IOrgCommand orgCommand)
         {
+            var command = orgCommand.DbCommand;
             var orgService = command.CrmDbConnection.OrganizationService;
-            var response = orgService.Execute(createRequest);
-            var resultSet = new EntityResultSet(command, createRequest, null);
+
+            // Execute the request and obtain the result.
+            var response = orgService.Execute(orgCommand.Request);
+
+            var resultSet = CreateEntityResultSet(orgCommand);
+
             var createResponse = response as CreateResponse;
             if (createResponse != null)
             {
                 AssignResponseParameter(command, response);
+
                 // for execute reader and execute scalar purposes, we provide a result that has the newly created id of the entity.
-                var result = new Entity(createRequest.Target.LogicalName);
-                var idattname = string.Format("{0}id", createRequest.Target.LogicalName);
+                var request = (CreateRequest)orgCommand.Request;
+                var result = new Entity(request.Target.LogicalName);
+
+                // Populate results for execute reader and execute scalar purposes.
+                var idattname = string.Format("{0}id", request.Target.LogicalName);
                 result[idattname] = createResponse.id;
-                result.Id = createResponse.id;                
+                result.Id = createResponse.id;
                 resultSet.Results = new EntityCollection(new List<Entity>(new Entity[] { result }));
 
-                // We populate metadata regarding the columns in the results. In this case its just the id attribute column for the inserted record.
-                if (_MetadataProvider != null)
-                {
-                    var columns = new List<ColumnMetadata>();
-                    var entityMeta = _MetadataProvider.GetEntityMetadata(createRequest.Target.LogicalName);
-                    columns.AddRange((from c in entityMeta.Attributes
-                                      join s in result.Attributes.Select(a => a.Key)
-                                          on c.LogicalName equals s
-                                      select new ColumnMetadata(c)).Reverse());
-                    resultSet.ColumnMetadata = columns;
-                }
+                // Add column metadata for the results we are returning, in this case it's just the id.
+                string[] resultattributes = new string[] { idattname };
+                AddResultColumnMetadata(orgCommand, resultSet, request.Target.LogicalName, resultattributes);
+
 
             }
             return resultSet;
         }
 
-        private void ProcessRetrieveMultiple(CrmDbCommand command, RetrieveMultipleRequest retrieveMultipleRequest, EntityResultSet resultSet, bool schemaOnly = false)
+        private void AddResultColumnMetadata(IOrgCommand orgCommand, EntityResultSet results, string entityName, string[] attributeNames)
         {
-            var orgService = command.CrmDbConnection.OrganizationService;
-            if (!schemaOnly)
+            var metadataProvider = orgCommand.DbCommand.CrmDbConnection.MetadataProvider;
+            if (metadataProvider != null)
             {
-                var response = orgService.Execute(retrieveMultipleRequest);
-                var retrieveMultipleResponse = response as RetrieveMultipleResponse;
-                if (retrieveMultipleResponse != null)
+                if (results.HasResults())
                 {
-                    AssignResponseParameter(command, response);
-                    resultSet.Results = retrieveMultipleResponse.EntityCollection;
+                    if (results.ColumnMetadata == null)
+                    {
+                        results.ColumnMetadata = new List<ColumnMetadata>(); ;
+                    }
+
+                    var entityMeta = metadataProvider.GetEntityMetadata(entityName);
+                    results.ColumnMetadata.AddRange(
+                        (from c in attributeNames
+                         join s in entityMeta.Attributes
+                         on c equals s.LogicalName
+                         select new ColumnMetadata(s)));
                 }
             }
-            //PopulateMetadata(resultSet, retrieveMultipleRequest.Query as QueryExpression);
-            // return resultSet;
         }
 
-        private ResultSet ProcessCreateEntityRequest(CrmDbCommand command, CreateEntityRequest createEntityRequest)
+        private ResultSet ProcessCreateEntityRequest(IOrgCommand orgCommand)
         {
+            var command = orgCommand.DbCommand;
             var orgService = command.CrmDbConnection.OrganizationService;
+            var createEntityRequest = (CreateEntityRequest)orgCommand.Request;
+
             var response = orgService.Execute(createEntityRequest);
-            var resultSet = new EntityResultSet(command, createEntityRequest, null);
+            var resultSet = CreateEntityResultSet(orgCommand);
+
             var createResponse = response as CreateEntityResponse;
             if (createResponse != null)
             {
@@ -320,11 +340,12 @@ namespace CrmAdo
                 //col.ColumnName = "primaryattributeid";
                 //col.LogicalAttributeName = "primaryattributeid";
 
-                // We populate metadata regarding the columns in the results. In this case its just the id attribute column for the inserted record.
-                //if (_MetadataProvider != null)
+                //  We populate metadata regarding the columns in the results. In this case its just the id attribute column for the inserted record.
+                //var metaDataProvider = orgCommand.DbCommand.CrmDbConnection.MetadataProvider;
+                //if (metaDataProvider != null)
                 //{
                 //    var columns = new List<ColumnMetadata>();
-                //    var entityMeta = _MetadataProvider.GetEntityMetadata("");
+                //    var entityMeta = metaDataProvider.GetEntityMetadata(createEntityRequest.Entity.LogicalName);
                 //    columns.AddRange((from c in entityMeta.Attributes
                 //                      join s in result.Attributes.Select(a => a.Key)
                 //                          on c.LogicalName equals s
@@ -336,11 +357,15 @@ namespace CrmAdo
             return resultSet;
         }
 
-        private object ProcessCreateOnetoManyRequest(CrmDbCommand command, CreateOneToManyRequest createOneToManyRequest)
+        private ResultSet ProcessCreateOnetoManyRequest(IOrgCommand orgCommand)
         {
+            var command = orgCommand.DbCommand;
             var orgService = command.CrmDbConnection.OrganizationService;
+            var createOneToManyRequest = (CreateOneToManyRequest)orgCommand.Request;
+
             var response = orgService.Execute(createOneToManyRequest);
-            var resultSet = new EntityResultSet(command, createOneToManyRequest, null);
+            var resultSet = CreateEntityResultSet(orgCommand);
+
             var createResponse = response as CreateOneToManyResponse;
             if (createResponse != null)
             {
@@ -356,9 +381,12 @@ namespace CrmAdo
             return resultSet;
         }
 
-        private object ProcessCreateAttributeRequest(CrmDbCommand command, CreateAttributeRequest createAttributeRequest)
+        private ResultSet ProcessCreateAttributeRequest(IOrgCommand orgCommand)
         {
+            var command = orgCommand.DbCommand;
             var orgService = command.CrmDbConnection.OrganizationService;
+            var createAttributeRequest = (CreateAttributeRequest)orgCommand.Request;
+
             var response = orgService.Execute(createAttributeRequest);
             var resultSet = new EntityResultSet(command, createAttributeRequest, null);
             var createResponse = response as CreateAttributeResponse;
@@ -375,14 +403,18 @@ namespace CrmAdo
             return resultSet;
         }
 
-        private void ProcessRetrieveMetadataChangesRequest(CrmDbCommand command, RetrieveMetadataChangesRequest retrieveMetadataChangesRequest, EntityMetadataResultSet resultSet, bool schemaOnly = false)
+        private ResultSet ProcessRetrieveMetadataChangesRequest(IOrgCommand orgCommand, bool schemaOnly = false)
         {
+            var command = orgCommand.DbCommand;
             var orgService = command.CrmDbConnection.OrganizationService;
 
             CrmAdo.EntityMetadataResultSet.DenormalisedMetadataResult[] results = null;
-            EntityMetadataDataSet ds = new EntityMetadataDataSet();
+            // EntityMetadataDataSet ds = new EntityMetadataDataSet();
+            var metadataResultSet = new EntityMetadataResultSet(command, orgCommand.Request, orgCommand.Columns);
+
             if (!schemaOnly)
             {
+                var retrieveMetadataChangesRequest = (RetrieveMetadataChangesRequest)orgCommand.Request;
                 var response = orgService.Execute(retrieveMetadataChangesRequest);
                 var retrieveMultipleResponse = response as RetrieveMetadataChangesResponse;
                 if (retrieveMultipleResponse != null)
@@ -412,6 +444,7 @@ namespace CrmAdo
                                    from o in (r.OneToManyRelationships ?? Enumerable.Empty<OneToManyRelationshipMetadata>()).Union(r.ManyToOneRelationships ?? Enumerable.Empty<OneToManyRelationshipMetadata>()).DefaultIfEmpty()
                                    from m in (r.ManyToManyRelationships ?? Enumerable.Empty<ManyToManyRelationshipMetadata>()).DefaultIfEmpty()
                                    select new CrmAdo.EntityMetadataResultSet.DenormalisedMetadataResult { EntityMetadata = r, AttributeMetadata = attFactory.Create(a), OneToManyRelationship = o, ManyToManyRelationship = m }).ToArray();
+
 
                         // var dataResults = resul
 
@@ -458,23 +491,29 @@ namespace CrmAdo
 
 
 
-                        resultSet.Results = results;
+                        metadataResultSet.Results = results;
+
                     }
 
                 }
             }
 
+            return metadataResultSet;
+
             //var resultSet = new EntityMetadataResultSet(command, retrieveMetadataChangesRequest, results);
             // PopulateMetadata(resultSet, retrieveMetadataChangesRequest.Query);
             // return resultSet;
         }
-                       
-        private EntityResultSet ProcessStoredProcedureCommand(CrmDbCommand command)
+
+        private EntityResultSet ProcessStoredProcedureCommand(IOrgCommand command)
         {
             // What would a stored procedure be in terms of Dynamics Crm SDK?
             // Perhaps this could be used for exectuign fetch xml commands...?
             throw new System.NotImplementedException();
         }
+
+
+
     }
 
 }

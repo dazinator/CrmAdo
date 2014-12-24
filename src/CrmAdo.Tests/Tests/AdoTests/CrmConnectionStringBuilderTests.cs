@@ -5,7 +5,6 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using NUnit.Framework;
 using Rhino.Mocks;
-using CrmAdo.Ado;
 
 namespace CrmAdo.Tests
 {

@@ -786,7 +786,7 @@ namespace CrmAdo.IntegrationTests
 
 
                 var createTableSql = "CREATE TABLE ExperimentWithOutputClause (ID UniqueIdentifier NOT NULL PRIMARY KEY DEFAULT NewSequentialId(), CreatedOn DateTime NOT NULL DEFAULT GetUtcDate(), ModifiedOn DATETIME NULL)";
-                
+
                 var createTableCommand = conn.CreateCommand();
                 createTableCommand.CommandText = createTableSql;
                 createTableCommand.ExecuteNonQuery();
@@ -801,11 +801,108 @@ namespace CrmAdo.IntegrationTests
                 {
                     Console.WriteLine(outputResults.GetGuid(0));
                     Console.WriteLine(outputResults.GetDateTime(1));
-                }               
+                }
 
                 conn.Close();
             }
 
+        }
+
+        [Category("Experimentation")]
+        [Test(Description = "Experiment for perforing an Insert, and a Retrieve in a Bulk Request.")]
+        public void Should_Be_Able_To_Insert_And_Retrieve_Inserted_Account_In_Single_Bulk_Request()
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var orgService = conn.OrganizationService;
+
+                // Create an ExecuteMultipleRequest object.
+                var multipleRequests = new ExecuteMultipleRequest()
+                {
+                    // Assign settings that define execution behavior: continue on error, return responses. 
+                    Settings = new ExecuteMultipleSettings()
+                    {
+                        ContinueOnError = false,
+                        ReturnResponses = true
+                    },
+                    // Create an empty organization request collection.
+                    Requests = new OrganizationRequestCollection()
+                };
+
+                var entity = new Entity("account");
+                entity.Id = Guid.NewGuid();
+                entity["name"] = "experimental test";
+
+                CreateRequest createRequest = new CreateRequest
+                {
+                    Target = entity
+                };
+
+                RetrieveRequest retrieveRequest = new RetrieveRequest
+                {
+                    Target = new EntityReference(entity.LogicalName, entity.Id),
+                    ColumnSet = new ColumnSet("createdon")
+                };
+
+                multipleRequests.Requests.Add(createRequest);
+                multipleRequests.Requests.Add(retrieveRequest);
+
+                // Execute all the requests in the request collection using a single web method call.
+                ExecuteMultipleResponse responseWithResults = (ExecuteMultipleResponse)orgService.Execute(multipleRequests);
+                             
+                var createResponseItem = responseWithResults.Responses[0];
+                CreateResponse createResponse = null;
+                if (createResponseItem.Response != null)
+                {
+                    createResponse = (CreateResponse)createResponseItem.Response;
+                }
+
+                var retrieveResponseItem = responseWithResults.Responses[1];
+
+                RetrieveResponse retrieveResponse = null;
+                if (retrieveResponseItem.Response != null)
+                {
+                    retrieveResponse = (RetrieveResponse)retrieveResponseItem.Response;
+                }
+
+                Console.Write(retrieveResponse.Entity["createdon"]);
+
+            }
+
+          
+
+        }
+
+
+        /// <summary>
+        /// Display the response of an organization message request.
+        /// </summary>
+        /// <param name="organizationRequest">The organization message request.</param>
+        /// <param name="organizationResponse">The organization message response.</param>
+        private void DisplayResponse(OrganizationRequest organizationRequest, OrganizationResponse organizationResponse)
+        {
+            Console.WriteLine("Returned entity " + ((Entity)organizationRequest.Parameters["Target"])["name"]
+                + " with account id as " + organizationResponse.Results["id"].ToString());
+            //     + " with " + organizationResponse.Results["id"].ToString());
+
+
+            // _newAccountIds.Add(new Guid(organizationResponse.Results["id"].ToString()));
+        }
+
+        /// <summary>
+        /// Display the fault that resulted from processing an organization message request.
+        /// </summary>
+        /// <param name="organizationRequest">The organization message request.</param>
+        /// <param name="count">nth request number from ExecuteMultiple request</param>
+        /// <param name="organizationServiceFault">A WCF fault.</param>
+        private void DisplayFault(OrganizationRequest organizationRequest, int count,
+            OrganizationServiceFault organizationServiceFault)
+        {
+            Console.WriteLine("A fault occurred when processing {1} request, at index {0} in the request collection with a fault message: {2}", count + 1,
+                organizationRequest.RequestName,
+                organizationServiceFault.Message);
         }
 
 

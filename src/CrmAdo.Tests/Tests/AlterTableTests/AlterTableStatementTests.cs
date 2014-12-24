@@ -1,4 +1,5 @@
-﻿using CrmAdo.Tests.Support;
+﻿using CrmAdo.Tests.Sandbox;
+using CrmAdo.Tests.Support;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -27,53 +28,56 @@ namespace CrmAdo.Tests
 
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} BIT", entityName, newColumnName);
 
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
 
-            var attMetadata = request.Attribute;
+                var attMetadata = request.Attribute;
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(BooleanAttributeMetadata)));
+                Assert.That(attMetadata, Is.AssignableTo(typeof(BooleanAttributeMetadata)));
 
-            var attMeta = (BooleanAttributeMetadata)attMetadata;
+                var attMeta = (BooleanAttributeMetadata)attMetadata;
 
-            Assert.That(attMeta.AttributeType == AttributeTypeCode.Boolean);
-            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.BooleanType);
-            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(attMeta.DisplayName, Is.Not.Null);
-            // Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+                Assert.That(attMeta.AttributeType == AttributeTypeCode.Boolean);
+                Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.BooleanType);
+                Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(attMeta.DisplayName, Is.Not.Null);
+                // Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
-            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            //  Assert.That(attMeta.DefaultValue, Is.EqualTo(int.MinValue));
-            // CrmAdo should create a default yes / no option set, whihc should be able to be altered later if desired. 
-            Assert.That(attMeta.OptionSet, Is.Not.Null);
-            Assert.That(attMeta.OptionSet.TrueOption, Is.Not.Null);
-            Assert.That(attMeta.OptionSet.FalseOption, Is.Not.Null);
+                Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                //  Assert.That(attMeta.DefaultValue, Is.EqualTo(int.MinValue));
+                // CrmAdo should create a default yes / no option set, whihc should be able to be altered later if desired. 
+                Assert.That(attMeta.OptionSet, Is.Not.Null);
+                Assert.That(attMeta.OptionSet.TrueOption, Is.Not.Null);
+                Assert.That(attMeta.OptionSet.FalseOption, Is.Not.Null);
 
-            // True and False values should be specified.
-            Assert.That(attMeta.OptionSet.TrueOption.Value, Is.GreaterThan(-1));
-            Assert.That(attMeta.OptionSet.FalseOption.Value, Is.GreaterThan(-1));
-            // True and False values shouldn't be the same.
-            Assert.That(attMeta.OptionSet.FalseOption.Value, Is.Not.EqualTo(attMeta.OptionSet.TrueOption.Value));
+                // True and False values should be specified.
+                Assert.That(attMeta.OptionSet.TrueOption.Value, Is.GreaterThan(-1));
+                Assert.That(attMeta.OptionSet.FalseOption.Value, Is.GreaterThan(-1));
+                // True and False values shouldn't be the same.
+                Assert.That(attMeta.OptionSet.FalseOption.Value, Is.Not.EqualTo(attMeta.OptionSet.TrueOption.Value));
 
-            // True and False Labels should be specified.
-            Assert.That(attMeta.OptionSet.TrueOption.Label, Is.Not.Null);
-            Assert.That(attMeta.OptionSet.FalseOption.Label, Is.Not.Null);
+                // True and False Labels should be specified.
+                Assert.That(attMeta.OptionSet.TrueOption.Label, Is.Not.Null);
+                Assert.That(attMeta.OptionSet.FalseOption.Label, Is.Not.Null);
 
-            // True and False Localised Labels should be specified.
-            Assert.That(attMeta.OptionSet.FalseOption.Label.LocalizedLabels, Is.Not.Null);
-            Assert.That(attMeta.OptionSet.TrueOption.Label.LocalizedLabels, Is.Not.Null);
+                // True and False Localised Labels should be specified.
+                Assert.That(attMeta.OptionSet.FalseOption.Label.LocalizedLabels, Is.Not.Null);
+                Assert.That(attMeta.OptionSet.TrueOption.Label.LocalizedLabels, Is.Not.Null);
 
-            Assert.That(attMeta.OptionSet.FalseOption.Label.LocalizedLabels, Is.Not.Empty);
-            Assert.That(attMeta.OptionSet.TrueOption.Label.LocalizedLabels, Is.Not.Empty);
+                Assert.That(attMeta.OptionSet.FalseOption.Label.LocalizedLabels, Is.Not.Empty);
+                Assert.That(attMeta.OptionSet.TrueOption.Label.LocalizedLabels, Is.Not.Empty);
 
-            var trueLabel = attMeta.OptionSet.TrueOption.Label.LocalizedLabels.First();
-            var falseLabel = attMeta.OptionSet.FalseOption.Label.LocalizedLabels.First();
-            // True and False Localised Labels shouldn't be the same.
-            Assert.That(trueLabel.Label, Is.Not.EqualTo(falseLabel.Label));
+                var trueLabel = attMeta.OptionSet.TrueOption.Label.LocalizedLabels.First();
+                var falseLabel = attMeta.OptionSet.FalseOption.Label.LocalizedLabels.First();
+                // True and False Localised Labels shouldn't be the same.
+                Assert.That(trueLabel.Label, Is.Not.EqualTo(falseLabel.Label));
 
-
+            }
+            //  var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
         }
 
@@ -86,52 +90,56 @@ namespace CrmAdo.Tests
 
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} BIT DEFAULT 1", entityName, newColumnName);
 
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
 
-            var attMetadata = request.Attribute;
+                //  var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                var attMetadata = request.Attribute;
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(BooleanAttributeMetadata)));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            var attMeta = (BooleanAttributeMetadata)attMetadata;
+                Assert.That(attMetadata, Is.AssignableTo(typeof(BooleanAttributeMetadata)));
 
-            Assert.That(attMeta.AttributeType == AttributeTypeCode.Boolean);
-            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.BooleanType);
-            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(attMeta.DisplayName, Is.Not.Null);
-            //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+                var attMeta = (BooleanAttributeMetadata)attMetadata;
 
-            //  Assert.That(attMeta.DefaultValue, Is.EqualTo(int.MinValue));
-            // CrmAdo should create a default yes / no option set, whihc should be able to be altered later if desired. 
-            Assert.That(attMeta.OptionSet, Is.Not.Null);
-            Assert.That(attMeta.OptionSet.TrueOption, Is.Not.Null);
-            Assert.That(attMeta.OptionSet.FalseOption, Is.Not.Null);
+                Assert.That(attMeta.AttributeType == AttributeTypeCode.Boolean);
+                Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.BooleanType);
+                Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                Assert.That(attMeta.DisplayName, Is.Not.Null);
+                //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
-            // True and False values should be specified.
-            Assert.That(attMeta.OptionSet.TrueOption.Value, Is.GreaterThan(-1));
-            Assert.That(attMeta.OptionSet.FalseOption.Value, Is.GreaterThan(-1));
-            // True and False values shouldn't be the same.
-            Assert.That(attMeta.OptionSet.FalseOption.Value, Is.Not.EqualTo(attMeta.OptionSet.TrueOption.Value));
+                //  Assert.That(attMeta.DefaultValue, Is.EqualTo(int.MinValue));
+                // CrmAdo should create a default yes / no option set, whihc should be able to be altered later if desired. 
+                Assert.That(attMeta.OptionSet, Is.Not.Null);
+                Assert.That(attMeta.OptionSet.TrueOption, Is.Not.Null);
+                Assert.That(attMeta.OptionSet.FalseOption, Is.Not.Null);
 
-            // True and False Localised Labels should be specified.
-            Assert.That(attMeta.OptionSet.FalseOption.Label.LocalizedLabels, Is.Not.Null);
-            Assert.That(attMeta.OptionSet.TrueOption.Label.LocalizedLabels, Is.Not.Null);
+                // True and False values should be specified.
+                Assert.That(attMeta.OptionSet.TrueOption.Value, Is.GreaterThan(-1));
+                Assert.That(attMeta.OptionSet.FalseOption.Value, Is.GreaterThan(-1));
+                // True and False values shouldn't be the same.
+                Assert.That(attMeta.OptionSet.FalseOption.Value, Is.Not.EqualTo(attMeta.OptionSet.TrueOption.Value));
 
-            Assert.That(attMeta.OptionSet.FalseOption.Label.LocalizedLabels, Is.Not.Empty);
-            Assert.That(attMeta.OptionSet.TrueOption.Label.LocalizedLabels, Is.Not.Empty);
+                // True and False Localised Labels should be specified.
+                Assert.That(attMeta.OptionSet.FalseOption.Label.LocalizedLabels, Is.Not.Null);
+                Assert.That(attMeta.OptionSet.TrueOption.Label.LocalizedLabels, Is.Not.Null);
 
-            var trueLabel = attMeta.OptionSet.TrueOption.Label.LocalizedLabels.First();
-            var falseLabel = attMeta.OptionSet.FalseOption.Label.LocalizedLabels.First();
-            // True and False Localised Labels shouldn't be the same.
-            Assert.That(trueLabel.Label, Is.Not.EqualTo(falseLabel.Label));
+                Assert.That(attMeta.OptionSet.FalseOption.Label.LocalizedLabels, Is.Not.Empty);
+                Assert.That(attMeta.OptionSet.TrueOption.Label.LocalizedLabels, Is.Not.Empty);
+
+                var trueLabel = attMeta.OptionSet.TrueOption.Label.LocalizedLabels.First();
+                var falseLabel = attMeta.OptionSet.FalseOption.Label.LocalizedLabels.First();
+                // True and False Localised Labels shouldn't be the same.
+                Assert.That(trueLabel.Label, Is.Not.EqualTo(falseLabel.Label));
 
 
-            Assert.That(attMeta.DefaultValue, Is.Not.Null);
-            Assert.That(attMeta.DefaultValue, Is.EqualTo(true));
-
+                Assert.That(attMeta.DefaultValue, Is.Not.Null);
+                Assert.That(attMeta.DefaultValue, Is.EqualTo(true));
+            }
         }
 
         [Test(Description = "Should support adding a new boolean attribute with a default value of false.")]
@@ -143,51 +151,56 @@ namespace CrmAdo.Tests
 
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} BIT DEFAULT 0", entityName, newColumnName);
 
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
 
-            var attMetadata = request.Attribute;
+                //  var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                var attMetadata = request.Attribute;
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(BooleanAttributeMetadata)));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            var attMeta = (BooleanAttributeMetadata)attMetadata;
+                Assert.That(attMetadata, Is.AssignableTo(typeof(BooleanAttributeMetadata)));
 
-            Assert.That(attMeta.AttributeType == AttributeTypeCode.Boolean);
-            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.BooleanType);
-            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(attMeta.DisplayName, Is.Not.Null);
-            //    Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
-            //  Assert.That(attMeta.DefaultValue, Is.EqualTo(int.MinValue));
-            // CrmAdo should create a default yes / no option set, whihc should be able to be altered later if desired. 
-            Assert.That(attMeta.OptionSet, Is.Not.Null);
-            Assert.That(attMeta.OptionSet.TrueOption, Is.Not.Null);
-            Assert.That(attMeta.OptionSet.FalseOption, Is.Not.Null);
+                var attMeta = (BooleanAttributeMetadata)attMetadata;
 
-            // True and False values should be specified.
-            Assert.That(attMeta.OptionSet.TrueOption.Value, Is.GreaterThan(-1));
-            Assert.That(attMeta.OptionSet.FalseOption.Value, Is.GreaterThan(-1));
-            // True and False values shouldn't be the same.
-            Assert.That(attMeta.OptionSet.FalseOption.Value, Is.Not.EqualTo(attMeta.OptionSet.TrueOption.Value));
+                Assert.That(attMeta.AttributeType == AttributeTypeCode.Boolean);
+                Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.BooleanType);
+                Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                Assert.That(attMeta.DisplayName, Is.Not.Null);
+                //    Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+                //  Assert.That(attMeta.DefaultValue, Is.EqualTo(int.MinValue));
+                // CrmAdo should create a default yes / no option set, whihc should be able to be altered later if desired. 
+                Assert.That(attMeta.OptionSet, Is.Not.Null);
+                Assert.That(attMeta.OptionSet.TrueOption, Is.Not.Null);
+                Assert.That(attMeta.OptionSet.FalseOption, Is.Not.Null);
 
-            // True and False Localised Labels should be specified.
-            Assert.That(attMeta.OptionSet.FalseOption.Label.LocalizedLabels, Is.Not.Null);
-            Assert.That(attMeta.OptionSet.TrueOption.Label.LocalizedLabels, Is.Not.Null);
+                // True and False values should be specified.
+                Assert.That(attMeta.OptionSet.TrueOption.Value, Is.GreaterThan(-1));
+                Assert.That(attMeta.OptionSet.FalseOption.Value, Is.GreaterThan(-1));
+                // True and False values shouldn't be the same.
+                Assert.That(attMeta.OptionSet.FalseOption.Value, Is.Not.EqualTo(attMeta.OptionSet.TrueOption.Value));
 
-            Assert.That(attMeta.OptionSet.FalseOption.Label.LocalizedLabels, Is.Not.Empty);
-            Assert.That(attMeta.OptionSet.TrueOption.Label.LocalizedLabels, Is.Not.Empty);
+                // True and False Localised Labels should be specified.
+                Assert.That(attMeta.OptionSet.FalseOption.Label.LocalizedLabels, Is.Not.Null);
+                Assert.That(attMeta.OptionSet.TrueOption.Label.LocalizedLabels, Is.Not.Null);
 
-            var trueLabel = attMeta.OptionSet.TrueOption.Label.LocalizedLabels.First();
-            var falseLabel = attMeta.OptionSet.FalseOption.Label.LocalizedLabels.First();
-            // True and False Localised Labels shouldn't be the same.
-            Assert.That(trueLabel.Label, Is.Not.EqualTo(falseLabel.Label));
+                Assert.That(attMeta.OptionSet.FalseOption.Label.LocalizedLabels, Is.Not.Empty);
+                Assert.That(attMeta.OptionSet.TrueOption.Label.LocalizedLabels, Is.Not.Empty);
+
+                var trueLabel = attMeta.OptionSet.TrueOption.Label.LocalizedLabels.First();
+                var falseLabel = attMeta.OptionSet.FalseOption.Label.LocalizedLabels.First();
+                // True and False Localised Labels shouldn't be the same.
+                Assert.That(trueLabel.Label, Is.Not.EqualTo(falseLabel.Label));
 
 
-            Assert.That(attMeta.DefaultValue, Is.Not.Null);
-            Assert.That(attMeta.DefaultValue, Is.EqualTo(false));
+                Assert.That(attMeta.DefaultValue, Is.Not.Null);
+                Assert.That(attMeta.DefaultValue, Is.EqualTo(false));
 
+            }
         }
 
         #endregion
@@ -203,25 +216,28 @@ namespace CrmAdo.Tests
 
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} DATETIME", entityName, newColumnName);
 
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
+                // var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
-            var attMetadata = request.Attribute;
+                var attMetadata = request.Attribute;
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(DateTimeAttributeMetadata)));
+                Assert.That(attMetadata, Is.AssignableTo(typeof(DateTimeAttributeMetadata)));
 
-            var attMeta = (DateTimeAttributeMetadata)attMetadata;
+                var attMeta = (DateTimeAttributeMetadata)attMetadata;
 
-            Assert.That(attMeta.AttributeType == AttributeTypeCode.DateTime);
-            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DateTimeType);
-            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(attMeta.Format == DateTimeFormat.DateAndTime);
-            Assert.That(attMeta.DisplayName, Is.Not.Null);
-            //  Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
-
+                Assert.That(attMeta.AttributeType == AttributeTypeCode.DateTime);
+                Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DateTimeType);
+                Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                Assert.That(attMeta.Format == DateTimeFormat.DateAndTime);
+                Assert.That(attMeta.DisplayName, Is.Not.Null);
+                //  Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+            }
 
         }
 
@@ -234,25 +250,28 @@ namespace CrmAdo.Tests
 
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} DATE", entityName, newColumnName);
 
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
+                //  var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
-            var attMetadata = request.Attribute;
+                var attMetadata = request.Attribute;
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(DateTimeAttributeMetadata)));
+                Assert.That(attMetadata, Is.AssignableTo(typeof(DateTimeAttributeMetadata)));
 
-            var attMeta = (DateTimeAttributeMetadata)attMetadata;
+                var attMeta = (DateTimeAttributeMetadata)attMetadata;
 
-            Assert.That(attMeta.AttributeType == AttributeTypeCode.DateTime);
-            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DateTimeType);
-            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(attMeta.Format == DateTimeFormat.DateOnly);
-            Assert.That(attMeta.DisplayName, Is.Not.Null);
-            //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
-
+                Assert.That(attMeta.AttributeType == AttributeTypeCode.DateTime);
+                Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DateTimeType);
+                Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                Assert.That(attMeta.Format == DateTimeFormat.DateOnly);
+                Assert.That(attMeta.DisplayName, Is.Not.Null);
+                //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+            }
 
         }
 
@@ -271,7 +290,7 @@ namespace CrmAdo.Tests
             int maxPrecision = DecimalAttributeMetadata.MaxSupportedValue.ToString().Length + DecimalAttributeMetadata.MaxSupportedPrecision;
 
             // The max number of digits that can appear after the decimal point. = 10.
-            int maxScale = DecimalAttributeMetadata.MaxSupportedPrecision;
+           // int maxScale = DecimalAttributeMetadata.MaxSupportedPrecision;
 
             // The min number of digits that can appear after the decimal point. = 0.
             int minScale = DecimalAttributeMetadata.MinSupportedPrecision;
@@ -282,28 +301,31 @@ namespace CrmAdo.Tests
 
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} DECIMAL", entityName, newColumnName);
 
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
+                //var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
-            var attMetadata = request.Attribute;
+                var attMetadata = request.Attribute;
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(DecimalAttributeMetadata)));
+                Assert.That(attMetadata, Is.AssignableTo(typeof(DecimalAttributeMetadata)));
 
-            var attMeta = (DecimalAttributeMetadata)attMetadata;
+                var attMeta = (DecimalAttributeMetadata)attMetadata;
 
-            Assert.That(attMeta.AttributeType == AttributeTypeCode.Decimal);
-            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DecimalType);
-            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(attMeta.MinValue, Is.EqualTo(DecimalAttributeMetadata.MinSupportedValue));
-            Assert.That(attMeta.MaxValue, Is.EqualTo(DecimalAttributeMetadata.MaxSupportedValue));
-            Assert.That(attMeta.DisplayName, Is.Not.Null);
-            //  Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
-            // attMeta.Precision
-            Assert.That(attMeta.Precision, Is.EqualTo(minScale));
-
+                Assert.That(attMeta.AttributeType == AttributeTypeCode.Decimal);
+                Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DecimalType);
+                Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                Assert.That(attMeta.MinValue, Is.EqualTo(DecimalAttributeMetadata.MinSupportedValue));
+                Assert.That(attMeta.MaxValue, Is.EqualTo(DecimalAttributeMetadata.MaxSupportedValue));
+                Assert.That(attMeta.DisplayName, Is.Not.Null);
+                //  Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+                // attMeta.Precision
+                Assert.That(attMeta.Precision, Is.EqualTo(minScale));
+            }
         }
 
         [Test(Description = "Should support adding a new decimal attribute with precision.")]
@@ -324,34 +346,37 @@ namespace CrmAdo.Tests
 
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} DECIMAL({2})", entityName, newColumnName, precision);
 
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
+                // var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
-            var attMetadata = request.Attribute;
+                var attMetadata = request.Attribute;
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(DecimalAttributeMetadata)));
+                Assert.That(attMetadata, Is.AssignableTo(typeof(DecimalAttributeMetadata)));
 
-            var attMeta = (DecimalAttributeMetadata)attMetadata;
+                var attMeta = (DecimalAttributeMetadata)attMetadata;
 
-            Assert.That(attMeta.AttributeType == AttributeTypeCode.Decimal);
-            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DecimalType);
-            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(attMeta.DisplayName, Is.Not.Null);
-            //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+                Assert.That(attMeta.AttributeType == AttributeTypeCode.Decimal);
+                Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DecimalType);
+                Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                Assert.That(attMeta.DisplayName, Is.Not.Null);
+                //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
-            // we should have a default min and max value that is not greater in length that the precision we have specified. 
-            Assert.That(attMeta.MinValue, Is.Not.Null);
-            Assert.That(attMeta.MaxValue, Is.Not.Null);
-            Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Length, Is.EqualTo(precision));
-            Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Length, Is.EqualTo(precision));
+                // we should have a default min and max value that is not greater in length that the precision we have specified. 
+                Assert.That(attMeta.MinValue, Is.Not.Null);
+                Assert.That(attMeta.MaxValue, Is.Not.Null);
+                Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Length, Is.EqualTo(precision));
+                Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Length, Is.EqualTo(precision));
 
-            // What dynamics sdk refers to as the 'precision' here is actually what we refer to as the 'scale' - the number of digits allowed after the decimal point.
-            // as we never speficied a scale this should default to 0.
-            Assert.That(attMeta.Precision, Is.EqualTo(DecimalAttributeMetadata.MinSupportedPrecision));
-
+                // What dynamics sdk refers to as the 'precision' here is actually what we refer to as the 'scale' - the number of digits allowed after the decimal point.
+                // as we never speficied a scale this should default to 0.
+                Assert.That(attMeta.Precision, Is.EqualTo(DecimalAttributeMetadata.MinSupportedPrecision));
+            }
         }
 
         [Test(Description = "Should support adding a new decimal attribute with precision and scale.")]
@@ -375,36 +400,39 @@ namespace CrmAdo.Tests
 
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} DECIMAL({2},{3})", entityName, newColumnName, precision, scale);
 
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
+                //  var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
-            var attMetadata = request.Attribute;
+                var attMetadata = request.Attribute;
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(DecimalAttributeMetadata)));
+                Assert.That(attMetadata, Is.AssignableTo(typeof(DecimalAttributeMetadata)));
 
-            var attMeta = (DecimalAttributeMetadata)attMetadata;
+                var attMeta = (DecimalAttributeMetadata)attMetadata;
 
-            Assert.That(attMeta.AttributeType == AttributeTypeCode.Decimal);
-            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DecimalType);
-            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(attMeta.DisplayName, Is.Not.Null);
-            // Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+                Assert.That(attMeta.AttributeType == AttributeTypeCode.Decimal);
+                Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DecimalType);
+                Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                Assert.That(attMeta.DisplayName, Is.Not.Null);
+                // Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
-            // we should have a default min and max value that is not greater in length than the precision we specified. 
-            Assert.That(attMeta.MinValue, Is.Not.Null);
-            Assert.That(attMeta.MaxValue, Is.Not.Null);
-            Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
-            Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
+                // we should have a default min and max value that is not greater in length than the precision we specified. 
+                Assert.That(attMeta.MinValue, Is.Not.Null);
+                Assert.That(attMeta.MaxValue, Is.Not.Null);
+                Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
+                Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
 
 
 
-            // What dynamics sdk refers to as the 'precision' here is actually what we refer to as the 'scale' - the number of digits allowed after the decimal point.
-            // as we speficied a scale this should equal that.
-            Assert.That(attMeta.Precision, Is.EqualTo(scale));
-
+                // What dynamics sdk refers to as the 'precision' here is actually what we refer to as the 'scale' - the number of digits allowed after the decimal point.
+                // as we speficied a scale this should equal that.
+                Assert.That(attMeta.Precision, Is.EqualTo(scale));
+            }
         }
 
         #endregion
@@ -422,7 +450,7 @@ namespace CrmAdo.Tests
             int maxPrecision = DoubleAttributeMetadata.MaxSupportedValue.ToString().Length + DoubleAttributeMetadata.MaxSupportedPrecision;
 
             // The max number of digits that can appear after the decimal point. = 10.
-            int maxScale = DoubleAttributeMetadata.MaxSupportedPrecision;
+           // int maxScale = DoubleAttributeMetadata.MaxSupportedPrecision;
 
             // The min number of digits that can appear after the decimal point. = 0.
             int minScale = DoubleAttributeMetadata.MinSupportedPrecision;
@@ -435,28 +463,31 @@ namespace CrmAdo.Tests
 
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} FLOAT", entityName, newColumnName);
 
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
+                // var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
-            var attMetadata = request.Attribute;
+                var attMetadata = request.Attribute;
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(DoubleAttributeMetadata)));
+                Assert.That(attMetadata, Is.AssignableTo(typeof(DoubleAttributeMetadata)));
 
-            var attMeta = (DoubleAttributeMetadata)attMetadata;
+                var attMeta = (DoubleAttributeMetadata)attMetadata;
 
-            Assert.That(attMeta.AttributeType == AttributeTypeCode.Double);
-            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DoubleType);
-            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(attMeta.MinValue, Is.EqualTo(DoubleAttributeMetadata.MinSupportedValue));
-            Assert.That(attMeta.MaxValue, Is.EqualTo(DoubleAttributeMetadata.MaxSupportedValue));
-            Assert.That(attMeta.DisplayName, Is.Not.Null);
-            //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
-            // attMeta.Precision
-            Assert.That(attMeta.Precision, Is.EqualTo(minScale));
-
+                Assert.That(attMeta.AttributeType == AttributeTypeCode.Double);
+                Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DoubleType);
+                Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                Assert.That(attMeta.MinValue, Is.EqualTo(DoubleAttributeMetadata.MinSupportedValue));
+                Assert.That(attMeta.MaxValue, Is.EqualTo(DoubleAttributeMetadata.MaxSupportedValue));
+                Assert.That(attMeta.DisplayName, Is.Not.Null);
+                //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+                // attMeta.Precision
+                Assert.That(attMeta.Precision, Is.EqualTo(minScale));
+            }
         }
 
         [Test(Description = "Should support adding a new double attribute with precision.")]
@@ -477,37 +508,40 @@ namespace CrmAdo.Tests
             // SO PERHAPS FLOAT IS WRONG DATATYPE TO USE FOR DOUBLE ATTRIBUTES, PERHAPS NUMERIC(P,S) INSTEAD.
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} FLOAT({2})", entityName, newColumnName, precision);
 
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
+                // var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
-            var attMetadata = request.Attribute;
+                var attMetadata = request.Attribute;
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(DoubleAttributeMetadata)));
+                Assert.That(attMetadata, Is.AssignableTo(typeof(DoubleAttributeMetadata)));
 
-            var attMeta = (DoubleAttributeMetadata)attMetadata;
+                var attMeta = (DoubleAttributeMetadata)attMetadata;
 
-            Assert.That(attMeta.AttributeType == AttributeTypeCode.Double);
-            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DoubleType);
-            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(attMeta.DisplayName, Is.Not.Null);
-            //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+                Assert.That(attMeta.AttributeType == AttributeTypeCode.Double);
+                Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DoubleType);
+                Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                Assert.That(attMeta.DisplayName, Is.Not.Null);
+                //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
-            // we should have a default min and max value that is not greater in length that the precision we have specified. 
-            Assert.That(attMeta.MinValue, Is.Not.Null);
-            Assert.That(attMeta.MaxValue, Is.Not.Null);
+                // we should have a default min and max value that is not greater in length that the precision we have specified. 
+                Assert.That(attMeta.MinValue, Is.Not.Null);
+                Assert.That(attMeta.MaxValue, Is.Not.Null);
 
-            Assert.That(attMeta.MinValue, Is.Not.Null);
-            Assert.That(attMeta.MaxValue, Is.Not.Null);
-            Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Length, Is.EqualTo(precision));
-            Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Length, Is.EqualTo(precision));
+                Assert.That(attMeta.MinValue, Is.Not.Null);
+                Assert.That(attMeta.MaxValue, Is.Not.Null);
+                Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Length, Is.EqualTo(precision));
+                Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Length, Is.EqualTo(precision));
 
-            // What dynamics sdk refers to as the 'precision' here is actually what we refer to as the 'scale' - the number of digits allowed after the decimal point.
-            // as we never speficied a scale this should default to 0.
-            Assert.That(attMeta.Precision, Is.EqualTo(DoubleAttributeMetadata.MinSupportedPrecision));
-
+                // What dynamics sdk refers to as the 'precision' here is actually what we refer to as the 'scale' - the number of digits allowed after the decimal point.
+                // as we never speficied a scale this should default to 0.
+                Assert.That(attMeta.Precision, Is.EqualTo(DoubleAttributeMetadata.MinSupportedPrecision));
+            }
         }
 
         [Test(Description = "Should support adding a new double attribute with precision and scale.")]
@@ -529,34 +563,37 @@ namespace CrmAdo.Tests
             // SO PERHAPS FLOAT IS WRONG DATATYPE TO USE FOR DOUBLE ATTRIBUTES, PERHAPS NUMERIC(P,S) INSTEAD.
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} FLOAT({2},{3})", entityName, newColumnName, precision, scale);
 
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
+                // var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
-            var attMetadata = request.Attribute;
+                var attMetadata = request.Attribute;
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(DoubleAttributeMetadata)));
+                Assert.That(attMetadata, Is.AssignableTo(typeof(DoubleAttributeMetadata)));
 
-            var attMeta = (DoubleAttributeMetadata)attMetadata;
+                var attMeta = (DoubleAttributeMetadata)attMetadata;
 
-            Assert.That(attMeta.AttributeType == AttributeTypeCode.Double);
-            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DoubleType);
-            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(attMeta.DisplayName, Is.Not.Null);
-            //     Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+                Assert.That(attMeta.AttributeType == AttributeTypeCode.Double);
+                Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.DoubleType);
+                Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                Assert.That(attMeta.DisplayName, Is.Not.Null);
+                //     Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
-            // we should have a default min and max value that is not greater in length than the precision we specified. 
-            Assert.That(attMeta.MinValue, Is.Not.Null);
-            Assert.That(attMeta.MaxValue, Is.Not.Null);
-            Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
-            Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
+                // we should have a default min and max value that is not greater in length than the precision we specified. 
+                Assert.That(attMeta.MinValue, Is.Not.Null);
+                Assert.That(attMeta.MaxValue, Is.Not.Null);
+                Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
+                Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
 
-            // What dynamics sdk refers to as the 'precision' here is actually what we refer to as the 'scale' - the number of digits allowed after the decimal point.
-            // as we speficied a scale this should equal that.
-            Assert.That(attMeta.Precision, Is.EqualTo(scale));
-
+                // What dynamics sdk refers to as the 'precision' here is actually what we refer to as the 'scale' - the number of digits allowed after the decimal point.
+                // as we speficied a scale this should equal that.
+                Assert.That(attMeta.Precision, Is.EqualTo(scale));
+            }
         }
 
         #endregion
@@ -577,28 +614,31 @@ namespace CrmAdo.Tests
 
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} INT", entityName, newColumnName);
 
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
+                // var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
-            var attMetadata = request.Attribute;
+                var attMetadata = request.Attribute;
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(IntegerAttributeMetadata)));
+                Assert.That(attMetadata, Is.AssignableTo(typeof(IntegerAttributeMetadata)));
 
-            var attMeta = (IntegerAttributeMetadata)attMetadata;
+                var attMeta = (IntegerAttributeMetadata)attMetadata;
 
-            Assert.That(attMeta.AttributeType == AttributeTypeCode.Integer);
-            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.IntegerType);
-            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(attMeta.MinValue, Is.EqualTo(int.MinValue));
-            Assert.That(attMeta.MaxValue, Is.EqualTo(int.MaxValue));
-            Assert.That(attMeta.Format, Is.EqualTo(IntegerFormat.None));
-            Assert.That(attMeta.DisplayName, Is.Not.Null);
-            //    Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+                Assert.That(attMeta.AttributeType == AttributeTypeCode.Integer);
+                Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.IntegerType);
+                Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                Assert.That(attMeta.MinValue, Is.EqualTo(int.MinValue));
+                Assert.That(attMeta.MaxValue, Is.EqualTo(int.MaxValue));
+                Assert.That(attMeta.Format, Is.EqualTo(IntegerFormat.None));
+                Assert.That(attMeta.DisplayName, Is.Not.Null);
+                //    Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
-
+            }
 
         }
 
@@ -616,51 +656,57 @@ namespace CrmAdo.Tests
             string referencedEntityName = "referencedentity";
 
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} UNIQUEIDENTIFIER REFERENCES {2};", entityName, newColumnName, referencedEntityName);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateOneToManyRequest>(sandbox.FakeCrmDbConnection, commandText);
 
-            var request = GetOrganizationRequest<CreateOneToManyRequest>(commandText);
+                var attMetadata = request.Lookup;
+                var relationship = request.OneToManyRelationship;
 
-            var attMetadata = request.Lookup;
-            var relationship = request.OneToManyRelationship;
+                Assert.IsNotNull(attMetadata);
+                Assert.IsNotNull(relationship);
+                //  Assert.That(attMetadata.EntityLogicalName, Is.EqualTo(entityName.ToLower()));
+                Assert.That(attMetadata, Is.AssignableTo(typeof(LookupAttributeMetadata)));
 
-            Assert.IsNotNull(attMetadata);
-            Assert.IsNotNull(relationship);
-            //  Assert.That(attMetadata.EntityLogicalName, Is.EqualTo(entityName.ToLower()));
-            Assert.That(attMetadata, Is.AssignableTo(typeof(LookupAttributeMetadata)));
+                var attMeta = (LookupAttributeMetadata)attMetadata;
 
-            var attMeta = (LookupAttributeMetadata)attMetadata;
+                Assert.That(attMeta.AttributeType == AttributeTypeCode.Lookup);
+                Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.LookupType);
+                Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                Assert.That(attMeta.DisplayName, Is.Not.Null);
+                //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
-            Assert.That(attMeta.AttributeType == AttributeTypeCode.Lookup);
-            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.LookupType);
-            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(attMeta.DisplayName, Is.Not.Null);
-            //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+                // Assert on relationship.
+                Assert.That(relationship.ReferencedEntity, Is.EqualTo(referencedEntityName.ToLower()));
+                Assert.That(relationship.ReferencingEntity, Is.EqualTo(entityName.ToLower()));
+                //   Assert.That(relationship.SchemaName, Is.EqualTo(entityName.ToLower())); // potentially use CONSTRAINT my_name to set the schemaname?
 
-            // Assert on relationship.
-            Assert.That(relationship.ReferencedEntity, Is.EqualTo(referencedEntityName.ToLower()));
-            Assert.That(relationship.ReferencingEntity, Is.EqualTo(entityName.ToLower()));
-            //   Assert.That(relationship.SchemaName, Is.EqualTo(entityName.ToLower())); // potentially use CONSTRAINT my_name to set the schemaname?
+                // assert on cascade config?
+                Assert.That(relationship.RelationshipType, Is.EqualTo(RelationshipType.OneToManyRelationship));
+                Assert.That(relationship.CascadeConfiguration, Is.Not.Null);
+                Assert.That(relationship.SchemaName, Is.Not.Null);
+                //  Assert.That(relationship.SchemaName, Is.StringStarting(newColumnName));
 
-            // assert on cascade config?
-            Assert.That(relationship.RelationshipType, Is.EqualTo(RelationshipType.OneToManyRelationship));
-            Assert.That(relationship.CascadeConfiguration, Is.Not.Null);
-            Assert.That(relationship.SchemaName, Is.Not.Null);
-            //  Assert.That(relationship.SchemaName, Is.StringStarting(newColumnName));
+                var cascade = relationship.CascadeConfiguration;
 
-            var cascade = relationship.CascadeConfiguration;
+                // By default we shouldn't have any cascaded actions because it would be dangerous to assume any,
+                // dynamics only allows an entity to have 1 relationship that has a cascading action on it. If more relationships are added,
+                // those new relationshops cannot have any cascading actions because its constrained to 1 relationship with cascading actions per entity.
+                // therefore we assume that when users add in new foreign keys (lookups) that there are no cascading relationships. Otherwise the 2nd one
+                // that is added would cause dynamics crm to throw an error.
 
-            // By default we shouldn't have any cascaded actions because it would be dangerous to assume any,
-            // dynamics only allows an entity to have 1 relationship that has a cascading action on it. If more relationships are added,
-            // those new relationshops cannot have any cascading actions because its constrained to 1 relationship with cascading actions per entity.
-            // therefore we assume that when users add in new foreign keys (lookups) that there are no cascading relationships. Otherwise the 2nd one
-            // that is added would cause dynamics crm to throw an error.
+                Assert.That(cascade.Delete, Is.EqualTo(CascadeType.Restrict));
+                Assert.That(cascade.Assign, Is.EqualTo(CascadeType.NoCascade));
+                Assert.That(cascade.Merge, Is.EqualTo(CascadeType.NoCascade));
+                Assert.That(cascade.Reparent, Is.EqualTo(CascadeType.NoCascade));
+                Assert.That(cascade.Share, Is.EqualTo(CascadeType.NoCascade));
+                Assert.That(cascade.Unshare, Is.EqualTo(CascadeType.NoCascade));
 
-            Assert.That(cascade.Delete, Is.EqualTo(CascadeType.Restrict));
-            Assert.That(cascade.Assign, Is.EqualTo(CascadeType.NoCascade));
-            Assert.That(cascade.Merge, Is.EqualTo(CascadeType.NoCascade));
-            Assert.That(cascade.Reparent, Is.EqualTo(CascadeType.NoCascade));
-            Assert.That(cascade.Share, Is.EqualTo(CascadeType.NoCascade));
-            Assert.That(cascade.Unshare, Is.EqualTo(CascadeType.NoCascade));
+            }
+            //  var request = GetOrganizationRequest<CreateOneToManyRequest>(commandText);
+
+
 
         }
 
@@ -678,25 +724,28 @@ namespace CrmAdo.Tests
 
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} NVARCHAR(MAX)", entityName, newColumnName);
 
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
+                // var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
-            var attMetadata = request.Attribute;
+                var attMetadata = request.Attribute;
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(MemoAttributeMetadata)));
+                Assert.That(attMetadata, Is.AssignableTo(typeof(MemoAttributeMetadata)));
 
-            var attMeta = (MemoAttributeMetadata)attMetadata;
+                var attMeta = (MemoAttributeMetadata)attMetadata;
 
-            Assert.That(attMeta.AttributeType == AttributeTypeCode.Memo);
-            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.MemoType);
-            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(attMeta.MaxLength, Is.EqualTo(MemoAttributeMetadata.MaxSupportedLength));
-            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(attMeta.DisplayName, Is.Not.Null);
-            //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
-
+                Assert.That(attMeta.AttributeType == AttributeTypeCode.Memo);
+                Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.MemoType);
+                Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(attMeta.MaxLength, Is.EqualTo(MemoAttributeMetadata.MaxSupportedLength));
+                Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                Assert.That(attMeta.DisplayName, Is.Not.Null);
+                //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+            }
         }
 
         #endregion
@@ -714,7 +763,7 @@ namespace CrmAdo.Tests
             int maxPrecision = MoneyAttributeMetadata.MaxSupportedValue.ToString().Length + MoneyAttributeMetadata.MaxSupportedPrecision;
 
             // The max number of digits that can appear after the decimal point. = 10.
-            int maxScale = MoneyAttributeMetadata.MaxSupportedPrecision;
+           // int maxScale = MoneyAttributeMetadata.MaxSupportedPrecision;
 
             // The min number of digits that can appear after the decimal point. = 0.
             int minScale = MoneyAttributeMetadata.MinSupportedPrecision;
@@ -724,33 +773,36 @@ namespace CrmAdo.Tests
 
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} MONEY", entityName, newColumnName);
 
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
+                // var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
-            var attMetadata = request.Attribute;
+                var attMetadata = request.Attribute;
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(MoneyAttributeMetadata)));
+                Assert.That(attMetadata, Is.AssignableTo(typeof(MoneyAttributeMetadata)));
 
-            var attMeta = (MoneyAttributeMetadata)attMetadata;
+                var attMeta = (MoneyAttributeMetadata)attMetadata;
 
-            Assert.That(attMeta.AttributeType == AttributeTypeCode.Money);
-            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.MoneyType);
-            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                Assert.That(attMeta.AttributeType == AttributeTypeCode.Money);
+                Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.MoneyType);
+                Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
 
-            Assert.That(attMeta.MinValue, Is.EqualTo(MoneyAttributeMetadata.MinSupportedValue));
-            Assert.That(attMeta.MaxValue, Is.EqualTo(MoneyAttributeMetadata.MaxSupportedValue));
-            Assert.That(attMeta.DisplayName, Is.Not.Null);
-            //     Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
-            //When the PrecisionSource is set to zero (0), the MoneyAttributeMetadata.Precision value is used.
-            //When the PrecisionSource is set to one (1), the Organization.PricingDecimalPrecision value is used.
-            //When the PrecisionSource is set to two (2), the TransactionCurrency.CurrencyPrecision value is used.
+                Assert.That(attMeta.MinValue, Is.EqualTo(MoneyAttributeMetadata.MinSupportedValue));
+                Assert.That(attMeta.MaxValue, Is.EqualTo(MoneyAttributeMetadata.MaxSupportedValue));
+                Assert.That(attMeta.DisplayName, Is.Not.Null);
+                //     Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+                //When the PrecisionSource is set to zero (0), the MoneyAttributeMetadata.Precision value is used.
+                //When the PrecisionSource is set to one (1), the Organization.PricingDecimalPrecision value is used.
+                //When the PrecisionSource is set to two (2), the TransactionCurrency.CurrencyPrecision value is used.
 
-            Assert.That(attMeta.PrecisionSource, Is.EqualTo(0));
-            Assert.That(attMeta.Precision, Is.EqualTo(MoneyAttributeMetadata.MinSupportedPrecision));
-
+                Assert.That(attMeta.PrecisionSource, Is.EqualTo(0));
+                Assert.That(attMeta.Precision, Is.EqualTo(MoneyAttributeMetadata.MinSupportedPrecision));
+            }
         }
 
         [Test(Description = "Should support adding a new money attribute with precision.")]
@@ -769,41 +821,44 @@ namespace CrmAdo.Tests
 
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} MONEY({2})", entityName, newColumnName, precision);
 
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
+                // var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
-            var attMetadata = request.Attribute;
+                var attMetadata = request.Attribute;
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(MoneyAttributeMetadata)));
+                Assert.That(attMetadata, Is.AssignableTo(typeof(MoneyAttributeMetadata)));
 
-            var attMeta = (MoneyAttributeMetadata)attMetadata;
+                var attMeta = (MoneyAttributeMetadata)attMetadata;
 
-            Assert.That(attMeta.AttributeType == AttributeTypeCode.Money);
-            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.MoneyType);
-            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(attMeta.DisplayName, Is.Not.Null);
-            //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+                Assert.That(attMeta.AttributeType == AttributeTypeCode.Money);
+                Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.MoneyType);
+                Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                Assert.That(attMeta.DisplayName, Is.Not.Null);
+                //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
-            Assert.That(attMeta.MinValue, Is.Not.Null);
-            Assert.That(attMeta.MaxValue, Is.Not.Null);
+                Assert.That(attMeta.MinValue, Is.Not.Null);
+                Assert.That(attMeta.MaxValue, Is.Not.Null);
 
-            Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
-            Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
+                Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
+                Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
 
-            //Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Length, Is.EqualTo(precision));
-            //Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Length, Is.EqualTo(precision));
+                //Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Length, Is.EqualTo(precision));
+                //Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Length, Is.EqualTo(precision));
 
 
 
-            //When the PrecisionSource is set to zero (0), the MoneyAttributeMetadata.Precision value is used.
-            //When the PrecisionSource is set to one (1), the Organization.PricingDecimalPrecision value is used.
-            //When the PrecisionSource is set to two (2), the TransactionCurrency.CurrencyPrecision value is used.
-            Assert.That(attMeta.PrecisionSource, Is.EqualTo(0));
-            Assert.That(attMeta.Precision, Is.EqualTo(MoneyAttributeMetadata.MinSupportedPrecision));
-
+                //When the PrecisionSource is set to zero (0), the MoneyAttributeMetadata.Precision value is used.
+                //When the PrecisionSource is set to one (1), the Organization.PricingDecimalPrecision value is used.
+                //When the PrecisionSource is set to two (2), the TransactionCurrency.CurrencyPrecision value is used.
+                Assert.That(attMeta.PrecisionSource, Is.EqualTo(0));
+                Assert.That(attMeta.Precision, Is.EqualTo(MoneyAttributeMetadata.MinSupportedPrecision));
+            }
         }
 
         [Test(Description = "Should support adding a new money attribute with precision and scale.")]
@@ -825,41 +880,44 @@ namespace CrmAdo.Tests
 
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} MONEY({2},{3})", entityName, newColumnName, precision, scale);
 
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
+                //var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
-            var attMetadata = request.Attribute;
+                var attMetadata = request.Attribute;
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(MoneyAttributeMetadata)));
+                Assert.That(attMetadata, Is.AssignableTo(typeof(MoneyAttributeMetadata)));
 
-            var attMeta = (MoneyAttributeMetadata)attMetadata;
+                var attMeta = (MoneyAttributeMetadata)attMetadata;
 
-            Assert.That(attMeta.AttributeType == AttributeTypeCode.Money);
-            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.MoneyType);
-            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(attMeta.DisplayName, Is.Not.Null);
-            //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+                Assert.That(attMeta.AttributeType == AttributeTypeCode.Money);
+                Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.MoneyType);
+                Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                Assert.That(attMeta.DisplayName, Is.Not.Null);
+                //   Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
-            Assert.That(attMeta.MinValue, Is.Not.Null);
-            Assert.That(attMeta.MaxValue, Is.Not.Null);
+                Assert.That(attMeta.MinValue, Is.Not.Null);
+                Assert.That(attMeta.MaxValue, Is.Not.Null);
 
-            Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
-            Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
+                Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
+                Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Replace(".", "").Length, Is.EqualTo(precision));
 
-            //Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Length, Is.EqualTo(precision));
-            //Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Length, Is.EqualTo(precision));
+                //Assert.That(Math.Abs(attMeta.MinValue.Value).ToString().Length, Is.EqualTo(precision));
+                //Assert.That(Math.Abs(attMeta.MaxValue.Value).ToString().Length, Is.EqualTo(precision));
 
 
 
-            //When the PrecisionSource is set to zero (0), the MoneyAttributeMetadata.Precision value is used.
-            //When the PrecisionSource is set to one (1), the Organization.PricingDecimalPrecision value is used.
-            //When the PrecisionSource is set to two (2), the TransactionCurrency.CurrencyPrecision value is used.
-            Assert.That(attMeta.PrecisionSource, Is.EqualTo(0));
-            Assert.That(attMeta.Precision, Is.EqualTo(scale));
-
+                //When the PrecisionSource is set to zero (0), the MoneyAttributeMetadata.Precision value is used.
+                //When the PrecisionSource is set to one (1), the Organization.PricingDecimalPrecision value is used.
+                //When the PrecisionSource is set to two (2), the TransactionCurrency.CurrencyPrecision value is used.
+                Assert.That(attMeta.PrecisionSource, Is.EqualTo(0));
+                Assert.That(attMeta.Precision, Is.EqualTo(scale));
+            }
         }
 
         #endregion
@@ -924,41 +982,45 @@ namespace CrmAdo.Tests
 
 
             string commandText = sqlBuilder.ToString();
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
+                //  var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
-            var attMetadata = request.Attribute;
+                var attMetadata = request.Attribute;
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(PicklistAttributeMetadata)));
+                Assert.That(attMetadata, Is.AssignableTo(typeof(PicklistAttributeMetadata)));
 
-            var attMeta = (PicklistAttributeMetadata)attMetadata;
+                var attMeta = (PicklistAttributeMetadata)attMetadata;
 
-            Assert.That(attMeta.AttributeType == AttributeTypeCode.Picklist);
-            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.PicklistType);
-            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(attMeta.DisplayName, Is.Not.Null);
-            //    Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+                Assert.That(attMeta.AttributeType == AttributeTypeCode.Picklist);
+                Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.PicklistType);
+                Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                Assert.That(attMeta.DisplayName, Is.Not.Null);
+                //    Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
-            //  Assert.That(attMeta.OptionSet.OptionSetType, Is.EqualTo(OptionSetType.Picklist));     
-            //Assert.That(attMeta.OptionSet, Is.Not.Null);
-            //Assert.That(attMeta.OptionSet.Options, Is.Not.Null);
-            //Assert.That(attMeta.OptionSet.Options.Count(), Is.EqualTo(optionValues.Count()));
+                //  Assert.That(attMeta.OptionSet.OptionSetType, Is.EqualTo(OptionSetType.Picklist));     
+                //Assert.That(attMeta.OptionSet, Is.Not.Null);
+                //Assert.That(attMeta.OptionSet.Options, Is.Not.Null);
+                //Assert.That(attMeta.OptionSet.Options.Count(), Is.EqualTo(optionValues.Count()));
 
-            //for (int i = 0; i < optionValues.Count() - 1; i++)
-            //{
-            //    var option = attMeta.OptionSet.Options[0];
-            //    var expectedOption = optionValues.ElementAt(i);
-            //    Assert.That(option.Value, Is.EqualTo(expectedOption.Key));
-            //    Assert.That(option.Label, Is.Not.Null);
-            //    Assert.That(option.Label.LocalizedLabels, Is.Not.Null);
-            //    Assert.That(option.Label.LocalizedLabels.Count(), Is.EqualTo(2));
-            //    Assert.That(option.Label.LocalizedLabels[0].Label, Is.EqualTo(expectedOption.Value));
-            //    Assert.That(option.Label.LocalizedLabels[1].Label, Is.EqualTo(expectedOption.Value + "-anotherlabel"));
-            //    Assert.That(option.Label.LocalizedLabels[1].LanguageCode, Is.EqualTo(3081));
-            //}
+                //for (int i = 0; i < optionValues.Count() - 1; i++)
+                //{
+                //    var option = attMeta.OptionSet.Options[0];
+                //    var expectedOption = optionValues.ElementAt(i);
+                //    Assert.That(option.Value, Is.EqualTo(expectedOption.Key));
+                //    Assert.That(option.Label, Is.Not.Null);
+                //    Assert.That(option.Label.LocalizedLabels, Is.Not.Null);
+                //    Assert.That(option.Label.LocalizedLabels.Count(), Is.EqualTo(2));
+                //    Assert.That(option.Label.LocalizedLabels[0].Label, Is.EqualTo(expectedOption.Value));
+                //    Assert.That(option.Label.LocalizedLabels[1].Label, Is.EqualTo(expectedOption.Value + "-anotherlabel"));
+                //    Assert.That(option.Label.LocalizedLabels[1].LanguageCode, Is.EqualTo(3081));
+                //}
+            }
         }
 
         [ExpectedException(typeof(NotImplementedException))]
@@ -1007,42 +1069,46 @@ namespace CrmAdo.Tests
 
 
             string commandText = sqlBuilder.ToString();
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
+                //  var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
-            var attMetadata = request.Attribute;
+                var attMetadata = request.Attribute;
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(PicklistAttributeMetadata)));
+                Assert.That(attMetadata, Is.AssignableTo(typeof(PicklistAttributeMetadata)));
 
-            var attMeta = (PicklistAttributeMetadata)attMetadata;
+                var attMeta = (PicklistAttributeMetadata)attMetadata;
 
-            Assert.That(attMeta.AttributeType == AttributeTypeCode.Picklist);
-            Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.PicklistType);
-            Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            //  Assert.That(attMeta.OptionSet.OptionSetType, Is.EqualTo(OptionSetType.Picklist));
-            Assert.That(attMeta.DefaultFormValue, Is.EqualTo(defaultValue));
-            Assert.That(attMeta.DisplayName, Is.Not.Null);
-            //    Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+                Assert.That(attMeta.AttributeType == AttributeTypeCode.Picklist);
+                Assert.That(attMeta.AttributeTypeName == AttributeTypeDisplayName.PicklistType);
+                Assert.That(attMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(attMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                //  Assert.That(attMeta.OptionSet.OptionSetType, Is.EqualTo(OptionSetType.Picklist));
+                Assert.That(attMeta.DefaultFormValue, Is.EqualTo(defaultValue));
+                Assert.That(attMeta.DisplayName, Is.Not.Null);
+                //    Assert.That(attMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
 
-            //Assert.That(attMeta.OptionSet, Is.Not.Null);
-            //Assert.That(attMeta.OptionSet.Options, Is.Not.Null);
-            //Assert.That(attMeta.OptionSet.Options.Count(), Is.EqualTo(optionValues.Count()));
+                //Assert.That(attMeta.OptionSet, Is.Not.Null);
+                //Assert.That(attMeta.OptionSet.Options, Is.Not.Null);
+                //Assert.That(attMeta.OptionSet.Options.Count(), Is.EqualTo(optionValues.Count()));
 
-            //for (int i = 0; i < optionValues.Count() - 1; i++)
-            //{
-            //    var option = attMeta.OptionSet.Options[0];
-            //    var expectedOption = optionValues.ElementAt(i);
-            //    Assert.That(option.Value, Is.EqualTo(expectedOption.Key));
-            //    Assert.That(option.Label, Is.Not.Null);
-            //    Assert.That(option.Label.LocalizedLabels, Is.Not.Null);
-            //    Assert.That(option.Label.LocalizedLabels.Count(), Is.EqualTo(2));
-            //    Assert.That(option.Label.LocalizedLabels[0].Label, Is.EqualTo(expectedOption.Value));
-            //    Assert.That(option.Label.LocalizedLabels[1].Label, Is.EqualTo(expectedOption.Value + "-anotherlabel"));
-            //    Assert.That(option.Label.LocalizedLabels[1].LanguageCode, Is.EqualTo(3081));
-            //}
+                //for (int i = 0; i < optionValues.Count() - 1; i++)
+                //{
+                //    var option = attMeta.OptionSet.Options[0];
+                //    var expectedOption = optionValues.ElementAt(i);
+                //    Assert.That(option.Value, Is.EqualTo(expectedOption.Key));
+                //    Assert.That(option.Label, Is.Not.Null);
+                //    Assert.That(option.Label.LocalizedLabels, Is.Not.Null);
+                //    Assert.That(option.Label.LocalizedLabels.Count(), Is.EqualTo(2));
+                //    Assert.That(option.Label.LocalizedLabels[0].Label, Is.EqualTo(expectedOption.Value));
+                //    Assert.That(option.Label.LocalizedLabels[1].Label, Is.EqualTo(expectedOption.Value + "-anotherlabel"));
+                //    Assert.That(option.Label.LocalizedLabels[1].LanguageCode, Is.EqualTo(3081));
+                //}
+            }
         }
 
         #endregion
@@ -1070,24 +1136,28 @@ namespace CrmAdo.Tests
 
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} NVARCHAR", entityName, newColumnName);
 
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
+                //var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
-            var attMetadata = request.Attribute;
+                var attMetadata = request.Attribute;
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(StringAttributeMetadata)));
+                Assert.That(attMetadata, Is.AssignableTo(typeof(StringAttributeMetadata)));
 
-            var stringMeta = (StringAttributeMetadata)attMetadata;
+                var stringMeta = (StringAttributeMetadata)attMetadata;
 
-            Assert.That(stringMeta.AttributeType == AttributeTypeCode.String);
-            Assert.That(stringMeta.AttributeTypeName == AttributeTypeDisplayName.StringType);
-            Assert.That(stringMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(stringMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(stringMeta.MaxLength, Is.EqualTo(1));
-            Assert.That(stringMeta.DisplayName, Is.Not.Null);
-            // Assert.That(stringMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+                Assert.That(stringMeta.AttributeType == AttributeTypeCode.String);
+                Assert.That(stringMeta.AttributeTypeName == AttributeTypeDisplayName.StringType);
+                Assert.That(stringMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(stringMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                Assert.That(stringMeta.MaxLength, Is.EqualTo(1));
+                Assert.That(stringMeta.DisplayName, Is.Not.Null);
+                // Assert.That(stringMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+            }
         }
 
         [Test(Description = "Should support adding a new string attribute with a specified max size.")]
@@ -1100,24 +1170,28 @@ namespace CrmAdo.Tests
 
             string commandText = string.Format(@"ALTER TABLE {0} ADD {1} NVARCHAR({2})", entityName, newColumnName, maxLength.ToString());
 
-            var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var request = GetOrganizationRequest<CreateAttributeRequest>(sandbox.FakeCrmDbConnection, commandText);
+                //   var request = GetOrganizationRequest<CreateAttributeRequest>(commandText);
 
-            var attMetadata = request.Attribute;
+                var attMetadata = request.Attribute;
 
-            Assert.IsNotNull(attMetadata);
-            Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
+                Assert.IsNotNull(attMetadata);
+                Assert.That(request.EntityName, Is.EqualTo(entityName.ToLower()));
 
-            Assert.That(attMetadata, Is.AssignableTo(typeof(StringAttributeMetadata)));
+                Assert.That(attMetadata, Is.AssignableTo(typeof(StringAttributeMetadata)));
 
-            var stringMeta = (StringAttributeMetadata)attMetadata;
+                var stringMeta = (StringAttributeMetadata)attMetadata;
 
-            Assert.That(stringMeta.AttributeType == AttributeTypeCode.String);
-            Assert.That(stringMeta.AttributeTypeName == AttributeTypeDisplayName.StringType);
-            Assert.That(stringMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
-            Assert.That(stringMeta.MaxLength, Is.EqualTo(maxLength));
-            Assert.That(stringMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
-            Assert.That(stringMeta.DisplayName, Is.Not.Null);
-            //     Assert.That(stringMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+                Assert.That(stringMeta.AttributeType == AttributeTypeCode.String);
+                Assert.That(stringMeta.AttributeTypeName == AttributeTypeDisplayName.StringType);
+                Assert.That(stringMeta.LogicalName, Is.EqualTo(newColumnName.ToLower()));
+                Assert.That(stringMeta.MaxLength, Is.EqualTo(maxLength));
+                Assert.That(stringMeta.RequiredLevel.Value, Is.EqualTo(AttributeRequiredLevel.None));
+                Assert.That(stringMeta.DisplayName, Is.Not.Null);
+                //     Assert.That(stringMeta.DisplayName.UserLocalizedLabel, Is.Not.Null);
+            }
         }
 
         #endregion

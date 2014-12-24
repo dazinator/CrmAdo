@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrmAdo.Ado
+namespace CrmAdo
 {
     public sealed class CrmDataAdaptorRowUpdatedEventArgs : RowUpdatedEventArgs
     {

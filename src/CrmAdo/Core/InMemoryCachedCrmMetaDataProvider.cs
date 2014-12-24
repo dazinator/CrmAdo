@@ -6,8 +6,9 @@ using System.Linq;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Metadata.Query;
 using CrmAdo.Metadata;
+using CrmAdo.Dynamics;
 
-namespace CrmAdo.Dynamics.Metadata
+namespace CrmAdo.Core
 {
     public class InMemoryCachedCrmMetaDataProvider : ICrmMetaDataProvider
     {

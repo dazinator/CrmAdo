@@ -31,7 +31,7 @@ namespace CrmAdo.Tests
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
                 // Act
-                var queryExpression = base.GetQueryExpression(sql);
+                var queryExpression = base.GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
             }
 
         }

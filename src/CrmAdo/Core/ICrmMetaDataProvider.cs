@@ -1,5 +1,6 @@
 ﻿using CrmAdo.Metadata;
-namespace CrmAdo
+
+namespace CrmAdo.Core
 {
     public interface ICrmMetaDataProvider
     {

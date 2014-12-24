@@ -5,13 +5,14 @@ using CrmAdo.Dynamics;
 using CrmAdo.Dynamics.Metadata;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
-using CrmAdo.Ado;
+using CrmAdo;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Collections.Concurrent;
 using Microsoft.Xrm.Sdk.Query;
 using CrmAdo.IoC;
+using CrmAdo.Core;
 
 namespace CrmAdo
 {
@@ -25,6 +26,7 @@ namespace CrmAdo
         private ICrmMetaDataProvider _MetadataProvider = null;
         private ICrmServiceProvider _CrmServiceProvider = null;
         private ISchemaCollectionsProvider _SchemaCollectionsProvider = null;
+        private IOrgCommandExecutor _OrgCommandExecutor = null;
 
         private IOrganizationService _OrganizationService = null;
         private ConnectionState _State = ConnectionState.Closed;

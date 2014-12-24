@@ -11,6 +11,7 @@ using CrmAdo.Dynamics.Metadata;
 using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk.Metadata.Query;
 using CrmAdo.Metadata;
+using CrmAdo.Core;
 
 namespace CrmAdo.Visitor
 {

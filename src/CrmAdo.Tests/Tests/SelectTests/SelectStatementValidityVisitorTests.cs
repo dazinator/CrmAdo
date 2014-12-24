@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using CrmAdo.Tests.Support;
+using CrmAdo.Tests.Sandbox;
 
 namespace CrmAdo.Tests
 {
@@ -16,9 +17,12 @@ namespace CrmAdo.Tests
             // Arrange
             var sql = "Select * From";
             // Act
-            var queryExpression = GetQueryExpression(sql);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
+            }
         }
-        
+
 
         [Category("Validity")]
         [Test(Description = "Should Throw when no Column Name or * present")]
@@ -28,7 +32,12 @@ namespace CrmAdo.Tests
             // Arrange
             var sql = "Select From contact";
             // Act
-            var queryExpression = GetQueryExpression(sql);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
+
+            }
+           
         }
 
     }

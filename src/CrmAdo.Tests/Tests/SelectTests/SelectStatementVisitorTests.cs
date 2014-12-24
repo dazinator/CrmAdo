@@ -20,7 +20,7 @@ namespace CrmAdo.Tests
             {
 
                 // Act
-                var queryExpression = GetQueryExpression(sql);
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
                 // Assert
                 Assert.That(queryExpression.TopCount == 15);
             }
@@ -36,7 +36,7 @@ namespace CrmAdo.Tests
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
                 // Act
-                var queryExpression = GetQueryExpression(sql);
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
             }
         }
 
@@ -49,7 +49,7 @@ namespace CrmAdo.Tests
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
                 // Act
-                var queryExpression = GetQueryExpression(sql);
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
                 // Assert
 
                 Assert.That(queryExpression.Orders, Is.Not.Null);
@@ -69,7 +69,7 @@ namespace CrmAdo.Tests
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
                 // Act
-                var queryExpression = GetQueryExpression(sql);
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
                 // Assert
 
                 Assert.That(queryExpression.Orders, Is.Not.Null);
@@ -93,7 +93,7 @@ namespace CrmAdo.Tests
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
                 // Act
-                var queryExpression = GetQueryExpression(sql);
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
                 // Assert
 
                 Assert.That(queryExpression.Orders, Is.Not.Null);
@@ -113,7 +113,7 @@ namespace CrmAdo.Tests
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
                 // Act
-                var queryExpression = GetQueryExpression(sql);
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
                 // Assert
 
                 Assert.That(queryExpression.Orders, Is.Not.Null);
@@ -136,8 +136,7 @@ namespace CrmAdo.Tests
             var sql = "SELECT TOP 10 firstname, lastname FROM contact ORDER BY lastname DESC, firstname ASC ";
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
-                // Act
-                var queryExpression = GetQueryExpression(sql);
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
                 // Assert
 
                 Assert.That(queryExpression.Orders, Is.Not.Null);

@@ -23,11 +23,11 @@ namespace CrmAdo.Tests
         {
             // Arrange
             var sql = "INSERT INTO contact (contactid, firstname, lastname) VALUES ('9bf20a16-6034-48e2-80b4-8349bb80c3e2','billy','bob')";
-         
+
             // set up fake metadata provider.
-           // var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
-           // var fakeMetadata = GetFakeContactMetadata();
-          //  fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
+            // var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
+            // var fakeMetadata = GetFakeContactMetadata();
+            //  fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
 
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
@@ -45,9 +45,9 @@ namespace CrmAdo.Tests
                 Assert.That(targetEntity.Attributes.ContainsKey("firstname"));
                 Assert.That(targetEntity.Attributes.ContainsKey("lastname"));
             }
-           
 
-          
+
+
 
         }
 
@@ -72,9 +72,9 @@ namespace CrmAdo.Tests
                 Assert.That(targetEntity.Attributes.ContainsKey("contactid"));
                 Assert.That(targetEntity.Attributes.ContainsKey("firstname"));
                 Assert.That(targetEntity.Attributes.ContainsKey("lastname"));
-            }        
+            }
 
-          
+
 
         }
 
@@ -105,7 +105,7 @@ namespace CrmAdo.Tests
                 Assert.That(targetEntity.Attributes.ContainsKey("lastname"));
             }
 
-           
+
 
         }
 
@@ -116,13 +116,16 @@ namespace CrmAdo.Tests
             // Arrange
             var sql = "INSERT INTO contact DEFAULT VALUES";
             // Act
-            var createRequest = GetOrganizationRequest<CreateRequest>(sql);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var createRequest = GetOrganizationRequest<CreateRequest>(sandbox.FakeCrmDbConnection, sql);
 
-            Entity targetEntity = createRequest.Target;
+                Entity targetEntity = createRequest.Target;
 
-            Assert.That(targetEntity.Attributes.ContainsKey("contactid"));
-            Assert.That(targetEntity.Attributes.ContainsKey("firstname"));
-            Assert.That(targetEntity.Attributes.ContainsKey("lastname"));
+                Assert.That(targetEntity.Attributes.ContainsKey("contactid"));
+                Assert.That(targetEntity.Attributes.ContainsKey("firstname"));
+                Assert.That(targetEntity.Attributes.ContainsKey("lastname"));
+            }
 
         }
 
@@ -235,7 +238,7 @@ namespace CrmAdo.Tests
             Guid id = Guid.Parse("9bf20a16-6034-48e2-80b4-8349bb80c3e2");
             var sql = string.Format("INSERT INTO contact (contactid) VALUES ('{0}')", id);
 
-            using(var sandbox = RequestProviderTestsSandbox.Create())
+            using (var sandbox = RequestProviderTestsSandbox.Create())
             {
                 var cmd = new CrmDbCommand(sandbox.FakeCrmDbConnection);
                 cmd.CommandText = sql;
@@ -249,10 +252,10 @@ namespace CrmAdo.Tests
                 Assert.That(targetEntity.Attributes.ContainsKey("contactid"));
                 Assert.That(targetEntity["contactid"], Is.EqualTo(id));
 
-            }         
-          
+            }
 
-          
+
+
         }
 
         #region Helper Methods
@@ -271,10 +274,10 @@ namespace CrmAdo.Tests
 
                 Entity targetEntity = createRequest.Target;
                 AssertAttributeIsValue<T>(targetEntity, fieldname, assertValue);
-            }                
+            }
 
-           
-        }       
+
+        }
 
         private void AssertAttributeIsValue<T>(Entity ent, string attributeName, T val)
         {

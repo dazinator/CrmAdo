@@ -119,10 +119,6 @@ namespace CrmAdo.IntegrationTests
         }
 
 
-
-
-
-
         [Category("Insert Statement")]
         [Category("Performance")]
         [Test(Description = "Integration tests that inserts 1000 contacts into Dynamics CRM.")]
@@ -154,11 +150,10 @@ namespace CrmAdo.IntegrationTests
         }
 
 
-
         [Category("Select Statement")]
         [Category("Performance")]
         [TestCase(-1, Description = "Can select all contacts")]
-        [TestCase(10000, Description = "Can select TOP 10000 contacts", ExpectedException = typeof(NotSupportedException))]
+        [TestCase(20000, Description = "Can select TOP 20000 contacts")]
         [TestCase(5000, Description = "Can select TOP 5000 contacts")]
         public void Can_Select_Large_Number_Of_Contacts(int total)
         {

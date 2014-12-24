@@ -143,7 +143,11 @@
     <Compile Include="Ado\CrmDataAdaptorRowUpdatedEventArgs.cs" />
     <Compile Include="Ado\CrmDataAdaptorRowUpdatingEventArgs.cs" />
     <Compile Include="Ado\CrmDbMetadataReader.cs" />
-    <Compile Include="ColumnMetadata.cs" />
+    <Compile Include="Metadata\ColumnMetadata.cs" />
+    <Compile Include="Core\IOrganisationCommandProvider.cs" />
+    <Compile Include="Core\IOrgCommand.cs" />
+    <Compile Include="Core\SqlGenerationOrganizationCommandProvider.cs" />
+    <Compile Include="Enums\CrmOperation.cs" />
     <Compile Include="IoC\Container.cs" />
     <Compile Include="Core\ISchemaCollectionsProvider.cs" />
     <Compile Include="IoC\ContainerServices.cs" />
@@ -171,12 +175,13 @@
     <Compile Include="Metadata\CalendarRulesAttributeInfo.cs" />
     <Compile Include="Metadata\StringAttributeInfo.cs" />
     <Compile Include="Metadata\VirtualAttributeInfo.cs" />
+    <Compile Include="Core\OrgCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CrmConnectionCache.cs" />
-    <Compile Include="CrmConnectionInfo.cs" />
+    <Compile Include="Ado\CrmConnectionCache.cs" />
+    <Compile Include="Ado\CrmConnectionInfo.cs" />
     <Compile Include="DesignTime\CrmConnectionStringBuilderConverter.cs" />
     <Compile Include="DesignTime\EnumStandardValuesAttribute.cs" />
-    <Compile Include="CrmCommandExecutor.cs" />
+    <Compile Include="Core\CrmCommandExecutor.cs" />
     <Compile Include="Ado\CrmDbCommand.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -202,13 +207,13 @@
     <Compile Include="Metadata\DecimalAttributeInfo.cs" />
     <Compile Include="Metadata\DoubleAttributeInfo.cs" />
     <Compile Include="Metadata\IColumnMetadata.cs" />
-    <Compile Include="Dynamics\Metadata\MetadataConverter.cs" />
+    <Compile Include="Dynamics\MetadataConverter.cs" />
     <Compile Include="Metadata\MoneyAttributeInfo.cs" />
-    <Compile Include="Dynamics\Metadata\EntityMetadataDataSet.cs">
+    <Compile Include="Dynamics\EntityMetadataDataSet.cs">
       <DependentUpon>EntityMetadataDataSet.xsd</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Dynamics\Metadata\EntityMetadataDataSet.Designer.cs">
+    <Compile Include="Dynamics\EntityMetadataDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>EntityMetadataDataSet.xsd</DependentUpon>
@@ -216,33 +221,32 @@
     <Compile Include="Results\DataTableResultSet.cs" />
     <Compile Include="Results\EntityMetadataResultSet.cs" />
     <Compile Include="Results\ResultSet.cs" />
-    <Compile Include="SchemaTableProvider.cs" />
-    <Compile Include="DataReaderExtensions.cs" />
+    <Compile Include="Core\SchemaTableProvider.cs" />
+    <Compile Include="Util\DataReaderExtensions.cs" />
     <Compile Include="Dynamics\CrmClientCredentialsProvider.cs" />
     <Compile Include="Dynamics\CrmConnectionProvider.cs" />
     <Compile Include="Metadata\CrmEntityMetadata.cs" />
-    <Compile Include="Dynamics\Metadata\EntityMetadataRepository.cs" />
-    <Compile Include="Dynamics\Metadata\EntityMetadataUtils.cs" />
-    <Compile Include="Dynamics\Metadata\EntityQueryUtils.cs" />
+    <Compile Include="Core\EntityMetadataRepository.cs" />
+    <Compile Include="Util\EntityMetadataUtils.cs" />
+    <Compile Include="Util\EntityQueryUtils.cs" />
     <Compile Include="Core\ICrmMetaDataProvider.cs" />
-    <Compile Include="Dynamics\Metadata\InMemoryCachedCrmMetaDataProvider.cs" />
+    <Compile Include="Core\InMemoryCachedCrmMetaDataProvider.cs" />
     <Compile Include="Dynamics\CrmOrganisationManager.cs" />
     <Compile Include="Dynamics\CrmServiceProvider.cs" />
-    <Compile Include="Dynamics\Metadata\EntityAttributeMetadataBuilder.cs" />
-    <Compile Include="Dynamics\Metadata\EntityConstruction.cs" />
-    <Compile Include="Dynamics\Metadata\EntityMetadataBuilder.cs" />
-    <Compile Include="Dynamics\EntityUtils.cs" />
+    <Compile Include="Dynamics\EntityAttributeMetadataBuilder.cs" />
+    <Compile Include="Dynamics\EntityConstruction.cs" />
+    <Compile Include="Dynamics\EntityMetadataBuilder.cs" />
+    <Compile Include="Util\EntityUtils.cs" />
     <Compile Include="Dynamics\ExplicitConnectionStringProviderWithFallbackToConfig.cs" />
     <Compile Include="Dynamics\FailedToConnectToCrmException.cs" />
     <Compile Include="Dynamics\ICrmClientCredentialsProvider.cs" />
     <Compile Include="Dynamics\ICrmConnectionProvider.cs" />
     <Compile Include="Dynamics\ICrmOrganisationManager.cs" />
     <Compile Include="Dynamics\ICrmServiceProvider.cs" />
-    <Compile Include="Dynamics\Metadata\IEntityMetadataRepository.cs" />
-    <Compile Include="Dynamics\OrganisationDoesNotExistException.cs" />
+    <Compile Include="Core\IEntityMetadataRepository.cs" />
+    <Compile Include="Exceptions\OrganisationDoesNotExistException.cs" />
     <Compile Include="Results\EntityResultSet.cs" />
     <Compile Include="Core\ICrmCommandExecutor.cs" />
-    <Compile Include="Core\ICrmRequestProvider.cs" />
     <Compile Include="Util\DynamicLinq.cs" />
     <Compile Include="Util\Extensions.cs" />
     <Compile Include="Util\SystemCommandParameters.cs" />
@@ -265,15 +269,15 @@
     <None Include="app.config.transform" />
     <None Include="CrmAdo.nuspec" />
     <None Include="Key.pfx" />
-    <None Include="Dynamics\Metadata\EntityMetadataDataSet.xsc">
+    <None Include="Dynamics\EntityMetadataDataSet.xsc">
       <DependentUpon>EntityMetadataDataSet.xsd</DependentUpon>
     </None>
-    <None Include="Dynamics\Metadata\EntityMetadataDataSet.xsd">
+    <None Include="Dynamics\EntityMetadataDataSet.xsd">
       <SubType>Designer</SubType>
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>EntityMetadataDataSet.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Dynamics\Metadata\EntityMetadataDataSet.xss">
+    <None Include="Dynamics\EntityMetadataDataSet.xss">
       <DependentUpon>EntityMetadataDataSet.xsd</DependentUpon>
     </None>
     <None Include="packages.config" />

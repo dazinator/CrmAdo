@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrmAdo.Dynamics.Metadata
+namespace CrmAdo.Dynamics
 {
     public class MetadataConverter
     {

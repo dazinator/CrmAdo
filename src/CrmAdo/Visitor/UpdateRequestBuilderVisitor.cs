@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using CrmAdo.Dynamics.Metadata;
 using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk;
+using CrmAdo.Core;
 
 namespace CrmAdo.Visitor
 {

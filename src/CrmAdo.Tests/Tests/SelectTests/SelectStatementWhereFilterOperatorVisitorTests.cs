@@ -34,8 +34,7 @@ namespace CrmAdo.Tests
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} {1} '{2}'", columnName, sqlOperator, conditionValue);
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
-                // Act
-                var queryExpression = GetQueryExpression(sql);
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
                 // Assert
                 AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, conditionValue);
             }
@@ -59,7 +58,7 @@ namespace CrmAdo.Tests
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
                 // Act
-                var queryExpression = GetQueryExpression(sql);
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
                 // Assert
                 AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, valuesArray);
             }
@@ -78,8 +77,7 @@ namespace CrmAdo.Tests
 
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
-                // Act
-                var queryExpression = GetQueryExpression(sql);
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
                 // Assert
                 AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, conditionValue);
             }
@@ -101,8 +99,7 @@ namespace CrmAdo.Tests
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} {1} {2}", columnName, sqlOperator, conditionValue);
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
-                // Act
-                var queryExpression = GetQueryExpression(sql);
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
                 // Assert
                 AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, conditionValue);
             }
@@ -128,7 +125,7 @@ namespace CrmAdo.Tests
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
                 // Act
-                var queryExpression = GetQueryExpression(sql);
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
                 // Assert
                 AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, valuesArray);
             }
@@ -146,7 +143,7 @@ namespace CrmAdo.Tests
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
                 // Act
-                var queryExpression = GetQueryExpression(sql);
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
                 // Assert
                 AssertUtils.AssertQueryContainsSingleFilterCondition(queryExpression, columnName, sqlOperator, null);
             }

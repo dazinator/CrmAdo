@@ -10,7 +10,7 @@
 
 #pragma warning disable 1591
 
-namespace CrmAdo.Dynamics.Metadata {
+namespace CrmAdo.Dynamics {
     
     
     /// <summary>

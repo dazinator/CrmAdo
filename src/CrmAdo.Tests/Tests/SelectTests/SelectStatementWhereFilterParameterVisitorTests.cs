@@ -46,15 +46,17 @@ namespace CrmAdo.Tests
             }
             var sql = string.Format("Select contactid, firstname, lastname From contact Where {0} ", filterFormatString);
 
-            var cmd = new CrmDbCommand(null);
-            cmd.CommandText = sql;
-            var param = cmd.CreateParameter();
-            param.ParameterName = "@param1";
-            param.Value = value;
-            cmd.Parameters.Add(param);
+          
             // Create test subject.
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
+                var cmd = new CrmDbCommand(sandbox.FakeCrmDbConnection);
+                cmd.CommandText = sql;
+                var param = cmd.CreateParameter();
+                param.ParameterName = "@param1";
+                param.Value = value;
+                cmd.Parameters.Add(param);
+
                 // Act
                 var subject = ResolveTestSubjectInstance();
 

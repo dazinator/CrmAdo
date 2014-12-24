@@ -8,7 +8,7 @@ using System.Text;
 using System.Data;
 using System.ComponentModel;
 
-namespace CrmAdo.Dynamics.Metadata
+namespace CrmAdo.Dynamics
 {
     public partial class EntityMetadataDataSet
     {

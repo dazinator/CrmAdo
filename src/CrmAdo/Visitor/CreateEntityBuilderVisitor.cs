@@ -12,6 +12,7 @@ using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using CrmAdo.Core;
+using CrmAdo.Metadata;
 
 namespace CrmAdo.Visitor
 {
@@ -97,7 +98,8 @@ namespace CrmAdo.Visitor
             if (!HasFoundNameColumn)
             {
                 throw new NotSupportedException("Dynamics CRM requires that you specify the primary name column. This should be of datatype VARCHAR or NVARCHAR.");
-            }
+            }         
+
 
         }
 

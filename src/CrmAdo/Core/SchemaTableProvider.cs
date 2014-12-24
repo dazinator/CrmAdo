@@ -7,7 +7,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 using CrmAdo.Dynamics.Metadata;
 using CrmAdo.Metadata;
 
-namespace CrmAdo
+namespace CrmAdo.Core
 {
     /// <summary>
     /// An implementation of a provider that generates the schema table, based on Column Metadata.

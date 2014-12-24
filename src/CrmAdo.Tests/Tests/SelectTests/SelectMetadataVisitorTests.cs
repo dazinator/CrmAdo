@@ -6,6 +6,7 @@ using CrmAdo.Tests.Support;
 using System.Text;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata.Query;
+using CrmAdo.Tests.Sandbox;
 
 namespace CrmAdo.Tests
 {
@@ -32,22 +33,25 @@ namespace CrmAdo.Tests
             // Arrange
             var sql = sqlBuilder.ToString();
             // Act
-            var queryExpression = GetOrganizationRequest<RetrieveMetadataChangesRequest>(sql);
-            // Assert
-            Assert.That(queryExpression, Is.Not.Null);
-            Assert.That(queryExpression.Query, Is.Not.Null);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var queryExpression = GetOrganizationRequest < RetrieveMetadataChangesRequest>(sandbox.FakeCrmDbConnection, sql);
+              
+                // Assert
+                Assert.That(queryExpression, Is.Not.Null);
+                Assert.That(queryExpression.Query, Is.Not.Null);
 
 
-            EntityQueryExpression query = queryExpression.Query;
-            Assert.That(query.Properties, Is.Not.Null);
+                EntityQueryExpression query = queryExpression.Query;
+                Assert.That(query.Properties, Is.Not.Null);
 
-            MetadataPropertiesExpression props = query.Properties;
-            Assert.That(props.PropertyNames.Count, Is.GreaterThan(1));
+                MetadataPropertiesExpression props = query.Properties;
+                Assert.That(props.PropertyNames.Count, Is.GreaterThan(1));
+
+            }
 
 
-            
-
-        }    
+        }
 
 
     }

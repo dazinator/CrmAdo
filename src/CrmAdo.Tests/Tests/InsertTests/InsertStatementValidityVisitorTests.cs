@@ -4,6 +4,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using NUnit.Framework;
 using CrmAdo.Tests.Support;
+using CrmAdo.Tests.Sandbox;
 
 namespace CrmAdo.Tests
 {
@@ -20,7 +21,10 @@ namespace CrmAdo.Tests
             // Arrange
             var sql = "INSERT INTO contact (firstname) VALUES (1, 'bloggs')";
             // Act
-            var queryExpression = GetOrganizationRequest<CreateRequest>(sql);
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+                var queryExpression = GetOrganizationRequest<CreateRequest>(sandbox.FakeCrmDbConnection, sql);
+            }
         }
 
 

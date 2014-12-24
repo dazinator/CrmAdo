@@ -45,7 +45,7 @@ namespace CrmAdo.Tests
             {
 
                 // Act
-                var queryExpression = GetQueryExpression(sql);
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
 
                 //Assert
 
@@ -89,9 +89,7 @@ namespace CrmAdo.Tests
 
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
-
-                // Act
-                var queryExpression = GetQueryExpression(sql);
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
 
                 Assert.That(queryExpression.ColumnSet.Columns.Count, Is.EqualTo(3));
                 Assert.That(queryExpression.LinkEntities, Is.Not.Null);
@@ -131,9 +129,7 @@ namespace CrmAdo.Tests
             // Ask our test subject to Convert the SelectBuilder to a Query Expression.
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
-
-                // Act
-                var queryExpression = GetQueryExpression(sql);
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
 
                 // There should be filter criteria on the main entity and also on the link entity.
                 //var defaultConditons = queryExpression.Criteria.Conditions;
@@ -160,9 +156,7 @@ namespace CrmAdo.Tests
 
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
-
-                // Act
-                var queryExpression = GetQueryExpression(sql);
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
 
                 // Assert
                 // the filter should have 3 conditions, one for main entity attribue, and others for the linked entities..

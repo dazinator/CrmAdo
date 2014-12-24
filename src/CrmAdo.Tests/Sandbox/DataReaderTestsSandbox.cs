@@ -1,4 +1,5 @@
-﻿using CrmAdo.Metadata;
+﻿using CrmAdo.Core;
+using CrmAdo.Metadata;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using System;

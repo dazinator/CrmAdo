@@ -1,4 +1,5 @@
-﻿using CrmAdo.Dynamics;
+﻿using CrmAdo.Core;
+using CrmAdo.Dynamics;
 using CrmAdo.Visitor;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -8,6 +9,7 @@ using Rhino.Mocks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,11 +17,13 @@ using System.Threading.Tasks;
 namespace CrmAdo.Tests.Support
 {
     [Category("Visitor")]
-    public class BaseOrganisationRequestBuilderVisitorTest : BaseTest<VisitingCrmRequestProvider>
+    public class BaseOrganisationRequestBuilderVisitorTest : BaseTest<SqlGenerationOrganizationCommandProvider>
     {
-        protected QueryExpression GetQueryExpression(string sql)
-        {            
-            var cmd = new CrmDbCommand();
+      //  private CrmDbConnection _MockConnection = null;
+
+        protected QueryExpression GetQueryExpression(CrmDbConnection connection, string sql)
+        {
+            var cmd = new CrmDbCommand(connection);
             cmd.CommandText = sql;
             return GetQueryExpression(cmd);
         }
@@ -30,19 +34,21 @@ namespace CrmAdo.Tests.Support
             return req.Query as QueryExpression;
         }
 
-        protected T GetOrganizationRequest<T>(string sql) where T : OrganizationRequest
+        protected T GetOrganizationRequest<T>(CrmDbConnection connection, string sql) where T : OrganizationRequest
         {
-            var cmd = new CrmDbCommand(null);
+            var cmd = new CrmDbCommand(connection);
             cmd.CommandText = sql;
             return GetOrganizationRequest<T>(cmd);
+
         }
 
-        protected T GetOrganizationRequest<T>(CrmDbCommand command) where T : OrganizationRequest
-        {                     
+        protected T GetOrganizationRequest<T>(CrmDbCommand command, CommandBehavior behaviour = CommandBehavior.Default) where T : OrganizationRequest
+        {
             List<ColumnMetadata> columnMetadata;
-            var subject = IoC.ContainerServices.CurrentContainer().Resolve<VisitingCrmRequestProvider>();
-            var request = subject.GetOrganizationRequest(command, out columnMetadata) as T;
-            return request as T;
+            var subject = this.ResolveTestSubjectInstance();
+            // IoC.ContainerServices.CurrentContainer().Resolve<VisitingCrmRequestProvider>();
+            var orgCommand = subject.GetOrganisationCommand(command, behaviour);
+            return orgCommand.Request as T;
         }
 
         protected static string GetSqlFilterString(string filterOperator, object filterValue, string filterFormatString, string filterColumnName)

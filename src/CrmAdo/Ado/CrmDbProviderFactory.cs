@@ -1,4 +1,4 @@
-﻿using CrmAdo.Ado;
+﻿using CrmAdo;
 using System;
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -8,7 +8,7 @@ using System.Reflection;
 namespace CrmAdo
 {
     public class CrmDbProviderFactory : DbProviderFactory
-    {      
+    {
 
         /// <summary>
         /// Every provider factory must have an Instance public field
@@ -18,12 +18,14 @@ namespace CrmAdo
 
         public override DbConnection CreateConnection()
         {
-            return new CrmDbConnection();
+            return IoC.ContainerServices.CurrentContainer().Resolve<CrmDbConnection>();
+            // return new CrmDbConnection();
         }
 
         public override DbCommand CreateCommand()
         {
-            return new CrmDbCommand();
+            return IoC.ContainerServices.CurrentContainer().Resolve<CrmDbCommand>();
+            // return new CrmDbCommand();
         }
 
         public override DbParameter CreateParameter()

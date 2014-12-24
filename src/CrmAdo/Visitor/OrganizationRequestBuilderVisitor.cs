@@ -1,5 +1,7 @@
-﻿using CrmAdo.Dynamics;
+﻿using CrmAdo.Core;
+using CrmAdo.Dynamics;
 using CrmAdo.Dynamics.Metadata;
+using CrmAdo.Enums;
 using Microsoft.Xrm.Sdk;
 using SQLGeneration.Builders;
 using System;
@@ -12,6 +14,8 @@ using System.Threading.Tasks;
 
 namespace CrmAdo.Visitor
 {
+
+
     /// <summary>
     /// A <see cref="BuilderVisitor"/> that builds a <see cref="OrganizationRequest"/> when it visits an <see cref="ICommand"/> 
     /// </summary>
@@ -19,21 +23,24 @@ namespace CrmAdo.Visitor
     {
         public const string ParameterToken = "@";
 
-        public OrganizationRequest OrganizationRequest { get; set; }
-        public List<ColumnMetadata> ColumnMetadata { get; set; }
+        // public OrganizationRequest OrganizationRequest { get; set; }
+        // public List<ColumnMetadata> ColumnMetadata { get; set; }
 
         public ICrmMetaDataProvider CrmMetadataProvider { get; set; }
         public DbParameterCollection Parameters { get; set; }
         public IDynamicsAttributeTypeProvider TypeProvider { get; set; }
 
         private bool _DetectingMetadataQuery = false;
-        private bool _IsMetadataQuery = false;
+        // private bool _IsMetadataQuery = false;
+        public IOrgCommand OrgCommand { get; private set; }
+
 
         public OrganizationRequestBuilderVisitor(ICrmMetaDataProvider crmMetadataProvider, DbParameterCollection parameters, IDynamicsAttributeTypeProvider typeProvider)
         {
             CrmMetadataProvider = crmMetadataProvider;
             Parameters = parameters;
             TypeProvider = typeProvider;
+            OrgCommand = new OrgCommand();
         }
 
         protected override void VisitSelect(SelectBuilder item)
@@ -46,16 +53,18 @@ namespace CrmAdo.Visitor
                 var visitor = new RetrieveMultipleRequestBuilderVisitor(Parameters, CrmMetadataProvider);
                 IVisitableBuilder visitable = item;
                 visitable.Accept(visitor);
-                OrganizationRequest = visitor.Request;
-                ColumnMetadata = visitor.ColumnMetadata;
+                OrgCommand.Request = visitor.Request;
+                OrgCommand.Columns = visitor.ColumnMetadata;
+                OrgCommand.OperationType = CrmOperation.RetrieveMultiple;
             }
             else
             {
                 var visitor = new RetrieveMetadataChangesRequestBuilderVisitor(Parameters, CrmMetadataProvider);
                 IVisitableBuilder visitable = item;
                 visitable.Accept(visitor);
-                OrganizationRequest = visitor.Request;
-                ColumnMetadata = visitor.ColumnMetadata;
+                OrgCommand.Request = visitor.Request;
+                OrgCommand.Columns = visitor.ColumnMetadata;
+                OrgCommand.OperationType = CrmOperation.RetrieveMetadataChanges;
             }
 
         }
@@ -65,7 +74,9 @@ namespace CrmAdo.Visitor
             var visitor = new CreateRequestBuilderVisitor(Parameters, CrmMetadataProvider);
             IVisitableBuilder visitable = item;
             visitable.Accept(visitor);
-            OrganizationRequest = visitor.Request;
+            OrgCommand.Request = visitor.Request;
+            OrgCommand.OperationType = CrmOperation.Create;
+
         }
 
         protected override void VisitUpdate(UpdateBuilder item)
@@ -73,7 +84,8 @@ namespace CrmAdo.Visitor
             var visitor = new UpdateRequestBuilderVisitor(Parameters, CrmMetadataProvider);
             IVisitableBuilder visitable = item;
             visitable.Accept(visitor);
-            OrganizationRequest = visitor.Request;
+            OrgCommand.Request = visitor.Request;
+            OrgCommand.OperationType = CrmOperation.Update;
         }
 
         protected override void VisitDelete(DeleteBuilder item)
@@ -81,7 +93,8 @@ namespace CrmAdo.Visitor
             var visitor = new DeleteRequestBuilderVisitor(Parameters, CrmMetadataProvider, TypeProvider);
             IVisitableBuilder visitable = item;
             visitable.Accept(visitor);
-            OrganizationRequest = visitor.Request;
+            OrgCommand.Request = visitor.Request;
+            OrgCommand.OperationType = CrmOperation.Delete;
         }
 
         protected override void VisitCreate(CreateBuilder item)
@@ -89,7 +102,8 @@ namespace CrmAdo.Visitor
             var visitor = new CreateEntityRequestBuilderVisitor(Parameters, CrmMetadataProvider);
             IVisitableBuilder visitable = item;
             visitable.Accept(visitor);
-            OrganizationRequest = visitor.Request;
+            OrgCommand.Request = visitor.Request;
+            OrgCommand.OperationType = CrmOperation.CreateEntity;
         }
 
         protected override void VisitAlter(AlterBuilder item)
@@ -105,7 +119,8 @@ namespace CrmAdo.Visitor
             var visitor = new CreateAttributeRequestBuilderVisitor(Parameters, CrmMetadataProvider);
             IVisitableBuilder visitable = item;
             visitable.Accept(visitor);
-            OrganizationRequest = visitor.Request;
+            OrgCommand.Request = visitor.Request;
+            OrgCommand.OperationType = CrmOperation.CreateAttribute;
         }
 
         private bool IsMetadataQuery(SelectBuilder item)
@@ -117,7 +132,7 @@ namespace CrmAdo.Visitor
                 visitable.Accept(this);
             }
             _DetectingMetadataQuery = false;
-            return _IsMetadataQuery;
+            return OrgCommand.OperationType == CrmOperation.RetrieveMetadataChanges;
         }
 
         protected override void VisitTable(Table item)
@@ -130,7 +145,8 @@ namespace CrmAdo.Visitor
                     case "attributemetadata":
                     case "onetomanyrelationshipmetadata":
                     case "manytomanyrelationshipmetadata":
-                        _IsMetadataQuery = true;
+                        OrgCommand.OperationType = CrmOperation.RetrieveMetadataChanges;
+                        // _IsMetadataQuery = true;
                         break;
                 }
             }
@@ -156,7 +172,7 @@ namespace CrmAdo.Visitor
         protected override void VisitLeftOuterJoin(LeftOuterJoin item)
         {
             if (_DetectingMetadataQuery)
-            {                
+            {
                 item.RightHand.Source.Accept(this);
             }
         }

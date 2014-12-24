@@ -9,6 +9,7 @@ using CrmAdo.Dynamics;
 using CrmAdo.Dynamics.Metadata;
 using Microsoft.Xrm.Sdk.Query;
 using NUnit.Framework;
+using CrmAdo.Core;
 
 namespace CrmAdo.IntegrationTests
 {

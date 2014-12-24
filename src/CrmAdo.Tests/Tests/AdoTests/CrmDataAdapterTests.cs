@@ -5,7 +5,6 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using NUnit.Framework;
 using Rhino.Mocks;
-using CrmAdo.Ado;
 using CrmAdo.Dynamics;
 using Rhino.Mocks.Constraints;
 using Microsoft.Xrm.Sdk.Messages;

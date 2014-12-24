@@ -1,5 +1,4 @@
 ﻿using CrmAdo;
-using CrmAdo.Ado;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -61,8 +60,8 @@ namespace CrmAdo.EntityFramework
 
             CrmDbCommand command = new CrmDbCommand();
 
-            List<DbParameter> parameters;
-            CommandType commandType;
+           // List<DbParameter> parameters;
+            //CommandType commandType;
 
 
             throw new NotImplementedException();
@@ -228,13 +227,13 @@ namespace CrmAdo.EntityFramework
 
             string databaseName = GetDatabaseName(crmConnection);
 
-            bool exists = false;
+           // bool exists = false;
 
             throw new NotImplementedException();
 
             //UsingMasterConnection(crmConnection, conn =>
             //{
-            throw new NotImplementedException();
+          //  throw new NotImplementedException();
 
             //StoreVersion storeVersion = StoreVersionUtils.GetStoreVersion(conn);
             //string databaseExistsScript = DdlBuilder.CreateDatabaseExistsScript(databaseName);
@@ -243,7 +242,7 @@ namespace CrmAdo.EntityFramework
             //exists = (result == 1);
             // });
 
-            return exists;
+          //  return exists;
         }
 
         protected override void DbDeleteDatabase(DbConnection connection, int? commandTimeout, StoreItemCollection storeItemCollection)
@@ -326,7 +325,7 @@ namespace CrmAdo.EntityFramework
         /// </summary>
         internal static CrmParameter CreateParameter(string name, TypeUsage type, ParameterMode mode, object value)
         {
-            int? size;
+           // int? size;
 
             value = EnsureParameterValue(value);
 
