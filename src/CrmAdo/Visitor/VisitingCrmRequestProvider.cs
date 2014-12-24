@@ -1,5 +1,4 @@
 ﻿using CrmAdo.Dynamics;
-using CrmAdo.Dynamics.Metadata;
 using Microsoft.Xrm.Sdk;
 using SQLGeneration.Generators;
 using System;

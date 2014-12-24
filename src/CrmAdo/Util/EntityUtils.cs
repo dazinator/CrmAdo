@@ -6,7 +6,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk.Metadata.Query;
 
-namespace CrmAdo.Dynamics
+namespace CrmAdo.Util
 { // ReSharper disable CheckNamespace 
 // Do not change the namespace as we want anyone impprting the dynamics Sdk to get these handy utility extension methods without having
 // to set up additional Using / Imports statements.

@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CrmAdo.Dynamics.Metadata;
+using CrmAdo.Dynamics;
+using CrmAdo.Util;
 
 namespace CrmAdo.Metadata
 {

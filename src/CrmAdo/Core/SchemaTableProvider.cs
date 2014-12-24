@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Globalization;
 using Microsoft.Xrm.Sdk.Metadata;
-using CrmAdo.Dynamics.Metadata;
+using CrmAdo.Dynamics;
 using CrmAdo.Metadata;
 
 namespace CrmAdo.Core

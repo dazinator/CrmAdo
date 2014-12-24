@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CrmAdo.Dynamics.Metadata;
+using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using CrmAdo.Metadata;

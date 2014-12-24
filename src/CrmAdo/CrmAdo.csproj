@@ -198,7 +198,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="IoC\TinyIoC.cs" />
-    <Compile Include="Util\CrmDbTypeConverter.cs" />
+    <Compile Include="Core\CrmDbTypeConverter.cs" />
     <Compile Include="Ado\CrmParameterCollection.cs" />
     <Compile Include="Dynamics\EntityBuilder.cs" />
     <Compile Include="Dynamics\IDynamicsAttributeTypeProvider.cs" />

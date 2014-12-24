@@ -1,6 +1,6 @@
 ﻿using System.Data.Common;
 
-namespace CrmAdo
+namespace CrmAdo.Util
 {
     public static class DataReaderExtensions
     {

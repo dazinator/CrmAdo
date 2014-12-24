@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.Xrm.Sdk.Query;
 
-namespace CrmAdo.Dynamics.Metadata
+namespace CrmAdo.Util
 {
     public static class EntityQueryUtils
     {

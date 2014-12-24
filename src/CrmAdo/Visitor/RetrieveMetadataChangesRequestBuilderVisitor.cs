@@ -7,11 +7,11 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CrmAdo.Dynamics.Metadata;
 using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk.Metadata.Query;
 using CrmAdo.Metadata;
 using CrmAdo.Core;
+using CrmAdo.Util;
 
 namespace CrmAdo.Visitor
 {

@@ -2,7 +2,6 @@
 using System.Data;
 using System.Data.Common;
 using CrmAdo.Dynamics;
-using CrmAdo.Dynamics.Metadata;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using CrmAdo;

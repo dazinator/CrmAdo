@@ -1,12 +1,13 @@
 ﻿using Microsoft.Xrm.Sdk.Metadata;
 using System;
-using CrmAdo.Dynamics.Metadata;
+using CrmAdo.Dynamics;
 using System.Collections.Generic;
 using System.Threading;
 using System.Linq;
 using System.Text;
 using System.Data;
 using System.ComponentModel;
+using CrmAdo.Util;
 
 namespace CrmAdo.Dynamics
 {

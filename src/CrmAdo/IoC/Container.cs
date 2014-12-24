@@ -1,7 +1,6 @@
 ﻿using CrmAdo;
 using CrmAdo.Core;
 using CrmAdo.Dynamics;
-using CrmAdo.Dynamics.Metadata;
 using CrmAdo.IoC;
 using CrmAdo.Visitor;
 using System;

@@ -1,4 +1,4 @@
-namespace CrmAdo
+namespace CrmAdo.Util
 {
     public static class SystemCommandParameters
     {

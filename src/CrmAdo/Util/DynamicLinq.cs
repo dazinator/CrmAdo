@@ -14,7 +14,7 @@ using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Collections;
 
-namespace CrmAdo.Util.DynamicLinq
+namespace CrmAdo.Util
 {
     public static class DynamicQueryable
     {

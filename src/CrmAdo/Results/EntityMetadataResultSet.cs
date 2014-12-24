@@ -1,4 +1,4 @@
-﻿using CrmAdo.Dynamics.Metadata;
+﻿using CrmAdo.Dynamics;
 using CrmAdo.Metadata;
 using CrmAdo.Results;
 using Microsoft.Xrm.Sdk;

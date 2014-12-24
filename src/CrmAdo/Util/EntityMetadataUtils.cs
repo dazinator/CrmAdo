@@ -8,7 +8,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using System.Text;
 
-namespace CrmAdo.Dynamics.Metadata
+namespace CrmAdo.Util
 {
     public static class EntityMetadataUtils
     {

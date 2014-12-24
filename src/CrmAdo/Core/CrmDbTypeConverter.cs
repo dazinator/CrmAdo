@@ -3,7 +3,7 @@ using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 
-namespace CrmAdo
+namespace CrmAdo.Core
 {
     public class CrmDbTypeConverter
     {
