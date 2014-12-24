@@ -47,7 +47,7 @@ namespace CrmAdo.Visitor
 
 
 
-        private ICrmMetaDataProvider _MetadataProvider;
+      //  private ICrmMetaDataProvider _MetadataProvider;
 
         public enum VisitMode
         {
@@ -65,12 +65,12 @@ namespace CrmAdo.Visitor
         }
 
         public RetrieveMetadataChangesRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider)
+            : base(metadataProvider)
         {
             Parameters = parameters;
-            Request = new RetrieveMetadataChangesRequest();
-            _MetadataProvider = metadataProvider;
-            EntityMetadata = new Dictionary<string, CrmEntityMetadata>();
-            ColumnMetadata = new List<ColumnMetadata>();
+            Request = new RetrieveMetadataChangesRequest();          
+          
+          //  ColumnMetadata = new List<ColumnMetadata>();
             //  QueryExpression = new EntityQueryExpression();          
             // Request.Query = QueryExpression;
         }
@@ -82,8 +82,8 @@ namespace CrmAdo.Visitor
         public bool IsSingleSource { get; set; }
         public AliasedSource SingleSource { get; set; }
         public VisitMode Mode { get; set; }
-        private Dictionary<string, CrmEntityMetadata> EntityMetadata { get; set; }
-        public List<ColumnMetadata> ColumnMetadata { get; set; }
+      //  private Dictionary<string, CrmEntityMetadata> EntityMetadata { get; set; }
+       // public List<ColumnMetadata> ColumnMetadata { get; set; }
 
         #region From Context
         //  public int EntityMetadataTableLevel = 0;
@@ -1014,71 +1014,6 @@ namespace CrmAdo.Visitor
         #endregion
 
         #endregion
-
-
-        private void AddAllColumnMetadata(string entityName, string entityAlias)
-        {
-            // Add the metadata for this column.
-            var entityMetadata = GetEntityMetadata(entityName);
-            if (entityMetadata != null)
-            {
-                // Populate metadata for these columns.
-                ColumnMetadata.AddRange((from c in entityMetadata.Attributes orderby c.LogicalName select new ColumnMetadata(c, entityAlias)));
-            }
-            else
-            {
-                // Could throw an exceptiton as no metadata found for this entity.
-            }
-        }
-
-        private void AddColumnMetadata(string entityName, string entityAlias, string attributeName)
-        {
-            // Add the metadata for this column.
-            var entityMetadata = GetEntityMetadata(entityName);
-            if (entityMetadata != null)
-            {
-                var colMeta = entityMetadata.Attributes.FirstOrDefault(c => c.LogicalName == attributeName);
-                ColumnMetadata columnMetadata = null;
-                if (colMeta == null)
-                {
-
-                    // could throw an exception as no metadata found for this attribute?
-                    //  throw new ArgumentException("Unknown column: " + columnAttributeName);
-                    columnMetadata = new ColumnMetadata(attributeName, entityAlias);
-
-                }
-                else
-                {
-                    columnMetadata = new ColumnMetadata(colMeta, entityAlias);
-                }
-                ColumnMetadata.Add(columnMetadata);
-            }
-            else
-            {
-                // Could throw an exceptiton as no metadata found for this entity.
-            }
-        }
-
-        private CrmEntityMetadata GetEntityMetadata(string entityName)
-        {
-            if (!EntityMetadata.ContainsKey(entityName))
-            {
-                if (_MetadataProvider == null)
-                {
-                    return null;
-                }
-                EntityMetadata[entityName] = _MetadataProvider.GetEntityMetadata(entityName);
-                if (entityName == AttributeMetadadataTableLogicalName)
-                {
-                    InitialiseAttributeQuery();
-                }
-                else if(entityName == OneToManyRelationshipMetadadataTableLogicalName)
-                {
-                    InitialiseRelationshipQuery();
-                }
-            }
-            var entMeta = EntityMetadata[entityName];
-            return entMeta;
-        }
+    
     }
 }

@@ -1,22 +1,22 @@
 using System;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using CrmAdo.Core;
 using CrmAdo.Dynamics;
+using CrmAdo.Metadata;
+using CrmAdo.Results;
+using CrmAdo.Util;
+using CrmAdo.Visitor;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
-using CrmAdo.Visitor;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Metadata.Query;
-using CrmAdo.Results;
-using CrmAdo.Util;
-using System.ComponentModel;
-using CrmAdo.Metadata;
-using CrmAdo.Dynamics;
 using SQLGeneration.Generators;
 using SQLGeneration.Builders;
-using CrmAdo.Core;
+
 using CrmAdo.Enums;
 
 namespace CrmAdo.Core

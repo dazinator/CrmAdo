@@ -25,7 +25,7 @@ namespace CrmAdo
         private ICrmMetaDataProvider _MetadataProvider = null;
         private ICrmServiceProvider _CrmServiceProvider = null;
         private ISchemaCollectionsProvider _SchemaCollectionsProvider = null;
-        private IOrgCommandExecutor _OrgCommandExecutor = null;
+       // private IOrgCommandExecutor _OrgCommandExecutor = null;
 
         private IOrganizationService _OrganizationService = null;
         private ConnectionState _State = ConnectionState.Closed;

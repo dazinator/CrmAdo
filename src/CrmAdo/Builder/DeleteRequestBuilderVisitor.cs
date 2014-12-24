@@ -26,10 +26,11 @@ namespace CrmAdo.Visitor
         }
 
         public DeleteRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider, IDynamicsAttributeTypeProvider typeProvider)
+            : base(metadataProvider)
         {
             Request = new DeleteRequest();
             Parameters = parameters;
-            MetadataProvider = metadataProvider;
+           // MetadataProvider = metadataProvider;
             IsVisitingRightFilterItem = false;
             DynamicsTypeProvider = typeProvider;
         }
@@ -38,7 +39,7 @@ namespace CrmAdo.Visitor
         public DeleteRequest Request { get; set; }
 
         public DbParameterCollection Parameters { get; set; }
-        private ICrmMetaDataProvider MetadataProvider { get; set; }
+       // private ICrmMetaDataProvider MetadataProvider { get; set; }
 
         private string EntityName { get; set; }
         private EqualToFilter EqualToFilter { get; set; }

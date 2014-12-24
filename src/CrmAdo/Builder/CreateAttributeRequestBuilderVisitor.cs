@@ -28,17 +28,18 @@ namespace CrmAdo.Visitor
         }
 
         public CreateAttributeRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider)
+            : base(metadataProvider)
         {
             // Request = new CreateAttributeRequest();
             Parameters = parameters;
-            MetadataProvider = metadataProvider;
+           // MetadataProvider = metadataProvider;
             this.FilterForForeignKeyConstraint = false;
         }
 
         public OrganizationRequest Request { get; set; }
 
         public DbParameterCollection Parameters { get; set; }
-        private ICrmMetaDataProvider MetadataProvider { get; set; }
+      //  private ICrmMetaDataProvider MetadataProvider { get; set; }
 
         private AttributeMetadata CurrentAttribute { get; set; }
         private AddColumns CurrentAddColumns { get; set; }

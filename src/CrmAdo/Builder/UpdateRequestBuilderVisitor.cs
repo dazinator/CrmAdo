@@ -26,16 +26,16 @@ namespace CrmAdo.Visitor
         }
 
         public UpdateRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider)
+            : base(metadataProvider)
         {
             Request = new UpdateRequest();
-            Parameters = parameters;
-            MetadataProvider = metadataProvider;
+            Parameters = parameters;           
             IsVisitingRightFilterItem = false;
         }
 
         public UpdateRequest Request { get; set; }
         public DbParameterCollection Parameters { get; set; }
-        private ICrmMetaDataProvider MetadataProvider { get; set; }
+       // private ICrmMetaDataProvider MetadataProvider { get; set; }
         private EntityBuilder EntityBuilder { get; set; }
 
         private string EntityName { get; set; }

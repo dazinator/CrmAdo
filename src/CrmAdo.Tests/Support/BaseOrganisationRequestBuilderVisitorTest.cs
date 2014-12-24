@@ -51,6 +51,23 @@ namespace CrmAdo.Tests.Support
             return orgCommand.Request as T;
         }
 
+        protected IOrgCommand GetOrgCommand(CrmDbConnection connection, string sql) 
+        {
+            var cmd = new CrmDbCommand(connection);
+            cmd.CommandText = sql;
+            return GetOrgCommand(cmd);
+
+        }
+
+        protected IOrgCommand GetOrgCommand(CrmDbCommand command, CommandBehavior behaviour = CommandBehavior.Default)
+        {
+            // List<ColumnMetadata> columnMetadata;
+            var subject = this.ResolveTestSubjectInstance();
+            // IoC.ContainerServices.CurrentContainer().Resolve<VisitingCrmRequestProvider>();
+            var orgCommand = subject.GetOrganisationCommand(command, behaviour);
+            return orgCommand;
+        }
+
         protected static string GetSqlFilterString(string filterOperator, object filterValue, string filterFormatString, string filterColumnName)
         {
             string sqlFilterString;

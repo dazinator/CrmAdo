@@ -53,7 +53,7 @@ namespace CrmAdo.Visitor
                 IVisitableBuilder visitable = item;
                 visitable.Accept(visitor);
                 OrgCommand.Request = visitor.Request;
-                OrgCommand.Columns = visitor.ColumnMetadata;
+                OrgCommand.Columns = visitor.ResultColumnMetadata;
                 OrgCommand.OperationType = CrmOperation.RetrieveMultiple;
             }
             else
@@ -62,7 +62,7 @@ namespace CrmAdo.Visitor
                 IVisitableBuilder visitable = item;
                 visitable.Accept(visitor);
                 OrgCommand.Request = visitor.Request;
-                OrgCommand.Columns = visitor.ColumnMetadata;
+                OrgCommand.Columns = visitor.ResultColumnMetadata;
                 OrgCommand.OperationType = CrmOperation.RetrieveMetadataChanges;
             }
 
@@ -74,12 +74,13 @@ namespace CrmAdo.Visitor
             IVisitableBuilder visitable = item;
             visitable.Accept(visitor);
             OrgCommand.Request = visitor.Request;
+            OrgCommand.Columns = visitor.ResultColumnMetadata;
             if(visitor.IsExecuteMultiple)
             {
-                OrgCommand.OperationType = CrmOperation.CreateWithOutput;
+                OrgCommand.OperationType = CrmOperation.CreateWithOutput;               
             }
             else
-            {
+            {               
                 OrgCommand.OperationType = CrmOperation.Create;
             }          
 

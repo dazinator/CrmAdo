@@ -48,7 +48,7 @@ namespace CrmAdo
 
         [DefaultValue(null)]
         [Editor("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-        public CrmDbCommand SelectCommand
+        public new CrmDbCommand SelectCommand
         {
             get { return _selectCommand; }
             set { _selectCommand = value; }
@@ -62,7 +62,7 @@ namespace CrmAdo
 
         [DefaultValue(null)]
         [Editor("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-        public CrmDbCommand InsertCommand
+        public new CrmDbCommand InsertCommand
         {
             get { return _insertCommand; }
             set { _insertCommand = value; }
@@ -76,7 +76,7 @@ namespace CrmAdo
 
         [DefaultValue(null)]
         [Editor("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-        public CrmDbCommand UpdateCommand
+        public new CrmDbCommand UpdateCommand
         {
             get { return _updateCommand; }
             set { _updateCommand = value; }
@@ -90,7 +90,7 @@ namespace CrmAdo
 
         [DefaultValue(null)]
         [Editor("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-        public CrmDbCommand DeleteCommand
+        public new CrmDbCommand DeleteCommand
         {
             get
             {

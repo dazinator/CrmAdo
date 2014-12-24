@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using SQLGeneration.Builders;
 using System.Data.Common;
+using CrmAdo.Core;
+using CrmAdo.Metadata;
+using System.Linq;
 
 namespace CrmAdo.Visitor
 {
@@ -45,6 +48,13 @@ namespace CrmAdo.Visitor
 
         }
 
+        protected BaseOrganizationRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider)
+        {
+            MetadataProvider = metadataProvider;
+            ResultColumnMetadata = new List<ColumnMetadata>();
+            EntityMetadata = new Dictionary<string, CrmEntityMetadata>();      
+        }
+
         protected VisitorSubCommandContext GetSubCommand()
         {
             return new VisitorSubCommandContext(this);
@@ -64,7 +74,72 @@ namespace CrmAdo.Visitor
                     item.Accept(ctx.Visitor);
                 }
             }
-        }    
+        }       
+
+        public ICrmMetaDataProvider MetadataProvider { get; set; }
+
+        /// <summary>
+        /// The Columns expected in the result.
+        /// </summary>
+        public List<ColumnMetadata> ResultColumnMetadata { get; set; }
+
+        protected Dictionary<string, CrmEntityMetadata> EntityMetadata { get; set; }
+
+        protected void AddAllColumnMetadata(string entityName, string entityAlias)
+        {
+            // Add the metadata for this column.
+            var entityMetadata = GetEntityMetadata(entityName);
+            if (entityMetadata != null)
+            {
+                // Populate metadata for these columns.
+                ResultColumnMetadata.AddRange((from c in entityMetadata.Attributes orderby c.LogicalName select new ColumnMetadata(c, entityAlias)));
+            }
+            else
+            {
+                // Could throw an exceptiton as no metadata found for this entity.
+            }
+        }
+
+        protected void AddColumnMetadata(string entityName, string entityAlias, string attributeName)
+        {
+            // Add the metadata for this column.
+            var entityMetadata = GetEntityMetadata(entityName);
+            if (entityMetadata != null)
+            {
+                var colMeta = entityMetadata.Attributes.FirstOrDefault(c => c.LogicalName == attributeName);
+                ColumnMetadata columnMetadata = null;
+                if (colMeta == null)
+                {
+                    // could throw an exception as no metadata found for this attribute?
+                    //  throw new ArgumentException("Unknown column: " + columnAttributeName);
+                    columnMetadata = new ColumnMetadata(attributeName, entityAlias);
+
+                }
+                else
+                {
+                    columnMetadata = new ColumnMetadata(colMeta, entityAlias);
+                }
+                ResultColumnMetadata.Add(columnMetadata);
+            }
+            else
+            {
+                // Could throw an exceptiton as no metadata found for this entity.
+            }
+        }
+
+        protected CrmEntityMetadata GetEntityMetadata(string entityName)
+        {
+            if (!EntityMetadata.ContainsKey(entityName))
+            {
+                if (MetadataProvider == null)
+                {
+                    return null;
+                }
+                EntityMetadata[entityName] = MetadataProvider.GetEntityMetadata(entityName);
+            }
+            var entMeta = EntityMetadata[entityName];
+            return entMeta;
+        }
 
 
     }

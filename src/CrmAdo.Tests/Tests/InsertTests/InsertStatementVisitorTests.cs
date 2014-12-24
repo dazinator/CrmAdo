@@ -277,16 +277,18 @@ namespace CrmAdo.Tests
                 cmd.CommandText = sql;
 
                 // Act
-                var req = GetOrganizationRequest<ExecuteMultipleRequest>(cmd);
+                var orgCommand = GetOrgCommand(cmd, System.Data.CommandBehavior.Default);
+                var req = orgCommand.Request as ExecuteMultipleRequest;
+
+               // var req = GetOrganizationRequest<ExecuteMultipleRequest>(cmd);
+
+                // Assert
                 Assert.That(req, Is.Not.Null);
                 Assert.That(req.Requests.Count, Is.EqualTo(2));
 
                 var createRequest = (CreateRequest)req.Requests[0];
                 var retrieveRequest = (RetrieveRequest)req.Requests[1];
-
-                //  GetOrganizationRequest<CreateRequest>(cmd);
-
-                // Assert
+               
                 Entity targetEntity = createRequest.Target;
 
                 Assert.That(targetEntity.Attributes.ContainsKey("contactid"));
@@ -298,6 +300,16 @@ namespace CrmAdo.Tests
                 var idGuid = Guid.Parse("9bf20a16-6034-48e2-80b4-8349bb80c3e2");
                 Assert.That(targetRetrieve.Id, Is.EqualTo(idGuid));
                 Assert.That(retrieveRequest.ColumnSet.Columns.Contains("createdon"));
+
+                Assert.That(orgCommand.Columns, Is.Not.Null);
+                Assert.That(orgCommand.Columns.Count, Is.GreaterThan(0));
+
+                var outputColumn = orgCommand.Columns[0];
+                Assert.That(outputColumn.ColumnName, Is.EqualTo("createdon"));
+                Assert.That(outputColumn.AttributeMetadata, Is.Not.Null);
+                var attMetadata = outputColumn.AttributeMetadata;
+                Assert.That(attMetadata.AttributeType, Is.EqualTo(AttributeTypeCode.DateTime));
+               
 
             }
 

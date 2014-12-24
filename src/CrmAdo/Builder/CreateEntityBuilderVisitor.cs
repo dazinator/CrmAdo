@@ -40,17 +40,18 @@ namespace CrmAdo.Visitor
         }
 
         public CreateEntityRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider, ICrmMetadataNamingConventionProvider schemaNameProvider)
+            : base(metadataProvider)
         {
             Request = new CreateEntityRequest();
             Parameters = parameters;
-            MetadataProvider = metadataProvider;
+           // MetadataProvider = metadataProvider;
             _SchemaNameProvider = schemaNameProvider;
             _NamingConvention = schemaNameProvider.GetAttributeNamingConvention();
         }
 
         public CreateEntityRequest Request { get; set; }
         public DbParameterCollection Parameters { get; set; }
-        private ICrmMetaDataProvider MetadataProvider { get; set; }
+       // private ICrmMetaDataProvider MetadataProvider { get; set; }
         private EntityMetadataBuilder EntityBuilder { get; set; }
 
         private bool IsVisitingCandidateIdColumn { get; set; }

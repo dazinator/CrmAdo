@@ -27,20 +27,21 @@ namespace CrmAdo.Visitor
         }
 
         public CreateRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider)
+            : base(metadataProvider)
         {
-          
+
             this.CreateRequest = new CreateRequest();
             Request = this.CreateRequest;
             Parameters = parameters;
-            MetadataProvider = metadataProvider;
+          //  MetadataProvider = metadataProvider;
         }
 
         public OrganizationRequest Request { get; set; }
         public CreateRequest CreateRequest { get; set; }
-        public RetrieveRequest RetrieveOutputRequest { get; set; }       
+        public RetrieveRequest RetrieveOutputRequest { get; set; }
 
         public DbParameterCollection Parameters { get; set; }
-        private ICrmMetaDataProvider MetadataProvider { get; set; }
+      //  private ICrmMetaDataProvider MetadataProvider { get; set; }
         private EntityBuilder EntityBuilder { get; set; }
         private Column[] Columns { get; set; }
         private Column CurrentColumn { get; set; }
@@ -139,7 +140,10 @@ namespace CrmAdo.Visitor
 
         protected override void VisitColumn(Column item)
         {
-            RetrieveOutputRequest.ColumnSet.AddColumn(item.GetColumnLogicalAttributeName());
+            var attName = item.GetColumnLogicalAttributeName();
+            RetrieveOutputRequest.ColumnSet.AddColumn(attName);
+            var entityName = this.CreateRequest.Target.LogicalName;
+            this.AddColumnMetadata(entityName, null, attName);
             // base.VisitColumn(item);
         }
 
@@ -174,6 +178,8 @@ namespace CrmAdo.Visitor
             var param = Parameters[paramName];
             return param.Value;
         }
+
+
 
     }
 }
