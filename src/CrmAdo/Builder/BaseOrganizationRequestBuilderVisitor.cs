@@ -6,13 +6,17 @@ using CrmAdo.Core;
 using CrmAdo.Metadata;
 using System.Linq;
 using CrmAdo.Dynamics;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Query;
 
 namespace CrmAdo.Visitor
 {
     /// <summary>
     /// Serves as a base <see cref="BuilderVisitor"/> class, for visitors that will build Dynamics Xrm objects from Sql Generation <see cref="IVisitableBuilder"/>'s 
     /// </summary>
-    public class BaseOrganizationRequestBuilderVisitor : BuilderVisitor
+    public class BaseOrganizationRequestBuilderVisitor<TOrgRequest> : BuilderVisitor
+        where TOrgRequest : OrganizationRequest, new()
     {
         private int _Level;
         public int Level
@@ -34,7 +38,7 @@ namespace CrmAdo.Visitor
 
         protected class VisitorSubCommandContext : IDisposable
         {
-            public VisitorSubCommandContext(BaseOrganizationRequestBuilderVisitor visitor)
+            public VisitorSubCommandContext(BaseOrganizationRequestBuilderVisitor<TOrgRequest> visitor)
             {
                 Visitor = visitor;
                 Visitor.Level = Visitor.Level + 1;
@@ -45,7 +49,7 @@ namespace CrmAdo.Visitor
                 Visitor.Level = Visitor.Level - 1;
             }
 
-            public BaseOrganizationRequestBuilderVisitor Visitor { get; set; }
+            public BaseOrganizationRequestBuilderVisitor<TOrgRequest> Visitor { get; set; }
 
         }
 
@@ -54,6 +58,9 @@ namespace CrmAdo.Visitor
             MetadataProvider = metadataProvider;
             ResultColumnMetadata = new List<ColumnMetadata>();
             EntityMetadata = new Dictionary<string, CrmEntityMetadata>();
+            var req = new TOrgRequest();
+            CurrentRequest = req;
+            Request = req;
         }
 
         protected VisitorSubCommandContext GetSubCommand()
@@ -78,6 +85,8 @@ namespace CrmAdo.Visitor
         }
 
         public ICrmMetaDataProvider MetadataProvider { get; set; }
+
+        #region Metadata Helper Methods
 
         /// <summary>
         /// The Columns expected in the result.
@@ -187,6 +196,60 @@ namespace CrmAdo.Visitor
             }
             var entMeta = EntityMetadata[entityName];
             return entMeta;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Whether the Request was upgraded to an ExecuteMultiple Request. This can happen if there are
+        /// OUTPUT values that need to be retreived after the initial Request has been processed.
+        /// </summary>
+        public bool IsExecuteMultiple { get; set; }
+
+        /// <summary>
+        /// The Organization Request that will be executed.
+        /// </summary>
+        public OrganizationRequest Request { get; set; }
+
+        /// <summary>
+        /// The current request that the builder is building.
+        /// </summary>
+        public TOrgRequest CurrentRequest { get; set; }
+
+        /// <summary>
+        /// A seperate request that is used to retrieve any values specified by an OUTPUT clause.
+        /// </summary>
+        public RetrieveRequest RetrieveOutputRequest { get; set; }
+
+        /// <summary>
+        /// The items contained within the OUTPUT clause.
+        /// </summary>
+        protected AliasedProjection[] OutputColumns { get; set; }
+
+        protected void UpgradeRequestToExecuteMultipleWithRetrieve(string entityName, Guid id)
+        {
+            // If there are output columns for anything that isn't part of the Create Response, then
+            // we have to upgrade to an executemultiplerequest, with an additional Retrieve to get the extra values.
+            RetrieveOutputRequest = new RetrieveRequest();
+            RetrieveOutputRequest.Target = new EntityReference(entityName, id);
+
+            // Upgrade to an ExecuteMultiple.
+            var executeMultipleRequest = new ExecuteMultipleRequest();
+            executeMultipleRequest.Settings = new ExecuteMultipleSettings();
+            executeMultipleRequest.Settings.ContinueOnError = false;
+            executeMultipleRequest.Settings.ReturnResponses = true;
+            executeMultipleRequest.Requests = new OrganizationRequestCollection();
+            executeMultipleRequest.Requests.Add(CurrentRequest);
+            executeMultipleRequest.Requests.Add(RetrieveOutputRequest);
+            RetrieveOutputRequest.ColumnSet = new ColumnSet();
+            foreach (var c in OutputColumns)
+            {
+                c.ProjectionItem.Accept(this);
+                // c.Accept(this);
+            }
+            Request = executeMultipleRequest;
+            IsExecuteMultiple = true;
+
         }
 
 

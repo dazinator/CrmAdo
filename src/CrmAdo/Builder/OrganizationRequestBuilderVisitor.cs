@@ -14,25 +14,19 @@ using System.Threading.Tasks;
 namespace CrmAdo.Visitor
 {
 
-
     /// <summary>
     /// A <see cref="BuilderVisitor"/> that builds a <see cref="OrganizationRequest"/> when it visits an <see cref="ICommand"/> 
     /// </summary>
     public class OrganizationRequestBuilderVisitor : BuilderVisitor
     {
-        public const string ParameterToken = "@";
-
-        // public OrganizationRequest OrganizationRequest { get; set; }
-        // public List<ColumnMetadata> ColumnMetadata { get; set; }
+        public const string ParameterToken = "@";      
 
         public ICrmMetaDataProvider CrmMetadataProvider { get; set; }
         public DbParameterCollection Parameters { get; set; }
         public IDynamicsAttributeTypeProvider TypeProvider { get; set; }
 
-        private bool _DetectingMetadataQuery = false;
-        // private bool _IsMetadataQuery = false;
+        private bool _DetectingMetadataQuery = false;      
         public IOrgCommand OrgCommand { get; private set; }
-
 
         public OrganizationRequestBuilderVisitor(ICrmMetaDataProvider crmMetadataProvider, DbParameterCollection parameters, IDynamicsAttributeTypeProvider typeProvider)
         {
@@ -75,14 +69,14 @@ namespace CrmAdo.Visitor
             visitable.Accept(visitor);
             OrgCommand.Request = visitor.Request;
             OrgCommand.Columns = visitor.ResultColumnMetadata;
-            if(visitor.IsExecuteMultiple)
+            if (visitor.IsExecuteMultiple)
             {
-                OrgCommand.OperationType = CrmOperation.CreateWithRetrieve;               
+                OrgCommand.OperationType = CrmOperation.CreateWithRetrieve;
             }
             else
-            {               
+            {
                 OrgCommand.OperationType = CrmOperation.Create;
-            }          
+            }
 
         }
 
@@ -92,7 +86,15 @@ namespace CrmAdo.Visitor
             IVisitableBuilder visitable = item;
             visitable.Accept(visitor);
             OrgCommand.Request = visitor.Request;
-            OrgCommand.OperationType = CrmOperation.Update;
+            OrgCommand.Columns = visitor.ResultColumnMetadata;
+            if (visitor.IsExecuteMultiple)
+            {
+                OrgCommand.OperationType = CrmOperation.UpdateWithRetrieve;
+            }
+            else
+            {
+                OrgCommand.OperationType = CrmOperation.Update;
+            }
         }
 
         protected override void VisitDelete(DeleteBuilder item)
@@ -187,7 +189,7 @@ namespace CrmAdo.Visitor
         private void AddRequest(OrganizationRequest request)
         {
             // intelligently 
-            if(this.OrgCommand.Request == null)
+            if (this.OrgCommand.Request == null)
             {
                 this.OrgCommand.Request = request;
             }

@@ -16,7 +16,7 @@ namespace CrmAdo.Visitor
     /// <summary>
     /// A <see cref="BuilderVisitor"/> that builds a <see cref="DeleteRequest"/> when it visits an <see cref="DeleteBuilder"/> 
     /// </summary>
-    public class DeleteRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor
+    public class DeleteRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor<DeleteRequest>
     {
 
         public DeleteRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider)
@@ -28,7 +28,7 @@ namespace CrmAdo.Visitor
         public DeleteRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider, IDynamicsAttributeTypeProvider typeProvider)
             : base(metadataProvider)
         {
-            Request = new DeleteRequest();
+            //Request = new DeleteRequest();
             Parameters = parameters;
            // MetadataProvider = metadataProvider;
             IsVisitingRightFilterItem = false;
@@ -36,7 +36,7 @@ namespace CrmAdo.Visitor
         }
 
         private IDynamicsAttributeTypeProvider DynamicsTypeProvider { get; set; }
-        public DeleteRequest Request { get; set; }
+       // public DeleteRequest Request { get; set; }
 
         public DbParameterCollection Parameters { get; set; }
        // private ICrmMetaDataProvider MetadataProvider { get; set; }
@@ -84,7 +84,7 @@ namespace CrmAdo.Visitor
             EntityReference entRef = new EntityReference();
             entRef.LogicalName = EntityName;
             entRef.Id = DynamicsTypeProvider.GetUniqueIdentifier(IdFilterValue);
-            Request.Target = entRef;
+            CurrentRequest.Target = entRef;
 
         }
 

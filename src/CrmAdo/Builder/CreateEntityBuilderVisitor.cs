@@ -18,7 +18,7 @@ namespace CrmAdo.Visitor
     /// <summary>
     /// A <see cref="BuilderVisitor"/> that builds a <see cref="CreateEntityRequest"/> when it visits an <see cref="CreateBuilder"/> 
     /// </summary>
-    public class CreateEntityRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor
+    public class CreateEntityRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor<CreateEntityRequest>
     {
 
         public const int NameMaxLength = 4000;
@@ -42,14 +42,14 @@ namespace CrmAdo.Visitor
         public CreateEntityRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider, ICrmMetadataNamingConventionProvider schemaNameProvider)
             : base(metadataProvider)
         {
-            Request = new CreateEntityRequest();
+           // Request = new CreateEntityRequest();
             Parameters = parameters;
            // MetadataProvider = metadataProvider;
             _SchemaNameProvider = schemaNameProvider;
             _NamingConvention = schemaNameProvider.GetAttributeNamingConvention();
         }
 
-        public CreateEntityRequest Request { get; set; }
+      //  public CreateEntityRequest Request { get; set; }
         public DbParameterCollection Parameters { get; set; }
        // private ICrmMetaDataProvider MetadataProvider { get; set; }
         private EntityMetadataBuilder EntityBuilder { get; set; }

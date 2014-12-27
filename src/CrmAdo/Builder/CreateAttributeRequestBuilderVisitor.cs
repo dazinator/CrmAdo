@@ -18,7 +18,7 @@ namespace CrmAdo.Visitor
     /// <summary>
     /// A <see cref="BuilderVisitor"/> that builds a <see cref="CreateAttributeRequest"/> when it visits an <see cref="AlterBuilder"/> 
     /// </summary>
-    public class CreateAttributeRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor
+    public class CreateAttributeRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor<CreateAttributeRequest>
     {
 
         public CreateAttributeRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider)
@@ -36,8 +36,8 @@ namespace CrmAdo.Visitor
             this.FilterForForeignKeyConstraint = false;
         }
 
-        public OrganizationRequest Request { get; set; }
-
+       // public OrganizationRequest Request { get; set; }
+        public CreateOneToManyRequest CreateOneToManyRequest { get; set; }
         public DbParameterCollection Parameters { get; set; }
       //  private ICrmMetaDataProvider MetadataProvider { get; set; }
 
@@ -164,10 +164,10 @@ namespace CrmAdo.Visitor
             // If this is a one to many attribute the request is a create one to many request.
             if (relationship != null)
             {
-                result = BuildCreateOneToManyRequest(relationship, (LookupAttributeMetadata)attMetadata);
-                return result;
+                CreateOneToManyRequest = BuildCreateOneToManyRequest(relationship, (LookupAttributeMetadata)attMetadata);
+                return CreateOneToManyRequest;
             }
-            var entityLogicalName = entitySchemaName.ToLower();
+            var entityLogicalName = entitySchemaName.ToLower();           
             result = BuildCreateAttributeRequest(entityLogicalName, attMetadata);
             return result;
         }
@@ -458,7 +458,7 @@ namespace CrmAdo.Visitor
 
         private CreateAttributeRequest BuildCreateAttributeRequest(string entityLogicalName, AttributeMetadata attributeMetadata)
         {
-            var createAttRequest = new CreateAttributeRequest();
+            var createAttRequest = this.CurrentRequest;
             createAttRequest.EntityName = entityLogicalName;
             createAttRequest.Attribute = attributeMetadata;
             return createAttRequest;

@@ -16,8 +16,21 @@ namespace CrmAdo.Visitor
     /// <summary>
     /// A <see cref="BuilderVisitor"/> that builds a <see cref="UpdateRequest"/> when it visits a <see cref="UpdateBuilder"/> 
     /// </summary>
-    public class UpdateRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor
+    public class UpdateRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor<UpdateRequest>
     {
+
+        private enum UpdateStatementPart
+        {
+            WhereClause = 0,
+            Setter = 1,
+            OutputClause = 2
+        }
+
+        private enum WhereFilterPart
+        {
+            LeftHand = 0,
+            RightHand = 1,
+        }
 
         public UpdateRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider)
             : this(null, metadataProvider)
@@ -28,24 +41,32 @@ namespace CrmAdo.Visitor
         public UpdateRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider)
             : base(metadataProvider)
         {
-            Request = new UpdateRequest();
-            Parameters = parameters;           
-            IsVisitingRightFilterItem = false;
+          //  Request = new UpdateRequest();
+            Parameters = parameters;
+            //  IsVisitingRightFilterItem = false;
         }
 
-        public UpdateRequest Request { get; set; }
+        //  public UpdateRequest UpdateRequest { get; set; }
+        // public RetrieveRequest RetrieveOutputRequest { get; set; }
+
         public DbParameterCollection Parameters { get; set; }
-       // private ICrmMetaDataProvider MetadataProvider { get; set; }
         private EntityBuilder EntityBuilder { get; set; }
 
         private string EntityName { get; set; }
         private EqualToFilter EqualToFilter { get; set; }
-        private bool IsVisitingRightFilterItem { get; set; }
-        private bool IsVisitingFilterItem { get; set; }
+
+        private UpdateStatementPart CurrentUpdateStatementPart { get; set; }
+        private WhereFilterPart CurrentWhereFilterPart { get; set; }
+
+        //  private bool IsVisitingWhereFilter { get; set; }
+        // private bool IsVisitingRightFilterItem { get; set; }
+        //   private bool IsVisitingFilterItem { get; set; }
 
         private Column IdFilterColumn { get; set; }
         private object IdFilterValue { get; set; }
         private Column CurrentSetterColumn { get; set; }
+
+        // private AliasedProjection[] OutputColumns { get; set; }
 
         #region Visit Methods
 
@@ -55,11 +76,14 @@ namespace CrmAdo.Visitor
             item.Table.Source.Accept(this);
 
             int whereCount = 0;
+            CurrentUpdateStatementPart = UpdateStatementPart.WhereClause;
             foreach (IVisitableBuilder where in item.Where)
             {
                 where.Accept(this);
                 whereCount++;
             }
+
+            // IsVisitingWhereFilter = false;
             if (whereCount != 1)
             {
                 throw new ArgumentException("The update statement should have a single filter in the where clause, which should specify the entity id of the record to be updated.");
@@ -79,24 +103,37 @@ namespace CrmAdo.Visitor
                 throw new NotSupportedException("The update statement has an unsupported filter in it's where clause. The'equal to' filter should specify the id column of the entity on one side.");
             }
             EntityBuilder.WithAttribute(idAttName).SetValueWithTypeCoersion(IdFilterValue);
+
+            CurrentUpdateStatementPart = UpdateStatementPart.Setter;
             foreach (IVisitableBuilder setter in item.Setters)
             {
                 setter.Accept(this);
             }
-            Request.Target = EntityBuilder.Build();
+            CurrentRequest.Target = EntityBuilder.Build();
             EntityBuilder = null;
+
+            CurrentUpdateStatementPart = UpdateStatementPart.OutputClause;
+            OutputColumns = item.Output.ToArray();
+            UpgradeToExecuteMultipleIfNecessary();
+        }
+
+        private void UpgradeToExecuteMultipleIfNecessary()
+        {
+            // If there are output columns for anything that isn't part of the Create Response, then
+            // we have to upgrade to an executemultiplerequest, with an additional Retrieve to get the extra values.
+            if (OutputColumns.Any())
+            {
+                UpgradeRequestToExecuteMultipleWithRetrieve(CurrentRequest.Target.LogicalName, CurrentRequest.Target.Id);
+            }
         }
 
         protected override void VisitEqualToFilter(EqualToFilter item)
         {
-
             EqualToFilter = item;
-            IsVisitingFilterItem = true;
+            CurrentWhereFilterPart = WhereFilterPart.LeftHand;
             item.LeftHand.Accept(this);
-            IsVisitingRightFilterItem = true;
+            CurrentWhereFilterPart = WhereFilterPart.RightHand;
             item.RightHand.Accept(this);
-            IsVisitingRightFilterItem = false;
-            IsVisitingFilterItem = false;
         }
 
         protected override void VisitTable(Table item)
@@ -107,16 +144,30 @@ namespace CrmAdo.Visitor
 
         protected override void VisitColumn(Column item)
         {
-            if (IsVisitingFilterItem)
+            if (CurrentUpdateStatementPart == UpdateStatementPart.WhereClause)
             {
                 IdFilterColumn = item;
             }
+            else
+            {
+                var attName = item.GetColumnLogicalAttributeName();
+                var entityName = this.CurrentRequest.Target.LogicalName;
+                this.AddColumnMetadata(entityName, null, attName);                
+                RetrieveOutputRequest.ColumnSet.AddColumn(attName);
+            }
         }
 
+        protected override void VisitAllColumns(AllColumns item)
+        {
+            var entityName = this.CurrentRequest.Target.LogicalName;
+            base.AddAllColumnMetadata(entityName, null);
+            RetrieveOutputRequest.ColumnSet.AllColumns = true;
+        }
+         
         protected override void VisitStringLiteral(StringLiteral item)
         {
             var sqlValue = item.ParseStringLiteralValue();
-            if (IsVisitingFilterItem)
+            if (CurrentUpdateStatementPart == UpdateStatementPart.WhereClause)
             {
                 IdFilterValue = sqlValue;
             }
@@ -130,7 +181,7 @@ namespace CrmAdo.Visitor
         protected override void VisitNumericLiteral(NumericLiteral item)
         {
             var sqlValue = item.ParseNumericLiteralValue();
-            if (IsVisitingFilterItem)
+            if (CurrentUpdateStatementPart == UpdateStatementPart.WhereClause)
             {
                 IdFilterValue = sqlValue;
             }
@@ -143,7 +194,7 @@ namespace CrmAdo.Visitor
 
         protected override void VisitNullLiteral(NullLiteral item)
         {
-            if (IsVisitingFilterItem)
+            if (CurrentUpdateStatementPart == UpdateStatementPart.WhereClause)
             {
                 IdFilterValue = null;
             }
@@ -157,7 +208,7 @@ namespace CrmAdo.Visitor
         protected override void VisitPlaceholder(Placeholder item)
         {
             var paramVal = GetParamaterValue(item.Value);
-            if (IsVisitingFilterItem)
+            if (CurrentUpdateStatementPart == UpdateStatementPart.WhereClause)
             {
                 IdFilterValue = paramVal;
             }
@@ -187,7 +238,7 @@ namespace CrmAdo.Visitor
             if (builder.Table == null)
             {
                 throw new ArgumentException("The update statement must specify a single table name to update (this is the logical name of the entity).");
-            }           
+            }
         }
 
         private object GetParamaterValue(string paramName)

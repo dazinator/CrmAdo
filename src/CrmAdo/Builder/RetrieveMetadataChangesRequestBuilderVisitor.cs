@@ -38,7 +38,7 @@ namespace CrmAdo.Visitor
     /// <summary>
     /// A <see cref="BuilderVisitor"/> that builds a <see cref="RetrieveMetadataChangesRequest"/> when it visits a <see cref="SelectBuilder"/> 
     /// </summary>
-    public class RetrieveMetadataChangesRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor
+    public class RetrieveMetadataChangesRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor<RetrieveMetadataChangesRequest>
     {
         public const string EntityMetadadataTableLogicalName = "entitymetadata";
         public const string AttributeMetadadataTableLogicalName = "attributemetadata";
@@ -68,14 +68,14 @@ namespace CrmAdo.Visitor
             : base(metadataProvider)
         {
             Parameters = parameters;
-            Request = new RetrieveMetadataChangesRequest();          
+          //  Request = new RetrieveMetadataChangesRequest();          
           
           //  ColumnMetadata = new List<ColumnMetadata>();
             //  QueryExpression = new EntityQueryExpression();          
             // Request.Query = QueryExpression;
         }
 
-        public RetrieveMetadataChangesRequest Request { get; set; }
+       // public RetrieveMetadataChangesRequest Request { get; set; }
         public EntityQueryExpression QueryExpression { get; set; }
         public DbParameterCollection Parameters { get; set; }
 
@@ -115,7 +115,7 @@ namespace CrmAdo.Visitor
         protected override void VisitSelect(SelectBuilder item)
         {
             this.QueryExpression = CreateDefaultQueryExpression();
-            Request.Query = this.QueryExpression;
+            CurrentRequest.Query = this.QueryExpression;
 
             if (!item.From.Any())
             {

@@ -17,7 +17,7 @@ namespace CrmAdo.Visitor
     /// <summary>
     /// A <see cref="BuilderVisitor"/> that builds a <see cref="CreateRequest"/> when it visits an <see cref="InsertBuilder"/> 
     /// </summary>
-    public class CreateRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor
+    public class CreateRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor<CreateRequest>
     {
 
         public CreateRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider)
@@ -29,27 +29,24 @@ namespace CrmAdo.Visitor
         public CreateRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider)
             : base(metadataProvider)
         {
-
-            this.CreateRequest = new CreateRequest();
-            Request = this.CreateRequest;
+            //this.CreateRequest = new CreateRequest();
+          //  Request = this.CreateRequest;
             Parameters = parameters;
             //  MetadataProvider = metadataProvider;
         }
 
-        public OrganizationRequest Request { get; set; }
-        public CreateRequest CreateRequest { get; set; }
-        public RetrieveRequest RetrieveOutputRequest { get; set; }
+       
+       // public CreateRequest CreateRequest { get; set; }
+      
 
         public DbParameterCollection Parameters { get; set; }
         //  private ICrmMetaDataProvider MetadataProvider { get; set; }
         private EntityBuilder EntityBuilder { get; set; }
         private Column[] Columns { get; set; }
         private Column CurrentColumn { get; set; }
-        private AliasedProjection[] OutputColumns { get; set; }
+       
         private bool IsVisitingSingleOutput { get; set; }
-        private bool IsOutputSingleId { get; set; }
-
-        public bool IsExecuteMultiple { get; set; }
+        private bool IsOutputSingleId { get; set; }       
 
         #region Visit Methods
 
@@ -60,7 +57,7 @@ namespace CrmAdo.Visitor
             Columns = item.Columns.ToArray();
             item.Values.Accept(this);
             Columns = null;
-            CreateRequest.Target = EntityBuilder.Build();
+            CurrentRequest.Target = EntityBuilder.Build();
             EntityBuilder = null;
             OutputColumns = item.Output.ToArray();
             UpgradeToExecuteMultipleIfNecessary();
@@ -79,7 +76,7 @@ namespace CrmAdo.Visitor
             {
                 // If only a single output column, and if it's the id, then executemultiple not necessary as
                 // this is already returned as the result from the createrequest.
-                var targetEntity = CreateRequest.Target;
+                var targetEntity = CurrentRequest.Target;
                 if (OutputColumns.Count() == 1)
                 {
                     var col = OutputColumns.First();
@@ -99,26 +96,9 @@ namespace CrmAdo.Visitor
                 {
                     throw new NotSupportedException("An OUTPUT clause can only be used in an Insert statement, if either the INSERT specifies the ID for the new entity, or if the only Output column is the inserted entities ID.");
                 }
-                RetrieveOutputRequest = new RetrieveRequest();
-                RetrieveOutputRequest.Target = new EntityReference(targetEntity.LogicalName, targetEntity.Id);
 
-                // Upgrade to an ExecuteMultiple.
-                var executeMultipleRequest = new ExecuteMultipleRequest();
-                executeMultipleRequest.Settings = new ExecuteMultipleSettings();
-                executeMultipleRequest.Settings.ContinueOnError = false;
-                executeMultipleRequest.Settings.ReturnResponses = true;
-                executeMultipleRequest.Requests = new OrganizationRequestCollection();
-                executeMultipleRequest.Requests.Add(CreateRequest);
-                executeMultipleRequest.Requests.Add(RetrieveOutputRequest);
-                RetrieveOutputRequest.ColumnSet = new ColumnSet();
-
-                foreach (var c in OutputColumns)
-                {
-                    c.ProjectionItem.Accept(this);
-                    // c.Accept(this);
-                }
-                Request = executeMultipleRequest;
-                IsExecuteMultiple = true;
+                UpgradeRequestToExecuteMultipleWithRetrieve(targetEntity.LogicalName, targetEntity.Id);
+               
             }
         }
 
@@ -171,13 +151,13 @@ namespace CrmAdo.Visitor
         {
             var attName = item.GetColumnLogicalAttributeName();
 
-            var entityName = this.CreateRequest.Target.LogicalName;
+            var entityName = this.CurrentRequest.Target.LogicalName;
             this.AddColumnMetadata(entityName, null, attName);
 
             if (IsVisitingSingleOutput)
             {
                 // var attName = item.GetColumnLogicalAttributeName();
-                if (this.IsPrimaryIdColumn(CreateRequest.Target.LogicalName, attName))
+                if (this.IsPrimaryIdColumn(CurrentRequest.Target.LogicalName, attName))
                 {
                     IsOutputSingleId = true;
                 }
@@ -195,7 +175,7 @@ namespace CrmAdo.Visitor
         {
             if (!IsVisitingSingleOutput)
             {
-                var entityName = this.CreateRequest.Target.LogicalName;
+                var entityName = this.CurrentRequest.Target.LogicalName;
                 base.AddAllColumnMetadata(entityName, null);
                 RetrieveOutputRequest.ColumnSet.AllColumns = true;
             }

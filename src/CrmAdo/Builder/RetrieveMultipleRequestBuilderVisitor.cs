@@ -17,7 +17,7 @@ namespace CrmAdo.Visitor
     /// <summary>
     /// A <see cref="BuilderVisitor"/> that builds a <see cref="RetrieveMultipleRequest"/> when it visits a <see cref="SelectBuilder"/> 
     /// </summary>
-    public class RetrieveMultipleRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor
+    public class RetrieveMultipleRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor<RetrieveMultipleRequest>
     {      
 
         public enum VisitMode
@@ -39,13 +39,13 @@ namespace CrmAdo.Visitor
             : base(metadataProvider)
         {
             Parameters = parameters;
-            Request = new RetrieveMultipleRequest();
+           // Request = new RetrieveMultipleRequest();
             QueryExpression = new QueryExpression();
-            Request.Query = QueryExpression;           
+            CurrentRequest.Query = QueryExpression;           
                
         }
 
-        public RetrieveMultipleRequest Request { get; set; }
+    //    public RetrieveMultipleRequest Request { get; set; }
         public QueryExpression QueryExpression { get; set; }
         public DbParameterCollection Parameters { get; set; }
         public bool IsSingleSource { get; set; }
@@ -79,7 +79,7 @@ namespace CrmAdo.Visitor
         protected override void VisitSelect(SelectBuilder item)
         {
             this.QueryExpression = new QueryExpression();
-            Request.Query = this.QueryExpression;
+            CurrentRequest.Query = this.QueryExpression;
             if (!item.From.Any())
             {
                 throw new InvalidOperationException("The query does not have a valid FROM clause");

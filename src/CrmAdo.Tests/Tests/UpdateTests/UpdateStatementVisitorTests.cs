@@ -147,12 +147,7 @@ namespace CrmAdo.Tests
         {
             // Arrange
             var sql = "UPDATE contact SET firstname = 'john', lastname = 'doe' OUTPUT INSERTED.modifiedon WHERE contactid = '9bf20a16-6034-48e2-80b4-8349bb80c3e2'";
-
-            // set up fake metadata provider.
-            // var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
-            // var fakeMetadata = GetFakeContactMetadata();
-            //  fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
-
+            
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
 
@@ -163,8 +158,6 @@ namespace CrmAdo.Tests
                 var orgCommand = GetOrgCommand(cmd, System.Data.CommandBehavior.Default);
                 var req = orgCommand.Request as ExecuteMultipleRequest;
 
-                // var req = GetOrganizationRequest<ExecuteMultipleRequest>(cmd);
-
                 // Assert
                 Assert.That(req, Is.Not.Null);
                 Assert.That(req.Requests.Count, Is.EqualTo(2));
@@ -174,7 +167,6 @@ namespace CrmAdo.Tests
 
                 Entity targetEntity = createRequest.Target;
 
-            //    Assert.That(targetEntity.Attributes.ContainsKey("contactid"));
                 Assert.That(targetEntity.Attributes.ContainsKey("firstname"));
                 Assert.That(targetEntity.Attributes.ContainsKey("lastname"));
 
@@ -195,11 +187,7 @@ namespace CrmAdo.Tests
 
                 Assert.That(orgCommand.OperationType, Is.EqualTo(Enums.CrmOperation.UpdateWithRetrieve));
 
-
             }
-
-
-
 
         }
      
