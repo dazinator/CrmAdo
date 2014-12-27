@@ -9,18 +9,21 @@ namespace CrmAdo.Metadata
     {
 
         public CrmEntityMetadata(string entityName)
-            : this(entityName, new List<AttributeInfo>())
+            : this(entityName, new List<AttributeInfo>(), null)
         {
         }
 
-        public CrmEntityMetadata(string entityName, List<AttributeInfo> attributes)
+        public CrmEntityMetadata(string entityName, List<AttributeInfo> attributes, string primaryIdAttributeName)
         {
             Attributes = attributes;
             EntityName = entityName;
+            PrimaryIdAttribute = primaryIdAttributeName;
         }
 
         public string Timestamp { get; set; }
         public string EntityName { get; set; }
+
+        public string PrimaryIdAttribute { get; set; }
 
         public List<AttributeInfo> Attributes { get; set; }
 
@@ -63,7 +66,7 @@ namespace CrmAdo.Metadata
             var attInfo = factory.CreatePseudo(this.EntityName, name, attTypeCode, attDisplayName);
             this.Attributes.Add(attInfo);
             return attInfo;
-        }     
+        }
 
     }
 }

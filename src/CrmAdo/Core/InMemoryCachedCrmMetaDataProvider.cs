@@ -47,7 +47,7 @@ namespace CrmAdo.Core
                 }
                 var entMeta = metadata.EntityMetadata[0];
                 var atts = _metadataConverter.ConvertAttributeInfoList(entMeta.Attributes);
-                var result = new CrmEntityMetadata(entityName, atts);
+                var result = new CrmEntityMetadata(entityName, atts, entMeta.PrimaryIdAttribute);
                 result.Timestamp = metadata.ServerVersionStamp;
                 return result;
             });
@@ -246,7 +246,7 @@ namespace CrmAdo.Core
                     var entMeta = metadata.EntityMetadata[0];
 
                     var atts = _metadataConverter.ConvertAttributeInfoList(entMeta.Attributes);
-                    var crment = new CrmEntityMetadata(entityName, atts);
+                    var crment = new CrmEntityMetadata(entityName, atts, entMeta.PrimaryIdAttribute);
                     crment.Timestamp = metadata.ServerVersionStamp;
                     return crment;
                 });

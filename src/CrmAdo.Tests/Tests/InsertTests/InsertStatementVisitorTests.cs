@@ -254,11 +254,8 @@ namespace CrmAdo.Tests
 
             }
 
-
-
         }
-
-
+        
         [Test(Description = "Should support Insert of a single entity with output columns")]
         public void Should_Support_Insert_Statement_Of_Single_Entity_With_Output_Columns()
         {
@@ -280,7 +277,7 @@ namespace CrmAdo.Tests
                 var orgCommand = GetOrgCommand(cmd, System.Data.CommandBehavior.Default);
                 var req = orgCommand.Request as ExecuteMultipleRequest;
 
-               // var req = GetOrganizationRequest<ExecuteMultipleRequest>(cmd);
+                // var req = GetOrganizationRequest<ExecuteMultipleRequest>(cmd);
 
                 // Assert
                 Assert.That(req, Is.Not.Null);
@@ -288,7 +285,7 @@ namespace CrmAdo.Tests
 
                 var createRequest = (CreateRequest)req.Requests[0];
                 var retrieveRequest = (RetrieveRequest)req.Requests[1];
-               
+
                 Entity targetEntity = createRequest.Target;
 
                 Assert.That(targetEntity.Attributes.ContainsKey("contactid"));
@@ -309,7 +306,127 @@ namespace CrmAdo.Tests
                 Assert.That(outputColumn.AttributeMetadata, Is.Not.Null);
                 var attMetadata = outputColumn.AttributeMetadata;
                 Assert.That(attMetadata.AttributeType, Is.EqualTo(AttributeTypeCode.DateTime));
-               
+
+                Assert.That(orgCommand.OperationType, Is.EqualTo(Enums.CrmOperation.CreateWithRetrieve));
+
+
+            }
+
+
+
+
+        }
+
+        [Test(Description = "Should support Insert of a single entity with output ID")]
+        public void Should_Support_Insert_Statement_Of_Single_Entity_With_Output_Id()
+        {
+            // Arrange
+            var sql = "INSERT INTO contact (firstname, lastname) OUTPUT INSERTED.contactid VALUES ('billy','bob')";
+
+            // set up fake metadata provider.
+            // var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
+            // var fakeMetadata = GetFakeContactMetadata();
+            //  fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
+
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+
+                var cmd = new CrmDbCommand(sandbox.FakeCrmDbConnection);
+                cmd.CommandText = sql;
+
+                // Act
+                var orgCommand = GetOrgCommand(cmd, System.Data.CommandBehavior.Default);
+                var req = orgCommand.Request as CreateRequest;
+
+                // var req = GetOrganizationRequest<ExecuteMultipleRequest>(cmd);
+
+                // Assert
+                Assert.That(req, Is.Not.Null);
+
+
+                Entity targetEntity = req.Target;
+
+                //Assert.That(targetEntity.Attributes.ContainsKey("contactid"));
+                Assert.That(targetEntity.Attributes.ContainsKey("firstname"));
+                Assert.That(targetEntity.Attributes.ContainsKey("lastname"));
+
+
+                //  Assert.That(req.Requests.Count, Is.EqualTo(2));
+
+                Assert.That(orgCommand.Columns, Is.Not.Null);
+                Assert.That(orgCommand.Columns.Count, Is.GreaterThan(0));
+
+                var outputColumn = orgCommand.Columns[0];
+                Assert.That(outputColumn.ColumnName, Is.EqualTo("contactid"));
+                Assert.That(outputColumn.AttributeMetadata, Is.Not.Null);
+                var attMetadata = outputColumn.AttributeMetadata;
+                Assert.That(attMetadata.AttributeType, Is.EqualTo(AttributeTypeCode.Uniqueidentifier));
+                Assert.IsTrue(attMetadata.IsPrimaryId.GetValueOrDefault());
+                Assert.That(orgCommand.OperationType, Is.EqualTo(Enums.CrmOperation.Create));
+
+            }
+
+
+
+
+        }
+
+        [Test(Description = "Should support Insert of a single entity with output ALL columns")]
+        public void Should_Support_Insert_Statement_Of_Single_Entity_With_Output_All_Columns()
+        {
+            // Arrange
+            var sql = "INSERT INTO contact (contactid, firstname, lastname) OUTPUT INSERTED.* VALUES ('9bf20a16-6034-48e2-80b4-8349bb80c3e2','billy','bob')";
+
+            // set up fake metadata provider.
+            // var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
+            // var fakeMetadata = GetFakeContactMetadata();
+            //  fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
+
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+
+                var cmd = new CrmDbCommand(sandbox.FakeCrmDbConnection);
+                cmd.CommandText = sql;
+
+                // Act
+                var orgCommand = GetOrgCommand(cmd, System.Data.CommandBehavior.Default);
+                var req = orgCommand.Request as ExecuteMultipleRequest;
+
+                // var req = GetOrganizationRequest<ExecuteMultipleRequest>(cmd);
+
+                // Assert
+                Assert.That(req, Is.Not.Null);
+                Assert.That(req.Requests.Count, Is.EqualTo(2));
+
+                var createRequest = (CreateRequest)req.Requests[0];
+                var retrieveRequest = (RetrieveRequest)req.Requests[1];
+
+                Entity targetEntity = createRequest.Target;
+
+                Assert.That(targetEntity.Attributes.ContainsKey("contactid"));
+                Assert.That(targetEntity.Attributes.ContainsKey("firstname"));
+                Assert.That(targetEntity.Attributes.ContainsKey("lastname"));
+
+                var targetRetrieve = retrieveRequest.Target;
+                Assert.That(targetRetrieve.LogicalName, Is.EqualTo("contact"));
+                var idGuid = Guid.Parse("9bf20a16-6034-48e2-80b4-8349bb80c3e2");
+                Assert.That(targetRetrieve.Id, Is.EqualTo(idGuid));
+                Assert.That(retrieveRequest.ColumnSet.AllColumns);
+
+                Assert.That(orgCommand.Columns, Is.Not.Null);
+                Assert.That(orgCommand.Columns.Count, Is.GreaterThan(0));
+
+                foreach (var outputColumn in orgCommand.Columns)
+                {
+                    Assert.That(outputColumn.ColumnName, Is.Not.Null);
+                    Assert.That(outputColumn.ColumnName, Is.Not.EqualTo(""));
+                    Assert.That(outputColumn.AttributeMetadata, Is.Not.Null);
+                    var attMetadata = outputColumn.AttributeMetadata;
+                    Assert.That(attMetadata.AttributeType, Is.Not.Null);
+                }                         
+
+                Assert.That(orgCommand.OperationType, Is.EqualTo(Enums.CrmOperation.CreateWithRetrieve));
+
 
             }
 

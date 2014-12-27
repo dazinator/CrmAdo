@@ -37,4 +37,47 @@ namespace CrmAdo.Dynamics
 
 
     }
+
+    /// <summary>
+    /// Single responsibility: To represent an exception for missing metadata.
+    /// </summary>
+    [Serializable()]
+    public class MissingMetadataException : Exception
+    {
+        public const string FailedToConnectErrorMessage = "Metadata for the following Entity / Attribute was not found.";
+
+        public string EntityName { get; set; }
+
+        public string AttributeName { get; set; }
+
+        public MissingMetadataException(string entityName, string attributeName, Exception innerException)
+            : base(FailedToConnectErrorMessage, innerException)
+        {
+            EntityName = entityName;
+            AttributeName = attributeName;
+        }
+
+        public override string Message
+        {
+            get
+            {
+                var builder = new System.Text.StringBuilder();
+                builder.AppendLine(FailedToConnectErrorMessage);
+                if (!string.IsNullOrWhiteSpace(EntityName))
+                {
+                    builder.AppendFormat("Entity Named: {0}", EntityName);
+                    builder.AppendLine();
+                }
+                if (!string.IsNullOrWhiteSpace(AttributeName))
+                {
+                    builder.AppendFormat("Attribute Named: {0}", AttributeName);
+                    builder.AppendLine();
+                }
+                builder.Append(base.Message);
+                return builder.ToString();
+            }
+        }
+
+
+    }
 }

@@ -5,6 +5,7 @@ using System.Data.Common;
 using CrmAdo.Core;
 using CrmAdo.Metadata;
 using System.Linq;
+using CrmAdo.Dynamics;
 
 namespace CrmAdo.Visitor
 {
@@ -52,7 +53,7 @@ namespace CrmAdo.Visitor
         {
             MetadataProvider = metadataProvider;
             ResultColumnMetadata = new List<ColumnMetadata>();
-            EntityMetadata = new Dictionary<string, CrmEntityMetadata>();      
+            EntityMetadata = new Dictionary<string, CrmEntityMetadata>();
         }
 
         protected VisitorSubCommandContext GetSubCommand()
@@ -74,7 +75,7 @@ namespace CrmAdo.Visitor
                     item.Accept(ctx.Visitor);
                 }
             }
-        }       
+        }
 
         public ICrmMetaDataProvider MetadataProvider { get; set; }
 
@@ -124,6 +125,53 @@ namespace CrmAdo.Visitor
             else
             {
                 // Could throw an exceptiton as no metadata found for this entity.
+            }
+        }
+
+        //protected void AddPrimaryIdMetadata(string entityName, string entityAlias)
+        //{
+        //    // Add the metadata for this column.
+        //    var entityMetadata = GetEntityMetadata(entityName);
+        //    if (entityMetadata != null)
+        //    {
+        //        var idMeta = entityMetadata.Attributes.FirstOrDefault(c => c.IsPrimaryId == true);
+        //        ColumnMetadata columnMetadata = null;
+        //        if (idMeta == null)
+        //        {
+        //            throw new MissingMetadataException(entityName, null, null);
+        //            // could throw an exception as no metadata found for this attribute?
+        //            //  throw new ArgumentException("Unknown column: " + columnAttributeName);
+        //            // columnMetadata = new ColumnMetadata(entityName + "id", entityAlias);
+        //        }
+        //        else
+        //        {
+        //            columnMetadata = new ColumnMetadata(idMeta, entityAlias);
+        //        }
+        //        ResultColumnMetadata.Add(columnMetadata);
+        //    }
+        //    else
+        //    {
+        //        // Could throw an exceptiton as no metadata found for this entity.
+        //        throw new MissingMetadataException(entityName, null, null);
+        //    }
+        //}
+
+        protected bool IsPrimaryIdColumn(string entityName, string attributeName)
+        {
+            var entityMetadata = GetEntityMetadata(entityName);
+            if (entityMetadata != null)
+            {
+                //var attName = column.GetColumnLogicalAttributeName();
+                if (entityMetadata.PrimaryIdAttribute == attributeName)
+                {
+                    return true;
+                }
+                return false;
+            }
+            else
+            {
+                // Could throw an exceptiton as no metadata found for this entity.
+                throw new MissingMetadataException(entityName, null, null);
             }
         }
 

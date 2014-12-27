@@ -77,7 +77,7 @@ namespace CrmAdo.Visitor
             OrgCommand.Columns = visitor.ResultColumnMetadata;
             if(visitor.IsExecuteMultiple)
             {
-                OrgCommand.OperationType = CrmOperation.CreateWithOutput;               
+                OrgCommand.OperationType = CrmOperation.CreateWithRetrieve;               
             }
             else
             {               

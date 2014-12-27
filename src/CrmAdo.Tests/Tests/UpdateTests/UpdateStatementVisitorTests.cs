@@ -142,6 +142,133 @@ namespace CrmAdo.Tests
             Test_That_Sql_Update_Statement_With_A_Literal_Value_Has_The_Value_Translated_To<EntityReference>(entRef, "modifiedby", sqlValue);
         }
 
+        [Test(Description = "Should support Update of a single entity with output columns")]
+        public void Should_Support_Update_Statement_Of_Single_Entity_With_Output_Columns()
+        {
+            // Arrange
+            var sql = "UPDATE contact SET firstname = 'john', lastname = 'doe' OUTPUT INSERTED.modifiedon WHERE contactid = '9bf20a16-6034-48e2-80b4-8349bb80c3e2'";
+
+            // set up fake metadata provider.
+            // var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
+            // var fakeMetadata = GetFakeContactMetadata();
+            //  fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
+
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+
+                var cmd = new CrmDbCommand(sandbox.FakeCrmDbConnection);
+                cmd.CommandText = sql;
+
+                // Act
+                var orgCommand = GetOrgCommand(cmd, System.Data.CommandBehavior.Default);
+                var req = orgCommand.Request as ExecuteMultipleRequest;
+
+                // var req = GetOrganizationRequest<ExecuteMultipleRequest>(cmd);
+
+                // Assert
+                Assert.That(req, Is.Not.Null);
+                Assert.That(req.Requests.Count, Is.EqualTo(2));
+
+                var createRequest = (UpdateRequest)req.Requests[0];
+                var retrieveRequest = (RetrieveRequest)req.Requests[1];
+
+                Entity targetEntity = createRequest.Target;
+
+            //    Assert.That(targetEntity.Attributes.ContainsKey("contactid"));
+                Assert.That(targetEntity.Attributes.ContainsKey("firstname"));
+                Assert.That(targetEntity.Attributes.ContainsKey("lastname"));
+
+                var targetRetrieve = retrieveRequest.Target;
+                Assert.That(targetRetrieve.LogicalName, Is.EqualTo("contact"));
+                var idGuid = Guid.Parse("9bf20a16-6034-48e2-80b4-8349bb80c3e2");
+                Assert.That(targetRetrieve.Id, Is.EqualTo(idGuid));
+                Assert.That(retrieveRequest.ColumnSet.Columns.Contains("modifiedon"));
+
+                Assert.That(orgCommand.Columns, Is.Not.Null);
+                Assert.That(orgCommand.Columns.Count, Is.GreaterThan(0));
+
+                var outputColumn = orgCommand.Columns[0];
+                Assert.That(outputColumn.ColumnName, Is.EqualTo("modifiedon"));
+                Assert.That(outputColumn.AttributeMetadata, Is.Not.Null);
+                var attMetadata = outputColumn.AttributeMetadata;
+                Assert.That(attMetadata.AttributeType, Is.EqualTo(AttributeTypeCode.DateTime));
+
+                Assert.That(orgCommand.OperationType, Is.EqualTo(Enums.CrmOperation.UpdateWithRetrieve));
+
+
+            }
+
+
+
+
+        }
+     
+        [Test(Description = "Should support Update of a single entity with output ALL columns")]
+        public void Should_Support_Update_Statement_Of_Single_Entity_With_Output_All_Columns()
+        {
+            // Arrange
+            var sql = "UPDATE contact SET firstname = 'john', lastname = 'doe' OUTPUT INSERTED.* WHERE contactid = '9bf20a16-6034-48e2-80b4-8349bb80c3e2'";
+
+            // set up fake metadata provider.
+            // var fakeMetadataProvider = MockRepository.GenerateMock<ICrmMetaDataProvider>();
+            // var fakeMetadata = GetFakeContactMetadata();
+            //  fakeMetadataProvider.Stub(a => a.GetEntityMetadata("contact")).Return(fakeMetadata);
+
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+
+                var cmd = new CrmDbCommand(sandbox.FakeCrmDbConnection);
+                cmd.CommandText = sql;
+
+                // Act
+                var orgCommand = GetOrgCommand(cmd, System.Data.CommandBehavior.Default);
+                var req = orgCommand.Request as ExecuteMultipleRequest;
+
+                // var req = GetOrganizationRequest<ExecuteMultipleRequest>(cmd);
+
+                // Assert
+                Assert.That(req, Is.Not.Null);
+                Assert.That(req.Requests.Count, Is.EqualTo(2));
+            
+             
+                var createRequest = (UpdateRequest)req.Requests[0];
+                var retrieveRequest = (RetrieveRequest)req.Requests[1];
+
+                Entity targetEntity = createRequest.Target;
+
+               // Assert.That(targetEntity.Attributes.ContainsKey("contactid"));
+                Assert.That(targetEntity.Attributes.ContainsKey("firstname"));
+                Assert.That(targetEntity.Attributes.ContainsKey("lastname"));
+
+                var targetRetrieve = retrieveRequest.Target;
+                Assert.That(targetRetrieve.LogicalName, Is.EqualTo("contact"));
+                var idGuid = Guid.Parse("9bf20a16-6034-48e2-80b4-8349bb80c3e2");
+                Assert.That(targetRetrieve.Id, Is.EqualTo(idGuid));
+                Assert.That(retrieveRequest.ColumnSet.AllColumns);
+
+                Assert.That(orgCommand.Columns, Is.Not.Null);
+                Assert.That(orgCommand.Columns.Count, Is.GreaterThan(0));
+
+                foreach (var outputColumn in orgCommand.Columns)
+                {
+                    Assert.That(outputColumn.ColumnName, Is.Not.Null);
+                    Assert.That(outputColumn.ColumnName, Is.Not.EqualTo(""));
+                    Assert.That(outputColumn.AttributeMetadata, Is.Not.Null);
+                    var attMetadata = outputColumn.AttributeMetadata;
+                    Assert.That(attMetadata.AttributeType, Is.Not.Null);
+                }
+
+                Assert.That(orgCommand.OperationType, Is.EqualTo(Enums.CrmOperation.UpdateWithRetrieve));
+
+
+            }
+
+
+
+
+        }
+
+
         #region Helper Methods
 
         private void Test_That_Sql_Update_Statement_With_A_Literal_Value_Has_The_Value_Translated_To<T>(T assertValue, string fieldname, string sqlLiteralValue)

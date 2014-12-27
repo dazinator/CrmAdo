@@ -33,7 +33,7 @@ namespace CrmAdo.Visitor
             this.CreateRequest = new CreateRequest();
             Request = this.CreateRequest;
             Parameters = parameters;
-          //  MetadataProvider = metadataProvider;
+            //  MetadataProvider = metadataProvider;
         }
 
         public OrganizationRequest Request { get; set; }
@@ -41,11 +41,13 @@ namespace CrmAdo.Visitor
         public RetrieveRequest RetrieveOutputRequest { get; set; }
 
         public DbParameterCollection Parameters { get; set; }
-      //  private ICrmMetaDataProvider MetadataProvider { get; set; }
+        //  private ICrmMetaDataProvider MetadataProvider { get; set; }
         private EntityBuilder EntityBuilder { get; set; }
         private Column[] Columns { get; set; }
         private Column CurrentColumn { get; set; }
-        private Column[] OutputColumns { get; set; }
+        private AliasedProjection[] OutputColumns { get; set; }
+        private bool IsVisitingSingleOutput { get; set; }
+        private bool IsOutputSingleId { get; set; }
 
         public bool IsExecuteMultiple { get; set; }
 
@@ -60,14 +62,42 @@ namespace CrmAdo.Visitor
             Columns = null;
             CreateRequest.Target = EntityBuilder.Build();
             EntityBuilder = null;
-            OutputColumns = item.OutputColumns.ToArray();
-            // Visit output columns
+            OutputColumns = item.Output.ToArray();
+            UpgradeToExecuteMultipleIfNecessary();
+        }
+
+        /// <summary>
+        /// Checks  the output columns. if there are output values that that aren't available from the CreateResponse, then
+        /// upgrades the Request to an ExecuteMultiple request, that contains the CreateRequest, and a RetrieveRequest to 
+        /// to get the additional output values.
+        /// </summary>
+        private void UpgradeToExecuteMultipleIfNecessary()
+        {
+            // If there are output columns for anything that isn't part of the Create Response, then
+            // we have to upgrade to an executemultiplerequest, with an additional Retrieve to get the extra values.
             if (OutputColumns.Any())
             {
+                // If only a single output column, and if it's the id, then executemultiple not necessary as
+                // this is already returned as the result from the createrequest.
                 var targetEntity = CreateRequest.Target;
+                if (OutputColumns.Count() == 1)
+                {
+                    var col = OutputColumns.First();
+                    IsVisitingSingleOutput = true;
+                    col.ProjectionItem.Accept(this);
+                    if (IsOutputSingleId)
+                    {
+                        return;
+                    }
+                }
+
+                IsVisitingSingleOutput = false;
+
+                // To get any other output, the id must be specified as part of the insert, so that we have the info
+                // we need to do the additional retrieve request.
                 if (targetEntity.Id == Guid.Empty)
                 {
-                    throw new NotSupportedException("An OUTPUT clause can only be used in an Insert statement, if the INSERT specifies the ID for the new entity.");
+                    throw new NotSupportedException("An OUTPUT clause can only be used in an Insert statement, if either the INSERT specifies the ID for the new entity, or if the only Output column is the inserted entities ID.");
                 }
                 RetrieveOutputRequest = new RetrieveRequest();
                 RetrieveOutputRequest.Target = new EntityReference(targetEntity.LogicalName, targetEntity.Id);
@@ -82,15 +112,14 @@ namespace CrmAdo.Visitor
                 executeMultipleRequest.Requests.Add(RetrieveOutputRequest);
                 RetrieveOutputRequest.ColumnSet = new ColumnSet();
 
-                foreach (IVisitableBuilder c in OutputColumns)
+                foreach (var c in OutputColumns)
                 {
-                    c.Accept(this);
+                    c.ProjectionItem.Accept(this);
+                    // c.Accept(this);
                 }
-
                 Request = executeMultipleRequest;
                 IsExecuteMultiple = true;
             }
-
         }
 
         protected override void VisitTable(Table item)
@@ -141,10 +170,36 @@ namespace CrmAdo.Visitor
         protected override void VisitColumn(Column item)
         {
             var attName = item.GetColumnLogicalAttributeName();
-            RetrieveOutputRequest.ColumnSet.AddColumn(attName);
+
             var entityName = this.CreateRequest.Target.LogicalName;
             this.AddColumnMetadata(entityName, null, attName);
-            // base.VisitColumn(item);
+
+            if (IsVisitingSingleOutput)
+            {
+                // var attName = item.GetColumnLogicalAttributeName();
+                if (this.IsPrimaryIdColumn(CreateRequest.Target.LogicalName, attName))
+                {
+                    IsOutputSingleId = true;
+                }
+                else
+                {
+                    IsOutputSingleId = false;
+                }
+                return;
+            }
+
+            RetrieveOutputRequest.ColumnSet.AddColumn(attName);
+        }
+
+        protected override void VisitAllColumns(AllColumns item)
+        {
+            if (!IsVisitingSingleOutput)
+            {
+                var entityName = this.CreateRequest.Target.LogicalName;
+                base.AddAllColumnMetadata(entityName, null);
+                RetrieveOutputRequest.ColumnSet.AllColumns = true;
+            }
+
         }
 
         #endregion

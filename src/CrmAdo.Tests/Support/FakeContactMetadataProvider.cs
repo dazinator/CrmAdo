@@ -62,7 +62,7 @@ namespace CrmAdo.Tests
                 atts.AddRange(deserialised.Attributes);
                 var attsList = _MetadataConverter.ConvertAttributeInfoList(atts);
                 var entName = "contact";
-                var crmMeta = new CrmEntityMetadata(entName, attsList);
+                var crmMeta = new CrmEntityMetadata(entName, attsList, deserialised.PrimaryIdAttribute);
                 return crmMeta;
             }
         }
