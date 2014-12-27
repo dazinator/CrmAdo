@@ -174,6 +174,7 @@
     <Compile Include="Sandbox\UnitTestSandboxContainer.cs" />
     <Compile Include="Tests\AdoTests\CrmConnectionStringBuilderTests.cs" />
     <Compile Include="Tests\AdoTests\CrmDataAdapterTests.cs" />
+    <Compile Include="Tests\CrmOrgCommandExecutorTests.cs" />
     <Compile Include="Tests\SchemaCollectionProviderTests.cs" />
     <Compile Include="Tests\AlterTableTests\AlterTableStatementTests.cs" />
     <Compile Include="Tests\CreateTableTests\CreateTableStatementTests.cs" />
