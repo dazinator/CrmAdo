@@ -100,6 +100,11 @@ namespace CrmAdo.Visitor
                 UpgradeRequestToExecuteMultipleWithRetrieve(targetEntity.LogicalName, targetEntity.Id);
                
             }
+            else
+            {
+                // No output columns however we still automatically output the id.               
+                this.AddColumnMetadata(CurrentRequest.Target.LogicalName, null, CurrentRequest.Target.LogicalName + "id");
+            }
         }
 
         protected override void VisitTable(Table item)

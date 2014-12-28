@@ -13,7 +13,7 @@ namespace CrmAdo.Core
     {
         CrmOperation OperationType { get; set; }
         List<ColumnMetadata> Columns { get; set; }
-        List<ColumnMetadata> OutputColumns { get; set; }       
+       // List<ColumnMetadata> OutputColumns { get; set; }       
         CrmDbCommand DbCommand { get; set; }
         CommandBehavior CommandBehavior { get; set; }
         OrganizationRequest Request { get; set; }
