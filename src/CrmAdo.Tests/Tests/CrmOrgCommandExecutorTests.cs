@@ -21,7 +21,7 @@ namespace CrmAdo.Tests.Tests
     public class CrmOrgCommandExecutorTests : BaseTest<CrmOrgCommandExecutor>
     {
         [Test()]
-        [Category("Execute Non Query")]
+        [Category("Insert Statement")]
         public void Should_Be_Able_To_Execute_An_Insert_Using_ExecuteNonQuery()
         {
             // Arrange
@@ -82,7 +82,7 @@ namespace CrmAdo.Tests.Tests
         }
 
         [Test()]
-        [Category("Execute With ResultSet")]
+        [Category("Insert Statement")]
         public void Should_Be_Able_To_Execute_An_Insert_Using_ExecuteReader_And_Get_Back_Inserted_Id()
         {
             // Arrange
@@ -153,7 +153,8 @@ namespace CrmAdo.Tests.Tests
         }
 
         [Test()]
-        [Category("Execute With ResultSet")]
+        [Category("Insert Statement")]
+        [Category("Output Clause")]
         public void Should_Be_Able_To_Execute_An_Insert_With_Output_Clause_And_Get_Back_Values()
         {
             // Arrange
@@ -229,7 +230,7 @@ namespace CrmAdo.Tests.Tests
                 var results = sut.ExecuteCommand(orgCommand, System.Data.CommandBehavior.Default);
 
                 // Assert  
-                
+
                 // Should have 1 result, with the 2 output fields - createdon, and contactid
                 Assert.That(results.ResultCount() == 1);
                 Assert.That(results.HasColumnMetadata());
@@ -247,6 +248,149 @@ namespace CrmAdo.Tests.Tests
             }
 
         }
+
+        [Test()]
+        [Category("Update Statement")]
+        public void Should_Be_Able_To_Execute_An_Update_Using_ExecuteNonQuery()
+        {
+            // Arrange
+            using (var sandbox = ConnectionTestsSandbox.Create())
+            {
+
+                var dbConnection = sandbox.Container.Resolve<CrmDbConnection>();
+
+                var command = new CrmDbCommand(dbConnection);
+                command.CommandText = "UPDATE contact SET firstname = 'JO', lastname = 'SCHMO' WHERE contactid = '9bf20a16-6034-48e2-80b4-8349bb80c3e2'";
+                command.CommandType = System.Data.CommandType.Text;
+
+                var provider = new SqlGenerationOrganizationCommandProvider(new DynamicsAttributeTypeProvider());
+                var orgCommand = provider.GetOrganisationCommand(command, System.Data.CommandBehavior.Default);
+                
+
+                // This is the fake reponse that the org service will return when its requested to get the data.
+                Guid expectedId = Guid.NewGuid();
+                var response = new UpdateResponse
+                {
+                    Results = new ParameterCollection()
+                };
+                
+                // Setup fake org service to return fake response.
+                sandbox.FakeOrgService.Stub(f => f.Execute(Arg<OrganizationRequest>.Matches(new OrganizationRequestMessageConstraint<UpdateRequest>())))
+                    .WhenCalled(x =>
+                    {
+                        var request = ((UpdateRequest)x.Arguments[0]);
+                    }).Return(response);
+
+                // Act                          
+
+                var sut = CrmOrgCommandExecutor.Instance;
+
+                dbConnection.Open();
+
+                var result = sut.ExecuteNonQueryCommand(orgCommand);
+                Assert.That(result == 1);
+
+            }
+
+        }
+
+        [Test()]
+        [Category("Update Statement")]
+        [Category("Output Clause")]
+        public void Should_Be_Able_To_Execute_An_Update_With_Output_Clause_And_Get_Back_Values()
+        {
+            // Arrange
+            using (var sandbox = ConnectionTestsSandbox.Create())
+            {
+
+                var dbConnection = sandbox.Container.Resolve<CrmDbConnection>();
+
+                var command = new CrmDbCommand(dbConnection);
+                command.CommandText = "UPDATE contact SET firstname = 'JO', lastname = 'SCHMO' OUTPUT INSERTED.modifiedon, INSERTED.contactid WHERE contactid = '9bf20a16-6034-48e2-80b4-8349bb80c3e2'";
+                command.CommandType = System.Data.CommandType.Text;
+
+                var provider = new SqlGenerationOrganizationCommandProvider(new DynamicsAttributeTypeProvider());
+                var orgCommand = provider.GetOrganisationCommand(command, System.Data.CommandBehavior.Default);
+
+                // This is a fake CreateResponse that will be returned to our sut at test time.
+                Guid expectedId = Guid.Parse("9bf20a16-6034-48e2-80b4-8349bb80c3e2");
+                var createResponse = new UpdateResponse
+                {
+                    Results = new ParameterCollection()                 
+                };
+
+                // This is a fake RetrieveResponse that will be returned to our sut at test time.
+                var resultEntity = new Entity("contact");
+                resultEntity.Id = expectedId;
+                resultEntity["contactid"] = expectedId;
+                var modifiedOnDate = DateTime.UtcNow;
+                resultEntity["modifiedon"] = modifiedOnDate;
+                var retrieveResponse = new RetrieveResponse
+                {
+                    Results = new ParameterCollection
+                    {
+                        { "Entity", resultEntity }
+                    }
+                };
+
+                // This is a fake ExecuteMultipleResponse that will be returned to our sut at test time.
+                var responses = new ExecuteMultipleResponseItemCollection();
+                var updateResponseItem = new ExecuteMultipleResponseItem();
+                updateResponseItem.RequestIndex = 0;
+                updateResponseItem.Response = createResponse;
+                responses.Add(updateResponseItem);
+
+                var retrieveResponseItem = new ExecuteMultipleResponseItem();
+                retrieveResponseItem.RequestIndex = 1;
+                retrieveResponseItem.Response = retrieveResponse;
+                responses.Add(retrieveResponseItem);
+
+                var executeMultipleResponse = new ExecuteMultipleResponse
+                {
+                    Results = new ParameterCollection
+                    {
+                        { "Responses", responses },
+                        { "IsFaulted", false}
+                    }
+                };
+
+                // Setup fake org service to return fake response.
+                sandbox.FakeOrgService.Stub(f => f.Execute(Arg<OrganizationRequest>.Matches(new OrganizationRequestMessageConstraint<ExecuteMultipleRequest>())))
+                    .WhenCalled(x =>
+                    {
+                        var request = ((ExecuteMultipleRequest)x.Arguments[0]);
+
+                    }).Return(executeMultipleResponse);
+
+                // Act                        
+
+                var sut = CrmOrgCommandExecutor.Instance;
+                dbConnection.Open();
+                var results = sut.ExecuteCommand(orgCommand, System.Data.CommandBehavior.Default);
+
+                // Assert  
+
+                // Should have 1 result, with the 2 output fields - createdon, and contactid
+                Assert.That(results.ResultCount() == 1);
+                Assert.That(results.HasColumnMetadata());
+
+                var reader = results.GetReader();
+                Assert.That(reader.HasRows);
+                Assert.That(reader.FieldCount == 2);
+
+                while (reader.Read())
+                {
+                    Assert.That(reader.GetDateTime(0), NUnit.Framework.Is.EqualTo(modifiedOnDate));
+                    Assert.That(reader.GetGuid(1), NUnit.Framework.Is.EqualTo(expectedId));
+                }
+
+            }
+
+        }
+
+
+
+
 
 
     }

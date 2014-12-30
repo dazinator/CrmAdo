@@ -134,6 +134,9 @@ namespace CrmAdo.Core
                 case CrmOperation.Update:
                     resultSet = ExecuteUpdateCommand(orgCommand);
                     break;
+                case CrmOperation.UpdateWithRetrieve:
+                    resultSet = ExecuteUpdateWithRetrieveCommand(orgCommand);
+                    break;
                 case CrmOperation.Delete:
                     resultSet = ExecuteDeleteCommand(orgCommand);
                     break;
@@ -155,6 +158,30 @@ namespace CrmAdo.Core
 
             return resultSet;
 
+        }
+
+        private ResultSet ExecuteUpdateWithRetrieveCommand(IOrgCommand orgCommand)
+        {
+            var command = orgCommand.DbCommand;
+            var orgService = command.CrmDbConnection.OrganizationService;
+
+            // Execute the request and obtain the result.
+            var response = ExecuteOrganisationRequest(orgCommand);
+            var resultSet = CreateEntityResultSet(orgCommand);
+
+            var execMultipleResponse = response as ExecuteMultipleResponse;
+            if (execMultipleResponse != null)
+            {
+                // for execute reader and execute scalar purposes, we provide a result that has the newly created id of the entity.
+                var execMultipleRequest = (ExecuteMultipleRequest)orgCommand.Request;
+                var request = (UpdateRequest)execMultipleRequest.Requests[0];
+
+                var retrieveResponse = (RetrieveResponse)execMultipleResponse.Responses[1].Response;
+                var result = retrieveResponse.Entity;
+
+                resultSet.Results = new EntityCollection(new List<Entity>(new Entity[] { result }));
+            }
+            return resultSet;
         }
 
         private ResultSet ExecuteCreateWithRetrieveCommand(IOrgCommand orgCommand)

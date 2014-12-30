@@ -255,7 +255,8 @@ namespace CrmAdo.Tests
             }
 
         }
-        
+
+        [Category("Output Clause")]
         [Test(Description = "Should support Insert of a single entity with output columns")]
         public void Should_Support_Insert_Statement_Of_Single_Entity_With_Output_Columns()
         {
@@ -317,6 +318,7 @@ namespace CrmAdo.Tests
 
         }
 
+        [Category("Output Clause")]
         [Test(Description = "Should support Insert of a single entity with output ID")]
         public void Should_Support_Insert_Statement_Of_Single_Entity_With_Output_Id()
         {
@@ -371,6 +373,7 @@ namespace CrmAdo.Tests
 
         }
 
+        [Category("Output Clause")]
         [Test(Description = "Should support Insert of a single entity with output ALL columns")]
         public void Should_Support_Insert_Statement_Of_Single_Entity_With_Output_All_Columns()
         {
@@ -423,7 +426,7 @@ namespace CrmAdo.Tests
                     Assert.That(outputColumn.AttributeMetadata, Is.Not.Null);
                     var attMetadata = outputColumn.AttributeMetadata;
                     Assert.That(attMetadata.AttributeType, Is.Not.Null);
-                }                         
+                }
 
                 Assert.That(orgCommand.OperationType, Is.EqualTo(Enums.CrmOperation.CreateWithRetrieve));
 

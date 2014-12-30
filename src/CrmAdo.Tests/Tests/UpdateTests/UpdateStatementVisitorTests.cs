@@ -142,12 +142,13 @@ namespace CrmAdo.Tests
             Test_That_Sql_Update_Statement_With_A_Literal_Value_Has_The_Value_Translated_To<EntityReference>(entRef, "modifiedby", sqlValue);
         }
 
+        [Category("Output Clause")]
         [Test(Description = "Should support Update of a single entity with output columns")]
         public void Should_Support_Update_Statement_Of_Single_Entity_With_Output_Columns()
         {
             // Arrange
             var sql = "UPDATE contact SET firstname = 'john', lastname = 'doe' OUTPUT INSERTED.modifiedon WHERE contactid = '9bf20a16-6034-48e2-80b4-8349bb80c3e2'";
-            
+
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {
 
@@ -190,7 +191,8 @@ namespace CrmAdo.Tests
             }
 
         }
-     
+
+        [Category("Output Clause")]
         [Test(Description = "Should support Update of a single entity with output ALL columns")]
         public void Should_Support_Update_Statement_Of_Single_Entity_With_Output_All_Columns()
         {
@@ -217,14 +219,14 @@ namespace CrmAdo.Tests
                 // Assert
                 Assert.That(req, Is.Not.Null);
                 Assert.That(req.Requests.Count, Is.EqualTo(2));
-            
-             
+
+
                 var createRequest = (UpdateRequest)req.Requests[0];
                 var retrieveRequest = (RetrieveRequest)req.Requests[1];
 
                 Entity targetEntity = createRequest.Target;
 
-               // Assert.That(targetEntity.Attributes.ContainsKey("contactid"));
+                // Assert.That(targetEntity.Attributes.ContainsKey("contactid"));
                 Assert.That(targetEntity.Attributes.ContainsKey("firstname"));
                 Assert.That(targetEntity.Attributes.ContainsKey("lastname"));
 
