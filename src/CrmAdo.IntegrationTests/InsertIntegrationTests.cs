@@ -35,7 +35,7 @@ namespace CrmAdo.IntegrationTests
 
         [Category("Insert Statement")]
         [Test(Description = "Integration tests that inserts a new contact into Dynamics CRM contacts.")]
-        [TestCase("INSERT INTO contact (firstname, lastname) Values('{0}','{1}')")]
+        [TestCase("INSERT INTO contact (firstname, lastname) Values('{0}','{1}')")]        
         public void Should_Be_Able_To_Insert_A_Contact(string insertSql)
         {
 
@@ -70,7 +70,7 @@ namespace CrmAdo.IntegrationTests
         [Category("Insert Statement")]
         [Test(Description = "Integration tests that inserts a new contact into Dynamics CRM contacts.")]
         [TestCase("INSERT INTO [contact] ([contactid],[fullname]) VALUES (@0,@1)", "96fa62d5-9c6a-4178-ae44-1497d0732b7f", "Gödel")]
-        public void Should_Be_Able_To_Insert_A_Contact_With_IndexedParamters(string insertSql, string id, string name)
+        public void Should_Be_Able_To_Insert_A_Contact_With_IndexedParameters(string insertSql, string id, string name)
         {           
 
          //   var sql = string.Format(insertSql, "Derren", "Brown");
@@ -116,6 +116,61 @@ namespace CrmAdo.IntegrationTests
             }
 
         }
+
+
+
+        [Category("Insert Statement")]
+        [Test(Description = "Integration tests that inserts a new contact into Dynamics CRM contacts with an OUTPUT clause to get the created on date of the inserted record.")]
+        [TestCase("INSERT INTO [contact] ([contactid],[fullname]) OUTPUT INSERTED.createdon VALUES (@0,@1)", "605d68f8-9885-4eb6-aa27-33f60f71788d", "Curie")]
+        public void Should_Be_Able_To_Insert_A_Contact_With_OutputClause(string insertSql, string id, string name)
+        {
+
+            //   var sql = string.Format(insertSql, "Derren", "Brown");
+            Console.WriteLine(insertSql);
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var command = conn.CreateCommand();
+
+                Console.WriteLine("Executing command " + insertSql);
+                command.CommandText = insertSql;
+
+                var param = command.CreateParameter();
+                param.ParameterName = "@0";
+                param.DbType = System.Data.DbType.String;
+                param.Direction = System.Data.ParameterDirection.Input;
+                param.Size = 40;
+                param.Value = id;
+                command.Parameters.Add(param);
+
+                var param2 = command.CreateParameter();
+                param2.ParameterName = "@1";
+                param2.DbType = System.Data.DbType.String;
+                param2.Direction = System.Data.ParameterDirection.Input;
+                param2.Size = 4000;
+                param2.Value = id;
+                command.Parameters.Add(param2);
+
+                //   command.CommandType = CommandType.Text;
+
+                using (var reader = command.ExecuteReader())
+                {
+                    int resultCount = 0;
+                    foreach (var result in reader)
+                    {
+                        resultCount++;
+                        var createdOn = (DateTime)reader["createdon"];
+                        Console.WriteLine(string.Format("{0}", createdOn));
+                    }
+                    Console.WriteLine("There were " + resultCount + " results..");
+                }
+            }
+
+        }
+
+
+
 
 
         [Category("Insert Statement")]
