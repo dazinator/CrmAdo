@@ -71,10 +71,12 @@
         <!-- Add to GAC. -->
         <File Id="Microsoft.Xrm.Sdk.dll" Source="$(var.CrmAdo.TargetDir)Microsoft.Xrm.Sdk.dll" Assembly=".net" KeyPath="yes" Name="Microsoft.Xrm.Sdk.dll" ProcessorArchitecture="msil" />
       </Component>
-      <Component Permanent="no" Id="SQLGeneration.dll" Directory="GAC" Guid="69F8A934-9174-41A7-B2AA-A36A19B5607E">
-        <!-- Add to GAC. -->
+      <!--<Component Permanent="no" Id="SQLGeneration.dll" Directory="GAC" Guid="69F8A934-9174-41A7-B2AA-A36A19B5607E">
+        -->
+      <!-- Add to GAC. -->
+      <!--
         <File Id="SQLGeneration.dll" Source="$(var.CrmAdo.TargetDir)SQLGeneration.dll" Assembly=".net" KeyPath="yes" />
-      </Component>
+      </Component>-->
       <Component Permanent="no" Id="Microsoft.Crm.Sdk.Proxy.dll" Directory="GAC" Guid="31506E30-C273-4C61-B602-6B61818D5616">
         <!-- Add to GAC. -->
         <File Id="Microsoft.Crm.Sdk.Proxy.dll" Source="$(var.CrmAdo.TargetDir)Microsoft.Crm.Sdk.Proxy.dll" Assembly=".net" KeyPath="yes" Name="Microsoft.Crm.Sdk.Proxy.dll" ProcessorArchitecture="msil" />

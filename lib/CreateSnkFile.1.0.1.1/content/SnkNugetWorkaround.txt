@@ -1,0 +1,3 @@
+Nuget does not allow to install or uninstall packages when they don't add references or content.
+So this file here was added so that Nuget considers the CreateSnkFile package a project-level package.
+I know this workaround stinks, but I couldn't come up with anything more elegant or robust. :-/

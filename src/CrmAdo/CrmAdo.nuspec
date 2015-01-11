@@ -15,8 +15,7 @@
      See here for latest release notes: https://github.com/dazinator/CrmAdo/releases
     </releaseNotes>
     <tags>Dynamics Crm ADO ADO.Net Data Provider SQL T-SQL DynamicsCrm</tags>
-    <dependencies>
-      <dependency id="SQLGeneration.DazinatorFork" version="2.5.3" />   
+    <dependencies>   
       <dependency id="Microsoft.IdentityModel" version="6.1.7600.16394" />
       <dependency id="Microsoft.CrmSdk.Extensions" version="6.0.4" />
       <dependency id="Microsoft.CrmSdk.CoreAssemblies" version="6.0.4" />

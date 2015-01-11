@@ -103,6 +103,7 @@
     <Reference Include="SQLGeneration, Version=2.6.2.0, Culture=neutral, PublicKeyToken=22ea15b5a3c0e6aa, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\SQLGeneration.DazinatorFork.2.6.2\lib\net40\SQLGeneration.dll</HintPath>
+      <ILMerge>True</ILMerge>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -307,4 +308,34 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="AfterBuild" DependsOnTargets="ILMerge" />
+  <PropertyGroup>
+    <ILMergeExecutable>"$(ProjectDir)..\..\lib\ILMerge.Tools.2.14.1208\tools\ILMerge.exe"</ILMergeExecutable>
+    <SnExecutable>"$(ProjectDir)..\..\lib\sn\sn.exe"</SnExecutable>
+    <!--<SnExecutable>"G:\Program Files\Microsoft SDKs\Windows\v7.0\Bin\sn.exe"</SnExecutable>-->
+    <PublicKeyFile>"$(ProjectDir)Key.snk"</PublicKeyFile>
+    <PfxKeyContainerName>VS_ABAB1234ABAB1234</PfxKeyContainerName>
+    <PasswordProtectedeyFile>"$(ProjectDir)Key.pfx"</PasswordProtectedeyFile>
+    <!--<OutputMergedFileDir>$(ProjectDir)$(OutputPath)merged\</OutputMergedFileDir>-->
+  </PropertyGroup>
+  
+  <!--<Target Name="CreateMergedOutputDir">
+    --><!--Ensure a folder is created for the output of ILMerge--><!--
+    <RemoveDir ContinueOnError="true" Directories="$(OutputMergedFileDir)"/>
+    <MakeDir Directories="$(OutputMergedFileDir)"/>
+  </Target>-->
+
+  <Target Name="ILMerge" Inputs="@(IntermediateAssembly)" Outputs="@(MainAssembly -> '%(RelativeDir)%(Filename).ILMergeTrigger%(Extension)')">
+    <!--Merge any dependencies with an ILMerge property = true into this assembly.-->
+    <CreateItem Include="@(ReferencePath)" Condition="'%(ReferencePath.ILMerge)'=='True'">
+      <Output TaskParameter="Include" ItemName="ILMergeAssemblies" />
+    </CreateItem>
+    <Exec Command="$(ILMergeExecutable) /Closed /Internalize /Lib:$(ProjectDir)$(OutputPath) /keyfile:$(PublicKeyFile) /delaysign /out:$(ProjectDir)@(MainAssembly) $(ProjectDir)@(IntermediateAssembly) @(ILMergeAssemblies->'&quot;%(FullPath)&quot;', ' ')" />
+    <!-- Make a copy of the merged output DLL to use as a trigger for incremental builds -->
+    <Copy SourceFiles="@(MainAssembly)" DestinationFiles="@(MainAssembly -> '%(RelativeDir)%(Filename).ILMergeTrigger%(Extension)')" />
+    <!--Re-sign the assemly using pfx-->
+    <Exec Command="$(SnExecutable) -Rca $(ProjectDir)@(MainAssembly) $(PfxKeyContainerName)" />
+  </Target>
+
+  <Import Project="../../lib/CreateSnkFile.1.0.1.1/tools/CreateSnkFile.targets" Condition="Exists('../../lib/CreateSnkFile.1.0.1.1/tools/CreateSnkFile.targets')" />
 </Project>

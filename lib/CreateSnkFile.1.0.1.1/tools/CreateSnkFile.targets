@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <CoreCompileDependsOn>
+      InitializeSnkFile;$(CoreCompileDependsOn)
+    </CoreCompileDependsOn>
+  </PropertyGroup>
+
+  <UsingTask TaskName="CreateSnkIfItDoesNotExist"
+             TaskFactory="Microsoft.Build.Tasks.CodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)/Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <SnkFilePath Required="true"
+                   ParameterType="System.String"/>
+      <SdkPath Required="true"
+               ParameterType="System.String"/>
+    </ParameterGroup>
+
+    <Task>
+      <Code Type="Fragment"
+            Language="cs">
+        <![CDATA[
+      var fullSnkFileName = Path.GetFullPath(SnkFilePath);
+
+      if(!File.Exists(fullSnkFileName))
+      {  
+        var args = string.Format(" -k \"{0}\"", fullSnkFileName);
+        var startInfo = new System.Diagnostics.ProcessStartInfo("sn", args)
+        {
+          WorkingDirectory = SdkPath
+        };
+        
+        using(var p = System.Diagnostics.Process.Start(startInfo))
+        {
+          p.WaitForExit();
+        }
+      }
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+
+  <Target Condition="'$(KeyOriginatorFile)' != ''"
+          Name="InitializeSnkFile">
+    <CreateSnkIfItDoesNotExist SnkFilePath="$(KeyOriginatorFile)"
+                               SdkPath="$(TargetFrameworkSDKToolsDirectory)" />
+  </Target>
+</Project>
