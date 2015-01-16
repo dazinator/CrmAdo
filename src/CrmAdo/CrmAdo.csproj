@@ -330,7 +330,7 @@
     <CreateItem Include="@(ReferencePath)" Condition="'%(ReferencePath.ILMerge)'=='True'">
       <Output TaskParameter="Include" ItemName="ILMergeAssemblies" />
     </CreateItem>
-    <Exec Command="$(ILMergeExecutable) /Closed /Internalize /Lib:$(ProjectDir)$(OutputPath) /keyfile:$(PublicKeyFile) /delaysign /out:$(ProjectDir)@(MainAssembly) $(ProjectDir)@(IntermediateAssembly) @(ILMergeAssemblies->'&quot;%(FullPath)&quot;', ' ')" />
+    <Exec Command="$(ILMergeExecutable) /Closed /Internalize /Lib:&quot;$(ProjectDir)$(OutputPath.TrimEnd('\'))&quot; /keyfile:$(PublicKeyFile) /delaysign /out:&quot;$(ProjectDir)@(MainAssembly)&quot; &quot;$(ProjectDir)@(IntermediateAssembly)&quot; @(ILMergeAssemblies->'&quot;%(FullPath)&quot;', ' ')" />
     <!-- Make a copy of the merged output DLL to use as a trigger for incremental builds -->
     <Copy SourceFiles="@(MainAssembly)" DestinationFiles="@(MainAssembly -> '%(RelativeDir)%(Filename).ILMergeTrigger%(Extension)')" />
     <!--Re-sign the assemly using pfx-->
