@@ -18,7 +18,7 @@ using System.Xml;
 
 namespace CrmAdo.EntityFramework
 {
-    internal class CrmEfProviderServices : DbProviderServices
+    public class CrmEfProviderServices : DbProviderServices
     {
         private static readonly CrmEfProviderServices _Instance = new CrmEfProviderServices();
 
@@ -29,7 +29,17 @@ namespace CrmAdo.EntityFramework
 
         protected override string GetDbProviderManifestToken(DbConnection connection)
         {
-            return "CrmAdo";
+            return connection.ServerVersion;
+        }
+
+        protected override DbProviderManifest GetDbProviderManifest(string versionHint)
+        {
+            //if (string.IsNullOrEmpty(versionHint))
+            //{
+            //    throw new ArgumentException("Could not determine store version; a valid store connection or a version hint is required.");
+            //}
+
+            return new CrmEfProviderManifest(versionHint);
         }
 
         protected override DbCommandDefinition CreateDbCommandDefinition(DbProviderManifest manifest, DbCommandTree commandTree)
@@ -60,7 +70,7 @@ namespace CrmAdo.EntityFramework
 
             CrmDbCommand command = new CrmDbCommand();
 
-           // List<DbParameter> parameters;
+            // List<DbParameter> parameters;
             //CommandType commandType;
 
 
@@ -126,18 +136,8 @@ namespace CrmAdo.EntityFramework
         {
             // Ensure a value that can be used with SqlParameter
             parameter.Value = EnsureParameterValue(value);
-        }
-        
-        protected override DbProviderManifest GetDbProviderManifest(string versionHint)
-        {
-            //if (string.IsNullOrEmpty(versionHint))
-            //{
-            //    throw new ArgumentException("Could not determine store version; a valid store connection or a version hint is required.");
-            //}
+        }             
 
-            return new CrmEfProviderManifest(versionHint);
-        }
-        
         protected override string DbCreateDatabaseScript(string providerManifestToken, StoreItemCollection storeItemCollection)
         {
             if (providerManifestToken == null)
@@ -210,11 +210,11 @@ namespace CrmAdo.EntityFramework
                 throw new InvalidOperationException("Connection String did not specify an Initial Catalog");
 
             return databaseName;
-            
-        }  
+
+        }
 
         protected override bool DbDatabaseExists(DbConnection connection, int? commandTimeout, StoreItemCollection storeItemCollection)
-        {          
+        {
             if (connection == null)
                 throw new ArgumentNullException("connection must not be null");
 
@@ -227,13 +227,13 @@ namespace CrmAdo.EntityFramework
 
             string databaseName = GetDatabaseName(crmConnection);
 
-           // bool exists = false;
+            // bool exists = false;
 
             throw new NotImplementedException();
 
             //UsingMasterConnection(crmConnection, conn =>
             //{
-          //  throw new NotImplementedException();
+            //  throw new NotImplementedException();
 
             //StoreVersion storeVersion = StoreVersionUtils.GetStoreVersion(conn);
             //string databaseExistsScript = DdlBuilder.CreateDatabaseExistsScript(databaseName);
@@ -242,7 +242,7 @@ namespace CrmAdo.EntityFramework
             //exists = (result == 1);
             // });
 
-          //  return exists;
+            //  return exists;
         }
 
         protected override void DbDeleteDatabase(DbConnection connection, int? commandTimeout, StoreItemCollection storeItemCollection)
@@ -319,13 +319,13 @@ namespace CrmAdo.EntityFramework
                 }
             }
         }
-        
+
         /// <summary>
         /// Creates a SqlParameter given a name, type, and direction
         /// </summary>
         internal static CrmParameter CreateParameter(string name, TypeUsage type, ParameterMode mode, object value)
         {
-           // int? size;
+            // int? size;
 
             value = EnsureParameterValue(value);
 
@@ -548,6 +548,6 @@ namespace CrmAdo.EntityFramework
             }
             return dbType;
         }
-      
+
     }
 }

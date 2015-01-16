@@ -175,6 +175,7 @@
     <Compile Include="Tests\AdoTests\CrmConnectionStringBuilderTests.cs" />
     <Compile Include="Tests\AdoTests\CrmDataAdapterTests.cs" />
     <Compile Include="Tests\CrmOrgCommandExecutorTests.cs" />
+    <Compile Include="Tests\EfTests\ProviderServicesTests.cs" />
     <Compile Include="Tests\SchemaCollectionProviderTests.cs" />
     <Compile Include="Tests\AlterTableTests\AlterTableStatementTests.cs" />
     <Compile Include="Tests\CreateTableTests\CreateTableStatementTests.cs" />
@@ -227,6 +228,10 @@
       <Targets>
       </Targets>
       <Name>CrmAdo</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CrmEF\CrmAdo.EntityFramework.csproj">
+      <Project>{d9372b45-9334-4997-bf80-3f0383f7bb3c}</Project>
+      <Name>CrmAdo.EntityFramework</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

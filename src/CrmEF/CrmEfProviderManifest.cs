@@ -26,14 +26,14 @@ namespace CrmAdo.EntityFramework
 
         private static XmlReader GetXmlResource(string resourceName)
         {
-            Assembly executingAssembly = Assembly.GetExecutingAssembly();
+            Assembly executingAssembly = Assembly.GetExecutingAssembly();            
             Stream stream = executingAssembly.GetManifestResourceStream(resourceName);
             return XmlReader.Create(stream);
         }
 
         private static XmlReader GetProviderManifest()
         {
-            return CrmEfProviderManifest.GetXmlResource("CrmEfProviderServices.ProviderManifest.xml");
+            return CrmEfProviderManifest.GetXmlResource("CrmAdo.EntityFramework.Resources.CrmEfProviderServices.ProviderManifest.xml");
         }
 
         private XmlReader GetStoreSchemaMapping()
