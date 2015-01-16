@@ -334,7 +334,7 @@
     <!-- Make a copy of the merged output DLL to use as a trigger for incremental builds -->
     <Copy SourceFiles="@(MainAssembly)" DestinationFiles="@(MainAssembly -> '%(RelativeDir)%(Filename).ILMergeTrigger%(Extension)')" />
     <!--Re-sign the assemly using pfx-->
-    <Exec Command="$(SnExecutable) -Rca $(ProjectDir)@(MainAssembly) $(PfxKeyContainerName)" />
+    <Exec Command="$(SnExecutable) -Rca &quot;$(ProjectDir)@(MainAssembly)&quot; $(PfxKeyContainerName)" />
   </Target>
 
   <Import Project="../../lib/CreateSnkFile.1.0.1.1/tools/CreateSnkFile.targets" Condition="Exists('../../lib/CreateSnkFile.1.0.1.1/tools/CreateSnkFile.targets')" />
