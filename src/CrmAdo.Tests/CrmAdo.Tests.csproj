@@ -51,17 +51,19 @@
     <Reference Include="AntiXSSLibrary">
       <HintPath>..\..\lib\Microsoft.CrmSdk.Extensions.6.0.4.1\lib\net40\AntiXSSLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="EntityFramework" Condition=" '$(Configuration)|$(Platform)' != 'Release 4.0|AnyCPU' ">
-      <HintPath>..\..\lib\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
     <Reference Include="EntityFramework" Condition=" '$(Configuration)|$(Platform)' == 'Release 4.0|AnyCPU' ">
       <HintPath>..\..\lib\EntityFramework.6.1.1\lib\net40\EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="EntityFramework.SqlServer" Condition=" '$(Configuration)|$(Platform)' != 'Release 4.0|AnyCPU' ">
-      <HintPath>..\..\lib\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer" Condition=" '$(Configuration)|$(Platform)' == 'Release 4.0|AnyCPU' ">
       <HintPath>..\..\lib\EntityFramework.6.1.1\lib\net40\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Crm.Sdk.Proxy, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -166,21 +168,17 @@
     <Compile Include="Sandbox\CommandTestsSandbox.cs" />
     <Compile Include="Support\BaseOrganisationRequestBuilderVisitorTest.cs" />
     <Compile Include="Sandbox\ConnectionTestsSandbox.cs" />
-    <Compile Include="Support\EfModel\Blog.cs" />
     <Compile Include="Support\EntityDataGenerator.cs" />
-    <Compile Include="Support\EntityFrameworkCodeFirstTestBase.cs" />
     <Compile Include="Support\GACWrap.cs" />
     <Compile Include="Support\RandomExtensions.cs" />
     <Compile Include="Sandbox\UnitTestSandboxContainer.cs" />
     <Compile Include="Tests\AdoTests\CrmConnectionStringBuilderTests.cs" />
     <Compile Include="Tests\AdoTests\CrmDataAdapterTests.cs" />
     <Compile Include="Tests\CrmOrgCommandExecutorTests.cs" />
-    <Compile Include="Tests\EfTests\ProviderServicesTests.cs" />
     <Compile Include="Tests\SchemaCollectionProviderTests.cs" />
     <Compile Include="Tests\AlterTableTests\AlterTableStatementTests.cs" />
     <Compile Include="Tests\CreateTableTests\CreateTableStatementTests.cs" />
     <Compile Include="Support\FakeContactMetadataProvider.cs" />
-    <Compile Include="Tests\EfTests\BasicTests.cs" />
     <Compile Include="Support\Utils.cs" />
     <Compile Include="Tests\SelectTests\SelectMetadataVisitorTests.cs" />
     <Compile Include="Tests\DynamicsAttributeTypeProviderTests.cs" />
@@ -228,10 +226,6 @@
       <Targets>
       </Targets>
       <Name>CrmAdo</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CrmEF\CrmAdo.EntityFramework.csproj">
-      <Project>{d9372b45-9334-4997-bf80-3f0383f7bb3c}</Project>
-      <Name>CrmAdo.EntityFramework</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

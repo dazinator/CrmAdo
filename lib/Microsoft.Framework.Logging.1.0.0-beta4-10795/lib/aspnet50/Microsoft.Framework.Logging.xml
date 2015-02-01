@@ -1,0 +1,400 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Framework.Logging</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Framework.Logging.DiagnosticsLoggerProvider">
+            <summary>
+            Provides an ILoggerFactory based on System.Diagnostics.TraceSource.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.DiagnosticsLoggerProvider.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Framework.Logging.DiagnosticsLoggerProvider"/> class. 
+            </summary>
+            <summary>
+            Creates a factory named "Microsoft.AspNet".
+            </summary>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.DiagnosticsLoggerProvider.#ctor(System.Diagnostics.SourceSwitch,System.Diagnostics.TraceListener)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Framework.Logging.DiagnosticsLoggerProvider"/> class.
+            </summary>
+            <param name="rootSourceSwitch"></param>
+            <param name="rootTraceListener"></param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.DiagnosticsLoggerProvider.Create(System.String)">
+            <summary>
+            Creates a new DiagnosticsLogger for the given component name.
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.Framework.Logging.DiagnosticsScope">
+            <summary>
+            Provides an IDisposable that represents a logical operation scope based on System.Diagnostics LogicalOperationStack
+            </summary>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.DiagnosticsScope.#ctor(System.Object)">
+            <summary>
+            Pushes state onto the LogicalOperationStack by calling 
+            <see cref="!:Trace.CorrelationManager.StartLogicalOperation(object operationId)"/>
+            </summary>
+            <param name="state">The state.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.DiagnosticsScope.Dispose">
+            <summary>
+            Pops a state off the LogicalOperationStack by calling
+            <see cref="!:Trace.CorrelationManager.StopLogicalOperation()"/>
+            </summary>
+            <param name="state">The state.</param>
+        </member>
+        <member name="T:Microsoft.Framework.Logging.LogFormatter">
+            <summary>
+            Formatters for common logging scenarios.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LogFormatter.Formatter(System.Object,System.Exception)">
+            <summary>
+            Formats a message from the given state and exception, in the form 
+            "state
+            exception".
+            If state is an <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/>, <see cref="M:Microsoft.Framework.Logging.LogFormatter.FormatStructure(Microsoft.Framework.Logging.ILoggerStructure)"/> 
+            is used to format the message, otherwise the state's ToString() is used.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LogFormatter.FormatStructure(Microsoft.Framework.Logging.ILoggerStructure)">
+            <summary>
+            Formats an <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/>.
+            </summary>
+            <param name="structure">The <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> to format.</param>
+            <returns>A string representation of the given <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/>.</returns>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LogFormatter.FormatStructure(Microsoft.Framework.Logging.ILoggerStructure,System.Text.StringBuilder)">
+            <summary>
+            Formats an <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/>.
+            </summary>
+            <param name="structure">The <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> to format.</param>
+            <param name="builder">The <see cref="T:System.Text.StringBuilder"/> to append to.</param>
+        </member>
+        <member name="T:Microsoft.Framework.Logging.LoggerExtensions">
+            <summary>
+            ILogger extension methods for common scenarios.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteVerbose(Microsoft.Framework.Logging.ILogger,System.String)">
+            <summary>
+            Writes a verbose log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="data">The message to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteVerbose(Microsoft.Framework.Logging.ILogger,System.Int32,System.String)">
+            <summary>
+            Writes a verbose log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="eventId">The event id associated with the log.</param>
+            <param name="data">The message to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteVerbose(Microsoft.Framework.Logging.ILogger,System.String,System.Object[])">
+            <summary>
+            Formats and writes a verbose log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="format">Format string of the log message.</param>
+            <param name="args">An object array that contains zero or more objects to format.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteVerbose(Microsoft.Framework.Logging.ILogger,System.Int32,System.String,System.Object[])">
+            <summary>
+            Formats and writes a verbose log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="eventId">The event id associated with the log.</param>
+            <param name="format">Format string of the log message.</param>
+            <param name="args">An object array that contains zero or more objects to format.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteVerbose(Microsoft.Framework.Logging.ILogger,Microsoft.Framework.Logging.ILoggerStructure,System.Exception)">
+            <summary>
+            Formats the given <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> and writes a verbose log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="state">The <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> to write.</param>
+            <param name="error">The exception to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteVerbose(Microsoft.Framework.Logging.ILogger,System.Int32,Microsoft.Framework.Logging.ILoggerStructure,System.Exception)">
+            <summary>
+            Formats the given <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> and writes a verbose log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="eventId">The event id associated with the log.</param>
+            <param name="state">The <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> to write.</param>
+            <param name="error">The exception to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteInformation(Microsoft.Framework.Logging.ILogger,System.String)">
+            <summary>
+            Writes an informational log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteInformation(Microsoft.Framework.Logging.ILogger,System.Int32,System.String)">
+            <summary>
+            Writes an informational log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="eventId">The event id associated with the log.</param>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteInformation(Microsoft.Framework.Logging.ILogger,System.String,System.Object[])">
+            <summary>
+            Formats and writes an informational log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="format">Format string of the log message.</param>
+            <param name="args">An object array that contains zero or more objects to format.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteInformation(Microsoft.Framework.Logging.ILogger,System.Int32,System.String,System.Object[])">
+            <summary>
+            Formats and writes an informational log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="eventId">The event id associated with the log.</param>
+            <param name="format">Format string of the log message.</param>
+            <param name="args">An object array that contains zero or more objects to format.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteInformation(Microsoft.Framework.Logging.ILogger,Microsoft.Framework.Logging.ILoggerStructure,System.Exception)">
+            <summary>
+            Formats the given <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> and writes an informational log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="state">The <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> to write.</param>
+            <param name="error">The exception to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteInformation(Microsoft.Framework.Logging.ILogger,System.Int32,Microsoft.Framework.Logging.ILoggerStructure,System.Exception)">
+            <summary>
+            Formats the given <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> and writes an informational log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="eventId">The event id associated with the log.</param>
+            <param name="state">The <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> to write.</param>
+            <param name="error">The exception to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteWarning(Microsoft.Framework.Logging.ILogger,System.String)">
+            <summary>
+            Writes a warning log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteWarning(Microsoft.Framework.Logging.ILogger,System.Int32,System.String)">
+            <summary>
+            Writes a warning log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="eventId">The event id associated with the log.</param>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteWarning(Microsoft.Framework.Logging.ILogger,System.String,System.Object[])">
+            <summary>
+            Formats and writes a warning log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="format">Format string of the log message.</param>
+            <param name="args">An object array that contains zero or more objects to format.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteWarning(Microsoft.Framework.Logging.ILogger,System.Int32,System.String,System.Object[])">
+            <summary>
+            Formats and writes a warning log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="eventId">The event id associated with the log.</param>
+            <param name="format">Format string of the log message.</param>
+            <param name="args">An object array that contains zero or more objects to format.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteWarning(Microsoft.Framework.Logging.ILogger,System.String,System.Exception)">
+            <summary>
+            Formats the given message and error and writes a warning log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="message">The message to log.</param>
+            <param name="error">The exception to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteWarning(Microsoft.Framework.Logging.ILogger,System.Int32,System.String,System.Exception)">
+            <summary>
+            Formats the given message and error and writes a warning log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="eventId">The event id associated with the log.</param>
+            <param name="message">The message to log.</param>
+            <param name="error">The exception to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteWarning(Microsoft.Framework.Logging.ILogger,Microsoft.Framework.Logging.ILoggerStructure,System.Exception)">
+            <summary>
+            Formats the given <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> and writes a warning log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="state">The <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> to write.</param>
+            <param name="error">The exception to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteWarning(Microsoft.Framework.Logging.ILogger,System.Int32,Microsoft.Framework.Logging.ILoggerStructure,System.Exception)">
+            <summary>
+            Formats the given <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> and writes a warning log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="eventId">The event id associated with the log.</param>
+            <param name="state">The <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> to write.</param>
+            <param name="error">The exception to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteError(Microsoft.Framework.Logging.ILogger,System.String)">
+            <summary>
+            Writes an error log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteError(Microsoft.Framework.Logging.ILogger,System.Int32,System.String)">
+            <summary>
+            Writes an error log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="eventId">The event id associated with the log.</param>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteError(Microsoft.Framework.Logging.ILogger,System.String,System.Object[])">
+            <summary>
+            Formats and writes an error log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="format">Format string of the log message.</param>
+            <param name="args">An object array that contains zero or more objects to format.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteError(Microsoft.Framework.Logging.ILogger,System.Int32,System.String,System.Object[])">
+            <summary>
+            Formats and writes an error log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="eventId">The event id associated with the log.</param>
+            <param name="format">Format string of the log message.</param>
+            <param name="args">An object array that contains zero or more objects to format.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteError(Microsoft.Framework.Logging.ILogger,System.String,System.Exception)">
+            <summary>
+            Formats the given message and error and writes an error log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="message">The message to log.</param>
+            <param name="error">The exception to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteError(Microsoft.Framework.Logging.ILogger,System.Int32,System.String,System.Exception)">
+            <summary>
+            Formats the given message and error and writes an error log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="eventId">The event id associated with the log.</param>
+            <param name="message">The message to log.</param>
+            <param name="error">The exception to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteError(Microsoft.Framework.Logging.ILogger,Microsoft.Framework.Logging.ILoggerStructure,System.Exception)">
+            <summary>
+            Formats the given <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> and writes an error log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="state">The <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> to write.</param>
+            <param name="error">The exception to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteError(Microsoft.Framework.Logging.ILogger,System.Int32,Microsoft.Framework.Logging.ILoggerStructure,System.Exception)">
+            <summary>
+            Formats the given <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> and writes an error log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="eventId">The event id associated with the log.</param>
+            <param name="state">The <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> to write.</param>
+            <param name="error">The exception to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteCritical(Microsoft.Framework.Logging.ILogger,System.String)">
+            <summary>
+            Writes a critical log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteCritical(Microsoft.Framework.Logging.ILogger,System.Int32,System.String)">
+            <summary>
+            Writes a critical log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="eventId">The event id associated with the log.</param>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteCritical(Microsoft.Framework.Logging.ILogger,System.String,System.Object[])">
+            <summary>
+            Formats and writes a critical log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="format">Format string of the log message.</param>
+            <param name="args">An object array that contains zero or more objects to format.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteCritical(Microsoft.Framework.Logging.ILogger,System.Int32,System.String,System.Object[])">
+            <summary>
+            Formats and writes a critical log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="eventId">The event id associated with the log.</param>
+            <param name="format">Format string of the log message.</param>
+            <param name="args">An object array that contains zero or more objects to format.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteCritical(Microsoft.Framework.Logging.ILogger,System.String,System.Exception)">
+            <summary>
+            Formats the given message and error and writes a critical log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="message">The message to log.</param>
+            <param name="error">The exception to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteCritical(Microsoft.Framework.Logging.ILogger,System.Int32,System.String,System.Exception)">
+            <summary>
+            Formats the given message and error and writes a critical log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="eventId">The event id associated with the log.</param>
+            <param name="message">The message to log.</param>
+            <param name="error">The exception to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteCritical(Microsoft.Framework.Logging.ILogger,Microsoft.Framework.Logging.ILoggerStructure,System.Exception)">
+            <summary>
+            Formats the given <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> and writes a critical log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="state">The <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> to write.</param>
+            <param name="error">The exception to log.</param>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerExtensions.WriteCritical(Microsoft.Framework.Logging.ILogger,System.Int32,Microsoft.Framework.Logging.ILoggerStructure,System.Exception)">
+            <summary>
+            Formats the given <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> and writes a critical log message.
+            </summary>
+            <param name="logger">The <see cref="T:Microsoft.Framework.Logging.ILogger"/> to write to.</param>
+            <param name="eventId">The event id associated with the log.</param>
+            <param name="state">The <see cref="T:Microsoft.Framework.Logging.ILoggerStructure"/> to write.</param>
+            <param name="error">The exception to log.</param>
+        </member>
+        <member name="T:Microsoft.Framework.Logging.LoggerFactory">
+            <summary>
+            Summary description for LoggerFactory
+            </summary>
+        </member>
+        <member name="T:Microsoft.Framework.Logging.LoggerFactoryExtensions">
+            <summary>
+            ILoggerFactory extension methods for common scenarios.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Framework.Logging.LoggerFactoryExtensions.Create``1(Microsoft.Framework.Logging.ILoggerFactory)">
+            <summary>
+            Creates a new ILogger instance using the full name of the given type.
+            </summary>
+            <typeparam name="T">The type.</typeparam>
+            <param name="factory">The factory.</param>
+        </member>
+    </members>
+</doc>
