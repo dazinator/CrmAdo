@@ -66,6 +66,18 @@ namespace CrmAdo.EntityFramework.Metadata
             }
         }
 
+      
+        public new virtual string ComputedExpression
+        {
+            get { return base.ComputedExpression(); }           
+            set
+            {
+              //  Check.NullButNotEmpty(value, nameof(value));
+
+                ((Property)Property)[DynamicsCrmComputedExpressionAnnotation] = value;
+            }
+        }
+
         
         public new virtual string SequenceName
         {

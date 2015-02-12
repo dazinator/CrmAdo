@@ -1,6 +1,8 @@
-﻿using Microsoft.Data.Entity.Identity;
+﻿using CrmAdo.EntityFramework.Migrations;
+using Microsoft.Data.Entity.Identity;
 using Microsoft.Data.Entity.Infrastructure;
 using Microsoft.Data.Entity.Metadata;
+using Microsoft.Data.Entity.Relational.Migrations;
 using Microsoft.Data.Entity.Relational.Migrations.Infrastructure;
 using Microsoft.Data.Entity.Storage;
 using System;
@@ -21,7 +23,7 @@ namespace CrmAdo.EntityFramework
         private readonly DynamicsCrmDatabase _database;
         private readonly ModelBuilderFactory _modelBuilderFactory;
         private readonly DynamicsCrmModelSource _modelSource;
-        private readonly DynamicsCrmMigrator _migrator;
+        // private readonly DynamicsCrmMigrator _migrator;
 
         public DynamicsCrmDataStoreServices(
             DynamicsCrmDataStore store,
@@ -30,7 +32,9 @@ namespace CrmAdo.EntityFramework
             DynamicsCrmValueGeneratorCache valueGeneratorCache,
             DynamicsCrmDatabase database,
             ModelBuilderFactory modelBuilderFactory,
-            DynamicsCrmMigrator migrator,
+            DynamicsCrmModelDiffer modelDiffer,
+            DynamicsCrmHistoryRepository historyRepository,
+            DynamicsCrmSqlGenerator migrationSqlGenerator,
             DynamicsCrmModelSource modelSource
             )
         {
@@ -48,8 +52,10 @@ namespace CrmAdo.EntityFramework
             _valueGeneratorCache = valueGeneratorCache;
             _database = database;
             _modelBuilderFactory = modelBuilderFactory;
+            ModelDiffer = modelDiffer;
+            HistoryRepository = historyRepository;
+            MigrationSqlGenerator = migrationSqlGenerator;
             _modelSource = modelSource;
-            _migrator = migrator;
         }
 
         public override DataStore Store
@@ -77,17 +83,16 @@ namespace CrmAdo.EntityFramework
             get { return _database; }
         }
 
-        public override IModelBuilderFactory ModelBuilderFactory
+        public override ModelBuilderFactory ModelBuilderFactory
         {
             get { return _modelBuilderFactory; }
         }
 
-        public override Migrator Migrator
-        {
-            get { return _migrator; }
-        }
+        public override ModelDiffer ModelDiffer { get; private set; }
+        public override IHistoryRepository HistoryRepository { get; private set; }
+        public override MigrationSqlGenerator MigrationSqlGenerator { get; private set; }
 
-        public override IModelSource ModelSource
+        public override ModelSource ModelSource
         {
             get { return _modelSource; }
         }

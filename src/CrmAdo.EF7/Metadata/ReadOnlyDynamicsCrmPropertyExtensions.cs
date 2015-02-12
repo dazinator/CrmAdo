@@ -19,6 +19,7 @@ namespace CrmAdo.EntityFramework.Metadata
         protected const string DynamicsCrmSequenceSchemaAnnotation = DynamicsCrmAnnotationNames.Prefix + DynamicsCrmAnnotationNames.SequenceSchema;
         protected const string DynamicsCrmDefaultValueAnnotation = DynamicsCrmAnnotationNames.Prefix + RelationalAnnotationNames.ColumnDefaultValue;
         protected const string DynamicsCrmDefaultValueTypeAnnotation = DynamicsCrmAnnotationNames.Prefix + RelationalAnnotationNames.ColumnDefaultValueType;
+        protected const string DynamicsCrmComputedExpressionAnnotation = DynamicsCrmAnnotationNames.Prefix + DynamicsCrmAnnotationNames.ColumnComputedExpression;
 
         public ReadOnlyDynamicsCrmPropertyExtensions(IProperty property)
             : base(property)
@@ -47,6 +48,11 @@ namespace CrmAdo.EntityFramework.Metadata
                 return new TypedAnnotation(Property[DynamicsCrmDefaultValueTypeAnnotation], Property[DynamicsCrmDefaultValueAnnotation]).Value
                        ?? base.DefaultValue;
             }
+        }
+
+        public virtual string ComputedExpression()
+        {
+            return Property[DynamicsCrmComputedExpressionAnnotation];
         }
 
         public virtual DynamicsCrmValueGenerationStrategy? ValueGenerationStrategy

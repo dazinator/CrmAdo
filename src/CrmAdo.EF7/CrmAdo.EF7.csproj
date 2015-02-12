@@ -57,42 +57,46 @@
   <ItemGroup>
     <Reference Include="EntityFramework.Core, Version=7.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\EntityFramework.Core.7.0.0-beta4-12113\lib\net45\EntityFramework.Core.dll</HintPath>
+      <HintPath>..\..\lib\EntityFramework.Core.7.0.0-beta4-12175\lib\net45\EntityFramework.Core.dll</HintPath>
     </Reference>
-    <Reference Include="EntityFramework.Relational">
-      <HintPath>..\..\lib\EntityFramework.Relational.7.0.0-beta4-12113\lib\net451\EntityFramework.Relational.dll</HintPath>
+    <Reference Include="EntityFramework.Relational, Version=7.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\EntityFramework.Relational.7.0.0-beta4-12175\lib\net451\EntityFramework.Relational.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Framework.ConfigurationModel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Microsoft.Framework.ConfigurationModel.1.0.0-beta4-10790\lib\net45\Microsoft.Framework.ConfigurationModel.dll</HintPath>
+      <HintPath>..\..\lib\Microsoft.Framework.ConfigurationModel.1.0.0-beta4-10813\lib\net45\Microsoft.Framework.ConfigurationModel.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Framework.DependencyInjection, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Microsoft.Framework.DependencyInjection.1.0.0-beta4-10810\lib\net45\Microsoft.Framework.DependencyInjection.dll</HintPath>
+      <HintPath>..\..\lib\Microsoft.Framework.DependencyInjection.1.0.0-beta4-10834\lib\net45\Microsoft.Framework.DependencyInjection.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Framework.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Microsoft.Framework.Logging.1.0.0-beta4-10795\lib\net45\Microsoft.Framework.Logging.dll</HintPath>
+      <HintPath>..\..\lib\Microsoft.Framework.Logging.1.0.0-beta4-10820\lib\net45\Microsoft.Framework.Logging.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Framework.Logging.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Microsoft.Framework.Logging.Interfaces.1.0.0-beta4-10795\lib\net45\Microsoft.Framework.Logging.Interfaces.dll</HintPath>
+      <HintPath>..\..\lib\Microsoft.Framework.Logging.Interfaces.1.0.0-beta4-10820\lib\net45\Microsoft.Framework.Logging.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Framework.OptionsModel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Microsoft.Framework.OptionsModel.1.0.0-beta4-10783\lib\net45\Microsoft.Framework.OptionsModel.dll</HintPath>
+      <HintPath>..\..\lib\Microsoft.Framework.OptionsModel.1.0.0-beta4-10807\lib\net45\Microsoft.Framework.OptionsModel.dll</HintPath>
     </Reference>
-    <Reference Include="Remotion.Linq">
+    <Reference Include="Remotion.Linq, Version=1.15.15.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Remotion.Linq.1.15.15.0\lib\portable-net45+wp80+wpa81+win\Remotion.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Collections.Concurrent" />
     <Reference Include="System.Collections.Immutable, Version=1.1.32.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\..\lib\System.Collections.Immutable.1.1.32-beta\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Interactive.Async">
+    <Reference Include="System.Interactive.Async, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Ix-Async.1.2.3\lib\net45\System.Interactive.Async.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
@@ -102,13 +106,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DynamicsCrmBuilderExtensions.cs" />
     <Compile Include="DynamicsCrmDatabase .cs" />
+    <Compile Include="DynamicsCrmDatabaseExtensions.cs" />
     <Compile Include="DynamicsCrmDataStore.cs" />
     <Compile Include="DynamicsCrmConnection.cs" />
     <Compile Include="DynamicsCrmDataStoreCreator.cs" />
     <Compile Include="DynamicsCrmDataStoreServices.cs" />
-    <Compile Include="DynamicsCrmMigrationOperationSqlGenerator.cs" />
+    <Compile Include="DynamicsCrmModelBuilderFactory .cs" />
     <Compile Include="DynamicsCrmModelSource.cs" />
+    <Compile Include="DynamicsCrmSimpleCommandExecutor .cs" />
+    <Compile Include="Metadata\DynamicsCrmEntityBuilder.cs" />
+    <Compile Include="Metadata\DynamicsCrmForeignKeyBuilder.cs" />
+    <Compile Include="Metadata\DynamicsCrmIndexBuilder.cs" />
+    <Compile Include="Metadata\DynamicsCrmKeyBuilder.cs" />
+    <Compile Include="Metadata\DynamicsCrmModelBuilder.cs" />
+    <Compile Include="Metadata\DynamicsCrmPropertyBuilder.cs" />
+    <Compile Include="Metadata\DynamicsCrmSequenceBuilder.cs" />
+    <Compile Include="Migrations\CreateDatabaseOperation.cs" />
+    <Compile Include="Migrations\DropDatabaseOperation.cs" />
+    <Compile Include="Migrations\DynamicsCrmHistoryRepository .cs" />
+    <Compile Include="Migrations\DynamicsCrmMigrationSqlGenerator.cs" />
     <Compile Include="Query\DynamicsCrmQueryCompilationContext.cs" />
     <Compile Include="Extensions\DynamicsCrmDbContextOptionsExtensions.cs" />
     <Compile Include="Metadata\DynamicsCrmModelExtensions.cs" />
@@ -120,18 +138,14 @@
     <Compile Include="DynamicsCrmSequenceValueGeneratorFactory.cs" />
     <Compile Include="DynamicsCrmSqlGenerator.cs" />
     <Compile Include="DynamicsCrmTypeMapper.cs" />
-    <Compile Include="DynamicsCrmMigrationOperationFactory.cs" />
-    <Compile Include="DynamicsCrmMigrationOperationProcessor.cs" />
-    <Compile Include="DynamicsCrmModelDiffer.cs" />
-    <Compile Include="DynamicsCrmMigrationOperationSqlGeneratorFactory.cs" />
+    <Compile Include="Migrations\DynamicsCrmModelDiffer.cs" />
     <Compile Include="DynamicsCrmMigrator.cs" />
     <Compile Include="Metadata\IDynamicsCrmIndexExtensions.cs" />
     <Compile Include="Metadata\ReadOnlyDynamicsCrmForeignKeyExtensions.cs" />
-    <Compile Include="Metadata\ReadOnlySqlServerIndexExtensions.cs" />
+    <Compile Include="Metadata\ReadOnlyDynamicsCrmIndexExtensions.cs" />
     <Compile Include="Metadata\ReadOnlyDynamicsCrmModelExtensions.cs" />
     <Compile Include="Query\DynamicsCrmQueryGenerator.cs" />
     <Compile Include="Update\DynamicsCrmBatchExecutor.cs" />
-    <Compile Include="Metadata\DynamicsCrmMetadataExtensionProvider.cs" />
     <Compile Include="Update\DynamicsCrmCommandBatchPreparer.cs" />
     <Compile Include="Update\DynamicsCrmModificationCommandBatch.cs" />
     <Compile Include="Update\DynamicsCrmModificationCommandBatchFactory.cs" />
@@ -160,15 +174,14 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="SequentialGuidValueGenerator.cs" />
+    <Compile Include="Utils\EnumerableExtensions.cs" />
     <Compile Include="Utils\SharedTypeExtensions.cs" />
     <Compile Include="Utils\StringBuilderExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Key.pfx" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CrmAdo\CrmAdo.csproj">

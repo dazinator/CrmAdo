@@ -55,6 +55,20 @@ namespace CrmAdo.EntityFramework
 
             //return new DynamicsCrmConnection(new DbContextService<IDbContextOptions>(() => options), LoggerFactory);
         }
+
+        public virtual DynamicsCrmConnection CreateDeploymentServiceConnection()
+        {
+            throw new NotImplementedException();
+
+            //var builder = new CrmConnectionStringBuilder { ConnectionString = ConnectionString };
+            ////builder. = "master";
+
+            //// TODO use clone connection method once implimented see #1406
+            //var options = new DbContextOptions();
+            //options.UseDynamicsCrm(builder.ConnectionString).CommandTimeout(CommandTimeout);
+
+            //return new DynamicsCrmConnection(new DbContextService<IDbContextOptions>(() => options), LoggerFactory);
+        }
     }
 
 

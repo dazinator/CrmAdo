@@ -6,15 +6,16 @@ using Microsoft.Data.Entity.Storage;
 using Microsoft.Data.Entity.Relational;
 using System.Collections.Generic;
 using Microsoft.Data.Entity.Relational.Migrations.MigrationsModel;
+using CrmAdo.EntityFramework.Migrations;
 
 namespace CrmAdo.EntityFramework
-{  
+{     
 
     public class DynamicsCrmDataStoreCreator : RelationalDataStoreCreator
     {
         private readonly DynamicsCrmConnection _connection;
         private readonly DynamicsCrmModelDiffer _modelDiffer;
-        private readonly DynamicsCrmMigrationOperationSqlGeneratorFactory _sqlGeneratorFactory;
+        private readonly DynamicsCrmMigrationSqlGenerator _sqlGenerator;
         private readonly SqlStatementExecutor _statementExecutor;
 
         /// <summary>
@@ -27,56 +28,56 @@ namespace CrmAdo.EntityFramework
         }
 
         public DynamicsCrmDataStoreCreator(
-          DynamicsCrmConnection connection,
-          DynamicsCrmModelDiffer modelDiffer,
-          DynamicsCrmMigrationOperationSqlGeneratorFactory sqlGeneratorFactory,
-          SqlStatementExecutor statementExecutor)
+            DynamicsCrmConnection connection,
+            DynamicsCrmModelDiffer modelDiffer,
+            DynamicsCrmMigrationSqlGenerator sqlGenerator,
+            SqlStatementExecutor statementExecutor)
         {
-            //Check.NotNull(connection, "connection");
-            //Check.NotNull(modelDiffer, "modelDiffer");
-            //Check.NotNull(sqlGeneratorFactory, "sqlGeneratorFactory");
-            //Check.NotNull(statementExecutor, "statementExecutor");
+           //Check.NotNull(connection, "connection");
+           //Check.NotNull(modelDiffer, "modelDiffer");
+           //Check.NotNull(sqlGenerator, nameof(sqlGenerator));
+           //Check.NotNull(statementExecutor, "statementExecutor");
 
             _connection = connection;
             _modelDiffer = modelDiffer;
-            _sqlGeneratorFactory = sqlGeneratorFactory;
+            _sqlGenerator = sqlGenerator;
             _statementExecutor = statementExecutor;
         }
 
         public override void Create()
         {
-            //using (var masterConnection = _connection.())
-            //{
-            _statementExecutor.ExecuteNonQuery(_connection, null, CreateDatabase());
-            ClearPool();
-            //}
+            using (var masterConnection = _connection.CreateDeploymentServiceConnection())
+            {
+                _statementExecutor.ExecuteNonQuery(masterConnection, null, CreateCreateOperations());
+                ClearPool();
+            }
 
             Exists(retryOnNotExists: true);
         }
 
         public override async Task CreateAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            //using (var masterConnection = _connection.CreateMasterConnection())
-            //{
-            await _statementExecutor
-                .ExecuteNonQueryAsync(_connection, null, CreateDatabase(), cancellationToken)
-                .WithCurrentCulture();
-            ClearPool();
-            // }
+            using (var masterConnection = _connection.CreateDeploymentServiceConnection())
+            {
+                await _statementExecutor
+                    .ExecuteNonQueryAsync(masterConnection, null, CreateCreateOperations(), cancellationToken)
+                    .WithCurrentCulture();
+                ClearPool();
+            }
 
             await ExistsAsync(retryOnNotExists: true, cancellationToken: cancellationToken).WithCurrentCulture();
         }
 
         public override void CreateTables(IModel model)
         {
-            // Check.NotNull(model, "model");
+           // Check.NotNull(model, "model");
 
             _statementExecutor.ExecuteNonQuery(_connection, _connection.DbTransaction, CreateSchemaCommands(model));
         }
 
         public override async Task CreateTablesAsync(IModel model, CancellationToken cancellationToken = default(CancellationToken))
         {
-            //Check.NotNull(model, "model");
+           // Check.NotNull(model, "model");
 
             await _statementExecutor
                 .ExecuteNonQueryAsync(_connection, _connection.DbTransaction, CreateSchemaCommands(model), cancellationToken)
@@ -97,9 +98,7 @@ namespace CrmAdo.EntityFramework
 
         private IEnumerable<SqlBatch> CreateSchemaCommands(IModel model)
         {
-            var sqlGenerator = _sqlGeneratorFactory.Create(model);
-
-            return sqlGenerator.Generate(_modelDiffer.CreateSchema(model));
+            return _sqlGenerator.Generate(_modelDiffer.GetDifferences(null, model), model);
         }
 
         private string CreateHasTablesCommand()
@@ -107,12 +106,11 @@ namespace CrmAdo.EntityFramework
             return "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES) SELECT 1 ELSE SELECT 0";
         }
 
-        private IEnumerable<SqlBatch> CreateDatabase()
+        private IEnumerable<SqlBatch> CreateCreateOperations()
         {
             var databaseName = _connection.DbConnection.Database;
-            var sqlGenerator = _sqlGeneratorFactory.Create();
 
-            return sqlGenerator.Generate(new CreateDatabaseOperation(databaseName));
+            return _sqlGenerator.Generate(new[] { new CrmAdo.EntityFramework.Migrations.CreateDatabaseOperation(databaseName) });
         }
 
         public override bool Exists()
@@ -122,30 +120,28 @@ namespace CrmAdo.EntityFramework
 
         private bool Exists(bool retryOnNotExists)
         {
-            throw new NotImplementedException();
+            var retryCount = 0;
+            while (true)
+            {
+                try
+                {
+                    _connection.Open();
+                    _connection.Close();
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    if (!retryOnNotExists && IsDoesNotExist(e))
+                    {
+                        return false;
+                    }
 
-            //var retryCount = 0;
-            //while (true)
-            //{
-            //    try
-            //    {
-            //        _connection.Open();
-            //        _connection.Close();
-            //        return true;
-            //    }
-            //    catch (SqlException e)
-            //    {
-            //        if (!retryOnNotExists && IsDoesNotExist(e))
-            //        {
-            //            return false;
-            //        }
-
-            //        if (!RetryOnExistsFailure(e, ref retryCount))
-            //        {
-            //            throw;
-            //        }
-            //    }
-            //}
+                    if (!RetryOnExistsFailure(e, ref retryCount))
+                    {
+                        throw;
+                    }
+                }
+            }
         }
 
         public override Task<bool> ExistsAsync(CancellationToken cancellationToken = default(CancellationToken))
@@ -155,36 +151,40 @@ namespace CrmAdo.EntityFramework
 
         private async Task<bool> ExistsAsync(bool retryOnNotExists, CancellationToken cancellationToken)
         {
+            var retryCount = 0;
+            while (true)
+            {
+                try
+                {
+                    await _connection.OpenAsync(cancellationToken).WithCurrentCulture();
+                    _connection.Close();
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    if (!retryOnNotExists && IsDoesNotExist(e))
+                    {
+                        return false;
+                    }
+
+                    if (!RetryOnExistsFailure(e, ref retryCount))
+                    {
+                        throw;
+                    }
+                }
+            }
+        }
+
+        private static bool IsDoesNotExist(Exception exception)
+        {
+            // Login failed is thrown when database does not exist (See Issue #776)
             throw new NotImplementedException();
-
-            //var retryCount = 0;
-            //while (true)
-            //{
-            //    try
-            //    {
-            //        await _connection.OpenAsync(cancellationToken).WithCurrentCulture();
-            //        _connection.Close();
-            //        return true;
-            //    }
-            //    catch (SqlException e)
-            //    {
-            //        if (!retryOnNotExists && IsDoesNotExist(e))
-            //        {
-            //            return false;
-            //        }
-
-            //        if (!RetryOnExistsFailure(e, ref retryCount))
-            //        {
-            //            throw;
-            //        }
-            //    }
-            //}
-        }       
+            //return exception.Number == 4060;
+        }
 
         // See Issue #985
         private bool RetryOnExistsFailure(Exception exception, ref int retryCount)
         {
-            throw new NotImplementedException();
             // This is to handle the case where Open throws (Number 233):
             //   System.Data.SqlClient.SqlException: A connection was successfully established with the
             //   server, but then an error occurred during the login process. (provider: Named Pipes
@@ -206,29 +206,30 @@ namespace CrmAdo.EntityFramework
             //    Thread.Sleep(100);
             //    return true;
             //}
-           // return false;
+            //return false;
+            throw new NotImplementedException();
         }
 
         public override void Delete()
         {
             ClearAllPools();
 
-            //using (var masterConnection = _connection.CreateMasterConnection())
-            //{
-            _statementExecutor.ExecuteNonQuery(_connection, null, CreateDropCommands());
-            //}
+            using (var masterConnection = _connection.CreateDeploymentServiceConnection())
+            {
+                _statementExecutor.ExecuteNonQuery(masterConnection, null, CreateDropCommands());
+            }
         }
 
         public override async Task DeleteAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             ClearAllPools();
 
-            //using (var masterConnection = _connection.CreateDiscoveryServiceConnection())
-            //{
-            await _statementExecutor
-                .ExecuteNonQueryAsync(_connection, null, CreateDropCommands(), cancellationToken)
-                .WithCurrentCulture();
-            //}
+            using (var masterConnection = _connection.CreateDeploymentServiceConnection())
+            {
+                await _statementExecutor
+                    .ExecuteNonQueryAsync(masterConnection, null, CreateDropCommands(), cancellationToken)
+                    .WithCurrentCulture();
+            }
         }
 
         private IEnumerable<SqlBatch> CreateDropCommands()
@@ -237,25 +238,24 @@ namespace CrmAdo.EntityFramework
                 {
                     // TODO Check DbConnection.Database always gives us what we want
                     // Issue #775
-                    new DropDatabaseOperation(_connection.DbConnection.Database)
+                    new CrmAdo.EntityFramework.Migrations.DropDatabaseOperation(_connection.DbConnection.Database)
                 };
 
-            var sqlGenerator = _sqlGeneratorFactory.Create();
-            var masterCommands = sqlGenerator.Generate(operations);
+            var masterCommands = _sqlGenerator.Generate(operations);
             return masterCommands;
         }
 
         private static void ClearAllPools()
         {
             // Clear connection pools in case there are active connections that are pooled
-            //  SqlConnection.ClearAllPools();
+            //SqlConnection.ClearAllPools();
         }
 
         private void ClearPool()
         {
             // Clear connection pool for the database connection since after the 'create database' call, a previously
             // invalid connection may now be valid.
-            // SqlConnection.ClearPool((SqlConnection)_connection.DbConnection);
+           // SqlConnection.ClearPool((SqlConnection)_connection.DbConnection);
         }
     }
 }

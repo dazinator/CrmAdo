@@ -1,9 +1,7 @@
 ﻿using System.Data.Common;
 using JetBrains.Annotations;
 using Microsoft.Data.Entity.Infrastructure;
-using Microsoft.Data.Entity.SqlServer;
 using Microsoft.Data.Entity.Utilities;
-using Microsoft.Data.Entity.SqlServer.Extensions;
 using CrmAdo.EntityFramework.Extensions;
 using CrmAdo.EntityFramework;
 

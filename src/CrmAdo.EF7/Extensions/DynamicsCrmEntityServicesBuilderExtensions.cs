@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CrmAdo.EntityFramework;
+using CrmAdo.EntityFramework.Migrations;
 // ReSharper disable once CheckNamespace
 
 namespace Microsoft.Framework.DependencyInjection
@@ -22,9 +23,10 @@ namespace Microsoft.Framework.DependencyInjection
         {
             //Check.NotNull(builder, "builder");
 
-            builder.AddMigrations().ServiceCollection
+            builder.AddRelational().ServiceCollection
                 .AddScoped<DataStoreSource, DynamicsCrmDataStoreSource>()
                 .TryAdd(new ServiceCollection()
+                    .AddSingleton<DynamicsCrmModelBuilderFactory>()
                     .AddSingleton<DynamicsCrmValueGeneratorCache>()
                     .AddSingleton<DynamicsCrmValueGeneratorSelector>()
                     .AddSingleton<SimpleValueGeneratorFactory<SequentialGuidValueGenerator>>()
@@ -34,19 +36,25 @@ namespace Microsoft.Framework.DependencyInjection
                     .AddSingleton<DynamicsCrmTypeMapper>()
                     .AddSingleton<DynamicsCrmModificationCommandBatchFactory>()
                     .AddSingleton<DynamicsCrmCommandBatchPreparer>()
-                    .AddSingleton<DynamicsCrmMetadataExtensionProvider>()
-                    .AddSingleton<DynamicsCrmMigrationOperationFactory>()
                     .AddSingleton<DynamicsCrmModelSource>()
+
+                    //.AddSingleton<DynamicsCrmMetadataExtensionProvider>()
+                //.AddSingleton<DynamicsCrmMigrationOperationFactory>()
+
                     .AddScoped<DynamicsCrmBatchExecutor>()
                     .AddScoped<DynamicsCrmDataStoreServices>()
                     .AddScoped<DynamicsCrmDataStore>()
                     .AddScoped<DynamicsCrmConnection>()
-                    .AddScoped<DynamicsCrmMigrationOperationProcessor>()
+                // .AddScoped<DynamicsCrmMigrationOperationProcessor>()
                     .AddScoped<DynamicsCrmModelDiffer>()
                     .AddScoped<DynamicsCrmDatabase>()
-                    .AddScoped<DynamicsCrmMigrationOperationSqlGeneratorFactory>()
+                    .AddScoped<DynamicsCrmMigrationSqlGenerator>()
                     .AddScoped<DynamicsCrmDataStoreCreator>()
-                    .AddScoped<DynamicsCrmMigrator>());
+                    .AddScoped<DynamicsCrmHistoryRepository>()
+                    );
+            // .AddScoped<DynamicsCrmMigrationOperationSqlGeneratorFactory>()
+
+            // .AddScoped<DynamicsCrmMigrator>());
 
             return builder;
         }

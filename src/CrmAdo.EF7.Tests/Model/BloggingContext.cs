@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Metadata;
 using Microsoft.Data.Entity.Relational;
+using System.Configuration;
 
 
 namespace CrmAdo.EF7.Tests.Model
@@ -17,20 +18,24 @@ namespace CrmAdo.EF7.Tests.Model
 
         protected override void OnConfiguring(DbContextOptions builder)
         {
-            builder.UseDynamicsCrm(@"Server=(localdb)\v11.0;Database=Blogging;Trusted_Connection=True;");
+            var connString = ConfigurationManager.ConnectionStrings["CrmConnection"];
+            var conn = connString.ConnectionString;
+            builder.UseDynamicsCrm(conn);
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Blog>()
-                .OneToMany(b => b.Posts, p => p.Blog)
+                .HasMany<Post>(b => b.Posts)
+                .WithOne(p => p.Blog)
                 .ForeignKey(p => p.BlogId);
+
         }
     }
 
     public class Blog
     {
-        public int BlogId { get; set; }
+        public Guid BlogId { get; set; }
         public string Url { get; set; }
 
         public List<Post> Posts { get; set; }
@@ -38,11 +43,11 @@ namespace CrmAdo.EF7.Tests.Model
 
     public class Post
     {
-        public int PostId { get; set; }
+        public Guid PostId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
 
-        public int BlogId { get; set; }
+        public Guid BlogId { get; set; }
         public Blog Blog { get; set; }
     }
 }
