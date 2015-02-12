@@ -1,0 +1,894 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.AspNet.Http</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.AspNet.Http.CookieOptions">
+            <summary>
+            Options used to create a new cookie.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.CookieOptions.#ctor">
+            <summary>
+            Creates a default cookie with a path of '/'.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.CookieOptions.Domain">
+            <summary>
+            Gets or sets the domain to associate the cookie with.
+            </summary>
+            <returns>The domain to associate the cookie with.</returns>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.CookieOptions.Path">
+            <summary>
+            Gets or sets the cookie path.
+            </summary>
+            <returns>The cookie path.</returns>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.CookieOptions.Expires">
+            <summary>
+            Gets or sets the expiration date and time for the cookie.
+            </summary>
+            <returns>The expiration date and time for the cookie.</returns>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.CookieOptions.Secure">
+            <summary>
+            Gets or sets a value that indicates whether to transmit the cookie using Secure Sockets Layer (SSL)�that is, over HTTPS only.
+            </summary>
+            <returns>true to transmit the cookie only over an SSL connection (HTTPS); otherwise, false.</returns>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.CookieOptions.HttpOnly">
+            <summary>
+            Gets or sets a value that indicates whether a cookie is accessible by client-side script.
+            </summary>
+            <returns>true if a cookie is accessible by client-side script; otherwise, false.</returns>
+        </member>
+        <member name="T:Microsoft.AspNet.Http.FragmentString">
+            <summary>
+            Provides correct handling for FragmentString value when needed to generate a URI string
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNet.Http.FragmentString.Empty">
+            <summary>
+            Represents the empty fragment string. This field is read-only.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.FragmentString.#ctor(System.String)">
+            <summary>
+            Initialize the fragment string with a given value. This value must be in escaped and delimited format with
+            a leading '#' character.
+            </summary>
+            <param name="value">The fragment string to be assigned to the Value property.</param>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.FragmentString.Value">
+            <summary>
+            The escaped fragment string with the leading '#' character
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.FragmentString.HasValue">
+            <summary>
+            True if the fragment string is not empty
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.FragmentString.ToString">
+            <summary>
+            Provides the fragment string escaped in a way which is correct for combining into the URI representation.
+            A leading '#' character will be included unless the Value is null or empty. Characters which are potentially
+            dangerous are escaped.
+            </summary>
+            <returns>The fragment string value</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.FragmentString.ToUriComponent">
+            <summary>
+            Provides the fragment string escaped in a way which is correct for combining into the URI representation.
+            A leading '#' character will be included unless the Value is null or empty. Characters which are potentially
+            dangerous are escaped.
+            </summary>
+            <returns>The fragment string value</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.FragmentString.FromUriComponent(System.String)">
+            <summary>
+            Returns an FragmentString given the fragment as it is escaped in the URI format. The string MUST NOT contain any
+            value that is not a fragment.
+            </summary>
+            <param name="uriComponent">The escaped fragment as it appears in the URI format.</param>
+            <returns>The resulting FragmentString</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.FragmentString.FromUriComponent(System.Uri)">
+            <summary>
+            Returns an FragmentString given the fragment as from a Uri object. Relative Uri objects are not supported.
+            </summary>
+            <param name="uri">The Uri object</param>
+            <returns>The resulting FragmentString</returns>
+        </member>
+        <member name="T:Microsoft.AspNet.Http.HostString">
+            <summary>
+            Represents the host portion of a URI can be used to construct URI's properly formatted and encoded for use in
+            HTTP headers.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.HostString.#ctor(System.String)">
+            <summary>
+            Creates a new HostString without modification. The value should be Unicode rather than punycode, and may have a port.
+            IPv4 and IPv6 addresses are also allowed, and also may have ports.
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.HostString.Value">
+            <summary>
+            Returns the original value from the constructor.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.HostString.ToString">
+            <summary>
+            Returns the value as normalized by ToUriComponent().
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.HostString.ToUriComponent">
+            <summary>
+            Returns the value properly formatted and encoded for use in a URI in a HTTP header.
+            Any Unicode is converted to punycode. IPv6 addresses will have brackets added if they are missing.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.HostString.FromUriComponent(System.String)">
+            <summary>
+            Creates a new HostString from the given URI component.
+            Any punycode will be converted to Unicode.
+            </summary>
+            <param name="uriComponent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.HostString.FromUriComponent(System.Uri)">
+            <summary>
+            Creates a new HostString from the host and port of the give Uri instance.
+            Punycode will be converted to Unicode.
+            </summary>
+            <param name="uri"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.HostString.Equals(Microsoft.AspNet.Http.HostString)">
+            <summary>
+            Compares the equality of the Value property, ignoring case.
+            </summary>
+            <param name="other"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.HostString.Equals(System.Object)">
+            <summary>
+            Compares against the given object only if it is a HostString.
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.HostString.GetHashCode">
+            <summary>
+            Gets a hash code for the value.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.HostString.op_Equality(Microsoft.AspNet.Http.HostString,Microsoft.AspNet.Http.HostString)">
+            <summary>
+            Compares the two instances for equality.
+            </summary>
+            <param name="left"></param>
+            <param name="right"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.HostString.op_Inequality(Microsoft.AspNet.Http.HostString,Microsoft.AspNet.Http.HostString)">
+            <summary>
+            Compares the two instances for inequality.
+            </summary>
+            <param name="left"></param>
+            <param name="right"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.HttpRequest.Method">
+            <summary>
+            Gets or set the HTTP method.
+            </summary>
+            <returns>The HTTP method.</returns>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.HttpRequest.Scheme">
+            <summary>
+            Gets or set the HTTP request scheme from owin.RequestScheme.
+            </summary>
+            <returns>The HTTP request scheme from owin.RequestScheme.</returns>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.HttpRequest.IsSecure">
+            <summary>
+            Returns true if the owin.RequestScheme is https.
+            </summary>
+            <returns>true if this request is using https; otherwise, false.</returns>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.HttpRequest.Host">
+            <summary>
+            Gets or set the Host header. May include the port.
+            </summary>
+            <return>The Host header.</return>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.HttpRequest.PathBase">
+            <summary>
+            Gets or set the owin.RequestPathBase.
+            </summary>
+            <returns>The owin.RequestPathBase.</returns>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.HttpRequest.Path">
+            <summary>
+            Gets or set the request path from owin.RequestPath.
+            </summary>
+            <returns>The request path from owin.RequestPath.</returns>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.HttpRequest.QueryString">
+            <summary>
+            Gets or set the query string from owin.RequestQueryString.
+            </summary>
+            <returns>The query string from owin.RequestQueryString.</returns>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.HttpRequest.Query">
+            <summary>
+            Gets the query value collection parsed from owin.RequestQueryString.
+            </summary>
+            <returns>The query value collection parsed from owin.RequestQueryString.</returns>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.HttpRequest.Protocol">
+            <summary>
+            Gets or set the owin.RequestProtocol.
+            </summary>
+            <returns>The owin.RequestProtocol.</returns>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.HttpRequest.Headers">
+            <summary>
+            Gets the request headers.
+            </summary>
+            <returns>The request headers.</returns>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.HttpRequest.Cookies">
+            <summary>
+            Gets the collection of Cookies for this request.
+            </summary>
+            <returns>The collection of Cookies for this request.</returns>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.HttpRequest.ContentLength">
+            <summary>
+            Gets or sets the Content-Length header
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.HttpRequest.ContentType">
+            <summary>
+            Gets or sets the Content-Type header.
+            </summary>
+            <returns>The Content-Type header.</returns>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.HttpRequest.Body">
+            <summary>
+            Gets or set the owin.RequestBody Stream.
+            </summary>
+            <returns>The owin.RequestBody Stream.</returns>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.HttpRequest.HasFormContentType">
+            <summary>
+            Checks the content-type header for form types.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.HttpRequest.Form">
+            <summary>
+            Gets or sets the request body as a form.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.HttpRequest.ReadFormAsync(System.Threading.CancellationToken)">
+            <summary>
+            Reads the request body if it is a form.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.AspNet.Http.HttpResponseWritingExtensions">
+            <summary>
+            Convenience methods for writing to the response.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.HttpResponseWritingExtensions.WriteAsync(Microsoft.AspNet.Http.HttpResponse,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Writes the given text to the response body. UTF-8 encoding will be used.
+            </summary>
+            <param name="response"></param>
+            <param name="text"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.HttpResponseWritingExtensions.WriteAsync(Microsoft.AspNet.Http.HttpResponse,System.String,System.Text.Encoding,System.Threading.CancellationToken)">
+            <summary>
+            Writes the given text to the response body using the given encoding.
+            </summary>
+            <param name="response"></param>
+            <param name="text"></param>
+            <param name="encoding"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.AspNet.Http.IFormCollection">
+            <summary>
+            Contains the parsed form values.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.Http.IHeaderDictionary">
+            <summary>
+            Represents request and response headers
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.IHeaderDictionary.Item(System.String)">
+            <summary>
+            Get or sets the associated value from the collection as a single string.
+            </summary>
+            <param name="key">The header name.</param>
+            <returns>the associated value from the collection as a single string or null if the key is not present.</returns>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.IHeaderDictionary.Count">
+            <summary>
+            Gets the number of elements contained in the collection.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.IHeaderDictionary.Keys">
+            <summary>
+            Gets a collection containing the keys.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.IHeaderDictionary.GetCommaSeparatedValues(System.String)">
+            <summary>
+            Get the associated values from the collection separated into individual values.
+            Quoted values will not be split, and the quotes will be removed.
+            </summary>
+            <param name="key">The header name.</param>
+            <returns>the associated values from the collection separated into individual values, or null if the key is not present.</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.IHeaderDictionary.Append(System.String,System.String)">
+            <summary>
+            Add a new value. Appends to the header if already present
+            </summary>
+            <param name="key">The header name.</param>
+            <param name="value">The header value.</param>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.IHeaderDictionary.AppendValues(System.String,System.String[])">
+            <summary>
+            Add new values. Each item remains a separate array entry.
+            </summary>
+            <param name="key">The header name.</param>
+            <param name="values">The header values.</param>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.IHeaderDictionary.AppendCommaSeparatedValues(System.String,System.String[])">
+            <summary>
+            Quotes any values containing comas, and then coma joins all of the values with any existing values.
+            </summary>
+            <param name="key">The header name.</param>
+            <param name="values">The header values.</param>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.IHeaderDictionary.Set(System.String,System.String)">
+            <summary>
+            Sets a specific header value.
+            </summary>
+            <param name="key">The header name.</param>
+            <param name="value">The header value.</param>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.IHeaderDictionary.SetValues(System.String,System.String[])">
+            <summary>
+            Sets the specified header values without modification.
+            </summary>
+            <param name="key">The header name.</param>
+            <param name="values">The header values.</param>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.IHeaderDictionary.SetCommaSeparatedValues(System.String,System.String[])">
+            <summary>
+            Quotes any values containing comas, and then coma joins all of the values.
+            </summary>
+            <param name="key">The header name.</param>
+            <param name="values">The header values.</param>
+        </member>
+        <member name="T:Microsoft.AspNet.Http.IReadableStringCollection">
+            <summary>
+            Accessors for headers, query, forms, etc.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.IReadableStringCollection.Item(System.String)">
+            <summary>
+            Get the associated value from the collection.  Multiple values will be merged.
+            Returns null if the key is not present.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.IReadableStringCollection.Count">
+            <summary>
+            Gets the number of elements contained in the collection.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.IReadableStringCollection.Keys">
+            <summary>
+            Gets a collection containing the keys.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.IReadableStringCollection.ContainsKey(System.String)">
+            <summary>
+            Determines whether the collection contains an element with the specified key.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.IReadableStringCollection.Get(System.String)">
+            <summary>
+            Get the associated value from the collection.  Multiple values will be merged.
+            Returns null if the key is not present.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.IReadableStringCollection.GetValues(System.String)">
+            <summary>
+            Get the associated values from the collection in their original format.
+            Returns null if the key is not present.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.AspNet.Http.IResponseCookies">
+            <summary>
+            A wrapper for the response Set-Cookie header
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.IResponseCookies.Append(System.String,System.String)">
+            <summary>
+            Add a new cookie and value
+            </summary>
+            <param name="key"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.IResponseCookies.Append(System.String,System.String,Microsoft.AspNet.Http.CookieOptions)">
+            <summary>
+            Add a new cookie
+            </summary>
+            <param name="key"></param>
+            <param name="value"></param>
+            <param name="options"></param>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.IResponseCookies.Delete(System.String)">
+            <summary>
+            Sets an expired cookie
+            </summary>
+            <param name="key"></param>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.IResponseCookies.Delete(System.String,Microsoft.AspNet.Http.CookieOptions)">
+            <summary>
+            Sets an expired cookie
+            </summary>
+            <param name="key"></param>
+            <param name="options"></param>
+        </member>
+        <member name="T:Microsoft.AspNet.Http.PathString">
+            <summary>
+            Provides correct escaping for Path and PathBase values when needed to reconstruct a request or redirect URI string
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNet.Http.PathString.Empty">
+            <summary>
+            Represents the empty path. This field is read-only.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.PathString.#ctor(System.String)">
+            <summary>
+            Initalize the path string with a given value. This value must be in unescaped format. Use
+            PathString.FromUriComponent(value) if you have a path value which is in an escaped format.
+            </summary>
+            <param name="value">The unescaped path to be assigned to the Value property.</param>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.PathString.Value">
+            <summary>
+            The unescaped path value
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.PathString.HasValue">
+            <summary>
+            True if the path is not empty
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.PathString.ToString">
+            <summary>
+            Provides the path string escaped in a way which is correct for combining into the URI representation. 
+            </summary>
+            <returns>The escaped path value</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.PathString.ToUriComponent">
+            <summary>
+            Provides the path string escaped in a way which is correct for combining into the URI representation.
+            </summary>
+            <returns>The escaped path value</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.PathString.FromUriComponent(System.String)">
+            <summary>
+            Returns an PathString given the path as it is escaped in the URI format. The string MUST NOT contain any
+            value that is not a path.
+            </summary>
+            <param name="uriComponent">The escaped path as it appears in the URI format.</param>
+            <returns>The resulting PathString</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.PathString.FromUriComponent(System.Uri)">
+            <summary>
+            Returns an PathString given the path as from a Uri object. Relative Uri objects are not supported.
+            </summary>
+            <param name="uri">The Uri object</param>
+            <returns>The resulting PathString</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.PathString.Add(Microsoft.AspNet.Http.PathString)">
+            <summary>
+            Adds two PathString instances into a combined PathString value. 
+            </summary>
+            <returns>The combined PathString value</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.PathString.Add(Microsoft.AspNet.Http.QueryString)">
+            <summary>
+            Combines a PathString and QueryString into the joined URI formatted string value. 
+            </summary>
+            <returns>The joined URI formatted string value</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.PathString.Equals(Microsoft.AspNet.Http.PathString)">
+            <summary>
+            Compares this PathString value to another value. The default comparison is StringComparison.OrdinalIgnoreCase.
+            </summary>
+            <param name="other">The second PathString for comparison.</param>
+            <returns>True if both PathString values are equal</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.PathString.Equals(Microsoft.AspNet.Http.PathString,System.StringComparison)">
+            <summary>
+            Compares this PathString value to another value using a specific StringComparison type
+            </summary>
+            <param name="other">The second PathString for comparison</param>
+            <param name="comparisonType">The StringComparison type to use</param>
+            <returns>True if both PathString values are equal</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.PathString.Equals(System.Object)">
+            <summary>
+            Compares this PathString value to another value. The default comparison is StringComparison.OrdinalIgnoreCase.
+            </summary>
+            <param name="obj">The second PathString for comparison.</param>
+            <returns>True if both PathString values are equal</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.PathString.GetHashCode">
+            <summary>
+            Returns the hash code for the PathString value. The hash code is provided by the OrdinalIgnoreCase implementation.
+            </summary>
+            <returns>The hash code</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.PathString.op_Equality(Microsoft.AspNet.Http.PathString,Microsoft.AspNet.Http.PathString)">
+            <summary>
+            Operator call through to Equals
+            </summary>
+            <param name="left">The left parameter</param>
+            <param name="right">The right parameter</param>
+            <returns>True if both PathString values are equal</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.PathString.op_Inequality(Microsoft.AspNet.Http.PathString,Microsoft.AspNet.Http.PathString)">
+            <summary>
+            Operator call through to Equals
+            </summary>
+            <param name="left">The left parameter</param>
+            <param name="right">The right parameter</param>
+            <returns>True if both PathString values are not equal</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.PathString.op_Addition(Microsoft.AspNet.Http.PathString,Microsoft.AspNet.Http.PathString)">
+            <summary>
+            Operator call through to Add
+            </summary>
+            <param name="left">The left parameter</param>
+            <param name="right">The right parameter</param>
+            <returns>The PathString combination of both values</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.PathString.op_Addition(Microsoft.AspNet.Http.PathString,Microsoft.AspNet.Http.QueryString)">
+            <summary>
+            Operator call through to Add
+            </summary>
+            <param name="left">The left parameter</param>
+            <param name="right">The right parameter</param>
+            <returns>The PathString combination of both values</returns>
+        </member>
+        <member name="T:Microsoft.AspNet.Http.QueryString">
+            <summary>
+            Provides correct handling for QueryString value when needed to reconstruct a request or redirect URI string
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNet.Http.QueryString.Empty">
+            <summary>
+            Represents the empty query string. This field is read-only.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.QueryString.#ctor(System.String)">
+            <summary>
+            Initialize the query string with a given value. This value must be in escaped and delimited format with
+            a leading '?' character. 
+            </summary>
+            <param name="value">The query string to be assigned to the Value property.</param>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.QueryString.#ctor(System.String,System.String)">
+            <summary>
+            Initialize a query string with a single given parameter name and value.
+            </summary>
+            <param name="name">The un-encoded parameter name</param>
+            <param name="value">The un-encoded parameter value</param>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.QueryString.Value">
+            <summary>
+            The escaped query string with the leading '?' character
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.QueryString.HasValue">
+            <summary>
+            True if the query string is not empty
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.QueryString.ToString">
+            <summary>
+            Provides the query string escaped in a way which is correct for combining into the URI representation. 
+            A leading '?' character will be included unless the Value is null or empty. Characters which are potentially
+            dangerous are escaped.
+            </summary>
+            <returns>The query string value</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.QueryString.ToUriComponent">
+            <summary>
+            Provides the query string escaped in a way which is correct for combining into the URI representation. 
+            A leading '?' character will be included unless the Value is null or empty. Characters which are potentially
+            dangerous are escaped.
+            </summary>
+            <returns>The query string value</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.QueryString.FromUriComponent(System.String)">
+            <summary>
+            Returns an QueryString given the query as it is escaped in the URI format. The string MUST NOT contain any
+            value that is not a query.
+            </summary>
+            <param name="uriComponent">The escaped query as it appears in the URI format.</param>
+            <returns>The resulting QueryString</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.QueryString.FromUriComponent(System.Uri)">
+            <summary>
+            Returns an QueryString given the query as from a Uri object. Relative Uri objects are not supported.
+            </summary>
+            <param name="uri">The Uri object</param>
+            <returns>The resulting QueryString</returns>
+        </member>
+        <member name="T:Microsoft.AspNet.Http.Security.AuthenticationResult">
+            <summary>
+            Acts as the return value from calls to the IAuthenticationManager's AuthenticeAsync methods.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.Security.AuthenticationResult.#ctor(System.Security.Principal.IIdentity,Microsoft.AspNet.Http.Security.AuthenticationProperties,Microsoft.AspNet.Http.Security.AuthenticationDescription)">
+            <summary>
+            Create an instance of the result object
+            </summary>
+            <param name="identity">Assigned to Identity. May be null.</param>
+            <param name="properties">Assigned to Properties. Contains extra information carried along with the identity.</param>
+            <param name="description">Assigned to Description. Contains information describing the authentication provider.</param>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.Security.AuthenticationResult.Identity">
+            <summary>
+            Contains the claims that were authenticated by the given AuthenticationType. If the authentication
+            type was not successful the Identity property will be null.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.Security.AuthenticationResult.Properties">
+            <summary>
+            Contains extra values that were provided with the original SignIn call.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.Security.AuthenticationResult.Description">
+            <summary>
+            Contains description properties for the middleware authentication type in general. Does not
+            vary per request.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.Http.Security.AuthenticationDescription">
+            <summary>
+            Contains information describing an authentication provider.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.Security.AuthenticationDescription.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.AspNet.Http.Security.AuthenticationDescription"/> class
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.Security.AuthenticationDescription.#ctor(System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.AspNet.Http.Security.AuthenticationDescription"/> class
+            </summary>
+            <param name="properties"></param>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.Security.AuthenticationDescription.Dictionary">
+            <summary>
+            Contains metadata about the authentication provider.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.Security.AuthenticationDescription.AuthenticationType">
+            <summary>
+            Gets or sets the name used to reference the authentication middleware instance.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.Security.AuthenticationDescription.Caption">
+            <summary>
+            Gets or sets the display name for the authentication provider.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.Http.Security.AuthenticationProperties">
+            <summary>
+            Dictionary used to store state values about the authentication session.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.Security.AuthenticationProperties.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.AspNet.Http.Security.AuthenticationProperties"/> class
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Http.Security.AuthenticationProperties.#ctor(System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.AspNet.Http.Security.AuthenticationProperties"/> class
+            </summary>
+            <param name="dictionary"></param>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.Security.AuthenticationProperties.Dictionary">
+            <summary>
+            State values about the authentication session.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.Security.AuthenticationProperties.IsPersistent">
+            <summary>
+            Gets or sets whether the authentication session is persisted across multiple requests.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.Security.AuthenticationProperties.RedirectUri">
+            <summary>
+            Gets or sets the full path or absolute URI to be used as an http redirect response value. 
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.Security.AuthenticationProperties.IssuedUtc">
+            <summary>
+            Gets or sets the time at which the authentication ticket was issued.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.Security.AuthenticationProperties.ExpiresUtc">
+            <summary>
+            Gets or sets the time at which the authentication ticket expires.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Http.Security.AuthenticationProperties.AllowRefresh">
+            <summary>
+            Gets or sets if refreshing the authentication session should be allowed.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Builder.MapExtensions.Map(Microsoft.AspNet.Builder.IApplicationBuilder,System.String,System.Action{Microsoft.AspNet.Builder.IApplicationBuilder})">
+            <summary>
+            If the request path starts with the given pathMatch, execute the app configured via configuration parameter instead of
+            continuing to the next component in the pipeline.
+            </summary>
+            <param name="app"></param>
+            <param name="pathMatch">The path to match</param>
+            <param name="configuration">The branch to take for positive path matches</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Builder.MapExtensions.Map(Microsoft.AspNet.Builder.IApplicationBuilder,Microsoft.AspNet.Http.PathString,System.Action{Microsoft.AspNet.Builder.IApplicationBuilder})">
+            <summary>
+            If the request path starts with the given pathMatch, execute the app configured via configuration parameter instead of
+            continuing to the next component in the pipeline.
+            </summary>
+            <param name="app"></param>
+            <param name="pathMatch">The path to match</param>
+            <param name="configuration">The branch to take for positive path matches</param>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.AspNet.Builder.Extensions.MapOptions">
+            <summary>
+            Options for the Map middleware
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Builder.Extensions.MapOptions.PathMatch">
+            <summary>
+            The path to match
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Builder.Extensions.MapOptions.Branch">
+            <summary>
+            The branch taken for a positive match
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.Builder.Extensions.MapWhenOptions">
+            <summary>
+            Options for the MapWhen middleware
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Builder.Extensions.MapWhenOptions.Predicate">
+            <summary>
+            The user callback that determines if the branch should be taken
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Builder.Extensions.MapWhenOptions.PredicateAsync">
+            <summary>
+            The async user callback that determines if the branch should be taken
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.Builder.Extensions.MapWhenOptions.Branch">
+            <summary>
+            The branch taken for a positive match
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.Builder.MapWhenExtensions">
+            <summary>
+            Extension methods for the MapWhenMiddleware
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.Builder.MapWhenExtensions.MapWhen(Microsoft.AspNet.Builder.IApplicationBuilder,System.Func{Microsoft.AspNet.Http.HttpContext,System.Boolean},System.Action{Microsoft.AspNet.Builder.IApplicationBuilder})">
+            <summary>
+            Branches the request pipeline based on the result of the given predicate.
+            </summary>
+            <param name="app"></param>
+            <param name="predicate">Invoked with the request environment to determine if the branch should be taken</param>
+            <param name="configuration">Configures a branch to take</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Builder.MapWhenExtensions.MapWhenAsync(Microsoft.AspNet.Builder.IApplicationBuilder,System.Func{Microsoft.AspNet.Http.HttpContext,System.Threading.Tasks.Task{System.Boolean}},System.Action{Microsoft.AspNet.Builder.IApplicationBuilder})">
+            <summary>
+            Branches the request pipeline based on the async result of the given predicate.
+            </summary>
+            <param name="app"></param>
+            <param name="predicate">Invoked asynchronously with the request environment to determine if the branch should be taken</param>
+            <param name="configuration">Configures a branch to take</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Builder.UseExtensions.Use(Microsoft.AspNet.Builder.IApplicationBuilder,System.Func{Microsoft.AspNet.Http.HttpContext,System.Func{System.Threading.Tasks.Task},System.Threading.Tasks.Task})">
+            <summary>
+            Use middleware defined in-line.
+            </summary>
+            <param name="app"></param>
+            <param name="middleware">A function that handles the request or calls the given next function.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Builder.UseExtensions.Use``1(Microsoft.AspNet.Builder.IApplicationBuilder,System.Func{Microsoft.AspNet.Http.HttpContext,System.Func{System.Threading.Tasks.Task},``0,System.Threading.Tasks.Task})">
+            <summary>
+            Use middleware defined in-line
+            </summary>
+            <typeparam name="TService1">Per-request service required by middleware</typeparam>
+            <param name="app"></param>
+            <param name="middleware">A function that handles the request or calls the given next function.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Builder.UseExtensions.Use``2(Microsoft.AspNet.Builder.IApplicationBuilder,System.Func{Microsoft.AspNet.Http.HttpContext,System.Func{System.Threading.Tasks.Task},``0,``1,System.Threading.Tasks.Task})">
+            <summary>
+            Use middleware defined in-line
+            </summary>
+            <typeparam name="TService1">Per-request service required by middleware</typeparam>
+            <typeparam name="TService2">Per-request service required by middleware</typeparam>
+            <param name="app"></param>
+            <param name="middleware">A function that handles the request or calls the given next function.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Builder.UseExtensions.Use``3(Microsoft.AspNet.Builder.IApplicationBuilder,System.Func{Microsoft.AspNet.Http.HttpContext,System.Func{System.Threading.Tasks.Task},``0,``1,``2,System.Threading.Tasks.Task})">
+            <summary>
+            Use middleware defined in-line
+            </summary>
+            <typeparam name="TService1">Per-request service required by middleware</typeparam>
+            <typeparam name="TService2">Per-request service required by middleware</typeparam>
+            <typeparam name="TService3">Per-request service required by middleware</typeparam>
+            <param name="app"></param>
+            <param name="middleware">A function that handles the request or calls the given next function.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.AspNet.Builder.UseExtensions.Use``4(Microsoft.AspNet.Builder.IApplicationBuilder,System.Func{Microsoft.AspNet.Http.HttpContext,System.Func{System.Threading.Tasks.Task},``0,``1,``2,``3,System.Threading.Tasks.Task})">
+            <summary>
+            Use middleware defined in-line
+            </summary>
+            <typeparam name="TService1">Per-request service required by middleware</typeparam>
+            <typeparam name="TService2">Per-request service required by middleware</typeparam>
+            <typeparam name="TService3">Per-request service required by middleware</typeparam>
+            <typeparam name="TService4">Per-request service required by middleware</typeparam>
+            <param name="app"></param>
+            <param name="middleware">A function that handles the request or calls the given next function.</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
