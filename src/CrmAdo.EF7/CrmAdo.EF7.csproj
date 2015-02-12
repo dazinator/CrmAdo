@@ -139,7 +139,6 @@
     <Compile Include="DynamicsCrmSqlGenerator.cs" />
     <Compile Include="DynamicsCrmTypeMapper.cs" />
     <Compile Include="Migrations\DynamicsCrmModelDiffer.cs" />
-    <Compile Include="DynamicsCrmMigrator.cs" />
     <Compile Include="Metadata\IDynamicsCrmIndexExtensions.cs" />
     <Compile Include="Metadata\ReadOnlyDynamicsCrmForeignKeyExtensions.cs" />
     <Compile Include="Metadata\ReadOnlyDynamicsCrmIndexExtensions.cs" />

@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Entity.Relational;
+﻿using CrmAdo.EntityFramework.Migrations;
+using Microsoft.Data.Entity.Relational;
 using Microsoft.Data.Entity.Relational.Migrations.Infrastructure;
 using Microsoft.Framework.Logging;
 using System;
