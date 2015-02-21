@@ -1,0 +1,1730 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EntityFramework.Core</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Data.Entity.DbContext">
+            <summary>
+                A DbContext instance represents a session with the data store and can be used to query and save
+                instances of your entities. DbContext is a combination of the Unit Of Work and Repository patterns.
+            </summary>
+            <remarks>
+                <para>
+                    Typically you create a class that derives from DbContext and contains <see cref="T:Microsoft.Data.Entity.DbSet`1" />
+                    properties for each entity in the model. If the <see cref="T:Microsoft.Data.Entity.DbSet`1" /> properties have a public setter,
+                    they are automatically initialized when the instance of the derived context is created.
+                </para>
+                <para>
+                    Override the <see cref="M:Microsoft.Data.Entity.DbContext.OnConfiguring(Microsoft.Data.Entity.DbContextOptions)" /> method to configure the data store (and other
+                    options) to be
+                    used for the context.
+                </para>
+                <para>
+                    The model is discovered by running a set of conventions over the entity classes found in the
+                    <see cref="T:Microsoft.Data.Entity.DbSet`1" />
+                    properties on the derived context. To further configure the model that is discovered by convention, you can
+                    override the <see cref="M:Microsoft.Data.Entity.DbContext.OnModelCreating(Microsoft.Data.Entity.ModelBuilder)" /> method.
+                </para>
+            </remarks>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.#ctor">
+            <summary>
+                Initializes a new instance of the <see cref="T:Microsoft.Data.Entity.DbContext" /> class. The
+                <see cref="M:Microsoft.Data.Entity.DbContext.OnConfiguring(Microsoft.Data.Entity.DbContextOptions)" />
+                method will be called to configure the data store (and other options) to be used for this context.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.#ctor(System.IServiceProvider)">
+            <summary>
+                <para>
+                    Initializes a new instance of the <see cref="T:Microsoft.Data.Entity.DbContext" /> class using an <see cref="T:System.IServiceProvider" />.
+                </para>
+                <para>
+                    The service provider must contain all the services required by Entity Framework (and the data store being
+                    used).
+                    The Entity Framework services can be registered using the
+                    <see cref="M:Microsoft.Framework.DependencyInjection.EntityServiceCollectionExtensions.AddEntityFramework(Microsoft.Framework.DependencyInjection.IServiceCollection,Microsoft.Framework.ConfigurationModel.IConfiguration)" /> method.
+                    Most data stores also provide an extension method on <see cref="T:Microsoft.Framework.DependencyInjection.IServiceCollection" /> to register the services
+                    required.
+                </para>
+                <para>
+                    If the <see cref="T:System.IServiceProvider" /> has a <see cref="T:Microsoft.Data.Entity.DbContextOptions" /> or
+                    <see cref="T:Microsoft.Data.Entity.DbContextOptions`1" />
+                    registered, then this will be used as the options for this context instance. The <see cref="M:Microsoft.Data.Entity.DbContext.OnConfiguring(Microsoft.Data.Entity.DbContextOptions)" />
+                    method
+                    will still be called to allow further configuration of the options.
+                </para>
+            </summary>
+            <param name="serviceProvider">The service provider to be used.</param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.#ctor(Microsoft.Data.Entity.DbContextOptions)">
+            <summary>
+                Initializes a new instance of the <see cref="T:Microsoft.Data.Entity.DbContext" /> with the specified options. The
+                <see cref="M:Microsoft.Data.Entity.DbContext.OnConfiguring(Microsoft.Data.Entity.DbContextOptions)" /> method will still be called to allow further
+                configuration of the options.
+            </summary>
+            <param name="options">The options for this context.</param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.#ctor(System.IServiceProvider,Microsoft.Data.Entity.DbContextOptions)">
+            <summary>
+                Initializes a new instance of the <see cref="T:Microsoft.Data.Entity.DbContext" /> class using an <see cref="T:System.IServiceProvider" />
+                and the specified options.
+                <para>
+                    The <see cref="M:Microsoft.Data.Entity.DbContext.OnConfiguring(Microsoft.Data.Entity.DbContextOptions)" /> method will still be called to allow further
+                    configuration of the options.
+                </para>
+                <para>
+                    The service provider must contain all the services required by Entity Framework (and the data store being
+                    used).
+                    The Entity Framework services can be registered using the
+                    <see cref="M:Microsoft.Framework.DependencyInjection.EntityServiceCollectionExtensions.AddEntityFramework(Microsoft.Framework.DependencyInjection.IServiceCollection,Microsoft.Framework.ConfigurationModel.IConfiguration)" /> method.
+                    Most data stores also provide an extension method on <see cref="T:Microsoft.Framework.DependencyInjection.IServiceCollection" /> to register the services
+                    required.
+                </para>
+                <para>
+                    If the <see cref="T:System.IServiceProvider" /> has a <see cref="T:Microsoft.Data.Entity.DbContextOptions" /> or
+                    <see cref="T:Microsoft.Data.Entity.DbContextOptions`1" />
+                    registered, then this will be used as the options for this context instance. The <see cref="M:Microsoft.Data.Entity.DbContext.OnConfiguring(Microsoft.Data.Entity.DbContextOptions)" />
+                    method
+                    will still be called to allow further configuration of the options.
+                </para>
+            </summary>
+            <param name="serviceProvider">The service provider to be used.</param>
+            <param name="options">The options for this context.</param>
+        </member>
+        <member name="P:Microsoft.Data.Entity.DbContext.Microsoft#Data#Entity#Infrastructure#IAccessor{System#IServiceProvider}#Service">
+            <summary>
+                <para>
+                    Gets the scoped <see cref="T:System.IServiceProvider" /> being used to resolve services.
+                </para>
+                <para>
+                    This property is intended for use by extension methods that need to make use of services
+                    not directly exposed in the public API surface.
+                </para>
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.OnConfiguring(Microsoft.Data.Entity.DbContextOptions)">
+            <summary>
+                Override this method to configure the data store (and other options) to be used for this context.
+                This method is called for each instance of the context that is created.
+            </summary>
+            <remarks>
+                If you passed an instance of <see cref="T:Microsoft.Data.Entity.DbContextOptions" /> to the constructor of the context (or
+                provided an <see cref="T:System.IServiceProvider" /> with <see cref="T:Microsoft.Data.Entity.DbContextOptions" /> registered) then
+                it is cloned before being passed to this method. This allows the options to be altered without
+                affecting other context instances that are constructed with the same <see cref="T:Microsoft.Data.Entity.DbContextOptions" />
+                instance.
+            </remarks>
+            <param name="options">
+                The options for this context. Data stores (and other extensions) typically define extension methods
+                on this object that allow you to configure the context.
+            </param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.OnModelCreating(Microsoft.Data.Entity.ModelBuilder)">
+            <summary>
+                Override this method to further configure the model that was discovered by convention from the entity types
+                exposed in <see cref="T:Microsoft.Data.Entity.DbSet`1" /> properties on your derived context. The resulting model may be cached
+                and re-used for subsequent instances of your derived context.
+            </summary>
+            <param name="modelBuilder">
+                The builder being used to construct the model for this context. Data stores (and other extensions) typically
+                define extension methods on this object that allow you to configure aspects of the model that are specific
+                to a given data store.
+            </param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.SaveChanges">
+            <summary>
+                Saves all changes made in this context to the underlying data store.
+            </summary>
+            <remarks>
+                This method will automatically call <see cref="M:Microsoft.Data.Entity.ChangeTracking.ChangeTracker.DetectChanges" /> to discover any changes
+                to entity instances before saving to the underlying data store. This can be disabled via
+                <see cref="P:Microsoft.Data.Entity.ChangeTracking.ChangeTracker.AutoDetectChangesEnabled" />.
+            </remarks>
+            <returns>
+                The number of state entries written to the underlying data store.
+            </returns>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.SaveChangesAsync(System.Threading.CancellationToken)">
+            <summary>
+                Asynchronously saves all changes made in this context to the underlying data store.
+            </summary>
+            <remarks>
+                <para>
+                    This method will automatically call <see cref="M:Microsoft.Data.Entity.ChangeTracking.ChangeTracker.DetectChanges" /> to discover any changes
+                    to entity instances before saving to the underlying data store. This can be disabled via
+                    <see cref="P:Microsoft.Data.Entity.ChangeTracking.ChangeTracker.AutoDetectChangesEnabled" />.
+                </para>
+                <para>
+                    Multiple active operations on the same context instance are not supported.  Use 'await' to ensure
+                    that any asynchronous operations have completed before calling another method on this context.
+                </para>
+            </remarks>
+            <param name="cancellationToken">A <see cref="T:System.Threading.CancellationToken" /> to observe while waiting for the task to complete.</param>
+            <returns>
+                A task that represents the asynchronous save operation. The task result contains the
+                number of state entries written to the underlying data store.
+            </returns>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.Dispose">
+            <summary>
+                Releases the allocated resources for this context.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.Entry``1(``0)">
+            <summary>
+                Gets an <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry`1" /> for the given entity providing access to
+                information the context is tracking for the given the entity and the ability
+                to perform actions on the entity.
+            </summary>
+            <typeparam name="TEntity"> The type of the entity. </typeparam>
+            <param name="entity"> The entity to get the entry for. </param>
+            <returns> The entry for the given entity. </returns>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.Entry(System.Object)">
+            <summary>
+                Gets an <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry" /> for the given entity providing access to
+                information the context is tracking for the given the entity and the ability
+                to perform actions on the entity.
+            </summary>
+            <param name="entity"> The entity to get the entry for. </param>
+            <returns> The entry for the given entity. </returns>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.Add``1(``0)">
+            <summary>
+                Begins tracking the given entity in the <see cref="F:Microsoft.Data.Entity.EntityState.Added" /> state such that it will
+                be inserted into the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <typeparam name="TEntity"> The type of the entity. </typeparam>
+            <param name="entity"> The entity to add. </param>
+            <returns>
+                The <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry`1" /> for the entity. This entry provides access to
+                information the context is tracking for the entity and the ability to perform
+                actions on the entity.
+            </returns>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.Attach``1(``0)">
+            <summary>
+                Begins tracking the given entity in the <see cref="F:Microsoft.Data.Entity.EntityState.Unchanged" /> state such that no
+                operation will be performed when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <typeparam name="TEntity"> The type of the entity. </typeparam>
+            <param name="entity"> The entity to attach. </param>
+            <returns>
+                The <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry`1" /> for the entity. This entry provides access to
+                information the context is tracking for the entity and the ability to perform
+                actions on the entity.
+            </returns>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.Update``1(``0)">
+            <summary>
+                <para>
+                    Begins tracking the given entity in the <see cref="F:Microsoft.Data.Entity.EntityState.Modified" /> state such that it will
+                    be updated in the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+                </para>
+                <para>
+                    All properties of the entity will be marked as modified. To mark only some properties as modified, use
+                    <see cref="M:Microsoft.Data.Entity.DbContext.Attach``1(``0)" /> to begin tracking the entity in the
+                    <see cref="F:Microsoft.Data.Entity.EntityState.Unchanged" />
+                    state and then use the returned <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry`1" /> to mark the desired properties as modified.
+                </para>
+            </summary>
+            <typeparam name="TEntity"> The type of the entity. </typeparam>
+            <param name="entity"> The entity to update. </param>
+            <returns>
+                The <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry`1" /> for the entity. This entry provides access to
+                information the context is tracking for the entity and the ability to perform
+                actions on the entity.
+            </returns>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.Remove``1(``0)">
+            <summary>
+                Begins tracking the given entity in the <see cref="F:Microsoft.Data.Entity.EntityState.Deleted" /> state such that it will
+                be removed from the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <remarks>
+                If the entity is already tracked in the <see cref="F:Microsoft.Data.Entity.EntityState.Added" /> state then the context will
+                stop tracking the entity (rather than marking it as <see cref="F:Microsoft.Data.Entity.EntityState.Deleted" />) since the
+                entity was previously added to the context and does not exist in the data store.
+            </remarks>
+            <typeparam name="TEntity"> The type of the entity. </typeparam>
+            <param name="entity"> The entity to remove. </param>
+            <returns>
+                The <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry`1" /> for the entity. This entry provides access to
+                information the context is tracking for the entity and the ability to perform
+                actions on the entity.
+            </returns>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.Add(System.Object)">
+            <summary>
+                Begins tracking the given entity in the <see cref="F:Microsoft.Data.Entity.EntityState.Added" /> state such that it will
+                be inserted into the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <param name="entity"> The entity to add. </param>
+            <returns>
+                The <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry" /> for the entity. This entry provides access to
+                information the context is tracking for the entity and the ability to perform
+                actions on the entity.
+            </returns>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.Attach(System.Object)">
+            <summary>
+                Begins tracking the given entity in the <see cref="F:Microsoft.Data.Entity.EntityState.Unchanged" /> state such that no
+                operation will be performed when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <param name="entity"> The entity to attach. </param>
+            <returns>
+                The <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry" /> for the entity. This entry provides access to
+                information the context is tracking for the entity and the ability to perform
+                actions on the entity.
+            </returns>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.Update(System.Object)">
+            <summary>
+                <para>
+                    Begins tracking the given entity in the <see cref="F:Microsoft.Data.Entity.EntityState.Modified" /> state such that it will
+                    be updated in the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+                </para>
+                <para>
+                    All properties of the entity will be marked as modified. To mark only some properties as modified, use
+                    <see cref="M:Microsoft.Data.Entity.DbContext.Attach(System.Object)" /> to begin tracking the entity in the <see cref="F:Microsoft.Data.Entity.EntityState.Unchanged" />
+                    state and then use the returned <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry" /> to mark the desired properties as modified.
+                </para>
+            </summary>
+            <param name="entity"> The entity to update. </param>
+            <returns>
+                The <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry" /> for the entity. This entry provides access to
+                information the context is tracking for the entity and the ability to perform
+                actions on the entity.
+            </returns>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.Remove(System.Object)">
+            <summary>
+                Begins tracking the given entity in the <see cref="F:Microsoft.Data.Entity.EntityState.Deleted" /> state such that it will
+                be removed from the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <remarks>
+                If the entity is already tracked in the <see cref="F:Microsoft.Data.Entity.EntityState.Added" /> state then the context will
+                stop tracking the entity (rather than marking it as <see cref="F:Microsoft.Data.Entity.EntityState.Deleted" />) since the
+                entity was previously added to the context and does not exist in the data store.
+            </remarks>
+            <param name="entity"> The entity to remove. </param>
+            <returns>
+                The <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry" /> for the entity. This entry provides access to
+                information the context is tracking for the entity and the ability to perform
+                actions on the entity.
+            </returns>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.AddRange(System.Object[])">
+            <summary>
+                Begins tracking the given entities in the <see cref="F:Microsoft.Data.Entity.EntityState.Added" /> state such that they will
+                be inserted into the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <param name="entities"> The entities to add. </param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.AttachRange(System.Object[])">
+            <summary>
+                Begins tracking the given entities in the <see cref="F:Microsoft.Data.Entity.EntityState.Unchanged" /> state such that no
+                operation will be performed when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <param name="entities"> The entities to attach. </param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.UpdateRange(System.Object[])">
+            <summary>
+                <para>
+                    Begins tracking the given entities in the <see cref="F:Microsoft.Data.Entity.EntityState.Modified" /> state such that they will
+                    be updated in the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+                </para>
+                <para>
+                    All properties of the entities will be marked as modified. To mark only some properties as modified, use
+                    <see cref="M:Microsoft.Data.Entity.DbContext.Attach(System.Object)" /> to begin tracking each entity in the <see cref="F:Microsoft.Data.Entity.EntityState.Unchanged" />
+                    state and then use the returned <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry" /> to mark the desired properties as modified.
+                </para>
+            </summary>
+            <param name="entities"> The entities to update. </param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.RemoveRange(System.Object[])">
+            <summary>
+                Begins tracking the given entities in the <see cref="F:Microsoft.Data.Entity.EntityState.Deleted" /> state such that they will
+                be removed from the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <remarks>
+                If any of the entities are already tracked in the <see cref="F:Microsoft.Data.Entity.EntityState.Added" /> state then the context will
+                stop tracking those entities (rather than marking them as <see cref="F:Microsoft.Data.Entity.EntityState.Deleted" />) since those
+                entities were previously added to the context and do not exist in the data store.
+            </remarks>
+            <param name="entities"> The entities to remove. </param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.AddRange(System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+                Begins tracking the given entities in the <see cref="F:Microsoft.Data.Entity.EntityState.Added" /> state such that they will
+                be inserted into the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <param name="entities"> The entities to add. </param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.AttachRange(System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+                Begins tracking the given entities in the <see cref="F:Microsoft.Data.Entity.EntityState.Unchanged" /> state such that no
+                operation will be performed when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <param name="entities"> The entities to attach. </param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.UpdateRange(System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+                <para>
+                    Begins tracking the given entities in the <see cref="F:Microsoft.Data.Entity.EntityState.Modified" /> state such that they will
+                    be updated in the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+                </para>
+                <para>
+                    All properties of the entities will be marked as modified. To mark only some properties as modified, use
+                    <see cref="M:Microsoft.Data.Entity.DbContext.Attach(System.Object)" /> to begin tracking each entity in the <see cref="F:Microsoft.Data.Entity.EntityState.Unchanged" />
+                    state and then use the returned <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry" /> to mark the desired properties as modified.
+                </para>
+            </summary>
+            <param name="entities"> The entities to update. </param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.RemoveRange(System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+                Begins tracking the given entities in the <see cref="F:Microsoft.Data.Entity.EntityState.Deleted" /> state such that they will
+                be removed from the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <remarks>
+                If any of the entities are already tracked in the <see cref="F:Microsoft.Data.Entity.EntityState.Added" /> state then the context will
+                stop tracking those entities (rather than marking them as <see cref="F:Microsoft.Data.Entity.EntityState.Deleted" />) since those
+                entities were previously added to the context and do not exist in the data store.
+            </remarks>
+            <param name="entities"> The entities to remove. </param>
+        </member>
+        <member name="P:Microsoft.Data.Entity.DbContext.Database">
+            <summary>
+                Provides access to database related information and operations for this context.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.DbContext.ChangeTracker">
+            <summary>
+                Provides access to information and operations for entity instances this context is tracking.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.DbContext.Model">
+            <summary>
+                The metadata about the shape of entities and relationships between them.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContext.Set``1">
+            <summary>
+                Creates a set to perform operations for a given entity type in the model. LINQ queries against
+                <see cref="T:Microsoft.Data.Entity.DbSet`1" /> will be translated into queries against the data store.
+            </summary>
+            <typeparam name="TEntity"> The type of entity for which a set should be returned. </typeparam>
+            <returns> A set for the given entity type. </returns>
+        </member>
+        <member name="T:Microsoft.Data.Entity.DbContextOptions">
+            <summary>
+                <para>
+                    Represents the options for a <see cref="T:Microsoft.Data.Entity.DbContext" /> instance (such as the data store to be targeted). The
+                    <see cref="T:Microsoft.Data.Entity.DbContextOptions" /> for a context can be configured by overriding
+                    <see cref="M:Microsoft.Data.Entity.DbContext.OnConfiguring(Microsoft.Data.Entity.DbContextOptions)" />
+                    or externally creating a <see cref="T:Microsoft.Data.Entity.DbContextOptions" /> and passing it to the <see cref="T:Microsoft.Data.Entity.DbContext" />
+                    constructor.
+                </para>
+                <para>
+                    Data stores (and other extensions) typically define extension methods on this object that allow you to
+                    configure the context.
+                </para>
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContextOptions.#ctor">
+            <summary>
+                Initializes a new instance of the <see cref="T:Microsoft.Data.Entity.DbContextOptions" /> class.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContextOptions.#ctor(Microsoft.Data.Entity.DbContextOptions)">
+            <summary>
+                Initializes a new instance of the <see cref="T:Microsoft.Data.Entity.DbContextOptions" /> class with options cloned from
+                another <see cref="T:Microsoft.Data.Entity.DbContextOptions" /> instance.
+            </summary>
+            <param name="copyFrom"> The options to be cloned. </param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContextOptions.Clone">
+            <summary>
+                Creates a new instance of the <see cref="T:Microsoft.Data.Entity.DbContextOptions" /> class with options cloned from
+                another <see cref="T:Microsoft.Data.Entity.DbContextOptions" /> instance.
+            </summary>
+            <returns> The new options instance. </returns>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContextOptions.UseModel(Microsoft.Data.Entity.Metadata.IModel)">
+            <summary>
+                Sets the model to be used. If the model is set on <see cref="T:Microsoft.Data.Entity.DbContextOptions" /> then
+                <see cref="M:Microsoft.Data.Entity.DbContext.OnModelCreating(Microsoft.Data.Entity.ModelBuilder)" /> will not be called on any context constructed
+                from the options.
+            </summary>
+            <param name="model"> The model to be used. </param>
+            <returns>
+                The same <see cref="T:Microsoft.Data.Entity.DbContextOptions" /> instance so that multiple configuration calls can be chained together.
+            </returns>
+        </member>
+        <member name="P:Microsoft.Data.Entity.DbContextOptions.Model">
+            <summary>
+                Gets the model configured on this options instance. Returns null if no model has been configured.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContextOptions.Microsoft#Data#Entity#Infrastructure#IDbContextOptions#AddOrUpdateExtension``1(System.Action{``0})">
+            <inheritdoc />
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContextOptions.Microsoft#Data#Entity#Infrastructure#IDbContextOptions#AddExtension(Microsoft.Data.Entity.Infrastructure.DbContextOptionsExtension)">
+            <inheritdoc />
+        </member>
+        <member name="P:Microsoft.Data.Entity.DbContextOptions.Microsoft#Data#Entity#Infrastructure#IDbContextOptions#Extensions">
+            <inheritdoc />
+        </member>
+        <member name="P:Microsoft.Data.Entity.DbContextOptions.Microsoft#Data#Entity#Infrastructure#IDbContextOptions#RawOptions">
+            <inheritdoc />
+        </member>
+        <member name="T:Microsoft.Data.Entity.DbContextOptions`1">
+            <summary>
+                <para>
+                    Represents the options for a <see cref="T:Microsoft.Data.Entity.DbContext" /> instance (such as the data store to be targeted). The
+                    <see cref="T:Microsoft.Data.Entity.DbContextOptions" /> for a context can be configured by overriding
+                    <see cref="M:Microsoft.Data.Entity.DbContext.OnConfiguring(Microsoft.Data.Entity.DbContextOptions)" />
+                    or externally creating a <see cref="T:Microsoft.Data.Entity.DbContextOptions" /> and passing it to the <see cref="T:Microsoft.Data.Entity.DbContext" />
+                    constructor.
+                </para>
+                <para>
+                    Data stores (and other extensions) typically define extension methods on this object that allow you to
+                    configure the context.
+                </para>
+            </summary>
+            <typeparam name="T"> The type of context that will be constructed with the options. </typeparam>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContextOptions`1.#ctor">
+            <summary>
+                Initializes a new instance of the <see cref="T:Microsoft.Data.Entity.DbContextOptions`1" /> class.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContextOptions`1.#ctor(Microsoft.Data.Entity.DbContextOptions)">
+            <summary>
+                Initializes a new instance of the <see cref="T:Microsoft.Data.Entity.DbContextOptions`1" /> class with options cloned from
+                another <see cref="T:Microsoft.Data.Entity.DbContextOptions" /> instance.
+            </summary>
+            <param name="copyFrom"> The options to be cloned. </param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContextOptions`1.Clone">
+            <inheritdoc />
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbContextOptions`1.UseModel(Microsoft.Data.Entity.Metadata.IModel)">
+            <summary>
+                Sets the model to be used. If the model is set on <see cref="T:Microsoft.Data.Entity.DbContextOptions" /> then
+                <see cref="M:Microsoft.Data.Entity.DbContext.OnModelCreating(Microsoft.Data.Entity.ModelBuilder)" /> will not be called on any context constructed
+                from the options.
+            </summary>
+            <param name="model"> The model to be used. </param>
+            <returns>
+                The same <see cref="T:Microsoft.Data.Entity.DbContextOptions`1" /> instance so that multiple configuration calls can be chained together.
+            </returns>
+        </member>
+        <member name="T:Microsoft.Data.Entity.DbSet`1">
+            <summary>
+                <para>
+                    A DbSet allows operations to be performed for a given entity type. LINQ queries against
+                    <see cref="T:Microsoft.Data.Entity.DbSet`1" /> will be translated into queries against the data store.
+                </para>
+                <para>
+                    The results of a LINQ query against a <see cref="T:Microsoft.Data.Entity.DbSet`1" /> will contain the results
+                    returned from the data store and may not reflect changes made in the context that have not
+                    been persisted to the store. For example, the results will not contain newly added entities
+                    and may still contain entities that are marked for deletion.
+                </para>
+                <para>
+                    <see cref="T:Microsoft.Data.Entity.DbSet`1" /> objects are usually obtained from a <see cref="T:Microsoft.Data.Entity.DbSet`1" />
+                    property on a derived <see cref="T:Microsoft.Data.Entity.DbContext" /> or from the <see cref="M:Microsoft.Data.Entity.DbContext.Set``1" />
+                    method.
+                </para>
+            </summary>
+            <typeparam name="TEntity"> The type of entity being operated on by this set. </typeparam>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbSet`1.Add(`0)">
+            <summary>
+                Begins tracking the given entity in the <see cref="F:Microsoft.Data.Entity.EntityState.Added" /> state such that it will
+                be inserted into the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <param name="entity"> The entity to add. </param>
+            <returns>
+                The <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry`1" /> for the entity. This entry provides access to
+                information the context is tracking for the entity and the ability to perform
+                actions on the entity.
+            </returns>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbSet`1.Attach(`0)">
+            <summary>
+                Begins tracking the given entity in the <see cref="F:Microsoft.Data.Entity.EntityState.Unchanged" /> state such that no
+                operation will be performed when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <param name="entity"> The entity to attach. </param>
+            <returns>
+                The <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry" /> for the entity. This entry provides access to
+                information the context is tracking for the entity and the ability to perform
+                actions on the entity.
+            </returns>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbSet`1.Remove(`0)">
+            <summary>
+                Begins tracking the given entity in the <see cref="F:Microsoft.Data.Entity.EntityState.Deleted" /> state such that it will
+                be removed from the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <remarks>
+                If the entity is already tracked in the <see cref="F:Microsoft.Data.Entity.EntityState.Added" /> state then the context will
+                stop tracking the entity (rather than marking it as <see cref="F:Microsoft.Data.Entity.EntityState.Deleted" />) since the
+                entity was previously added to the context and does not exist in the data store.
+            </remarks>
+            <param name="entity"> The entity to remove. </param>
+            <returns>
+                The <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry" /> for the entity. This entry provides access to
+                information the context is tracking for the entity and the ability to perform
+                actions on the entity.
+            </returns>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbSet`1.Update(`0)">
+            <summary>
+                <para>
+                    Begins tracking the given entity in the <see cref="F:Microsoft.Data.Entity.EntityState.Modified" /> state such that it will
+                    be updated in the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+                </para>
+                <para>
+                    All properties of the entity will be marked as modified. To mark only some properties as modified, use
+                    <see cref="M:Microsoft.Data.Entity.DbSet`1.Attach(`0)" /> to begin tracking the entity in the <see cref="F:Microsoft.Data.Entity.EntityState.Unchanged" />
+                    state and then use the returned <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry" /> to mark the desired properties as modified.
+                </para>
+            </summary>
+            <param name="entity"> The entity to update. </param>
+            <returns>
+                The <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry" /> for the entity. This entry provides access to
+                information the context is tracking for the entity and the ability to perform
+                actions on the entity.
+            </returns>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbSet`1.AddRange(`0[])">
+            <summary>
+                Begins tracking the given entities in the <see cref="F:Microsoft.Data.Entity.EntityState.Added" /> state such that they will
+                be inserted into the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <param name="entities"> The entities to add. </param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbSet`1.AttachRange(`0[])">
+            <summary>
+                Begins tracking the given entities in the <see cref="F:Microsoft.Data.Entity.EntityState.Unchanged" /> state such that no
+                operation will be performed when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <param name="entities"> The entities to attach. </param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbSet`1.RemoveRange(`0[])">
+            <summary>
+                Begins tracking the given entities in the <see cref="F:Microsoft.Data.Entity.EntityState.Deleted" /> state such that they will
+                be removed from the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <remarks>
+                If any of the entities are already tracked in the <see cref="F:Microsoft.Data.Entity.EntityState.Added" /> state then the context will
+                stop tracking those entities (rather than marking them as <see cref="F:Microsoft.Data.Entity.EntityState.Deleted" />) since those
+                entities were previously added to the context and do not exist in the data store.
+            </remarks>
+            <param name="entities"> The entities to remove. </param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbSet`1.UpdateRange(`0[])">
+            <summary>
+                <para>
+                    Begins tracking the given entities in the <see cref="F:Microsoft.Data.Entity.EntityState.Modified" /> state such that they will
+                    be updated in the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+                </para>
+                <para>
+                    All properties of the entities will be marked as modified. To mark only some properties as modified, use
+                    <see cref="M:Microsoft.Data.Entity.DbSet`1.Attach(`0)" /> to begin tracking each entity in the <see cref="F:Microsoft.Data.Entity.EntityState.Unchanged" />
+                    state and then use the returned <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry" /> to mark the desired properties as modified.
+                </para>
+            </summary>
+            <param name="entities"> The entities to update. </param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbSet`1.AddRange(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+                Begins tracking the given entities in the <see cref="F:Microsoft.Data.Entity.EntityState.Added" /> state such that they will
+                be inserted into the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <param name="entities"> The entities to add. </param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbSet`1.AttachRange(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+                Begins tracking the given entities in the <see cref="F:Microsoft.Data.Entity.EntityState.Unchanged" /> state such that no
+                operation will be performed when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <param name="entities"> The entities to attach. </param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbSet`1.RemoveRange(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+                Begins tracking the given entities in the <see cref="F:Microsoft.Data.Entity.EntityState.Deleted" /> state such that they will
+                be removed from the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+            </summary>
+            <remarks>
+                If any of the entities are already tracked in the <see cref="F:Microsoft.Data.Entity.EntityState.Added" /> state then the context will
+                stop tracking those entities (rather than marking them as <see cref="F:Microsoft.Data.Entity.EntityState.Deleted" />) since those
+                entities were previously added to the context and do not exist in the data store.
+            </remarks>
+            <param name="entities"> The entities to remove. </param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbSet`1.UpdateRange(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+                <para>
+                    Begins tracking the given entities in the <see cref="F:Microsoft.Data.Entity.EntityState.Modified" /> state such that they will
+                    be updated in the data store when <see cref="M:Microsoft.Data.Entity.DbContext.SaveChanges" /> is called.
+                </para>
+                <para>
+                    All properties of the entities will be marked as modified. To mark only some properties as modified, use
+                    <see cref="M:Microsoft.Data.Entity.DbSet`1.Attach(`0)" /> to begin tracking each entity in the <see cref="F:Microsoft.Data.Entity.EntityState.Unchanged" />
+                    state and then use the returned <see cref="T:Microsoft.Data.Entity.ChangeTracking.EntityEntry" /> to mark the desired properties as modified.
+                </para>
+            </summary>
+            <param name="entities"> The entities to update. </param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbSet`1.System#Collections#Generic#IEnumerable{TEntity}#GetEnumerator">
+            <summary>
+                Returns an <see cref="T:System.Collections.Generic.IEnumerator`1" /> which when enumerated will execute the query against the data store.
+            </summary>
+            <returns> The query results. </returns>
+        </member>
+        <member name="M:Microsoft.Data.Entity.DbSet`1.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+                Returns an <see cref="T:System.Collections.IEnumerator" /> which when enumerated will execute the query against the data store.
+            </summary>
+            <returns> The query results. </returns>
+        </member>
+        <member name="P:Microsoft.Data.Entity.DbSet`1.Microsoft#Data#Entity#Query#IAsyncEnumerableAccessor{TEntity}#AsyncEnumerable">
+            <summary>
+                Returns an <see cref="T:System.Collections.Generic.IAsyncEnumerable`1" /> which when enumerated will asynchronously execute the query against
+                the data store.
+            </summary>
+            <returns> The query results. </returns>
+        </member>
+        <member name="P:Microsoft.Data.Entity.DbSet`1.System#Linq#IQueryable#ElementType">
+            <summary>
+                Gets the IQueryable element type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.DbSet`1.System#Linq#IQueryable#Expression">
+            <summary>
+                Gets the IQueryable LINQ Expression.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.DbSet`1.System#Linq#IQueryable#Provider">
+            <summary>
+                Gets the IQueryable provider.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.DbSet`1.Microsoft#Data#Entity#Infrastructure#IAccessor{System#IServiceProvider}#Service">
+            <summary>
+                <para>
+                    Gets the scoped <see cref="T:System.IServiceProvider" /> being used to resolve services.
+                </para>
+                <para>
+                    This property is intended for use by extension methods that need to make use of services
+                    not directly exposed in the public API surface.
+                </para>
+            </summary>
+        </member>
+        <member name="T:Microsoft.Data.Entity.EntityState">
+            <summary>
+                The state in which an entity is being tracked by a context.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Data.Entity.EntityState.Detached">
+            <summary>
+                The entity is not being tracked by the context.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Data.Entity.EntityState.Unchanged">
+            <summary>
+                The entity is being tracked by the context and exists in the database. Its property
+                values have not changed from the values in the database.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Data.Entity.EntityState.Deleted">
+            <summary>
+                The entity is being tracked by the context and exists in the database. It has been marked
+                for deletion from the database.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Data.Entity.EntityState.Modified">
+            <summary>
+                The entity is being tracked by the context and exists in the database. Some or all of its
+                property values have been modified.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Data.Entity.EntityState.Added">
+            <summary>
+                The entity is being tracked by the context but does not yet exist in the database.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.ChangeTracking.ChangeTracker.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.ChangeTracking.Internal.ArraySidecar.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.ChangeTracking.Internal.ChangeDetector.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.ChangeTracking.Internal.DictionarySidecar.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.ChangeTracking.Internal.InternalClrEntityEntry.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.ChangeTracking.Internal.InternalEntityEntry.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.ChangeTracking.Internal.InternalEntityEntryFactory.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.ChangeTracking.Internal.InternalEntityEntryNotifier.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.ChangeTracking.Internal.InternalMixedEntityEntry.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.ChangeTracking.Internal.InternalShadowEntityEntry.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.ChangeTracking.Internal.KeyPropagator.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.ChangeTracking.Internal.NavigationFixer.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.ChangeTracking.Internal.OriginalValues.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.ChangeTracking.Internal.RelationshipsSnapshot.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.ChangeTracking.Internal.Sidecar.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.ChangeTracking.Internal.StateManager.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.ChangeTracking.Internal.StoreGeneratedValues.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Data.Entity.Infrastructure.DbContextService`1">
+            <summary>
+                Used for constructor injection of services that are dynamic based on the configuration
+                of the currrently in scope <see cref="T:Microsoft.Data.Entity.DbContext" />.
+            </summary>
+            <typeparam name="TService">The service that will be dynamically resolved.</typeparam>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Infrastructure.DbSetInitializer.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Data.Entity.Infrastructure.EntityFrameworkServicesBuilder">
+            <summary>
+                Provides Entity Framework specific APIs for configuring services in an <see cref="T:Microsoft.Framework.DependencyInjection.IServiceCollection" />.
+                These APIs are usually accessed by calling
+                <see cref="M:Microsoft.Framework.DependencyInjection.EntityServiceCollectionExtensions.AddEntityFramework(Microsoft.Framework.DependencyInjection.IServiceCollection,Microsoft.Framework.ConfigurationModel.IConfiguration)" />
+                and then chaining API calls on the returned <see cref="T:Microsoft.Data.Entity.Infrastructure.EntityFrameworkServicesBuilder" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Infrastructure.EntityFrameworkServicesBuilder.#ctor(Microsoft.Framework.DependencyInjection.IServiceCollection,Microsoft.Framework.ConfigurationModel.IConfiguration)">
+            <summary>
+                Initializes a new instance of the <see cref="T:Microsoft.Data.Entity.Infrastructure.EntityFrameworkServicesBuilder" /> class.
+            </summary>
+            <param name="serviceCollection"> The <see cref="T:Microsoft.Framework.DependencyInjection.IServiceCollection" /> being configured. </param>
+            <param name="configuration">
+                The configuration for the application. This configuration may contain Entity Framework specific settings
+                which will be passed into context instances that are created by dependency injection.
+            </param>
+        </member>
+        <member name="P:Microsoft.Data.Entity.Infrastructure.EntityFrameworkServicesBuilder.Microsoft#Data#Entity#Infrastructure#IAccessor{Microsoft#Framework#DependencyInjection#IServiceCollection}#Service">
+            <summary>
+                Gets the <see cref="T:Microsoft.Framework.DependencyInjection.IServiceCollection" /> being configured.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.Infrastructure.EntityFrameworkServicesBuilder.Microsoft#Data#Entity#Infrastructure#IAccessor{Microsoft#Framework#ConfigurationModel#IConfiguration}#Service">
+            <summary>
+                The configuration for the application, or null if no configuration has been created. This configuration
+                may contain Entity Framework specific settings which will be passed into context instances that are
+                created by dependency injection.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.ArgumentIsEmpty(System.Object)">
+            <summary>
+            The string argument '{argumentName}' cannot be empty.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.CircularDependency(System.Object)">
+            <summary>
+            A circular dependency was detected: {cycle}.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.InvalidEnumValue(System.Object,System.Object)">
+            <summary>
+            The value provided for argument '{argumentName}' must be a valid value of enum type '{enumType}'.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.InvalidPropertiesExpression(System.Object)">
+            <summary>
+            The properties expression '{expression}' is not valid. The expression should represent a property access: 't =&gt; t.MyProperty'. When specifying multiple properties use an anonymous type: 't =&gt; new {{ t.MyProperty1, t.MyProperty2 }}'.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.InvalidPropertyExpression(System.Object)">
+            <summary>
+            The expression '{expression}' is not a valid property expression. The expression should represent a property access: 't =&gt; t.MyProperty'.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.IdentityConflict(System.Object)">
+            <summary>
+            The instance of entity type '{entityType}' cannot be tracked because another instance of this type with the same key is already being tracked. For new entities consider using an IIdentityGenerator to generate unique key values.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.InvalidPrimaryKey(System.Object)">
+            <summary>
+            The instance of entity type '{entityType}' cannot be tracked because it has an invalid (e.g. null or CLR default) primary key. Either set the key explicitly or consider using an IValueGenerator to generate unique key values.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.WrongStateManager(System.Object)">
+            <summary>
+            Cannot start tracking InternalEntityEntry for entity type '{entityType}' because it was created by a different StateManager instance.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.MultipleEntries(System.Object)">
+            <summary>
+            Cannot start tracking InternalEntityEntry for entity type '{entityType}' because another InternalEntityEntry is already tracking the same entity.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.EntityTypeNotFound(System.Object)">
+            <summary>
+            The entity type '{entityType}' was not found. Ensure that the entity type has been added to the model.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.PropertyNotFound(System.Object,System.Object)">
+            <summary>
+            The property '{property}' on entity type '{entityType}' could not be found. Ensure that the property exists and has been included in the model.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.Internal.Strings.EmptySequence">
+            <summary>
+            Sequence contains no elements.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.Internal.Strings.MoreThanOneElement">
+            <summary>
+            Sequence contains more than one element.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.Internal.Strings.MoreThanOneMatch">
+            <summary>
+            Sequence contains more than one matching element.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.Internal.Strings.NoMatch">
+            <summary>
+            Sequence contains no matching element.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.CollectionArgumentIsEmpty(System.Object)">
+            <summary>
+            The collection argument '{argumentName}' must contain at least one element.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.GraphDoesNotContainVertex(System.Object)">
+            <summary>
+            The edge cannot be added because the graph does not contain vertex '{vertex}'.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.InconsistentEntityType(System.Object)">
+            <summary>
+            The properties provided for the argument '{argumentName}' are declared on different entity types.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.EntityRequiresKey(System.Object)">
+            <summary>
+            The entity type '{entityType}' requires a key to be defined.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.KeyPropertiesWrongEntity(System.Object,System.Object)">
+            <summary>
+            The specified key properties {key} are not declared on the entity type '{entityType}'. Ensure key properties are declared on the target entity type.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.ForeignKeyPropertiesWrongEntity(System.Object,System.Object)">
+            <summary>
+            The specified foreign key properties {foreignKey} are not declared on the entity type '{entityType}'. Ensure foreign key properties are declared on the target entity type.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.IndexPropertiesWrongEntity(System.Object,System.Object)">
+            <summary>
+            The specified index properties {index} are not declared on the entity type '{entityType}'. Ensure index properties are declared on the target entity type.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.IQueryableNotAsync(System.Object)">
+            <summary>
+            The source IQueryable doesn't implement IAsyncEnumerable&lt;{genericParameter}&gt;. Only sources that implement IAsyncEnumerable can be used for Entity Framework asynchronous operations.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.Internal.Strings.IQueryableProviderNotAsync">
+            <summary>
+            The provider for the source IQueryable doesn't implement IAsyncQueryProvider. Only providers that implement IEntityQueryProvider can be used for Entity Framework asynchronous operations.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.EagerOriginalValuesRequired(System.Object)">
+            <summary>
+            Lazy original value tracking cannot be turned on for entity type '{entityType}'. Entities that do not implement both INotifyPropertyChanging and INotifyPropertyChanged require original values to be stored eagerly in order to correct detect changes made to entities.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.OriginalValueNotTracked(System.Object,System.Object)">
+            <summary>
+            The original value for property '{property}' of entity type '{entityType}' cannot be accessed because it is not being tracked. To access all original values set 'UseLazyOriginalValues' to false on the entity type.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.MissingBackingField(System.Object,System.Object,System.Object)">
+            <summary>
+            The property '{entityType}.{property}' is annotated with backing field '{field}' but that field cannot be found.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.BadBackingFieldType(System.Object,System.Object,System.Object,System.Object,System.Object)">
+            <summary>
+            The annotated backing field '{field}' of type '{fieldType}' cannot be used for the property '{entityType}.{property}' of type '{propertyType}'. Only backing fields of types that are assignable from the property type can be used.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.NoFieldOrSetter(System.Object,System.Object)">
+            <summary>
+            No backing field could be discovered for property '{entityType}.{property}' and the property does not have a setter. Either use a backing field name that can be matched by convention, annotate the property with a backing field, or define a property setter.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.NoClrType(System.Object)">
+            <summary>
+            The CLR entity materializer cannot be used for entity type '{entityType}' because it is a shadow-state entity type.  Materialization to a CLR type is only possible for entity types that have a corresponding CLR type.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.MultipleDataStoresConfigured(System.Object)">
+            <summary>
+            The data stores {storeNames}are configured. A context can only be configured to use a single data store.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.Internal.Strings.NoDataStoreConfigured">
+            <summary>
+            No data stores are configured. Configure a data store by overriding OnConfiguring in your DbContext class or in the AddDbContext method when setting up services.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.Internal.Strings.NoDataStoreService">
+            <summary>
+            No data stores are available. Ensure that data store services are added inside the call to AddEntityFramework on your ServiceCollection.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.MultipleDataStoresAvailable(System.Object)">
+            <summary>
+            The data stores {storeNames}are available. A context can only be configured to use a single data store. Configure a data store by overriding OnConfiguring in your DbContext class or in the AddDbContext method when setting up services.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.MultiplePropertiesMatchedAsKeys(System.Object,System.Object)">
+            <summary>
+            Multiple potential primary key properties named '{property}' but differing only by case were found on entity type '{entityType}'. Configure the primary key explicitly using the SetKey fluent API.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.NoValueGenerator(System.Object,System.Object,System.Object)">
+            <summary>
+            The '{propertyName}' on entity type '{entityType}' does not have a value set and no value generator is available for properties of type '{propertyType}'. Either set a value for the property before adding the entity or configure a value generator for properties of type '{propertyType}'.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.TempValuePersists(System.Object,System.Object,System.Object)">
+            <summary>
+            The property '{property}' on entity type '{entityType}' has a temporary value while attempting to change the entity's state to '{state}'. Either set a permanent value explicitly or ensure that the data store is configured to generate values for this property.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.PropertyWithStorageNameNotFound(System.Object,System.Object)">
+            <summary>
+            A property with the storage name '{property}' on entity type '{entityType}' could not be found. Ensure that the property exists, has been included in the model, and has been configured with storage name specified.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.Internal.Strings.CurrentValuesAlwaysInSync">
+            <summary>
+            CurrentValues are always in sync with the entity state.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.Internal.Strings.DataStoreException">
+            <summary>
+            An error occured while running a data store operation. See InnerException for details.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.LogExceptionDuringQueryIteration(System.Object,System.Object)">
+            <summary>
+            An exception occurred in the data store while iterating the results of a query.{newline}{error}
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.LogExceptionDuringSaveChanges(System.Object,System.Object)">
+            <summary>
+            An exception occurred in the data store while saving changes.{newline}{error}
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.Internal.Strings.PropertyExtensionInvoked">
+            <summary>
+            The Property&lt;T&gt; extension method may only be used within LINQ queries.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.DuplicateProperty(System.Object,System.Object)">
+            <summary>
+            The property '{property}' cannot be added to the entity type '{entityType}' because a property with the same name already exists.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.NoClrProperty(System.Object,System.Object)">
+            <summary>
+            The property '{property}' cannot exist on entity type '{entityType}' because the property is not marked as shadow state and no corresponding CLR property exists on the underlying type.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.PropertyWrongClrType(System.Object,System.Object)">
+            <summary>
+            The property '{property}' cannot exist on entity type '{entityType}' because the property is not marked as shadow state and the type of the corresponding CLR property does not match the type specified in the property.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.ClrPropertyOnShadowEntity(System.Object,System.Object)">
+            <summary>
+            The property '{property}' cannot exist on entity type '{entityType}' because the entity type is marked as shadow state while the property is not. Shadow state entity types can only contain shadow state properties.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.PropertyInUse(System.Object,System.Object)">
+            <summary>
+            The property '{property}' cannot be removed from entity type '{entityType}' because it is being used in an index or key. All indexes and keys must be removed or redefined before the property can be removed.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.KeyInUse(System.Object,System.Object,System.Object)">
+            <summary>
+            Cannot remove key {key} from entity type '{entityType}' because it is referenced by a foreign key in entity type '{dependentType}'. All foreign keys must be removed or redefined before the referenced key can be removed.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.ForeignKeyInUse(System.Object,System.Object,System.Object,System.Object)">
+            <summary>
+            Cannot remove foreign key {foreignKey} from entity type '{entityType}' because it is referenced by navigation property '{navigation}' in entity type '{dependentType}'. All navigations must be removed or redefined before the referenced foreign key can be removed.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.NavigationAlreadyOwned(System.Object,System.Object,System.Object)">
+            <summary>
+            The navigation property '{navigation}' cannot be added to the entity type '{entityType}' because it already belongs to entity type '{existingEntityType}'.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.DuplicateNavigation(System.Object,System.Object)">
+            <summary>
+            The navigation property '{navigation}' cannot be added to the entity type '{entityType}' because a navigation property with the same name already exists.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.NavigationOnShadowEntity(System.Object,System.Object)">
+            <summary>
+            The navigation property '{navigation}' cannot be added to entity type '{entityType}' because the entity type is defined in shadow state and navigations properties cannot be added to shadow state.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.NoClrNavigation(System.Object,System.Object)">
+            <summary>
+            The navigation property '{navigation}' cannot be added to entity type '{entityType}' because there is no corresponding CLR property on the underlying type and navigations properties cannot be added to shadow state.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.NavigationSingleWrongClrType(System.Object,System.Object,System.Object,System.Object)">
+            <summary>
+            The navigation property '{navigation}' cannot be added to entity type '{entityType}' because its CLR type '{clrType}' does not match the expected CLR type '{targetType}'.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.NavigationCollectionWrongClrType(System.Object,System.Object,System.Object,System.Object)">
+            <summary>
+            The collection navigation property '{navigation}' cannot be added to entity type '{entityType}' because its CLR type '{clrType}' does not implement 'IEnumerable&lt;{targetType}&gt;'. Collection navigation properties must implement IEnumerable&lt;&gt; of the related entity.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.NavigationNotFound(System.Object,System.Object)">
+            <summary>
+            The navigation property '{navigation}' on entity type '{entityType}' could not be found. Ensure that the navigation property exists and has been included in the model.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.MultipleNavigations(System.Object,System.Object,System.Object)">
+            <summary>
+            The navigation properties '{navigation1}' and '{navigation2}' on entity type '{entityType}' are both backed by the same foreign key and point in the same direction. Each foreign key can have at most one navigation property and one inverse navigation property.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.ForeignKeyCountMismatch(System.Object,System.Object,System.Object,System.Object)">
+            <summary>
+            The number of properties specified for the foreign key {foreignKey} on entity type '{dependentType}' does not match the number of properties in the referenced key {referencedKey} on entity type '{principalType}'.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.ForeignKeyTypeMismatch(System.Object,System.Object,System.Object)">
+            <summary>
+            The types of the properties specified for the foreign key {foreignKey} on entity type '{dependentType}' do not match the types of the properties in the referenced key on entity type '{principalType}'.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.NavigationBadType(System.Object,System.Object,System.Object,System.Object)">
+            <summary>
+            The type of navigation property '{navigation}' on entity type '{entityType}' is '{foundType}' which does not implement ICollection&lt;{targetType}&gt;. Collection navigation properties must implement ICollection&lt;&gt; of the target type.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.NavigationArray(System.Object,System.Object,System.Object)">
+            <summary>
+            The type of navigation property '{navigation}' on entity type '{entityType}' is '{foundType}' which is an array type.. Collection navigation properties cannot be arrays.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.NavigationNoGetter(System.Object,System.Object)">
+            <summary>
+            The navigation property '{navigation}' on entity type '{entityType}' does not have a getter.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.NavigationNoSetter(System.Object,System.Object)">
+            <summary>
+            The navigation property '{navigation}' on entity type '{entityType}' does not have a setter. Read-only collection navigation properties must be initialized before use.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.NavigationCannotCreateType(System.Object,System.Object,System.Object)">
+            <summary>
+            The type of navigation property '{navigation}' on entity type '{entityType}' is '{foundType}' for which it was not possible to create a concrete instance. Either initialize the property before use, add a public parameterless constructor to the type, or use a type which can be assigned a HashSet&lt;&gt; or List&lt;&gt;.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.PropertyReadOnly(System.Object,System.Object)">
+            <summary>
+            The property '{property}' on entity type '{entityType}' is read-only and so cannot be modified or marked as modified.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.KeyPropertyMustBeReadOnly(System.Object,System.Object)">
+            <summary>
+            The property '{property}' on entity type '{entityType}' cannot be marked as read-write because it is part of a key. Key properties are always read-only.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.DuplicateForeignKey(System.Object,System.Object)">
+            <summary>
+            The foreign key {foreignKey} cannot be added to the entity type '{entityType}' because a foreign key on the same properties already exists.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.DuplicateIndex(System.Object,System.Object)">
+            <summary>
+            The index {index} cannot be added to the entity type '{entityType}' because an index on the same properties already exists.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.DuplicateKey(System.Object,System.Object)">
+            <summary>
+            The key {key} cannot be added to the entity type '{entityType}' because a key on the same properties already exists.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.ForeignKeyNotFound(System.Object,System.Object)">
+            <summary>
+            The foreign key {foreignKey} on entity type '{entityType}' could not be found. Ensure that the foreign key been added to the entity type.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.IndexNotFound(System.Object,System.Object)">
+            <summary>
+            The index {index} on entity type '{entityType}' could not be found. Ensure that the index been added to the entity type.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.KeyNotFound(System.Object,System.Object)">
+            <summary>
+            The key {key} on entity type '{entityType}' could not be found. Ensure that the key been added to the entity type.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.NavigationToShadowEntity(System.Object,System.Object,System.Object)">
+            <summary>
+            The navigation property '{navigation}' cannot be added to entity type '{entityType}' because the target entity type '{targetType}' is defined in shadow state and navigations properties cannot point to shadow state entities.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.CollectionArgumentContainsNulls(System.Object)">
+            <summary>
+            The collection argument '{argumentName}' must not contain any null references.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.EntityTypeNotInRelationship(System.Object,System.Object,System.Object)">
+            <summary>
+            The specified type '{type}' is invalid. It should be either the dependent type '{dependentType}' or the principal type '{principalType}'.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.DuplicateEntityType(System.Object)">
+            <summary>
+            The entity type '{entityType}' cannot be added to the model because an entity with the same name already exists.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.UnsupportedAnnotationType(System.Object)">
+            <summary>
+            Annotations of type '{type}' are not supported. Only common simple .NET types are currently supported.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.DuplicateAnnotation(System.Object)">
+            <summary>
+            The annotation '{annotation}' cannot be added because an annotation with the same name already exists.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.AnnotationNotFound(System.Object)">
+            <summary>
+            The annotation '{annotation}' was not found. Ensure that the annotation has been added.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.Internal.Strings.IncludeNotImplemented">
+            <summary>
+            The Include operator is not implemented by the current data store provider.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.IncludeNonBindableExpression(System.Object)">
+            <summary>
+            The expression '{expression}' passed to the Include operator could not be bound.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.LogCompilingQueryModel(System.Object)">
+            <summary>
+            Compiling query model: '{queryModel}'
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.LogOptimizedQueryModel(System.Object)">
+            <summary>
+            Optimized query model: '{queryModel}'
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.Internal.Strings.LogCompiledQueryFunction">
+            <summary>
+            Compiled query expression.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.LogIncludingNavigation(System.Object)">
+            <summary>
+            Including navigation: '{navigation}'
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.LogTrackingQuerySources(System.Object)">
+            <summary>
+            Tracking query sources: [{querySources}]
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.CannotBeNullable(System.Object,System.Object,System.Object)">
+            <summary>
+            The property '{property}' on entity type '{entity}' cannot be marked as nullable/optional because the type of the property is '{propertyType}' which is not a nullable type. Any property can be marked as non-nullable/required, but only properties of nullable types can be marked as nullable/optional.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.Internal.Strings.RecursiveOnModelCreating">
+            <summary>
+            An attempt was made to use the model while it was being created. A DbContext instance cannot be used inside OnModelCreating in any way that makes use of the model that is being created.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.Internal.Strings.RecursiveOnConfiguring">
+            <summary>
+            An attempt was made to use the context while it is being configured. A DbContext instance cannot be used inside OnConfiguring since it is still being configured at this point.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.PropertyAddedExplicitly(System.Object,System.Object)">
+            <summary>
+            The property '{property}' on entity type '{entityType}' could not be ignored because it has been explicitly added or is part of a key, foreign key or index that has been explicitly defined.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.PropertyIgnoredExplicitly(System.Object,System.Object)">
+            <summary>
+            The property '{property}' cannot be added to entity type '{entityType}' because it has been explicitly ignored.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.EntityAddedExplicitly(System.Object)">
+            <summary>
+            The  entity type '{entityType}' could not be ignored because it has been explicitly added or is referenced from a foreign key that has been explicitly defined.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.EntityIgnoredExplicitly(System.Object)">
+            <summary>
+            The entity type '{entityType}' could not be added because it has been explicitly ignored.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.EntityTypeInUse(System.Object)">
+            <summary>
+            The entity type '{entityType}' cannot be removed because it is being referenced from a foreign key. All referencing foreign keys must be removed or redefined before the entity type can be removed.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.ArgumentPropertyNull(System.Object,System.Object)">
+            <summary>
+            The property '{property}' of the argument '{argument}' cannot be null.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.NavigationIgnoredExplicitly(System.Object,System.Object)">
+            <summary>
+            The navigation property '{navigation}' cannot be added to entity type '{entityType}' because it has been explicitly ignored.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Data.Entity.Internal.Strings.RelationshipCannotBeInverted">
+            <summary>
+            The principal and dependent ends of the relationship cannot be flipped once foreign key or referenced key properties have been specified.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.NavigationAddedExplicitly(System.Object,System.Object)">
+            <summary>
+            The navigation property '{navigation}' on entity type '{entityType}' could not be ignored because it has been explicitly added.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.PrincipalEntityTypeRequiresKey(System.Object)">
+            <summary>
+            The principal entity type '{entityType}' requires a key to be defined.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.InvalidEntityType(System.Object,System.Object)">
+            <summary>
+            The entity type '{type}' provided for the argument '{argumentName}' must be a reference type.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.IntegerConfigurationValueFormatError(System.Object,System.Object)">
+            <summary>
+            The value for the configuration entry '{configurationKey}' is '{invalidValue}', but an integer is expected.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.ConnectionStringNotFound(System.Object)">
+            <summary>
+            No connection string named '{connectionString}' could be found in configuration.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.UnhandledBindingType(System.Object)">
+            <summary>
+            Unhandled binding type: '{type}'.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.UnhandledExpressionType(System.Object)">
+            <summary>
+            Unhandled expression type: '{type}'.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.ReferencedShadowKey(System.Object,System.Object,System.Object,System.Object,System.Object)">
+            <summary>
+            The key {key} on entity type '{entityType}' contains properties in shadow state - {shadowProperties} and it is referenced by the foreign key {foreignKey} from entity type '{referencingEntityType}'."
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.ShadowKey(System.Object,System.Object,System.Object)">
+            <summary>
+            The key {key} on entity type '{entityType}' contains properties in shadow state - {shadowProperties}.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.ExpressionParameterizationException(System.Object)">
+            <summary>
+            An exception was thrown while attempting to evaluate the LINQ query parameter expression '{expression}'.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.InvalidValueGeneratorFactoryProperty(System.Object,System.Object,System.Object)">
+            <summary>
+            The '{factory}' cannot create a value generator for property '{property}' on entity type '{entityType}'. Only integer properties are supported.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.InvalidForDerivedEntity(System.Object,System.Object)">
+            <summary>
+            The entity type method '{method}' is not valid for derived type '{derivedType}'.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.CircularInheritance(System.Object,System.Object)">
+            <summary>
+            The entity type '{entityType}' cannot inherit '{baseEntityType}' because '{baseEntityType}' is a descendent of '{entityType}'.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Internal.Strings.DerivedEntityCannotHaveKeys(System.Object)">
+            <summary>
+            Unable to set a base type for entity type '{entityType}' because it has one or more keys defined.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Metadata.ClrCollectionAccessorSource.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Metadata.EntityMaterializerSource.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Metadata.EntityType.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Metadata.EntityType.#ctor(System.Type,Microsoft.Data.Entity.Metadata.Model)">
+            <summary>
+                Creates a new metadata object representing an entity type associated with the given .NET type.
+            </summary>
+            <param name="type">The .NET entity type that this metadata object represents.</param>
+            <param name="model">The model associated with this entity type.</param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Metadata.EntityType.#ctor(System.String,Microsoft.Data.Entity.Metadata.Model)">
+            <summary>
+                Creates a new metadata object representing an entity type that will participate in shadow-state
+                such that there is no underlying .NET type corresponding to this metadata object.
+            </summary>
+            <param name="name">The name of the shadow-state entity type.</param>
+            <param name="model">The model associated with this entity type.</param>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Metadata.ForeignKey.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Metadata.Index.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Metadata.Key.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Metadata.MemberMapper.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Metadata.PropertyBase.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Storage.DataStore.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Storage.DataStoreConnection.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Storage.DataStoreSelector.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Data.Entity.Storage.DataStoreTransaction.#ctor">
+            <summary>
+                This constructor is intended only for use when creating test doubles that will override members
+                with mocked or faked behavior. Use of this constructor for other purposes may result in unexpected
+                behavior including but not limited to throwing <see cref="T:System.NullReferenceException" />.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Data.Entity.ValueGeneration.HiLoValueGenerator`1">
+            <summary>
+                Acts as a <see cref="T:Microsoft.Data.Entity.ValueGeneration.ValueGenerator" />  by requesting a block of values from the
+                underlying data store and returning them one by one. Will ask the underlying
+                data store for another block when the current block is exhausted.
+            </summary>
+        </member>
+        <member name="T:System.Threading.Tasks.TaskExtensions">
+            <summary>
+                Contains extension methods for the <see cref="T:System.Threading.Tasks.Task" /> class.
+            </summary>
+        </member>
+        <member name="M:System.Threading.Tasks.TaskExtensions.WithCurrentCulture``1(System.Threading.Tasks.Task{``0})">
+            <summary>
+                Configures an awaiter used to await this <see cref="T:System.Threading.Tasks.Task`1" /> to avoid
+                marshalling the continuation back to the original context, but preserve the
+                current culture and UI culture.
+            </summary>
+            <remarks> Calling this has no effect on platforms that don't use <see cref="T:System.Threading.SynchronizationContext" />. </remarks>
+            <typeparam name="T">
+                The type of the result produced by the associated <see cref="T:System.Threading.Tasks.Task`1" />.
+            </typeparam>
+            <param name="task">The task to be awaited on.</param>
+            <returns>An object used to await this task.</returns>
+        </member>
+        <member name="M:System.Threading.Tasks.TaskExtensions.WithCurrentCulture(System.Threading.Tasks.Task)">
+            <summary>
+                Configures an awaiter used to await this <see cref="T:System.Threading.Tasks.Task" /> to avoid
+                marshalling the continuation back to the original context, but preserve the
+                current culture and UI culture.
+            </summary>
+            <remarks> Calling this has no effect on platforms that don't use <see cref="T:System.Threading.SynchronizationContext" />. </remarks>
+            <param name="task">The task to be awaited on.</param>
+            <returns>An object used to await this task.</returns>
+        </member>
+        <member name="T:System.Threading.Tasks.TaskExtensions.CultureAwaiter`1">
+            <summary>
+                Provides an awaitable object that allows for awaits on <see cref="T:System.Threading.Tasks.Task`1" /> that
+                preserve the culture.
+            </summary>
+            <typeparam name="T">
+                The type of the result produced by the associated <see cref="T:System.Threading.Tasks.Task`1" />.
+            </typeparam>
+            <remarks>This type is intended for compiler use only.</remarks>
+        </member>
+        <member name="M:System.Threading.Tasks.TaskExtensions.CultureAwaiter`1.#ctor(System.Threading.Tasks.Task{`0})">
+            <summary>
+                Constructs a new instance of the <see cref="T:System.Threading.Tasks.TaskExtensions.CultureAwaiter`1" /> class.
+            </summary>
+            <param name="task">The task to be awaited on.</param>
+        </member>
+        <member name="M:System.Threading.Tasks.TaskExtensions.CultureAwaiter`1.GetAwaiter">
+            <summary>Gets an awaiter used to await this <see cref="T:System.Threading.Tasks.Task`1" />.</summary>
+            <returns>An awaiter instance.</returns>
+            <remarks>This method is intended for compiler user rather than use directly in code.</remarks>
+        </member>
+        <member name="P:System.Threading.Tasks.TaskExtensions.CultureAwaiter`1.IsCompleted">
+            <summary>
+                Gets whether this <see cref="T:System.Threading.Tasks.Task">Task</see> has completed.
+            </summary>
+            <remarks>
+                <see cref="P:System.Threading.Tasks.TaskExtensions.CultureAwaiter`1.IsCompleted" /> will return true when the Task is in one of the three
+                final states: <see cref="F:System.Threading.Tasks.TaskStatus.RanToCompletion">RanToCompletion</see>,
+                <see cref="F:System.Threading.Tasks.TaskStatus.Faulted">Faulted</see>, or
+                <see cref="F:System.Threading.Tasks.TaskStatus.Canceled">Canceled</see>.
+            </remarks>
+        </member>
+        <member name="M:System.Threading.Tasks.TaskExtensions.CultureAwaiter`1.GetResult">
+            <summary>Ends the await on the completed <see cref="T:System.Threading.Tasks.Task`1" />.</summary>
+            <returns>The result of the completed <see cref="T:System.Threading.Tasks.Task`1" />.</returns>
+            <exception cref="T:System.NullReferenceException">The awaiter was not properly initialized.</exception>
+            <exception cref="T:System.Threading.Tasks.TaskCanceledException">The task was canceled.</exception>
+            <exception cref="T:System.Exception">The task completed in a Faulted state.</exception>
+        </member>
+        <member name="M:System.Threading.Tasks.TaskExtensions.CultureAwaiter`1.OnCompleted(System.Action)">
+            <summary>This method is not implemented and should not be called.</summary>
+            <param name="continuation">The action to invoke when the await operation completes.</param>
+        </member>
+        <member name="M:System.Threading.Tasks.TaskExtensions.CultureAwaiter`1.UnsafeOnCompleted(System.Action)">
+            <summary>
+                Schedules the continuation onto the <see cref="T:System.Threading.Tasks.Task`1" /> associated with this
+                <see cref="T:System.Runtime.CompilerServices.TaskAwaiter`1" />.
+            </summary>
+            <param name="continuation">The action to invoke when the await operation completes.</param>
+            <exception cref="T:System.ArgumentNullException">
+                The <paramref name="continuation" /> argument is null
+                (Nothing in Visual Basic).
+            </exception>
+            <exception cref="T:System.InvalidOperationException">The awaiter was not properly initialized.</exception>
+            <remarks>This method is intended for compiler user rather than use directly in code.</remarks>
+        </member>
+        <member name="T:System.Threading.Tasks.TaskExtensions.CultureAwaiter">
+            <summary>
+                Provides an awaitable object that allows for awaits on <see cref="T:System.Threading.Tasks.Task" /> that
+                preserve the culture.
+            </summary>
+            <remarks>This type is intended for compiler use only.</remarks>
+        </member>
+        <member name="M:System.Threading.Tasks.TaskExtensions.CultureAwaiter.#ctor(System.Threading.Tasks.Task)">
+            <summary>
+                Constructs a new instance of the <see cref="T:System.Threading.Tasks.TaskExtensions.CultureAwaiter" /> class.
+            </summary>
+            <param name="task">The task to be awaited on.</param>
+        </member>
+        <member name="M:System.Threading.Tasks.TaskExtensions.CultureAwaiter.GetAwaiter">
+            <summary>Gets an awaiter used to await this <see cref="T:System.Threading.Tasks.Task" />.</summary>
+            <returns>An awaiter instance.</returns>
+            <remarks>This method is intended for compiler user rather than use directly in code.</remarks>
+        </member>
+        <member name="P:System.Threading.Tasks.TaskExtensions.CultureAwaiter.IsCompleted">
+            <summary>
+                Gets whether this <see cref="T:System.Threading.Tasks.Task">Task</see> has completed.
+            </summary>
+            <remarks>
+                <see cref="P:System.Threading.Tasks.TaskExtensions.CultureAwaiter.IsCompleted" /> will return true when the Task is in one of the three
+                final states: <see cref="F:System.Threading.Tasks.TaskStatus.RanToCompletion">RanToCompletion</see>,
+                <see cref="F:System.Threading.Tasks.TaskStatus.Faulted">Faulted</see>, or
+                <see cref="F:System.Threading.Tasks.TaskStatus.Canceled">Canceled</see>.
+            </remarks>
+        </member>
+        <member name="M:System.Threading.Tasks.TaskExtensions.CultureAwaiter.GetResult">
+            <summary>Ends the await on the completed <see cref="T:System.Threading.Tasks.Task" />.</summary>
+            <exception cref="T:System.NullReferenceException">The awaiter was not properly initialized.</exception>
+            <exception cref="T:System.Threading.Tasks.TaskCanceledException">The task was canceled.</exception>
+            <exception cref="T:System.Exception">The task completed in a Faulted state.</exception>
+        </member>
+        <member name="M:System.Threading.Tasks.TaskExtensions.CultureAwaiter.OnCompleted(System.Action)">
+            <summary>This method is not implemented and should not be called.</summary>
+            <param name="continuation">The action to invoke when the await operation completes.</param>
+        </member>
+        <member name="M:System.Threading.Tasks.TaskExtensions.CultureAwaiter.UnsafeOnCompleted(System.Action)">
+            <summary>
+                Schedules the continuation onto the <see cref="T:System.Threading.Tasks.Task" /> associated with this
+                <see cref="T:System.Runtime.CompilerServices.TaskAwaiter" />.
+            </summary>
+            <param name="continuation">The action to invoke when the await operation completes.</param>
+            <exception cref="T:System.ArgumentNullException">
+                The <paramref name="continuation" /> argument is null
+                (Nothing in Visual Basic).
+            </exception>
+            <exception cref="T:System.InvalidOperationException">The awaiter was not properly initialized.</exception>
+            <remarks>This method is intended for compiler user rather than use directly in code.</remarks>
+        </member>
+    </members>
+</doc>

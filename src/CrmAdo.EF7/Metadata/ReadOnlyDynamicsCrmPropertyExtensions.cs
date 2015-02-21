@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrmAdo.EntityFramework.Metadata
+namespace Microsoft.Data.Entity.DynamicsCrm.Metadata
 {
     public class ReadOnlyDynamicsCrmPropertyExtensions : ReadOnlyRelationalPropertyExtensions, IDynamicsCrmPropertyExtensions
     {
@@ -50,10 +50,10 @@ namespace CrmAdo.EntityFramework.Metadata
             }
         }
 
-        public virtual string ComputedExpression()
+        public virtual string ComputedExpression
         {
-            return Property[DynamicsCrmComputedExpressionAnnotation];
-        }
+            get { return Property[DynamicsCrmComputedExpressionAnnotation]; }
+        }      
 
         public virtual DynamicsCrmValueGenerationStrategy? ValueGenerationStrategy
         {

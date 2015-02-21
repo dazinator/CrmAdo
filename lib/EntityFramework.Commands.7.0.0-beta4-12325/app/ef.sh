@@ -1,0 +1,1 @@
+klr --appbase "$(dirname $0)" Microsoft.Framework.ApplicationHost ef $@

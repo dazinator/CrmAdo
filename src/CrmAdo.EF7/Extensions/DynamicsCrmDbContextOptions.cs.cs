@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.Entity.Relational;
 
-namespace CrmAdo.EntityFramework.Extensions
+namespace Microsoft.Data.Entity.DynamicsCrm
 {
 
     public class DynamicsCrmDbContextOptions : RelationalDbContextOptions

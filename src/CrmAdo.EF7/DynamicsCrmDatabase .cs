@@ -7,7 +7,7 @@ using Microsoft.Data.Entity.Relational.Migrations;
 using Microsoft.Data.Entity.Relational.Migrations.Infrastructure;
 using Microsoft.Framework.Logging;
 
-namespace CrmAdo.EntityFramework
+namespace Microsoft.Data.Entity.DynamicsCrm
 {
 
     public class DynamicsCrmDatabase : RelationalDatabase

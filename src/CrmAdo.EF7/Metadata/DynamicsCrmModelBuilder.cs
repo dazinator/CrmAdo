@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Metadata;
 
-namespace CrmAdo.EntityFramework.Metadata
+namespace Microsoft.Data.Entity.DynamicsCrm.Metadata
 {
     public class DynamicsCrmModelBuilder
     {

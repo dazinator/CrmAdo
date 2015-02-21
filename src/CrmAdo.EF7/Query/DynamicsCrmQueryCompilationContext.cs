@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Entity;
+using Microsoft.Data.Entity.ChangeTracking.Internal;
 using Microsoft.Data.Entity.Metadata;
 using Microsoft.Data.Entity.Query;
 using Microsoft.Data.Entity.Relational.Query;
@@ -11,9 +12,8 @@ using System.Linq;
 using System.Text;
 
 
-namespace CrmAdo.EntityFramework.Query
-{   
-
+namespace Microsoft.Data.Entity.DynamicsCrm.Query
+{
     public class DynamicsCrmQueryCompilationContext : RelationalQueryCompilationContext
     {
         public DynamicsCrmQueryCompilationContext(
@@ -22,16 +22,18 @@ namespace CrmAdo.EntityFramework.Query
             ILinqOperatorProvider linqOperatorProvider,
             IResultOperatorHandler resultOperatorHandler,
             EntityMaterializerSource entityMaterializerSource,
+            EntityKeyFactorySource entityKeyFactorySource,
             IQueryMethodProvider queryMethodProvider,
             IMethodCallTranslator methodCallTranslator)
-            : base(model, logger, linqOperatorProvider, resultOperatorHandler, entityMaterializerSource, queryMethodProvider, methodCallTranslator)
-                //Check.NotNull(model, "model"),
-                //Check.NotNull(logger, "logger"),
-                //Check.NotNull(linqOperatorProvider, "linqOperatorProvider"),
-                //Check.NotNull(resultOperatorHandler, "resultOperatorHandler"),
-                //Check.NotNull(entityMaterializerSource, "entityMaterializerSource"),
-                //Check.NotNull(queryMethodProvider, "queryMethodProvider"),
-                //Check.NotNull(methodCallTranslator, "methodCallTranslator"))
+            : base(
+                model,
+                logger,
+                linqOperatorProvider,
+                resultOperatorHandler,
+                entityMaterializerSource,
+                entityKeyFactorySource,
+                queryMethodProvider,
+                methodCallTranslator)
         {
         }
 
@@ -42,21 +44,21 @@ namespace CrmAdo.EntityFramework.Query
 
         public override string GetTableName(IEntityType entityType)
         {
-           // Check.NotNull(entityType, "entityType");
+            //Check.NotNull(entityType, nameof(entityType));
 
             return entityType.DynamicsCrm().Table;
         }
 
         public override string GetSchema(IEntityType entityType)
         {
-           // Check.NotNull(entityType, "entityType");
+           // Check.NotNull(entityType, nameof(entityType));
 
             return entityType.DynamicsCrm().Schema;
         }
 
         public override string GetColumnName(IProperty property)
         {
-          //  Check.NotNull(property, "property");
+           // Check.NotNull(property, nameof(property));
 
             return property.DynamicsCrm().Column;
         }

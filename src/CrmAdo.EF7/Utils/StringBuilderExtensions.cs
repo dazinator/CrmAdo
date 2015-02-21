@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrmAdo.EntityFramework.Utils
+// ReSharper disable once CheckNamespace
+
+namespace System.Text
 {
     internal static class StringBuilderExtensions
     {

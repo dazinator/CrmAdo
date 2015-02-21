@@ -1,11 +1,11 @@
-﻿using Microsoft.Data.Entity.Relational.Migrations.MigrationsModel;
+﻿using Microsoft.Data.Entity.Relational.Migrations.Operations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrmAdo.EntityFramework.Migrations
+namespace Microsoft.Data.Entity.DynamicsCrm.Migrations
 {   
     public class CreateDatabaseOperation : MigrationOperation
     {
@@ -19,6 +19,6 @@ namespace CrmAdo.EntityFramework.Migrations
             Name = name;
         }
 
-        public virtual string Name { get; }
+        public virtual string Name { get; private set; }
     }
 }

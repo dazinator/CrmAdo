@@ -1,0 +1,1928 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.AspNet.WebUtilities</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.AspNet.WebUtilities.FileBufferingReadStream">
+            <summary>
+            A Stream that wraps another stream and enables rewinding by buffering the content as it is read.
+            The content is buffered in memory up to a certain size and then spooled to a temp file on disk.
+            The temp file will be deleted on Dispose.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.WebUtilities.FormReader">
+            <summary>
+            Used to read an 'application/x-www-form-urlencoded' form.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.FormReader.ReadNextPair">
+            <summary>
+            Reads the next key value pair from the form.
+            For unbuffered data use the async overload instead.
+            </summary>
+            <returns>The next key value pair, or null when the end of the form is reached.</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.FormReader.ReadNextPairAsync(System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously reads the next key value pair from the form.
+            </summary>
+            <param name="cancellationToken"></param>
+            <returns>The next key value pair, or null when the end of the form is reached.</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.FormReader.ReadForm(System.String)">
+            <summary>
+            Parses text from an HTTP form body.
+            </summary>
+            <param name="text">The HTTP form body to parse.</param>
+            <returns>The collection containing the parsed HTTP form body.</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.FormReader.ReadFormAsync(System.IO.Stream,System.Threading.CancellationToken)">
+            <summary>
+            Parses an HTTP form body.
+            </summary>
+            <param name="stream">The HTTP form body to parse.</param>
+            <returns>The collection containing the parsed HTTP form body.</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.FormReader.ReadFormAsync(System.IO.Stream,System.Text.Encoding,System.Threading.CancellationToken)">
+            <summary>
+            Parses an HTTP form body.
+            </summary>
+            <param name="stream">The HTTP form body to parse.</param>
+            <returns>The collection containing the parsed HTTP form body.</returns>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.MultipartReader.HeaderLengthLimit">
+            <summary>
+            The limit for individual header lines inside a multipart section.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.MultipartReader.TotalHeaderSizeLimit">
+            <summary>
+            The combined size limit for headers per multipart section.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.MultipartReaderStream.#ctor(Microsoft.AspNet.WebUtilities.BufferedReadStream,System.String,System.Boolean)">
+            <summary>
+            Creates a stream that reads until it reaches the given boundary pattern.
+            </summary>
+            <param name="stream"></param>
+            <param name="boundary"></param>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.MultipartSection.BaseStreamOffset">
+            <summary>
+            The position where the body starts in the total multipart body.
+            This may not be available if the total multipart body is not seekable.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.QueryHelpers.AddQueryString(System.String,System.String,System.String)">
+            <summary>
+            Append the given query key and value to the URI.
+            </summary>
+            <param name="uri">The base URI.</param>
+            <param name="name">The name of the query key.</param>
+            <param name="value">The query value.</param>
+            <returns>The combined result.</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.QueryHelpers.AddQueryString(System.String,System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Append the given query keys and values to the uri.
+            </summary>
+            <param name="uri">The base uri.</param>
+            <param name="queryString">A collection of name value query pairs to append.</param>
+            <returns>The combine result.</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.QueryHelpers.ParseQuery(System.String)">
+            <summary>
+            Parse a query string into its component key and value parts.
+            </summary>
+            <param name="text">The raw query string value, with or without the leading '?'.</param>
+            <returns>A collection of parsed keys and values.</returns>
+        </member>
+        <member name="T:Microsoft.AspNet.WebUtilities.WebEncoders">
+            <summary>
+            Contains utility APIs to assist with common encoding and decoding operations.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.WebEncoders.Base64UrlDecode(System.String)">
+            <summary>
+            Decodes a base64url-encoded string.
+            </summary>
+            <param name="input">The base64url-encoded input to decode.</param>
+            <returns>The base64url-decoded form of the input.</returns>
+            <remarks>
+            The input must not contain any whitespace or padding characters.
+            Throws FormatException if the input is malformed.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.WebEncoders.Base64UrlDecode(System.String,System.Int32,System.Int32)">
+            <summary>
+            Decodes a base64url-encoded substring of a given string.
+            </summary>
+            <param name="input">A string containing the base64url-encoded input to decode.</param>
+            <param name="offset">The position in <paramref name="input"/> at which decoding should begin.</param>
+            <param name="count">The number of characters in <paramref name="input"/> to decode.</param>
+            <returns>The base64url-decoded form of the input.</returns>
+            <remarks>
+            The input must not contain any whitespace or padding characters.
+            Throws FormatException if the input is malformed.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.WebEncoders.Base64UrlEncode(System.Byte[])">
+            <summary>
+            Encodes an input using base64url encoding.
+            </summary>
+            <param name="input">The binary input to encode.</param>
+            <returns>The base64url-encoded form of the input.</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.WebEncoders.Base64UrlEncode(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Encodes an input using base64url encoding.
+            </summary>
+            <param name="input">The binary input to encode.</param>
+            <param name="offset">The offset into <paramref name="input"/> at which to begin encoding.</param>
+            <param name="count">The number of bytes of <paramref name="input"/> to encode.</param>
+            <returns>The base64url-encoded form of the input.</returns>
+        </member>
+        <member name="T:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters">
+            <summary>
+            Contains predefined Unicode code point filters.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.None">
+            <summary>
+            A filter which allows no characters.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.All">
+            <summary>
+            A filter which allows all Unicode Basic Multilingual Plane characters.
+            </summary>
+            <remarks>
+            This range spans the code points U+0000 .. U+FFFF.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.BasicLatin">
+            <summary>
+            A filter which allows characters in the 'Basic Latin' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0000 .. U+007F.
+            See http://www.unicode.org/charts/PDF/U0000.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Latin1Supplement">
+            <summary>
+            A filter which allows characters in the 'Latin-1 Supplement' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0080 .. U+00FF.
+            See http://www.unicode.org/charts/PDF/U0080.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.LatinExtendedA">
+            <summary>
+            A filter which allows characters in the 'Latin Extended-A' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0100 .. U+017F.
+            See http://www.unicode.org/charts/PDF/U0100.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.LatinExtendedB">
+            <summary>
+            A filter which allows characters in the 'Latin Extended-B' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0180 .. U+024F.
+            See http://www.unicode.org/charts/PDF/U0180.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.IPAExtensions">
+            <summary>
+            A filter which allows characters in the 'IPA Extensions' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0250 .. U+02AF.
+            See http://www.unicode.org/charts/PDF/U0250.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.SpacingModifierLetters">
+            <summary>
+            A filter which allows characters in the 'Spacing Modifier Letters' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+02B0 .. U+02FF.
+            See http://www.unicode.org/charts/PDF/U02B0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.CombiningDiacriticalMarks">
+            <summary>
+            A filter which allows characters in the 'Combining Diacritical Marks' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0300 .. U+036F.
+            See http://www.unicode.org/charts/PDF/U0300.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.GreekandCoptic">
+            <summary>
+            A filter which allows characters in the 'Greek and Coptic' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0370 .. U+03FF.
+            See http://www.unicode.org/charts/PDF/U0370.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Cyrillic">
+            <summary>
+            A filter which allows characters in the 'Cyrillic' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0400 .. U+04FF.
+            See http://www.unicode.org/charts/PDF/U0400.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.CyrillicSupplement">
+            <summary>
+            A filter which allows characters in the 'Cyrillic Supplement' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0500 .. U+052F.
+            See http://www.unicode.org/charts/PDF/U0500.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Armenian">
+            <summary>
+            A filter which allows characters in the 'Armenian' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0530 .. U+058F.
+            See http://www.unicode.org/charts/PDF/U0530.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Hebrew">
+            <summary>
+            A filter which allows characters in the 'Hebrew' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0590 .. U+05FF.
+            See http://www.unicode.org/charts/PDF/U0590.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Arabic">
+            <summary>
+            A filter which allows characters in the 'Arabic' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0600 .. U+06FF.
+            See http://www.unicode.org/charts/PDF/U0600.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Syriac">
+            <summary>
+            A filter which allows characters in the 'Syriac' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0700 .. U+074F.
+            See http://www.unicode.org/charts/PDF/U0700.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.ArabicSupplement">
+            <summary>
+            A filter which allows characters in the 'Arabic Supplement' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0750 .. U+077F.
+            See http://www.unicode.org/charts/PDF/U0750.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Thaana">
+            <summary>
+            A filter which allows characters in the 'Thaana' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0780 .. U+07BF.
+            See http://www.unicode.org/charts/PDF/U0780.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.NKo">
+            <summary>
+            A filter which allows characters in the 'NKo' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+07C0 .. U+07FF.
+            See http://www.unicode.org/charts/PDF/U07C0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Samaritan">
+            <summary>
+            A filter which allows characters in the 'Samaritan' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0800 .. U+083F.
+            See http://www.unicode.org/charts/PDF/U0800.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Mandaic">
+            <summary>
+            A filter which allows characters in the 'Mandaic' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0840 .. U+085F.
+            See http://www.unicode.org/charts/PDF/U0840.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.ArabicExtendedA">
+            <summary>
+            A filter which allows characters in the 'Arabic Extended-A' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+08A0 .. U+08FF.
+            See http://www.unicode.org/charts/PDF/U08A0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Devanagari">
+            <summary>
+            A filter which allows characters in the 'Devanagari' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0900 .. U+097F.
+            See http://www.unicode.org/charts/PDF/U0900.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Bengali">
+            <summary>
+            A filter which allows characters in the 'Bengali' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0980 .. U+09FF.
+            See http://www.unicode.org/charts/PDF/U0980.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Gurmukhi">
+            <summary>
+            A filter which allows characters in the 'Gurmukhi' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0A00 .. U+0A7F.
+            See http://www.unicode.org/charts/PDF/U0A00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Gujarati">
+            <summary>
+            A filter which allows characters in the 'Gujarati' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0A80 .. U+0AFF.
+            See http://www.unicode.org/charts/PDF/U0A80.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Oriya">
+            <summary>
+            A filter which allows characters in the 'Oriya' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0B00 .. U+0B7F.
+            See http://www.unicode.org/charts/PDF/U0B00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Tamil">
+            <summary>
+            A filter which allows characters in the 'Tamil' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0B80 .. U+0BFF.
+            See http://www.unicode.org/charts/PDF/U0B80.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Telugu">
+            <summary>
+            A filter which allows characters in the 'Telugu' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0C00 .. U+0C7F.
+            See http://www.unicode.org/charts/PDF/U0C00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Kannada">
+            <summary>
+            A filter which allows characters in the 'Kannada' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0C80 .. U+0CFF.
+            See http://www.unicode.org/charts/PDF/U0C80.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Malayalam">
+            <summary>
+            A filter which allows characters in the 'Malayalam' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0D00 .. U+0D7F.
+            See http://www.unicode.org/charts/PDF/U0D00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Sinhala">
+            <summary>
+            A filter which allows characters in the 'Sinhala' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0D80 .. U+0DFF.
+            See http://www.unicode.org/charts/PDF/U0D80.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Thai">
+            <summary>
+            A filter which allows characters in the 'Thai' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0E00 .. U+0E7F.
+            See http://www.unicode.org/charts/PDF/U0E00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Lao">
+            <summary>
+            A filter which allows characters in the 'Lao' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0E80 .. U+0EFF.
+            See http://www.unicode.org/charts/PDF/U0E80.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Tibetan">
+            <summary>
+            A filter which allows characters in the 'Tibetan' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+0F00 .. U+0FFF.
+            See http://www.unicode.org/charts/PDF/U0F00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Myanmar">
+            <summary>
+            A filter which allows characters in the 'Myanmar' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1000 .. U+109F.
+            See http://www.unicode.org/charts/PDF/U1000.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Georgian">
+            <summary>
+            A filter which allows characters in the 'Georgian' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+10A0 .. U+10FF.
+            See http://www.unicode.org/charts/PDF/U10A0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.HangulJamo">
+            <summary>
+            A filter which allows characters in the 'Hangul Jamo' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1100 .. U+11FF.
+            See http://www.unicode.org/charts/PDF/U1100.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Ethiopic">
+            <summary>
+            A filter which allows characters in the 'Ethiopic' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1200 .. U+137F.
+            See http://www.unicode.org/charts/PDF/U1200.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.EthiopicSupplement">
+            <summary>
+            A filter which allows characters in the 'Ethiopic Supplement' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1380 .. U+139F.
+            See http://www.unicode.org/charts/PDF/U1380.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Cherokee">
+            <summary>
+            A filter which allows characters in the 'Cherokee' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+13A0 .. U+13FF.
+            See http://www.unicode.org/charts/PDF/U13A0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.UnifiedCanadianAboriginalSyllabics">
+            <summary>
+            A filter which allows characters in the 'Unified Canadian Aboriginal Syllabics' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1400 .. U+167F.
+            See http://www.unicode.org/charts/PDF/U1400.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Ogham">
+            <summary>
+            A filter which allows characters in the 'Ogham' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1680 .. U+169F.
+            See http://www.unicode.org/charts/PDF/U1680.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Runic">
+            <summary>
+            A filter which allows characters in the 'Runic' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+16A0 .. U+16FF.
+            See http://www.unicode.org/charts/PDF/U16A0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Tagalog">
+            <summary>
+            A filter which allows characters in the 'Tagalog' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1700 .. U+171F.
+            See http://www.unicode.org/charts/PDF/U1700.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Hanunoo">
+            <summary>
+            A filter which allows characters in the 'Hanunoo' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1720 .. U+173F.
+            See http://www.unicode.org/charts/PDF/U1720.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Buhid">
+            <summary>
+            A filter which allows characters in the 'Buhid' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1740 .. U+175F.
+            See http://www.unicode.org/charts/PDF/U1740.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Tagbanwa">
+            <summary>
+            A filter which allows characters in the 'Tagbanwa' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1760 .. U+177F.
+            See http://www.unicode.org/charts/PDF/U1760.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Khmer">
+            <summary>
+            A filter which allows characters in the 'Khmer' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1780 .. U+17FF.
+            See http://www.unicode.org/charts/PDF/U1780.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Mongolian">
+            <summary>
+            A filter which allows characters in the 'Mongolian' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1800 .. U+18AF.
+            See http://www.unicode.org/charts/PDF/U1800.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.UnifiedCanadianAboriginalSyllabicsExtended">
+            <summary>
+            A filter which allows characters in the 'Unified Canadian Aboriginal Syllabics Extended' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+18B0 .. U+18FF.
+            See http://www.unicode.org/charts/PDF/U18B0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Limbu">
+            <summary>
+            A filter which allows characters in the 'Limbu' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1900 .. U+194F.
+            See http://www.unicode.org/charts/PDF/U1900.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.TaiLe">
+            <summary>
+            A filter which allows characters in the 'Tai Le' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1950 .. U+197F.
+            See http://www.unicode.org/charts/PDF/U1950.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.NewTaiLue">
+            <summary>
+            A filter which allows characters in the 'New Tai Lue' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1980 .. U+19DF.
+            See http://www.unicode.org/charts/PDF/U1980.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.KhmerSymbols">
+            <summary>
+            A filter which allows characters in the 'Khmer Symbols' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+19E0 .. U+19FF.
+            See http://www.unicode.org/charts/PDF/U19E0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Buginese">
+            <summary>
+            A filter which allows characters in the 'Buginese' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1A00 .. U+1A1F.
+            See http://www.unicode.org/charts/PDF/U1A00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.TaiTham">
+            <summary>
+            A filter which allows characters in the 'Tai Tham' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1A20 .. U+1AAF.
+            See http://www.unicode.org/charts/PDF/U1A20.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.CombiningDiacriticalMarksExtended">
+            <summary>
+            A filter which allows characters in the 'Combining Diacritical Marks Extended' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1AB0 .. U+1AFF.
+            See http://www.unicode.org/charts/PDF/U1AB0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Balinese">
+            <summary>
+            A filter which allows characters in the 'Balinese' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1B00 .. U+1B7F.
+            See http://www.unicode.org/charts/PDF/U1B00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Sundanese">
+            <summary>
+            A filter which allows characters in the 'Sundanese' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1B80 .. U+1BBF.
+            See http://www.unicode.org/charts/PDF/U1B80.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Batak">
+            <summary>
+            A filter which allows characters in the 'Batak' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1BC0 .. U+1BFF.
+            See http://www.unicode.org/charts/PDF/U1BC0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Lepcha">
+            <summary>
+            A filter which allows characters in the 'Lepcha' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1C00 .. U+1C4F.
+            See http://www.unicode.org/charts/PDF/U1C00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.OlChiki">
+            <summary>
+            A filter which allows characters in the 'Ol Chiki' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1C50 .. U+1C7F.
+            See http://www.unicode.org/charts/PDF/U1C50.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.SundaneseSupplement">
+            <summary>
+            A filter which allows characters in the 'Sundanese Supplement' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1CC0 .. U+1CCF.
+            See http://www.unicode.org/charts/PDF/U1CC0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.VedicExtensions">
+            <summary>
+            A filter which allows characters in the 'Vedic Extensions' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1CD0 .. U+1CFF.
+            See http://www.unicode.org/charts/PDF/U1CD0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.PhoneticExtensions">
+            <summary>
+            A filter which allows characters in the 'Phonetic Extensions' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1D00 .. U+1D7F.
+            See http://www.unicode.org/charts/PDF/U1D00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.PhoneticExtensionsSupplement">
+            <summary>
+            A filter which allows characters in the 'Phonetic Extensions Supplement' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1D80 .. U+1DBF.
+            See http://www.unicode.org/charts/PDF/U1D80.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.CombiningDiacriticalMarksSupplement">
+            <summary>
+            A filter which allows characters in the 'Combining Diacritical Marks Supplement' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1DC0 .. U+1DFF.
+            See http://www.unicode.org/charts/PDF/U1DC0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.LatinExtendedAdditional">
+            <summary>
+            A filter which allows characters in the 'Latin Extended Additional' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1E00 .. U+1EFF.
+            See http://www.unicode.org/charts/PDF/U1E00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.GreekExtended">
+            <summary>
+            A filter which allows characters in the 'Greek Extended' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+1F00 .. U+1FFF.
+            See http://www.unicode.org/charts/PDF/U1F00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.GeneralPunctuation">
+            <summary>
+            A filter which allows characters in the 'General Punctuation' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2000 .. U+206F.
+            See http://www.unicode.org/charts/PDF/U2000.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.SuperscriptsandSubscripts">
+            <summary>
+            A filter which allows characters in the 'Superscripts and Subscripts' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2070 .. U+209F.
+            See http://www.unicode.org/charts/PDF/U2070.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.CurrencySymbols">
+            <summary>
+            A filter which allows characters in the 'Currency Symbols' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+20A0 .. U+20CF.
+            See http://www.unicode.org/charts/PDF/U20A0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.CombiningDiacriticalMarksforSymbols">
+            <summary>
+            A filter which allows characters in the 'Combining Diacritical Marks for Symbols' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+20D0 .. U+20FF.
+            See http://www.unicode.org/charts/PDF/U20D0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.LetterlikeSymbols">
+            <summary>
+            A filter which allows characters in the 'Letterlike Symbols' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2100 .. U+214F.
+            See http://www.unicode.org/charts/PDF/U2100.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.NumberForms">
+            <summary>
+            A filter which allows characters in the 'Number Forms' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2150 .. U+218F.
+            See http://www.unicode.org/charts/PDF/U2150.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Arrows">
+            <summary>
+            A filter which allows characters in the 'Arrows' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2190 .. U+21FF.
+            See http://www.unicode.org/charts/PDF/U2190.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.MathematicalOperators">
+            <summary>
+            A filter which allows characters in the 'Mathematical Operators' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2200 .. U+22FF.
+            See http://www.unicode.org/charts/PDF/U2200.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.MiscellaneousTechnical">
+            <summary>
+            A filter which allows characters in the 'Miscellaneous Technical' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2300 .. U+23FF.
+            See http://www.unicode.org/charts/PDF/U2300.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.ControlPictures">
+            <summary>
+            A filter which allows characters in the 'Control Pictures' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2400 .. U+243F.
+            See http://www.unicode.org/charts/PDF/U2400.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.OpticalCharacterRecognition">
+            <summary>
+            A filter which allows characters in the 'Optical Character Recognition' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2440 .. U+245F.
+            See http://www.unicode.org/charts/PDF/U2440.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.EnclosedAlphanumerics">
+            <summary>
+            A filter which allows characters in the 'Enclosed Alphanumerics' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2460 .. U+24FF.
+            See http://www.unicode.org/charts/PDF/U2460.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.BoxDrawing">
+            <summary>
+            A filter which allows characters in the 'Box Drawing' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2500 .. U+257F.
+            See http://www.unicode.org/charts/PDF/U2500.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.BlockElements">
+            <summary>
+            A filter which allows characters in the 'Block Elements' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2580 .. U+259F.
+            See http://www.unicode.org/charts/PDF/U2580.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.GeometricShapes">
+            <summary>
+            A filter which allows characters in the 'Geometric Shapes' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+25A0 .. U+25FF.
+            See http://www.unicode.org/charts/PDF/U25A0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.MiscellaneousSymbols">
+            <summary>
+            A filter which allows characters in the 'Miscellaneous Symbols' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2600 .. U+26FF.
+            See http://www.unicode.org/charts/PDF/U2600.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Dingbats">
+            <summary>
+            A filter which allows characters in the 'Dingbats' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2700 .. U+27BF.
+            See http://www.unicode.org/charts/PDF/U2700.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.MiscellaneousMathematicalSymbolsA">
+            <summary>
+            A filter which allows characters in the 'Miscellaneous Mathematical Symbols-A' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+27C0 .. U+27EF.
+            See http://www.unicode.org/charts/PDF/U27C0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.SupplementalArrowsA">
+            <summary>
+            A filter which allows characters in the 'Supplemental Arrows-A' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+27F0 .. U+27FF.
+            See http://www.unicode.org/charts/PDF/U27F0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.BraillePatterns">
+            <summary>
+            A filter which allows characters in the 'Braille Patterns' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2800 .. U+28FF.
+            See http://www.unicode.org/charts/PDF/U2800.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.SupplementalArrowsB">
+            <summary>
+            A filter which allows characters in the 'Supplemental Arrows-B' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2900 .. U+297F.
+            See http://www.unicode.org/charts/PDF/U2900.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.MiscellaneousMathematicalSymbolsB">
+            <summary>
+            A filter which allows characters in the 'Miscellaneous Mathematical Symbols-B' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2980 .. U+29FF.
+            See http://www.unicode.org/charts/PDF/U2980.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.SupplementalMathematicalOperators">
+            <summary>
+            A filter which allows characters in the 'Supplemental Mathematical Operators' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2A00 .. U+2AFF.
+            See http://www.unicode.org/charts/PDF/U2A00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.MiscellaneousSymbolsandArrows">
+            <summary>
+            A filter which allows characters in the 'Miscellaneous Symbols and Arrows' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2B00 .. U+2BFF.
+            See http://www.unicode.org/charts/PDF/U2B00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Glagolitic">
+            <summary>
+            A filter which allows characters in the 'Glagolitic' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2C00 .. U+2C5F.
+            See http://www.unicode.org/charts/PDF/U2C00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.LatinExtendedC">
+            <summary>
+            A filter which allows characters in the 'Latin Extended-C' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2C60 .. U+2C7F.
+            See http://www.unicode.org/charts/PDF/U2C60.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Coptic">
+            <summary>
+            A filter which allows characters in the 'Coptic' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2C80 .. U+2CFF.
+            See http://www.unicode.org/charts/PDF/U2C80.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.GeorgianSupplement">
+            <summary>
+            A filter which allows characters in the 'Georgian Supplement' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2D00 .. U+2D2F.
+            See http://www.unicode.org/charts/PDF/U2D00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Tifinagh">
+            <summary>
+            A filter which allows characters in the 'Tifinagh' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2D30 .. U+2D7F.
+            See http://www.unicode.org/charts/PDF/U2D30.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.EthiopicExtended">
+            <summary>
+            A filter which allows characters in the 'Ethiopic Extended' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2D80 .. U+2DDF.
+            See http://www.unicode.org/charts/PDF/U2D80.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.CyrillicExtendedA">
+            <summary>
+            A filter which allows characters in the 'Cyrillic Extended-A' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2DE0 .. U+2DFF.
+            See http://www.unicode.org/charts/PDF/U2DE0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.SupplementalPunctuation">
+            <summary>
+            A filter which allows characters in the 'Supplemental Punctuation' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2E00 .. U+2E7F.
+            See http://www.unicode.org/charts/PDF/U2E00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.CJKRadicalsSupplement">
+            <summary>
+            A filter which allows characters in the 'CJK Radicals Supplement' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2E80 .. U+2EFF.
+            See http://www.unicode.org/charts/PDF/U2E80.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.KangxiRadicals">
+            <summary>
+            A filter which allows characters in the 'Kangxi Radicals' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2F00 .. U+2FDF.
+            See http://www.unicode.org/charts/PDF/U2F00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.IdeographicDescriptionCharacters">
+            <summary>
+            A filter which allows characters in the 'Ideographic Description Characters' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+2FF0 .. U+2FFF.
+            See http://www.unicode.org/charts/PDF/U2FF0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.CJKSymbolsandPunctuation">
+            <summary>
+            A filter which allows characters in the 'CJK Symbols and Punctuation' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+3000 .. U+303F.
+            See http://www.unicode.org/charts/PDF/U3000.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Hiragana">
+            <summary>
+            A filter which allows characters in the 'Hiragana' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+3040 .. U+309F.
+            See http://www.unicode.org/charts/PDF/U3040.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Katakana">
+            <summary>
+            A filter which allows characters in the 'Katakana' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+30A0 .. U+30FF.
+            See http://www.unicode.org/charts/PDF/U30A0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Bopomofo">
+            <summary>
+            A filter which allows characters in the 'Bopomofo' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+3100 .. U+312F.
+            See http://www.unicode.org/charts/PDF/U3100.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.HangulCompatibilityJamo">
+            <summary>
+            A filter which allows characters in the 'Hangul Compatibility Jamo' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+3130 .. U+318F.
+            See http://www.unicode.org/charts/PDF/U3130.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Kanbun">
+            <summary>
+            A filter which allows characters in the 'Kanbun' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+3190 .. U+319F.
+            See http://www.unicode.org/charts/PDF/U3190.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.BopomofoExtended">
+            <summary>
+            A filter which allows characters in the 'Bopomofo Extended' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+31A0 .. U+31BF.
+            See http://www.unicode.org/charts/PDF/U31A0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.CJKStrokes">
+            <summary>
+            A filter which allows characters in the 'CJK Strokes' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+31C0 .. U+31EF.
+            See http://www.unicode.org/charts/PDF/U31C0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.KatakanaPhoneticExtensions">
+            <summary>
+            A filter which allows characters in the 'Katakana Phonetic Extensions' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+31F0 .. U+31FF.
+            See http://www.unicode.org/charts/PDF/U31F0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.EnclosedCJKLettersandMonths">
+            <summary>
+            A filter which allows characters in the 'Enclosed CJK Letters and Months' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+3200 .. U+32FF.
+            See http://www.unicode.org/charts/PDF/U3200.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.CJKCompatibility">
+            <summary>
+            A filter which allows characters in the 'CJK Compatibility' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+3300 .. U+33FF.
+            See http://www.unicode.org/charts/PDF/U3300.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.CJKUnifiedIdeographsExtensionA">
+            <summary>
+            A filter which allows characters in the 'CJK Unified Ideographs Extension A' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+3400 .. U+4DBF.
+            See http://www.unicode.org/charts/PDF/U3400.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.YijingHexagramSymbols">
+            <summary>
+            A filter which allows characters in the 'Yijing Hexagram Symbols' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+4DC0 .. U+4DFF.
+            See http://www.unicode.org/charts/PDF/U4DC0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.CJKUnifiedIdeographs">
+            <summary>
+            A filter which allows characters in the 'CJK Unified Ideographs' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+4E00 .. U+9FFF.
+            See http://www.unicode.org/charts/PDF/U4E00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.YiSyllables">
+            <summary>
+            A filter which allows characters in the 'Yi Syllables' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+A000 .. U+A48F.
+            See http://www.unicode.org/charts/PDF/UA000.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.YiRadicals">
+            <summary>
+            A filter which allows characters in the 'Yi Radicals' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+A490 .. U+A4CF.
+            See http://www.unicode.org/charts/PDF/UA490.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Lisu">
+            <summary>
+            A filter which allows characters in the 'Lisu' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+A4D0 .. U+A4FF.
+            See http://www.unicode.org/charts/PDF/UA4D0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Vai">
+            <summary>
+            A filter which allows characters in the 'Vai' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+A500 .. U+A63F.
+            See http://www.unicode.org/charts/PDF/UA500.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.CyrillicExtendedB">
+            <summary>
+            A filter which allows characters in the 'Cyrillic Extended-B' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+A640 .. U+A69F.
+            See http://www.unicode.org/charts/PDF/UA640.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Bamum">
+            <summary>
+            A filter which allows characters in the 'Bamum' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+A6A0 .. U+A6FF.
+            See http://www.unicode.org/charts/PDF/UA6A0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.ModifierToneLetters">
+            <summary>
+            A filter which allows characters in the 'Modifier Tone Letters' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+A700 .. U+A71F.
+            See http://www.unicode.org/charts/PDF/UA700.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.LatinExtendedD">
+            <summary>
+            A filter which allows characters in the 'Latin Extended-D' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+A720 .. U+A7FF.
+            See http://www.unicode.org/charts/PDF/UA720.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.SylotiNagri">
+            <summary>
+            A filter which allows characters in the 'Syloti Nagri' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+A800 .. U+A82F.
+            See http://www.unicode.org/charts/PDF/UA800.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.CommonIndicNumberForms">
+            <summary>
+            A filter which allows characters in the 'Common Indic Number Forms' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+A830 .. U+A83F.
+            See http://www.unicode.org/charts/PDF/UA830.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Phagspa">
+            <summary>
+            A filter which allows characters in the 'Phags-pa' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+A840 .. U+A87F.
+            See http://www.unicode.org/charts/PDF/UA840.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Saurashtra">
+            <summary>
+            A filter which allows characters in the 'Saurashtra' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+A880 .. U+A8DF.
+            See http://www.unicode.org/charts/PDF/UA880.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.DevanagariExtended">
+            <summary>
+            A filter which allows characters in the 'Devanagari Extended' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+A8E0 .. U+A8FF.
+            See http://www.unicode.org/charts/PDF/UA8E0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.KayahLi">
+            <summary>
+            A filter which allows characters in the 'Kayah Li' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+A900 .. U+A92F.
+            See http://www.unicode.org/charts/PDF/UA900.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Rejang">
+            <summary>
+            A filter which allows characters in the 'Rejang' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+A930 .. U+A95F.
+            See http://www.unicode.org/charts/PDF/UA930.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.HangulJamoExtendedA">
+            <summary>
+            A filter which allows characters in the 'Hangul Jamo Extended-A' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+A960 .. U+A97F.
+            See http://www.unicode.org/charts/PDF/UA960.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Javanese">
+            <summary>
+            A filter which allows characters in the 'Javanese' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+A980 .. U+A9DF.
+            See http://www.unicode.org/charts/PDF/UA980.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.MyanmarExtendedB">
+            <summary>
+            A filter which allows characters in the 'Myanmar Extended-B' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+A9E0 .. U+A9FF.
+            See http://www.unicode.org/charts/PDF/UA9E0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Cham">
+            <summary>
+            A filter which allows characters in the 'Cham' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+AA00 .. U+AA5F.
+            See http://www.unicode.org/charts/PDF/UAA00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.MyanmarExtendedA">
+            <summary>
+            A filter which allows characters in the 'Myanmar Extended-A' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+AA60 .. U+AA7F.
+            See http://www.unicode.org/charts/PDF/UAA60.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.TaiViet">
+            <summary>
+            A filter which allows characters in the 'Tai Viet' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+AA80 .. U+AADF.
+            See http://www.unicode.org/charts/PDF/UAA80.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.MeeteiMayekExtensions">
+            <summary>
+            A filter which allows characters in the 'Meetei Mayek Extensions' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+AAE0 .. U+AAFF.
+            See http://www.unicode.org/charts/PDF/UAAE0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.EthiopicExtendedA">
+            <summary>
+            A filter which allows characters in the 'Ethiopic Extended-A' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+AB00 .. U+AB2F.
+            See http://www.unicode.org/charts/PDF/UAB00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.LatinExtendedE">
+            <summary>
+            A filter which allows characters in the 'Latin Extended-E' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+AB30 .. U+AB6F.
+            See http://www.unicode.org/charts/PDF/UAB30.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.MeeteiMayek">
+            <summary>
+            A filter which allows characters in the 'Meetei Mayek' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+ABC0 .. U+ABFF.
+            See http://www.unicode.org/charts/PDF/UABC0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.HangulSyllables">
+            <summary>
+            A filter which allows characters in the 'Hangul Syllables' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+AC00 .. U+D7AF.
+            See http://www.unicode.org/charts/PDF/UAC00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.HangulJamoExtendedB">
+            <summary>
+            A filter which allows characters in the 'Hangul Jamo Extended-B' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+D7B0 .. U+D7FF.
+            See http://www.unicode.org/charts/PDF/UD7B0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.CJKCompatibilityIdeographs">
+            <summary>
+            A filter which allows characters in the 'CJK Compatibility Ideographs' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+F900 .. U+FAFF.
+            See http://www.unicode.org/charts/PDF/UF900.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.AlphabeticPresentationForms">
+            <summary>
+            A filter which allows characters in the 'Alphabetic Presentation Forms' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+FB00 .. U+FB4F.
+            See http://www.unicode.org/charts/PDF/UFB00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.ArabicPresentationFormsA">
+            <summary>
+            A filter which allows characters in the 'Arabic Presentation Forms-A' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+FB50 .. U+FDFF.
+            See http://www.unicode.org/charts/PDF/UFB50.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.VariationSelectors">
+            <summary>
+            A filter which allows characters in the 'Variation Selectors' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+FE00 .. U+FE0F.
+            See http://www.unicode.org/charts/PDF/UFE00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.VerticalForms">
+            <summary>
+            A filter which allows characters in the 'Vertical Forms' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+FE10 .. U+FE1F.
+            See http://www.unicode.org/charts/PDF/UFE10.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.CombiningHalfMarks">
+            <summary>
+            A filter which allows characters in the 'Combining Half Marks' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+FE20 .. U+FE2F.
+            See http://www.unicode.org/charts/PDF/UFE20.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.CJKCompatibilityForms">
+            <summary>
+            A filter which allows characters in the 'CJK Compatibility Forms' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+FE30 .. U+FE4F.
+            See http://www.unicode.org/charts/PDF/UFE30.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.SmallFormVariants">
+            <summary>
+            A filter which allows characters in the 'Small Form Variants' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+FE50 .. U+FE6F.
+            See http://www.unicode.org/charts/PDF/UFE50.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.ArabicPresentationFormsB">
+            <summary>
+            A filter which allows characters in the 'Arabic Presentation Forms-B' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+FE70 .. U+FEFF.
+            See http://www.unicode.org/charts/PDF/UFE70.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.HalfwidthandFullwidthForms">
+            <summary>
+            A filter which allows characters in the 'Halfwidth and Fullwidth Forms' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+FF00 .. U+FFEF.
+            See http://www.unicode.org/charts/PDF/UFF00.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.Specials">
+            <summary>
+            A filter which allows characters in the 'Specials' Unicode range.
+            </summary>
+            <remarks>
+            This range spans the code points U+FFF0 .. U+FFFF.
+            See http://www.unicode.org/charts/PDF/UFFF0.pdf for the full set of characters in this range.
+            </remarks>
+        </member>
+        <member name="T:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.DefinedCharacterCodePointFilter">
+            <summary>
+            A code point filter which returns only defined characters within a certain
+            range of the Unicode specification.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.WebUtilities.Encoders.CodePointFilters.EmptyCodePointFilter">
+            <summary>
+            A filter that allows no code points.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.WebUtilities.Encoders.EncoderExtensions">
+            <summary>
+            Helpful extension methods for the encoder classes.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.EncoderExtensions.HtmlEncode(Microsoft.AspNet.WebUtilities.Encoders.IHtmlEncoder,System.String,System.IO.TextWriter)">
+            <summary>
+            HTML-encodes a string and writes the result to the supplied output.
+            </summary>
+            <remarks>
+            The encoded value is also safe for inclusion inside an HTML attribute
+            as long as the attribute value is surrounded by single or double quotes.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.EncoderExtensions.JavaScriptStringEncode(Microsoft.AspNet.WebUtilities.Encoders.IJavaScriptStringEncoder,System.String,System.IO.TextWriter)">
+            <summary>
+            JavaScript-escapes a string and writes the result to the supplied output.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.EncoderExtensions.UrlEncode(Microsoft.AspNet.WebUtilities.Encoders.IUrlEncoder,System.String,System.IO.TextWriter)">
+            <summary>
+            URL-encodes a string and writes the result to the supplied output.
+            </summary>
+            <remarks>
+            The encoded value is safe for use in the segment, query, or
+            fragment portion of a URI.
+            </remarks>
+        </member>
+        <member name="T:Microsoft.AspNet.WebUtilities.Encoders.HexUtil">
+            <summary>
+            Contains helpers for dealing with byte-hex char conversions.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.HexUtil.IntToChar(System.UInt32)">
+            <summary>
+            Converts a number 0 - 15 to its associated hex character '0' - 'F'.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.HexUtil.ParseHexCharacter(System.Char)">
+            <summary>
+            Returns the integral form of this hexadecimal character.
+            </summary>
+            <returns>0 - 15 if the character is valid, -1 if the character is invalid.</returns>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.HexUtil.WriteHexEncodedByte(System.Byte,System.Char@,System.Char@)">
+            <summary>
+            Gets the uppercase hex-encoded form of a byte.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.WebUtilities.Encoders.HtmlEncoder">
+            <summary>
+            A class which can perform HTML encoding given an allow list of characters which
+            can be represented unencoded.
+            </summary>
+            <remarks>
+            Once constructed, instances of this class are thread-safe for multiple callers.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.HtmlEncoder.#ctor">
+            <summary>
+            Instantiates an encoder using the 'Basic Latin' code table as the allow list.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.HtmlEncoder.#ctor(Microsoft.AspNet.WebUtilities.Encoders.ICodePointFilter[])">
+            <summary>
+            Instantiates an encoder using a custom allow list of characters.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.HtmlEncoder.Default">
+            <summary>
+            A default instance of the HtmlEncoder, equivalent to allowing only
+            the 'Basic Latin' character range.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.HtmlEncoder.HtmlEncode(System.Char[],System.Int32,System.Int32,System.IO.TextWriter)">
+            <summary>
+            Everybody's favorite HtmlEncode routine.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.HtmlEncoder.HtmlEncode(System.String)">
+            <summary>
+            Everybody's favorite HtmlEncode routine.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.HtmlEncoder.HtmlEncode(System.String,System.Int32,System.Int32,System.IO.TextWriter)">
+            <summary>
+            Everybody's favorite HtmlEncode routine.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.WebUtilities.Encoders.ICodePointFilter">
+            <summary>
+            Represents a filter which allows only certain Unicode code points through.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.ICodePointFilter.GetAllowedCodePoints">
+            <summary>
+            Gets an enumeration of all allowed code points.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.WebUtilities.Encoders.IHtmlEncoder">
+            <summary>
+            Provides services for HTML-encoding input.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.IHtmlEncoder.HtmlEncode(System.Char[],System.Int32,System.Int32,System.IO.TextWriter)">
+            <summary>
+            HTML-encodes a character array and writes the result to the supplied
+            output.
+            </summary>
+            <remarks>
+            The encoded value is also appropriately encoded for inclusion inside an HTML attribute
+            as long as the attribute value is surrounded by single or double quotes.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.IHtmlEncoder.HtmlEncode(System.String)">
+            <summary>
+            HTML-encodes a given input string.
+            </summary>
+            <returns>
+            The HTML-encoded value, or null if the input string was null.
+            </returns>
+            <remarks>
+            The return value is also appropriately encoded for inclusion inside an HTML attribute
+            as long as the attribute value is surrounded by single or double quotes.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.IHtmlEncoder.HtmlEncode(System.String,System.Int32,System.Int32,System.IO.TextWriter)">
+            <summary>
+            HTML-encodes a given input string and writes the result to the
+            supplied output.
+            </summary>
+            <remarks>
+            The encoded value is also appropriately encoded for inclusion inside an HTML attribute
+            as long as the attribute value is surrounded by single or double quotes.
+            </remarks>
+        </member>
+        <member name="T:Microsoft.AspNet.WebUtilities.Encoders.IJavaScriptStringEncoder">
+            <summary>
+            Provides services for JavaScript-escaping strings.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.IJavaScriptStringEncoder.JavaScriptStringEncode(System.Char[],System.Int32,System.Int32,System.IO.TextWriter)">
+            <summary>
+            JavaScript-escapes a character array and writes the result to the
+            supplied output.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.IJavaScriptStringEncoder.JavaScriptStringEncode(System.String)">
+            <summary>
+            JavaScript-escapes a given input string.
+            </summary>
+            <returns>
+            The JavaScript-escaped value, or null if the input string was null.
+            </returns>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.IJavaScriptStringEncoder.JavaScriptStringEncode(System.String,System.Int32,System.Int32,System.IO.TextWriter)">
+            <summary>
+            JavaScript-escapes a given input string and writes the
+            result to the supplied output.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.WebUtilities.Encoders.IUrlEncoder">
+            <summary>
+            Provides services for URL-escaping strings.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.IUrlEncoder.UrlEncode(System.Char[],System.Int32,System.Int32,System.IO.TextWriter)">
+            <summary>
+            URL-escapes a character array and writes the result to the supplied
+            output.
+            </summary>
+            <remarks>
+            The encoded value is appropriately encoded for inclusion in the segment, query, or
+            fragment portion of a URI.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.IUrlEncoder.UrlEncode(System.String)">
+            <summary>
+            URL-escapes a given input string.
+            </summary>
+            <returns>
+            The URL-escaped value, or null if the input string was null.
+            </returns>
+            <remarks>
+            The return value is appropriately encoded for inclusion in the segment, query, or
+            fragment portion of a URI.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.IUrlEncoder.UrlEncode(System.String,System.Int32,System.Int32,System.IO.TextWriter)">
+            <summary>
+            URL-escapes a string and writes the result to the supplied output.
+            </summary>
+            <remarks>
+            The encoded value is appropriately encoded for inclusion in the segment, query, or
+            fragment portion of a URI.
+            </remarks>
+        </member>
+        <member name="T:Microsoft.AspNet.WebUtilities.Encoders.JavaScriptStringEncoder">
+            <summary>
+            A class which can perform JavaScript string escaping given an allow list of characters which
+            can be represented unescaped.
+            </summary>
+            <remarks>
+            Once constructed, instances of this class are thread-safe for multiple callers.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.JavaScriptStringEncoder.#ctor">
+            <summary>
+            Instantiates an encoder using the 'Basic Latin' code table as the allow list.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.JavaScriptStringEncoder.#ctor(Microsoft.AspNet.WebUtilities.Encoders.ICodePointFilter[])">
+            <summary>
+            Instantiates an encoder using a custom allow list of characters.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.JavaScriptStringEncoder.Default">
+            <summary>
+            A default instance of the JavaScriptStringEncoder, equivalent to allowing only
+            the 'Basic Latin' character range.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.JavaScriptStringEncoder.JavaScriptStringEncode(System.Char[],System.Int32,System.Int32,System.IO.TextWriter)">
+            <summary>
+            Everybody's favorite JavaScriptStringEncode routine.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.JavaScriptStringEncoder.JavaScriptStringEncode(System.String)">
+            <summary>
+            Everybody's favorite JavaScriptStringEncode routine.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.JavaScriptStringEncoder.JavaScriptStringEncode(System.String,System.Int32,System.Int32,System.IO.TextWriter)">
+            <summary>
+            Everybody's favorite JavaScriptStringEncode routine.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.UnicodeEncoderBase.#ctor(Microsoft.AspNet.WebUtilities.Encoders.ICodePointFilter[],System.Int32)">
+            <summary>
+            Instantiates an encoder using a custom allow list of characters.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.UnicodeEncoderBase.Encode(System.Char[],System.Int32,System.Int32,System.IO.TextWriter)">
+            <summary>
+            Entry point to the encoder.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.UnicodeEncoderBase.Encode(System.String)">
+            <summary>
+            Entry point to the encoder.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.UnicodeEncoderBase.Encode(System.String,System.Int32,System.Int32,System.IO.TextWriter)">
+            <summary>
+            Entry point to the encoder.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.WebUtilities.Encoders.UnicodeEncoderBase.Writer">
+            <summary>
+            Provides an abstraction over both StringBuilder and TextWriter.
+            Declared as a struct so we can allocate on the stack and pass by
+            reference. Eliminates chatty virtual dispatches on hot paths.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.WebUtilities.Encoders.UnicodeHelpers">
+            <summary>
+            Contains helpers for dealing with Unicode code points.
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNet.WebUtilities.Encoders.UnicodeHelpers.UNICODE_REPLACEMENT_CHAR">
+            <summary>
+            Used for invalid Unicode sequences or other unrepresentable values.
+            </summary>
+        </member>
+        <member name="F:Microsoft.AspNet.WebUtilities.Encoders.UnicodeHelpers.UNICODE_LAST_CODEPOINT">
+            <summary>
+            The last code point defined by the Unicode specification.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.UnicodeHelpers.CreateDefinedCharacterBitmap">
+            <summary>
+            Helper method which creates a bitmap of all characters which are
+            defined per version 7.0.0 of the Unicode specification.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.UnicodeHelpers.GetDefinedCharacterBitmap">
+            <summary>
+            Returns a bitmap of all characters which are defined per version 7.0.0
+            of the Unicode specification.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.UnicodeHelpers.GetScalarValueFromUtf16(System.Char*,System.Boolean)">
+            <summary>
+            Given a UTF-16 character stream, reads the next scalar value from the stream.
+            Set 'endOfString' to true if 'pChar' points to the last character in the stream.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.UnicodeHelpers.GetUtf8RepresentationForScalarValue(System.UInt32)">
+            <summary>
+            Given a Unicode scalar value, returns the UTF-8 representation of the value.
+            The return value's bytes should be popped from the LSB.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.UnicodeHelpers.IsCharacterDefined(System.Char)">
+            <summary>
+            Returns a value stating whether a character is defined per version 7.0.0
+            of the Unicode specification. Certain classes of characters (control chars,
+            private use, surrogates, some whitespace) are considered "undefined" for
+            our purposes.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.UnicodeHelpers.IsSupplementaryCodePoint(System.Int32)">
+            <summary>
+            Determines whether the given scalar value is in the supplementary plane and thus
+            requires 2 characters to be represented in UTF-16 (as a surrogate pair).
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.WebUtilities.Encoders.UrlEncoder">
+            <summary>
+            A class which can perform URL string escaping given an allow list of characters which
+            can be represented unescaped.
+            </summary>
+            <remarks>
+            Once constructed, instances of this class are thread-safe for multiple callers.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.UrlEncoder.#ctor">
+            <summary>
+            Instantiates an encoder using the 'Basic Latin' code table as the allow list.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.UrlEncoder.#ctor(Microsoft.AspNet.WebUtilities.Encoders.ICodePointFilter[])">
+            <summary>
+            Instantiates an encoder using a custom allow list of characters.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.WebUtilities.Encoders.UrlEncoder.Default">
+            <summary>
+            A default instance of the UrlEncoder, equivalent to allowing only
+            the 'Basic Latin' character range.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.UrlEncoder.UrlEncode(System.Char[],System.Int32,System.Int32,System.IO.TextWriter)">
+            <summary>
+            Everybody's favorite UrlEncode routine.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.UrlEncoder.UrlEncode(System.String)">
+            <summary>
+            Everybody's favorite UrlEncode routine.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNet.WebUtilities.Encoders.UrlEncoder.UrlEncode(System.String,System.Int32,System.Int32,System.IO.TextWriter)">
+            <summary>
+            Everybody's favorite UrlEncode routine.
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -1,7 +1,4 @@
-﻿using CrmAdo.EntityFramework.Metadata;
-using CrmAdo.EntityFramework.Update;
-using Microsoft.Data.Entity;
-using Microsoft.Data.Entity.Identity;
+﻿using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Relational;
 using Microsoft.Data.Entity.Storage;
 using Microsoft.Data.Entity.Relational.Migrations;
@@ -12,24 +9,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CrmAdo.EntityFramework;
-using CrmAdo.EntityFramework.Migrations;
+using Microsoft.Data.Entity.Infrastructure;
+using Microsoft.Data.Entity.DynamicsCrm.Update;
+using Microsoft.Data.Entity.DynamicsCrm.Migrations;
+using Microsoft.Data.Entity.DynamicsCrm;
 // ReSharper disable once CheckNamespace
 
 namespace Microsoft.Framework.DependencyInjection
 {
     public static class DynamicsCrmEntityServicesBuilderExtensions
     {
-        public static EntityServicesBuilder AddDynamicsCrm(this EntityServicesBuilder builder)
+        public static EntityFrameworkServicesBuilder AddDynamicsCrm(this EntityFrameworkServicesBuilder builder)
         {
             //Check.NotNull(builder, "builder");
 
-            builder.AddRelational().ServiceCollection
+            ((IAccessor<IServiceCollection>)builder.AddRelational()).Service
                 .AddScoped<DataStoreSource, DynamicsCrmDataStoreSource>()
                 .TryAdd(new ServiceCollection()
                     .AddSingleton<DynamicsCrmModelBuilderFactory>()
                     .AddSingleton<DynamicsCrmValueGeneratorCache>()
-                    .AddSingleton<DynamicsCrmValueGeneratorSelector>()
-                    .AddSingleton<SimpleValueGeneratorFactory<SequentialGuidValueGenerator>>()
+                   
+                   // .AddSingleton<SimpleValueGeneratorFactory<SequentialGuidValueGenerator>>()
                     .AddSingleton<DynamicsCrmSequenceValueGeneratorFactory>()
                     .AddSingleton<DynamicsCrmSqlGenerator>()
                     .AddSingleton<SqlStatementExecutor>()
@@ -40,7 +40,7 @@ namespace Microsoft.Framework.DependencyInjection
 
                     //.AddSingleton<DynamicsCrmMetadataExtensionProvider>()
                 //.AddSingleton<DynamicsCrmMigrationOperationFactory>()
-
+                    .AddScoped<DynamicsCrmValueGeneratorSelector>()
                     .AddScoped<DynamicsCrmBatchExecutor>()
                     .AddScoped<DynamicsCrmDataStoreServices>()
                     .AddScoped<DynamicsCrmDataStore>()

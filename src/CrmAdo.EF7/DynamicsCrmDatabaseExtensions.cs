@@ -1,4 +1,5 @@
 ﻿using CrmAdo.EntityFramework;
+using Microsoft.Data.Entity.DynamicsCrm;
 using Microsoft.Data.Entity.Infrastructure;
 using System;
 using System.Collections.Generic;

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrmAdo.EntityFramework
+namespace Microsoft.Data.Entity.DynamicsCrm
 {
        public class DynamicsCrmModelBuilderFactory : ModelBuilderFactory
     {

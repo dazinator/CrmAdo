@@ -1,8 +1,7 @@
 ﻿using Microsoft.Data.Entity.Metadata;
-using CrmAdo.EntityFramework.Metadata;
 using Microsoft.Data.Entity.Utilities;
-using CrmAdo.EntityFramework.Metadata;
 using CrmAdo.EntityFramework;
+using Microsoft.Data.Entity.DynamicsCrm.Metadata;
 
 // ReSharper disable once CheckNamespace
 

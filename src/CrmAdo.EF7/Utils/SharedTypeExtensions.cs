@@ -6,7 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 
-namespace CrmAdo.EntityFramework.Utils
+// ReSharper disable once CheckNamespace
+
+namespace System
 {
     [DebuggerStepThrough]
     internal static class SharedTypeExtensions

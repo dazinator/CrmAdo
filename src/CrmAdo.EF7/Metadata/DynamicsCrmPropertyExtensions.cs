@@ -1,12 +1,13 @@
-﻿using Microsoft.Data.Entity.Metadata;
+﻿using CrmAdo.EntityFramework;
+using Microsoft.Data.Entity.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CrmAdo.EntityFramework.Utils;
 
-namespace CrmAdo.EntityFramework.Metadata
+
+namespace Microsoft.Data.Entity.DynamicsCrm.Metadata
 {
     public class DynamicsCrmPropertyExtensions : ReadOnlyDynamicsCrmPropertyExtensions
     {
@@ -69,7 +70,7 @@ namespace CrmAdo.EntityFramework.Metadata
       
         public new virtual string ComputedExpression
         {
-            get { return base.ComputedExpression(); }           
+            get { return base.ComputedExpression; }           
             set
             {
               //  Check.NullButNotEmpty(value, nameof(value));

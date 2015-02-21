@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CrmAdo.EntityFramework
-{
+namespace Microsoft.Data.Entity.DynamicsCrm
+{   
+
     public class DynamicsCrmModelSource : ModelSourceBase
     {
-        public DynamicsCrmModelSource(DbSetFinder setFinder)
-            : base(setFinder)
+        public DynamicsCrmModelSource(DbSetFinder setFinder, ModelValidator modelValidator)
+            : base(setFinder, modelValidator)
         {
         }
     }

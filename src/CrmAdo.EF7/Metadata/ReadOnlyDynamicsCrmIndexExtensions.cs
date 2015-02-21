@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CrmAdo.EntityFramework.Metadata
+namespace Microsoft.Data.Entity.DynamicsCrm.Metadata
 {
 
     public class ReadOnlyDynamicsCrmIndexExtensions : ReadOnlyRelationalIndexExtensions, IDynamicsCrmIndexExtensions

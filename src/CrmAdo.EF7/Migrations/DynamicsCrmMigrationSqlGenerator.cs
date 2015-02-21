@@ -1,14 +1,15 @@
-﻿using CrmAdo.EntityFramework.Metadata;
+﻿using Microsoft.Data.Entity.DynamicsCrm.Metadata;
 using Microsoft.Data.Entity.Metadata;
 using Microsoft.Data.Entity.Relational;
-using Microsoft.Data.Entity.Relational.Migrations.MigrationsModel;
+using Microsoft.Data.Entity.Relational.Migrations.Operations;
+using Microsoft.Data.Entity.Relational.Migrations.Sql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrmAdo.EntityFramework.Migrations
+namespace Microsoft.Data.Entity.DynamicsCrm.Migrations
 {
     public class DynamicsCrmMigrationSqlGenerator : MigrationSqlGenerator
     {

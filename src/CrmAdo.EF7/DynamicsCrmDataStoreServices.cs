@@ -1,60 +1,58 @@
-﻿using CrmAdo.EntityFramework.Migrations;
-using Microsoft.Data.Entity.Identity;
+﻿using Microsoft.Data.Entity.DynamicsCrm.Migrations;
 using Microsoft.Data.Entity.Infrastructure;
 using Microsoft.Data.Entity.Metadata;
+using Microsoft.Data.Entity.Relational;
 using Microsoft.Data.Entity.Relational.Migrations;
+using Microsoft.Data.Entity.Relational.Migrations.History;
 using Microsoft.Data.Entity.Relational.Migrations.Infrastructure;
+using Microsoft.Data.Entity.Relational.Migrations.Sql;
 using Microsoft.Data.Entity.Storage;
+using Microsoft.Data.Entity.ValueGeneration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrmAdo.EntityFramework
+namespace Microsoft.Data.Entity.DynamicsCrm
 {
 
-    public class DynamicsCrmDataStoreServices : MigrationsDataStoreServices
+    public class DynamicsCrmDataStoreServices : RelationalDataStoreServices
     {
         private readonly DynamicsCrmDataStore _store;
         private readonly DynamicsCrmDataStoreCreator _creator;
         private readonly DynamicsCrmConnection _connection;
-        private readonly DynamicsCrmValueGeneratorCache _valueGeneratorCache;
+        private readonly DynamicsCrmValueGeneratorSelector _valueGeneratorSelector;
         private readonly DynamicsCrmDatabase _database;
-        private readonly ModelBuilderFactory _modelBuilderFactory;
+        private readonly DynamicsCrmModelBuilderFactory _modelBuilderFactory;
         private readonly DynamicsCrmModelSource _modelSource;
-        // private readonly DynamicsCrmMigrator _migrator;
+        private readonly DynamicsCrmModelDiffer _modelDiffer;
+        private readonly DynamicsCrmHistoryRepository _historyRepository;
+        private readonly DynamicsCrmMigrationSqlGenerator _migrationSqlGenerator;
+
 
         public DynamicsCrmDataStoreServices(
             DynamicsCrmDataStore store,
             DynamicsCrmDataStoreCreator creator,
             DynamicsCrmConnection connection,
-            DynamicsCrmValueGeneratorCache valueGeneratorCache,
+            DynamicsCrmValueGeneratorSelector valueGeneratorSelector,
             DynamicsCrmDatabase database,
-            ModelBuilderFactory modelBuilderFactory,
+            DynamicsCrmModelBuilderFactory modelBuilderFactory,
             DynamicsCrmModelDiffer modelDiffer,
             DynamicsCrmHistoryRepository historyRepository,
-            DynamicsCrmSqlGenerator migrationSqlGenerator,
-            DynamicsCrmModelSource modelSource
-            )
+            DynamicsCrmMigrationSqlGenerator migrationSqlGenerator,
+            DynamicsCrmModelSource modelSource)
         {
-            //  Check.NotNull(store, "store");
-            // Check.NotNull(creator, "creator");
-            // Check.NotNull(connection, "connection");
-            // Check.NotNull(valueGeneratorCache, "valueGeneratorCache");
-            // Check.NotNull(database, "database");
-            // Check.NotNull(modelBuilderFactory, "modelBuilderFactory");
-            //  Check.NotNull(migrator, "migrator");
 
             _store = store;
             _creator = creator;
             _connection = connection;
-            _valueGeneratorCache = valueGeneratorCache;
+            _valueGeneratorSelector = valueGeneratorSelector;
             _database = database;
             _modelBuilderFactory = modelBuilderFactory;
-            ModelDiffer = modelDiffer;
-            HistoryRepository = historyRepository;
-            MigrationSqlGenerator = migrationSqlGenerator;
+            _modelDiffer = modelDiffer;
+            _historyRepository = historyRepository;
+            _migrationSqlGenerator = migrationSqlGenerator;
             _modelSource = modelSource;
         }
 
@@ -62,6 +60,11 @@ namespace CrmAdo.EntityFramework
         {
             get { return _store; }
         }
+
+        //public override DataStore Store()
+        //{
+        //    
+        //}
 
         public override DataStoreCreator Creator
         {
@@ -73,9 +76,9 @@ namespace CrmAdo.EntityFramework
             get { return _connection; }
         }
 
-        public override ValueGeneratorCache ValueGeneratorCache
+        public override ValueGeneratorSelectorContract ValueGeneratorSelector
         {
-            get { return _valueGeneratorCache; }
+            get { return _valueGeneratorSelector; }
         }
 
         public override Database Database
@@ -88,16 +91,25 @@ namespace CrmAdo.EntityFramework
             get { return _modelBuilderFactory; }
         }
 
-        public override ModelDiffer ModelDiffer { get; private set; }
-        public override IHistoryRepository HistoryRepository { get; private set; }
-        public override MigrationSqlGenerator MigrationSqlGenerator { get; private set; }
+        public override ModelDiffer ModelDiffer
+        {
+            get { return _modelDiffer; }
+        }
+
+        public override IHistoryRepository HistoryRepository
+        {
+            get { return _historyRepository; }
+        }
+
+        public override MigrationSqlGenerator MigrationSqlGenerator
+        {
+            get { return _migrationSqlGenerator; }
+        }      
 
         public override ModelSource ModelSource
         {
             get { return _modelSource; }
         }
-
-
     }
 
 

@@ -1,98 +1,23 @@
-﻿using CrmAdo.EntityFramework.Metadata;
+﻿using Microsoft.Data.Entity.DynamicsCrm;
 using Microsoft.Data.Entity;
+using Microsoft.Data.Entity.DynamicsCrm.Metadata;
 using Microsoft.Data.Entity.Metadata;
 using Microsoft.Data.Entity.Relational.Metadata;
 using Microsoft.Data.Entity.Relational.Migrations;
-using Microsoft.Data.Entity.Relational.Migrations.MigrationsModel;
+using Microsoft.Data.Entity.Relational.Migrations.Infrastructure;
+using Microsoft.Data.Entity.Relational.Migrations.Operations;
 using Microsoft.Data.Entity.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CrmAdo.EntityFramework.Migrations
-{
-    //public class DynamicsCrmModelDiffer : ModelDiffer, IEqualityComparer<ISequence>
-    //{
-    //    public DynamicsCrmModelDiffer(
-    //        DynamicsCrmMetadataExtensionProvider extensionProvider,
-    //       DynamicsCrmTypeMapper typeMapper,
-    //        DynamicsCrmMigrationOperationFactory operationFactory,
-    //        DynamicsCrmMigrationOperationProcessor operationProcessor)
-    //        : base(
-    //            extensionProvider,
-    //            typeMapper,
-    //            operationFactory,
-    //            operationProcessor)
-    //    {
-    //    }
-
-    //    public virtual new DynamicsCrmMetadataExtensionProvider ExtensionProvider
-    //    {
-    //        get { return (DynamicsCrmMetadataExtensionProvider)base.ExtensionProvider; }
-    //    }
-
-    //    public virtual new DynamicsCrmTypeMapper TypeMapper
-    //    {
-    //        get { return (DynamicsCrmTypeMapper)base.TypeMapper; }
-    //    }
-
-    //    public virtual new DynamicsCrmMigrationOperationFactory OperationFactory
-    //    {
-    //        get { return (DynamicsCrmMigrationOperationFactory)base.OperationFactory; }
-    //    }
-
-    //    public virtual new DynamicsCrmMigrationOperationProcessor OperationProcessor
-    //    {
-    //        get { return (DynamicsCrmMigrationOperationProcessor)base.OperationProcessor; }
-    //    }
-
-    //    protected override ISequence TryGetSequence(IProperty property)
-    //    {
-    //        return property.DynamicsCrm().TryGetSequence();
-    //    }
-
-    //    protected override IReadOnlyList<ISequence> GetSequences(IModel model)
-    //    {
-    //        // Check.NotNull(model, "model");
-
-    //        return
-    //            model.EntityTypes
-    //                .SelectMany(t => t.Properties)
-    //                .Select(TryGetSequence)
-    //                .Where(s => s != null)
-    //                .Distinct(this)
-    //                .ToList();
-    //    }
-
-    //    protected override bool EquivalentPrimaryKeys(IKey source, IKey target, IDictionary<IProperty, IProperty> columnMap)
-    //    {
-    //        return
-    //            base.EquivalentPrimaryKeys(source, target, columnMap)
-    //            && ExtensionProvider.Extensions(source).IsClustered == ExtensionProvider.Extensions(target).IsClustered;
-    //    }
-
-    //    protected override bool EquivalentIndexes(IIndex source, IIndex target, IDictionary<IProperty, IProperty> columnMap)
-    //    {
-    //        return
-    //            base.EquivalentIndexes(source, target, columnMap)
-    //            && ExtensionProvider.Extensions(source).IsClustered == ExtensionProvider.Extensions(target).IsClustered;
-    //    }       
-
-    //    public bool Equals(ISequence x, ISequence y)
-    //    {
-    //        return MatchSequenceNames(x, y) && MatchSequenceSchemas(x, y);
-    //    }
-
-    //    public int GetHashCode(ISequence obj)
-    //    {
-    //        return obj.GetHashCode();
-    //    }
-    //}
-
-    public class DynamicsCrmModelDiffer : ModelDiffer
+namespace Microsoft.Data.Entity.DynamicsCrm.Migrations
+{   
+  
+     public class DynamicsCrmModelDiffer : ModelDiffer
     {
-        public DynamicsCrmModelDiffer( DynamicsCrmTypeMapper typeMapper)
+        public DynamicsCrmModelDiffer(DynamicsCrmTypeMapper typeMapper)
             : base(typeMapper)
         {
         }
@@ -109,11 +34,11 @@ namespace CrmAdo.EntityFramework.Migrations
             // TODO: Remove when the default sequence is added to the model (See #1568)
             var sourceUsesDefaultSequence = DefaultSequenceUsed(source);
             var targetUsesDefaultSequence = DefaultSequenceUsed(target);
-            if (sourceUsesDefaultSequence == false && targetUsesDefaultSequence == true)
+            if (sourceUsesDefaultSequence == false && targetUsesDefaultSequence)
             {
                 operations = operations.Concat(Add(_defaultSequence.Value));
             }
-            else if (sourceUsesDefaultSequence == true && targetUsesDefaultSequence == false)
+            else if (sourceUsesDefaultSequence && targetUsesDefaultSequence == false)
             {
                 operations = operations.Concat(Remove(_defaultSequence.Value));
             }
@@ -121,15 +46,19 @@ namespace CrmAdo.EntityFramework.Migrations
             return operations;
         }
 
-        private bool DefaultSequenceUsed(IModel model) {
-              model != null
+        private bool DefaultSequenceUsed(IModel model)
+        {
+           return  model != null
             && model.DynamicsCrm().DefaultSequenceName == null
             && (model.DynamicsCrm().ValueGenerationStrategy == DynamicsCrmValueGenerationStrategy.Sequence
                 || model.EntityTypes.SelectMany(t => t.Properties).Any(
                     p => p.DynamicsCrm().ValueGenerationStrategy == DynamicsCrmValueGenerationStrategy.Sequence
-                        && p.DynamicsCrm().SequenceName == null));
+                         && p.DynamicsCrm().SequenceName == null));
+
+            
         }
-          
+         
+                  
 
         #endregion
 
@@ -191,7 +120,7 @@ namespace CrmAdo.EntityFramework.Migrations
 
             if (target.DynamicsCrm().ComputedExpression != null)
             {
-                operation.Column[DynamicsCrmAnnotationNames.Prefix +DynamicsCrmAnnotationNames.ColumnComputedExpression] =
+                operation.Column[DynamicsCrmAnnotationNames.Prefix + DynamicsCrmAnnotationNames.ColumnComputedExpression] =
                     target.DynamicsCrm().ComputedExpression;
             }
 
@@ -200,15 +129,16 @@ namespace CrmAdo.EntityFramework.Migrations
 
         // TODO: Move to metadata API?
         // See Issue #1271: Principal keys need to generate values on add, but the database should only have one Identity column.
-        private DynamicsCrmValueGenerationStrategy? GetValueGenerationStrategy(IProperty property){
-            property.DynamicsCrm().ValueGenerationStrategy
-              ?? property.EntityType.Model.DynamicsCrm().ValueGenerationStrategy
-              ?? (property.GenerateValueOnAdd && property.PropertyType.IsInteger() && property.IsPrimaryKey()
-                  ? DynamicsCrmValueGenerationStrategy.Identity
-                  : default(DynamicsCrmValueGenerationStrategy?));
+        private DynamicsCrmValueGenerationStrategy? GetValueGenerationStrategy(IProperty property)
+        {
+            return property.DynamicsCrm().ValueGenerationStrategy
+            ?? property.EntityType.Model.DynamicsCrm().ValueGenerationStrategy
+            ?? (property.GenerateValueOnAdd && property.PropertyType.IsInteger() && property.IsPrimaryKey()
+                ? DynamicsCrmValueGenerationStrategy.Identity
+                : default(DynamicsCrmValueGenerationStrategy?));
+            
         }
-        
-          
+           
 
         #endregion
 
@@ -278,7 +208,8 @@ namespace CrmAdo.EntityFramework.Migrations
                 operations.Add(createIndexOperation);
             }
 
-            if (createIndexOperation != null && target.DynamicsCrm().IsClustered != null)
+            if (createIndexOperation != null
+                && target.DynamicsCrm().IsClustered != null)
             {
                 createIndexOperation[DynamicsCrmAnnotationNames.Prefix + DynamicsCrmAnnotationNames.Clustered] =
                     target.DynamicsCrm().IsClustered.ToString();

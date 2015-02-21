@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
-using CrmAdo.EntityFramework.Utils;
 
-namespace CrmAdo.EntityFramework
+namespace Microsoft.Data.Entity.DynamicsCrm
 {
 
     public class DynamicsCrmTypeMapper : RelationalTypeMapper

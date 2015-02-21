@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CrmAdo.EntityFramework.Metadata
+namespace Microsoft.Data.Entity.DynamicsCrm.Metadata
 {
 
     public class DynamicsCrmKeyExtensions : ReadOnlyDynamicsCrmKeyExtensions

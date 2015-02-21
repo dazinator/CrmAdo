@@ -3,7 +3,7 @@ using Microsoft.Data.Entity.Infrastructure;
 using Microsoft.Data.Entity.Storage;
 using Microsoft.Data.Entity;
 
-namespace CrmAdo.EntityFramework
+namespace Microsoft.Data.Entity.DynamicsCrm
 {
 
     public class DynamicsCrmDataStoreSource : DataStoreSource<DynamicsCrmDataStoreServices, DynamicsCrmOptionsExtension>

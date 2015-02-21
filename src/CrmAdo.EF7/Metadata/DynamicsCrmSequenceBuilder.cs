@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.Entity;
 
-namespace CrmAdo.EntityFramework.Metadata
+namespace Microsoft.Data.Entity.DynamicsCrm.Metadata
 {
     public class DynamicsCrmSequenceBuilder
     {

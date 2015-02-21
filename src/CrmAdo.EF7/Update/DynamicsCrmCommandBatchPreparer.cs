@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CrmAdo.EntityFramework.Update
+namespace Microsoft.Data.Entity.DynamicsCrm.Update
 {
     
         public class DynamicsCrmCommandBatchPreparer : CommandBatchPreparer

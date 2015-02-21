@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Framework.Runtime.Interfaces</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Framework.Runtime.CompilationMessageSeverity">
+            <summary>
+            Specifies the severity of a <see cref="T:Microsoft.Framework.Runtime.ICompilationMessage"/>.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Framework.Runtime.ICompilationException">
+            <summary>
+            Specifies the contract for an exception representing compilation failure.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Framework.Runtime.ICompilationException.CompilationFailures">
+            <summary>
+            Gets a sequence of <see cref="T:Microsoft.Framework.Runtime.ICompilationFailure"/> with compilation failures.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Framework.Runtime.ICompilationFailure">
+            <summary>
+            Specifies the contract for a file that fails compilation.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Framework.Runtime.ICompilationFailure.SourceFilePath">
+            <summary>
+            Path of the file that produced the compilation exception.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Framework.Runtime.ICompilationFailure.SourceFileContent">
+            <summary>
+            Contents of the file.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Framework.Runtime.ICompilationFailure.CompiledContent">
+            <summary>
+            Contents being compiled.
+            </summary>
+            <remarks>
+            For templated files, the <see cref="P:Microsoft.Framework.Runtime.ICompilationFailure.SourceFileContent"/> represents the original content and
+            <see cref="P:Microsoft.Framework.Runtime.ICompilationFailure.CompiledContent"/> represents the transformed content. This property can be null if
+            the exception is encountered during transformation.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.Framework.Runtime.ICompilationFailure.Messages">
+            <summary>
+            Gets a sequence of <see cref="T:Microsoft.Framework.Runtime.ICompilationMessage"/> produced as a result of compilation.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Framework.Runtime.ICompilationMessage">
+            <summary>
+            Specifies the contract for diagnostic messages produced as result of compiling an instance
+            of <see cref="T:Microsoft.Framework.Runtime.ICompilationFailure"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Framework.Runtime.ICompilationMessage.SourceFilePath">
+            <summary>
+            Path of the file that produced the compilation message.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Framework.Runtime.ICompilationMessage.Message">
+            <summary>
+            Gets the error message.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Framework.Runtime.ICompilationMessage.FormattedMessage">
+            <summary>
+            Gets the formatted error message.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Framework.Runtime.ICompilationMessage.Severity">
+            <summary>
+            Gets the <see cref="T:Microsoft.Framework.Runtime.CompilationMessageSeverity"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Framework.Runtime.ICompilationMessage.StartLine">
+            <summary>
+            Gets the zero-based line index for the start of the compilation error.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Framework.Runtime.ICompilationMessage.StartColumn">
+            <summary>
+            Gets the zero-based column index for the start of the compilation error.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Framework.Runtime.ICompilationMessage.EndLine">
+            <summary>
+            Gets the zero-based line index for the end of the compilation error.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Framework.Runtime.ICompilationMessage.EndColumn">
+            <summary>
+            Gets the zero-based column index for the end of the compilation error.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Framework.Runtime.ICompilerOptionsProvider">
+            <summary>
+            Specifies the contracts for a type that provides the <see cref="T:Microsoft.Framework.Runtime.ICompilerOptions"/> for
+            a <c>project.json</c> file.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Framework.Runtime.ICompilerOptionsProvider.GetCompilerOptions(System.String,System.Runtime.Versioning.FrameworkName,System.String)">
+            <summary>
+            Returns the parsed <see cref="T:Microsoft.Framework.Runtime.ICompilerOptions"/> for a project file specified by
+            <paramref name="projectName"/>.
+            </summary>
+            <param name="projectName">Name or path of the project to read compilation settings from.</param>
+            <param name="targetFramework">The <see cref="T:System.Runtime.Versioning.FrameworkName"/> to read framework-specific options from.
+            When non-null, options for the specified framework are merged in to the result.</param>
+            <param name="configurationName">The configuration to read configuration-specific options from.
+            When non-null, options for the specified configuration are merged in to the result.</param>
+            <returns>The parsed <see cref="T:Microsoft.Framework.Runtime.ICompilerOptions"/>.</returns>
+        </member>
+    </members>
+</doc>

@@ -10,15 +10,16 @@ using Microsoft.Data.Entity.Relational;
 using Microsoft.Data.Entity.Infrastructure;
 using Microsoft.Data.Entity.Metadata;
 using Microsoft.Framework.Logging;
-using CrmAdo.EntityFramework.Update;
 using Microsoft.Data.Entity.Relational.Query;
 using Microsoft.Data.Entity.Query;
 using Microsoft.Data.Entity.Relational.Query.Methods;
-using Remotion.Linq;
-using CrmAdo.EntityFramework.Query;
+using Microsoft.Data.Entity.ChangeTracking.Internal;
+using Microsoft.Data.Entity.DynamicsCrm.Update;
+using Microsoft.Data.Entity.DynamicsCrm.Query;
 
-namespace CrmAdo.EntityFramework
+namespace Microsoft.Data.Entity.DynamicsCrm
 {
+
     public class DynamicsCrmDataStore : RelationalDataStore
     {
         /// <summary>
@@ -31,32 +32,29 @@ namespace CrmAdo.EntityFramework
         }
 
         public DynamicsCrmDataStore(
-            StateManager stateManager,
-            DbContextService<IModel> model,
-            EntityKeyFactorySource entityKeyFactorySource,
-            EntityMaterializerSource entityMaterializerSource,
-            ClrCollectionAccessorSource collectionAccessorSource,
-            ClrPropertySetterSource propertySetterSource,
-            DynamicsCrmConnection connection,
-            DynamicsCrmCommandBatchPreparer batchPreparer,
-            DynamicsCrmBatchExecutor batchExecutor,
-            DbContextService<IDbContextOptions> options,
-            ILoggerFactory loggerFactory,
-             ICompiledQueryCache compiledQueryCache)
+           StateManager stateManager,
+           DbContextService<IModel> model,
+           EntityKeyFactorySource entityKeyFactorySource,
+           EntityMaterializerSource entityMaterializerSource,
+           ClrCollectionAccessorSource collectionAccessorSource,
+           ClrPropertySetterSource propertySetterSource,
+           DynamicsCrmConnection connection,
+           DynamicsCrmCommandBatchPreparer batchPreparer,
+           DynamicsCrmBatchExecutor batchExecutor,
+           DbContextService<IDbContextOptions> options,
+           ILoggerFactory loggerFactory)
             : base(
-              // Check.NotNull(stateManager, "stateManager"),
-              // Check.NotNull(model, "model"),
-              // Check.NotNull(entityKeyFactorySource, "entityKeyFactorySource"),
-              // Check.NotNull(entityMaterializerSource, "entityMaterializerSource"),
-              // Check.NotNull(collectionAccessorSource, "collectionAccessorSource"),
-              // Check.NotNull(propertySetterSource, "propertySetterSource"),
-              // Check.NotNull(connection, "connection"),
-              // Check.NotNull(batchPreparer, "batchPreparer"),
-              // Check.NotNull(batchExecutor, "batchExecutor"),
-              // Check.NotNull(options, "options"),
-              // Check.NotNull(loggerFactory, "loggerFactory"),
-              // Check.NotNull(compiledQueryCache, "compiledQueryCache")
-            )
+             stateManager,
+             model,
+             entityKeyFactorySource,
+             entityMaterializerSource,
+             collectionAccessorSource,
+             propertySetterSource,
+             connection,
+             batchPreparer,
+             batchExecutor,
+             options,
+             loggerFactory)
         {
         }
 
@@ -67,7 +65,12 @@ namespace CrmAdo.EntityFramework
                 return new RelationalObjectArrayValueReaderFactory();
             }
         }
-      //  protected override RelationalValueReaderFactory ValueReaderFactory => 
+
+        //protected override RelationalValueReaderFactory ValueReaderFactory()
+        //{
+            
+        //}
+
 
         protected override RelationalQueryCompilationContext CreateQueryCompilationContext(
             ILinqOperatorProvider linqOperatorProvider,
@@ -75,10 +78,10 @@ namespace CrmAdo.EntityFramework
             IQueryMethodProvider enumerableMethodProvider,
             IMethodCallTranslator methodCallTranslator)
         {
-           // Check.NotNull(linqOperatorProvider, "linqOperatorProvider");
-           // Check.NotNull(resultOperatorHandler, "resultOperatorHandler");
-           // Check.NotNull(enumerableMethodProvider, "enumerableMethodProvider");
-           // Check.NotNull(methodCallTranslator, "methodCallTranslator");
+            // Check.NotNull(linqOperatorProvider, nameof(linqOperatorProvider));
+            // Check.NotNull(resultOperatorHandler, nameof(resultOperatorHandler));
+            // Check.NotNull(enumerableMethodProvider, nameof(enumerableMethodProvider));
+            // Check.NotNull(methodCallTranslator, nameof(methodCallTranslator));
 
             return new DynamicsCrmQueryCompilationContext(
                 Model,
@@ -86,10 +89,11 @@ namespace CrmAdo.EntityFramework
                 linqOperatorProvider,
                 resultOperatorHandler,
                 EntityMaterializerSource,
+                EntityKeyFactorySource,
                 enumerableMethodProvider,
                 methodCallTranslator);
         }
     }
 
-   
+
 }

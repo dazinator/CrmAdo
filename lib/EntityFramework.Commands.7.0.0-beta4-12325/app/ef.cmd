@@ -1,0 +1,1 @@
+@klr --appbase "%~dp0." Microsoft.Framework.ApplicationHost ef %*

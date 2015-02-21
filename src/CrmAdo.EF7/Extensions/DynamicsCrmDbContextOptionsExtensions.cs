@@ -2,8 +2,8 @@
 using JetBrains.Annotations;
 using Microsoft.Data.Entity.Infrastructure;
 using Microsoft.Data.Entity.Utilities;
-using CrmAdo.EntityFramework.Extensions;
 using CrmAdo.EntityFramework;
+using Microsoft.Data.Entity.DynamicsCrm;
 
 // ReSharper disable once CheckNamespace
 

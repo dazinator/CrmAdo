@@ -1,0 +1,41 @@
+{
+  "version": "7.0.0-*",
+  "description": "Command line utilities for Entity Framework.",
+  "compilationOptions": {
+    "warningsAsErrors": true
+  },
+  "dependencies": {
+    "EntityFramework.Commands": "7.0.0-beta4-12325"
+  },
+  "code": [
+    "**\\*.cs",
+    "..\\Shared\\*.cs"
+  ],
+  "exclude": "tools\\Handlers.cs",
+  "frameworks": {
+    "net451": {},
+    "aspnet50": {
+      "dependencies": {
+        "Microsoft.AspNet.Hosting": "1.0.0-*",
+        "Microsoft.Framework.CommandLineUtils": {
+          "version": "1.0.0-*",
+          "type": "build"
+        }
+      }
+    },
+    "aspnetcore50": {
+      "dependencies": {
+        "Microsoft.AspNet.Hosting": "1.0.0-*",
+        "Microsoft.Framework.CommandLineUtils": {
+          "version": "1.0.0-*",
+          "type": "build"
+        }
+      }
+    }
+  },
+  "commands": {
+    "ef": "EntityFramework.Commands"
+  },
+  "entryPoint": "EntityFramework.Commands",
+  "loadable": false
+}

@@ -1,12 +1,11 @@
-﻿using CrmAdo.EntityFramework.Metadata;
-using Microsoft.Data.Entity.Metadata;
+﻿using Microsoft.Data.Entity.Metadata;
 using Microsoft.Data.Entity.Relational.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CrmAdo.EntityFramework
+namespace Microsoft.Data.Entity.DynamicsCrm.Metadata
 {
 
     public class ReadOnlyDynamicsCrmModelExtensions : ReadOnlyRelationalModelExtensions, IDynamicsCrmModelExtensions

@@ -9,9 +9,10 @@ using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Metadata;
 using Microsoft.Data.Entity.Relational.Metadata;
 
-namespace CrmAdo.EntityFramework.Update
-{
-  
+namespace Microsoft.Data.Entity.DynamicsCrm.Update
+{ 
+       
+
         public class DynamicsCrmModificationCommandBatch : ReaderModificationCommandBatch
         {
             private const int DefaultNetworkPacketSizeBytes = 4096;
@@ -136,7 +137,8 @@ namespace CrmAdo.EntityFramework.Update
                 if (newModificationCommand.EntityState == EntityState.Added)
                 {
                     if (_bulkInsertCommands.Count > 0
-                        && _bulkInsertCommands[0].SchemaQualifiedName != newModificationCommand.SchemaQualifiedName)
+                        && !(string.Equals(_bulkInsertCommands[0].TableName, newModificationCommand.TableName)
+                                && string.Equals(_bulkInsertCommands[0].SchemaName, newModificationCommand.SchemaName)))
                     {
                         CachedCommandText.Append(GetBulkInsertCommandText(commandPosition));
                         _bulkInsertCommands.Clear();
@@ -156,7 +158,7 @@ namespace CrmAdo.EntityFramework.Update
 
             public override IRelationalPropertyExtensions GetPropertyExtensions(IProperty property)
             {
-                //Check.NotNull(property, "property");
+              //  Check.NotNull(property, nameof(property));
 
                 return property.DynamicsCrm();
             }

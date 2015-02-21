@@ -1,70 +1,80 @@
-﻿using Microsoft.Data.Entity.Identity;
-using Microsoft.Data.Entity.Metadata;
+﻿using Microsoft.Data.Entity.Metadata;
 using Microsoft.Data.Entity.Relational;
 using Microsoft.Data.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Data.Entity.DynamicsCrm;
+using Microsoft.Data.Entity.ValueGeneration;
 
-namespace CrmAdo.EntityFramework
-{    
-        public class DynamicsCrmSequenceValueGeneratorFactory : IValueGeneratorFactory
+namespace Microsoft.Data.Entity.DynamicsCrm
+{           
+        public class DynamicsCrmSequenceValueGeneratorFactory
         {
             private readonly SqlStatementExecutor _executor;
 
             public DynamicsCrmSequenceValueGeneratorFactory(SqlStatementExecutor executor)
             {
-               // Check.NotNull(executor, "executor");
+               // Check.NotNull(executor, nameof(executor));
 
                 _executor = executor;
             }
 
-            public virtual int GetBlockSize(IProperty property)
+            public virtual ValueGenerator Create(
+                IProperty property,
+                DynamicsCrmSequenceValueGeneratorState generatorState,
+                DynamicsCrmConnection connection)
             {
-              //  Check.NotNull(property, "property");
+               // Check.NotNull(property, nameof(property));
+               // Check.NotNull(generatorState, nameof(generatorState));
+               // Check.NotNull(connection, nameof(connection));
 
-                var incrementBy = property.DynamicsCrm().TryGetSequence().IncrementBy;
-
-                if (incrementBy <= 0)
+                if (property.PropertyType.UnwrapNullableType() == typeof(long))
                 {
-                    throw new NotSupportedException(Strings.SequenceBadBlockSize(incrementBy, GetSequenceName(property)));
+                    return new DynamicsCrmSequenceValueGenerator<long>(_executor, generatorState, connection);
                 }
 
-                return incrementBy;
-            }
+                if (property.PropertyType.UnwrapNullableType() == typeof(int))
+                {
+                    return new DynamicsCrmSequenceValueGenerator<int>(_executor, generatorState, connection);
+                }
 
-            public virtual string GetSequenceName(IProperty property)
-            {
-              //  Check.NotNull(property, "property");
+                if (property.PropertyType.UnwrapNullableType() == typeof(short))
+                {
+                    return new DynamicsCrmSequenceValueGenerator<short>(_executor, generatorState, connection);
+                }
 
-                var sequence = property.DynamicsCrm().TryGetSequence();
+                if (property.PropertyType.UnwrapNullableType() == typeof(byte))
+                {
+                    return new DynamicsCrmSequenceValueGenerator<byte>(_executor, generatorState, connection);
+                }
 
-                return (sequence.Schema == null ? "" : (sequence.Schema + ".")) + sequence.Name;
-            }
+                if (property.PropertyType.UnwrapNullableType() == typeof(ulong))
+                {
+                    return new DynamicsCrmSequenceValueGenerator<ulong>(_executor, generatorState, connection);
+                }
 
-            public virtual IValueGenerator Create(IProperty property)
-            {
-               // Check.NotNull(property, "property");
+                if (property.PropertyType.UnwrapNullableType() == typeof(uint))
+                {
+                    return new DynamicsCrmSequenceValueGenerator<uint>(_executor, generatorState, connection);
+                }
 
-                return new DynamicsCrmSequenceValueGenerator(_executor, GetSequenceName(property), GetBlockSize(property));
-            }
+                if (property.PropertyType.UnwrapNullableType() == typeof(ushort))
+                {
+                    return new DynamicsCrmSequenceValueGenerator<ushort>(_executor, generatorState, connection);
+                }
 
-            public virtual int GetPoolSize(IProperty property)
-            {
-               // Check.NotNull(property, "property");
+                if (property.PropertyType.UnwrapNullableType() == typeof(sbyte))
+                {
+                    return new DynamicsCrmSequenceValueGenerator<sbyte>(_executor, generatorState, connection);
+                }
 
-                // TODO: Allow configuration without creation of derived factory type
-                // Issue #778
-                return 5;
-            }
-
-            public virtual string GetCacheKey(IProperty property)
-            {
-               // Check.NotNull(property, "property");
-
-                return GetSequenceName(property);
+                throw new ArgumentException("DynamicsCrmSequenceValueGeneratorFactory");
+                //Strings.InvalidValueGeneratorFactoryProperty(
+                //    "DynamicsCrmSequenceValueGeneratorFactory", property.Name, property.EntityType.SimpleName));
             }
         }
+
   
 }
