@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics;
 
 namespace CrmAdo
 {
@@ -92,12 +93,23 @@ namespace CrmAdo
             set
             {
                 _Value = value;
-                _DbType = _inferType(value);
+                if (_Value != null)
+                {
+                    _DbType = _inferType(value);
+                }
+                else
+                {
+                    ResetDbType();
+                }
+
             }
         }
 
         private DbType _inferType(Object value)
         {
+
+            Debug.Assert(value != null);
+
             var type = value.GetType();
             switch (Type.GetTypeCode(type))
             {
@@ -153,8 +165,8 @@ namespace CrmAdo
                 //    throw new SystemException("Invalid data type");
 
                 default:
-                    return DbType.String;   
-                   // throw new SystemException("Value is of unknown data type");
+                    return DbType.String;
+                // throw new SystemException("Value is of unknown data type");
             }
         }
 

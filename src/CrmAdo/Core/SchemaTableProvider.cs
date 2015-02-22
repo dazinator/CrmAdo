@@ -65,10 +65,6 @@ namespace CrmAdo.Core
             //  table.Columns.Add(new DataColumn(SchemaTableColumn.ProviderType, typeof(int)));  
 
 
-
-
-
-
             int ordinal = 0;
             foreach (var columnMetadata in columns)
             {
@@ -107,7 +103,7 @@ namespace CrmAdo.Core
 
                 row["IsIdentity"] = isPrimaryId;
 
-                row[SchemaTableColumn.IsKey] = false; //for multi part keys // columnMetadata.AttributeMetadata.IsPrimaryId;
+                row[SchemaTableColumn.IsKey] = isPrimaryId; // false; //for multi part keys // columnMetadata.AttributeMetadata.IsPrimaryId;
                 row[SchemaTableColumn.IsLong] = false;
                 row[SchemaTableOptionalColumn.IsReadOnly] = !columnMetadata.AttributeMetadata.IsValidForUpdate.GetValueOrDefault() && !columnMetadata.AttributeMetadata.IsValidForCreate.GetValueOrDefault();
                 row[SchemaTableOptionalColumn.IsRowVersion] = false; //columnMetadata.AttributeMetadata.LogicalName == "versionnumber";
@@ -142,13 +138,8 @@ namespace CrmAdo.Core
                 row["UdtAssemblyQualifiedName"] = null;
                 row["XmlSchemaCollectionDatabase"] = null;
                 row["XmlSchemaCollectionName"] = null;
-                row["XmlSchemaCollectionOwningSchema"] = null;
+                row["XmlSchemaCollectionOwningSchema"] = null;                   
 
-                // some other optional columns..
-
-                // row[SchemaTableOptionalColumn.IsRowVersion] = false;
-                // row[SchemaTableOptionalColumn.IsHidden] = false;
-                // could possibly add a column with correct datatype etc..
 
                 ordinal++;
             }

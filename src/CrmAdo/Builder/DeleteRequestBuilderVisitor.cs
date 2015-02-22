@@ -64,22 +64,22 @@ namespace CrmAdo.Visitor
             }
             if (whereCount != 1)
             {
-                throw new ArgumentException("The update statement should have a single filter in the where clause, which should specify the entity id of the record to be updated.");
+                throw new ArgumentException("The delete statement should have a single filter in the where clause, which should specify the entity id of the record to be deleted.");
             }
             if (EqualToFilter == null)
             {
-                throw new NotSupportedException("The update statement has an unsupported filter in it's where clause. The where clause should contain a single 'equal to' filter that specifies the entity id of the particular record to update.");
+                throw new NotSupportedException("The delete statement has an unsupported filter in it's where clause. The where clause should contain a single 'equal to' filter that specifies the entity id of the particular record to delete.");
             }
             if (IdFilterColumn == null)
             {
-                throw new NotSupportedException("The update statement has an unsupported filter in it's where clause. The'equal to' filter should specify the entity id column on one side.");
+                throw new NotSupportedException("The delete statement has an unsupported filter in it's where clause. The'equal to' filter should specify the entity id column on one side.");
             }
             var idAttName = IdFilterColumn.GetColumnLogicalAttributeName();
 
             var expectedIdAttributeName = string.Format("{0}id", EntityName.ToLower());
             if (idAttName != expectedIdAttributeName)
             {
-                throw new NotSupportedException("The update statement has an unsupported filter in it's where clause. The'equal to' filter should specify the id column of the entity on one side.");
+                throw new NotSupportedException("The delete statement has an unsupported filter in it's where clause. The'equal to' filter should specify the id column of the entity on one side.");
             }
 
             EntityReference entRef = new EntityReference();
@@ -166,6 +166,14 @@ namespace CrmAdo.Visitor
 
         }
 
+        protected override void VisitFilterGroup(FilterGroup item)
+        {
+            foreach (var filter in item.Filters)
+            {
+                filter.Accept(this);
+            }           
+        }
+
         #endregion
 
         private void GuardDeleteBuilder(DeleteBuilder builder)
@@ -176,7 +184,7 @@ namespace CrmAdo.Visitor
             }
             if (builder.Table == null)
             {
-                throw new ArgumentException("The update statement must specify a single table name to update (this is the logical name of the entity).");
+                throw new ArgumentException("The delete statement must specify a single table name to update (this is the logical name of the entity).");
             }
         }
 

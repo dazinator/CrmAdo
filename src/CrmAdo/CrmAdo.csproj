@@ -223,7 +223,6 @@
     <Compile Include="Metadata\MoneyAttributeInfo.cs" />
     <Compile Include="Dynamics\EntityMetadataDataSet.cs">
       <DependentUpon>EntityMetadataDataSet.xsd</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Dynamics\EntityMetadataDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -325,7 +324,7 @@
     <SnExecutable>"$(ProjectDir)..\..\lib\sn\sn.exe"</SnExecutable>
     <!--<SnExecutable>"G:\Program Files\Microsoft SDKs\Windows\v7.0\Bin\sn.exe"</SnExecutable>-->
     <PublicKeyFile>"$(ProjectDir)Key.snk"</PublicKeyFile>
-    <PfxKeyContainerName>VS_ABAB1234ABAB1234</PfxKeyContainerName>
+    <PfxKeyContainerName>VS_KEY_ABAB1234ABAB1234</PfxKeyContainerName>
     <PasswordProtectedeyFile>"$(ProjectDir)Key.pfx"</PasswordProtectedeyFile>
     <!--<OutputMergedFileDir>$(ProjectDir)$(OutputPath)merged\</OutputMergedFileDir>-->
   </PropertyGroup>
