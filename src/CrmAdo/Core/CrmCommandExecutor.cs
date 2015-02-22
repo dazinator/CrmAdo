@@ -457,30 +457,7 @@ namespace CrmAdo.Core
         {
             var resultSet = new EntityResultSet(command.DbCommand, command.Request, command.Columns);
             return resultSet;
-        }
-
-        //[Obsolete]
-        //private void AddResultColumnMetadata(IOrgCommand orgCommand, EntityResultSet results, string entityName, string[] attributeNames)
-        //{
-        //    var metadataProvider = orgCommand.DbCommand.CrmDbConnection.MetadataProvider;
-        //    if (metadataProvider != null)
-        //    {
-        //        if (results.HasResults())
-        //        {
-        //            if (results.ColumnMetadata == null)
-        //            {
-        //                results.ColumnMetadata = new List<ColumnMetadata>(); ;
-        //            }
-
-        //            var entityMeta = metadataProvider.GetEntityMetadata(entityName);
-        //            results.ColumnMetadata.AddRange(
-        //                (from c in attributeNames
-        //                 join s in entityMeta.Attributes
-        //                 on c equals s.LogicalName
-        //                 select new ColumnMetadata(s)));
-        //        }
-        //    }
-        //}
+        }        
 
         #endregion
 

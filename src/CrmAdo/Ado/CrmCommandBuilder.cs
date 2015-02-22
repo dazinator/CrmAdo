@@ -9,15 +9,19 @@ using System.Threading.Tasks;
 namespace CrmAdo
 {
     public class CrmCommandBuilder : DbCommandBuilder
-    {
+    {       
         public override ConflictOption ConflictOption
         {
             get
             {
-                return ConflictOption.CompareRowVersion;
+                return base.ConflictOption;
             }
             set
             {
+                if (value != System.Data.ConflictOption.OverwriteChanges)
+                {
+                    throw new NotSupportedException("Due to current limitations with Dynamics CRM, the only conflict option currently supported is OverwriteChanges.");
+                }
                 base.ConflictOption = value;
             }
         }
@@ -41,6 +45,7 @@ namespace CrmAdo
         {
             base.QuotePrefix = "[";
             base.QuoteSuffix = "]";
+            this.ConflictOption = System.Data.ConflictOption.OverwriteChanges;
         }
 
         public CrmCommandBuilder(CrmDataAdapter dataAdapter)

@@ -46,7 +46,7 @@ namespace CrmAdo.Tests
     //Arg<User>.Matches(new UserConstraint(expectedUser));
 
 
-    
+
 
     [Category("ADO")]
     [Category("DataAdapter")]
@@ -81,9 +81,9 @@ namespace CrmAdo.Tests
 
         [Test]
         public void Should_Be_Able_To_Fill_DataSet()
-        {               
+        {
 
-             // Arrange
+            // Arrange
             using (var sandbox = ConnectionTestsSandbox.Create())
             {
 
@@ -127,9 +127,9 @@ namespace CrmAdo.Tests
                 var table = ds.Tables[0];
                 Assert.That(table.Rows.Count, NUnit.Framework.Is.EqualTo(resultCount));
 
-            }          
+            }
 
-           
+
 
         }
 
@@ -137,11 +137,11 @@ namespace CrmAdo.Tests
         public void Should_Be_Able_To_Fill_DataTable()
         {
 
-             // Arrange
+            // Arrange
             using (var sandbox = ConnectionTestsSandbox.Create())
             {
 
-                var dbConnection =  sandbox.Container.Resolve<CrmDbConnection>();
+                var dbConnection = sandbox.Container.Resolve<CrmDbConnection>();
                 var selectCommand = new CrmDbCommand(dbConnection);
                 selectCommand.CommandText = "SELECT * FROM contact";
 
@@ -177,14 +177,14 @@ namespace CrmAdo.Tests
 
             }
 
-           
+
 
         }
 
         [Test]
         public void Should_Be_Able_To_Fill_DataSet_Schema_Only()
         {
-             // Arrange
+            // Arrange
             using (var sandbox = ConnectionTestsSandbox.Create())
             {
 
@@ -232,7 +232,7 @@ namespace CrmAdo.Tests
 
             }
 
-         
+
 
         }
 
@@ -240,7 +240,7 @@ namespace CrmAdo.Tests
         public void Should_Be_Able_To_Fill_DataTable_Schema_Only()
         {
 
-             // Arrange
+            // Arrange
             using (var sandbox = ConnectionTestsSandbox.Create())
             {
 
@@ -283,7 +283,7 @@ namespace CrmAdo.Tests
 
             }
 
-         
+
 
         }
 
@@ -296,7 +296,7 @@ namespace CrmAdo.Tests
         public void Should_Be_Able_To_Update_DataSet_Containing_An_Insert_An_Update_And_A_Delete()
         {
 
-              // Arrange
+            // Arrange
             using (var sandbox = ConnectionTestsSandbox.Create())
             {
 
@@ -489,7 +489,186 @@ namespace CrmAdo.Tests
 
             }
 
-          
+
+
+
+
+        }
+
+
+        /// <summary>
+        /// Fills a dataset with fake data, then adds a row, modifies a row and deleted a row. Verifies that when the DataAdapter.Update()
+        /// method is called, that the appropriate Crm Organisation Service requests are issues (Create Request, Update Request and Delete Request)
+        /// to make the changes in the underlying data source (Crm). This test, test the CommandBuilder which is used to generate the Insert / Update / Delete commands
+        /// for the adapter.
+        /// </summary>
+        [Category("CommandBuilder")]
+        [Test]
+        public void Should_Be_Able_To_Update_DataSet_Containing_An_Insert_An_Update_And_A_Delete_Using_Command_Builder()
+        {
+
+            // Arrange
+            using (var sandbox = ConnectionTestsSandbox.Create())
+            {
+
+                var dbConnection = sandbox.Container.Resolve<CrmDbConnection>();
+                var selectCommand = new CrmDbCommand(dbConnection);
+                selectCommand.CommandText = "SELECT contactid, firstname, lastname FROM contact";
+
+                // Create a dataset, fill with schema.
+                var ds = new DataSet();
+                var subject = ResolveTestSubjectInstance();
+                subject.SelectCommand = selectCommand;
+
+                // Use command builder to generate automatically the update / delete / insert commands.
+                using (var commandBuilder = new CrmCommandBuilder(subject))
+                {
+                    var result = subject.FillSchema(ds, SchemaType.Source);
+
+
+                    // Fill the dataset with 100 contact entities from the data source.
+                    int resultCount = 100;
+                    var entityDataGenerator = new EntityDataGenerator();
+                    IList<Entity> fakeContactsData = entityDataGenerator.GenerateFakeEntities("contact", resultCount);
+
+                    // This is the fake reponse that the org service will return when its requested to get the data.
+                    var retrieveResponse = new RetrieveMultipleResponse
+                    {
+                        Results = new ParameterCollection
+ {
+ { "EntityCollection", new EntityCollection(fakeContactsData){EntityName = "contact"} }
+ }
+                    };
+
+                    // Setup fake org service to return fake response.
+                    sandbox.FakeOrgService.Stub(f => f.Execute(Arg<OrganizationRequest>.Matches(new OrganizationRequestMessageConstraint<RetrieveMultipleRequest>())))
+                        .WhenCalled(x =>
+                        {
+                            var request = ((RetrieveMultipleRequest)x.Arguments[0]);
+                        }).Return(retrieveResponse);
+
+                    subject.Fill(ds);
+
+                    // Now add a new contact, update an existing contact, and delete an existing contact.
+                    var newContact = entityDataGenerator.GenerateFakeEntities("contact", 1)[0];
+                    var contactDataTable = ds.Tables[0];
+
+                    var firstNameCol = contactDataTable.Columns["firstname"];
+                    var lastnameCol = contactDataTable.Columns["lastname"];
+                    var contactidcol = contactDataTable.Columns["contactid"];
+
+                    var newRow = contactDataTable.NewRow();
+
+                    newRow.SetField(firstNameCol, newContact["firstname"]);
+                    newRow.SetField(lastnameCol, newContact["lastname"]);
+                    newRow.SetField(contactidcol, newContact.Id);
+
+                    contactDataTable.Rows.Add(newRow);
+
+                    // update existing contact.
+                    var modifiedRow = contactDataTable.Rows[50];
+
+                    var updatedFirstName = "Jessie";
+                    var updatedLastName = "James";
+                    modifiedRow.SetField(firstNameCol, updatedFirstName);
+                    modifiedRow.SetField(lastnameCol, updatedLastName);
+
+                    // Delete existing contact
+                    var deleteRow = contactDataTable.Rows[99];
+                    var deleteContactId = (Guid)deleteRow[contactidcol];
+                    deleteRow.Delete();
+
+                    // When we call update on the dataset we need to verify that the org service is sent
+                    // an appropriate Create / Updated and Delete Request.
+                    var createResponse = new CreateResponse
+                    {
+                        Results = new ParameterCollection 
+                {
+                     { "id", newContact.Id }
+                }
+                    };
+
+                    // Setup fake org service create response.
+                    CreateRequest capturedCreateRequest = null;
+
+                    sandbox.FakeOrgService.Stub(f => f.Execute(Arg<OrganizationRequest>.Matches(new OrganizationRequestMessageConstraint<CreateRequest>())))
+                        .WhenCalled(x =>
+                        {
+                            var request = ((CreateRequest)x.Arguments[0]);
+                            capturedCreateRequest = request;
+
+                        }).Return(createResponse);
+
+
+                    // Setup fake org service update response.
+                    var updateResponse = new UpdateResponse
+                    {
+                        Results = new ParameterCollection()
+                        {
+                        }
+                    };
+
+                    UpdateRequest capturedUpdateRequest = null;
+
+                    sandbox.FakeOrgService.Stub(f => f.Execute(Arg<OrganizationRequest>.Matches(new OrganizationRequestMessageConstraint<UpdateRequest>())))
+                        .WhenCalled(x =>
+                        {
+                            var request = ((UpdateRequest)x.Arguments[0]);
+                            capturedUpdateRequest = request;
+
+                        }).Return(updateResponse);
+
+                    // Setup fake org service delete response.
+                    var deleteResponse = new DeleteResponse
+                    {
+                        Results = new ParameterCollection()
+                        {
+                        }
+                    };
+
+
+                    DeleteRequest capturedDeleteRequest = null;
+                    sandbox.FakeOrgService.Stub(f => f.Execute(Arg<OrganizationRequest>.Matches(new OrganizationRequestMessageConstraint<DeleteRequest>())))
+                        .WhenCalled(x =>
+                        {
+                            var request = ((DeleteRequest)x.Arguments[0]);
+                            capturedDeleteRequest = request;
+
+                        }).Return(deleteResponse);
+
+
+                    var updateCommand = commandBuilder.GetUpdateCommand();
+                    Console.WriteLine(updateCommand.CommandText);
+
+                    // ACT
+                    subject.Update(ds);
+
+                    // ASSERT
+                    // A create request for the new row data should have been captured.
+                    // An update request for the modified row data should have been captured.
+                    // A delete request for the deleted row should have been captured.
+                    Assert.NotNull(capturedCreateRequest);
+                    Assert.NotNull(capturedUpdateRequest);
+                    Assert.NotNull(capturedDeleteRequest);
+
+                    var forCreate = capturedCreateRequest.Target;
+                    Assert.AreEqual(forCreate.Id, newContact.Id);
+                    Assert.AreEqual(forCreate["firstname"], newContact["firstname"]);
+                    Assert.AreEqual(forCreate["lastname"], newContact["lastname"]);
+
+                    var forUpdate = capturedUpdateRequest.Target;
+                    Assert.AreEqual(forUpdate.Id, modifiedRow[contactidcol]);
+                    Assert.AreEqual(forUpdate["firstname"], updatedFirstName);
+                    Assert.AreEqual(forUpdate["lastname"], updatedLastName);
+
+                    var forDelete = capturedDeleteRequest.Target;
+                    Assert.AreEqual(forDelete.Id, deleteContactId);
+
+                }
+
+            }
+
+
 
 
 

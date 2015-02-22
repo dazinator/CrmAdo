@@ -63,15 +63,15 @@ namespace CrmAdo.Visitor
             }
             if (whereCount != 1)
             {
-                throw new ArgumentException("The update statement should have a single filter in the where clause, which should specify the entity id of the record to be updated.");
+                throw new ArgumentException("The delete statement should have a single filter in the where clause, which should specify the entity id of the record to be deleted.");
             }
             if (EqualToFilter == null)
             {
-                throw new NotSupportedException("The update statement has an unsupported filter in it's where clause. The where clause should contain a single 'equal to' filter that specifies the entity id of the particular record to update.");
+                throw new NotSupportedException("The delete statement has an unsupported filter in it's where clause. The where clause should contain a single 'equal to' filter that specifies the entity id of the particular record to delete.");
             }
             if (IdFilterColumn == null)
             {
-                throw new NotSupportedException("The update statement has an unsupported filter in it's where clause. The'equal to' filter should specify the entity id column on one side.");
+                throw new NotSupportedException("The delete statement has an unsupported filter in it's where clause. The'equal to' filter should specify the entity id column on one side.");
             }
             var idAttName = IdFilterColumn.GetColumnLogicalAttributeName();
 
@@ -163,6 +163,14 @@ namespace CrmAdo.Visitor
                 throw new NotSupportedException();
             }
 
+        }
+
+        protected override void VisitFilterGroup(FilterGroup item)
+        {
+            foreach (var filter in item.Filters)
+            {
+                filter.Accept(this);
+            }           
         }
 
         #endregion

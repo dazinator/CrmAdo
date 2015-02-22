@@ -158,6 +158,7 @@
     <Compile Include="Support\GACWrap.cs" />
     <Compile Include="Support\RandomExtensions.cs" />
     <Compile Include="Sandbox\UnitTestSandboxContainer.cs" />
+    <Compile Include="Tests\AdoTests\CrmCommandBuilderBuilderTests.cs" />
     <Compile Include="Tests\AdoTests\CrmConnectionStringBuilderTests.cs" />
     <Compile Include="Tests\AdoTests\CrmDataAdapterTests.cs" />
     <Compile Include="Tests\CrmOrgCommandExecutorTests.cs" />

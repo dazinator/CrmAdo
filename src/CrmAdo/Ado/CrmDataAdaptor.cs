@@ -34,6 +34,15 @@ namespace CrmAdo
         {
         }
 
+        public CrmDataAdapter(string selectCommandText, CrmDbConnection connection)
+            : base()
+        {
+             // var dbprovider = DbProviderFactories.GetFactory(CrmAdoConstants.Invariant);
+              this.SelectCommand = new CrmDbCommand(connection, selectCommandText);
+              this.SelectCommand.CommandText = selectCommandText;
+              this.SelectCommand.Connection = connection;
+        }
+
         public CrmDataAdapter(CrmDbCommand selectCommand)
             : base()
         {

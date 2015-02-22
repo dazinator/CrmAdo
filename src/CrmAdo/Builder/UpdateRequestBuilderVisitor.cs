@@ -227,6 +227,15 @@ namespace CrmAdo.Visitor
             CurrentSetterColumn = null;
         }
 
+        protected override void VisitFilterGroup(FilterGroup item)
+        {
+            foreach (var filter in item.Filters)
+            {
+                filter.Accept(this);
+            }
+           // base.VisitFilterGroup(item);
+        }
+
         #endregion
 
         private void GuardUpdateBuilder(UpdateBuilder builder)
