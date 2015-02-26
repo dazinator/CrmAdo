@@ -144,6 +144,7 @@
     <Compile Include="Ado\CrmDataAdaptorRowUpdatedEventArgs.cs" />
     <Compile Include="Ado\CrmDataAdaptorRowUpdatingEventArgs.cs" />
     <Compile Include="Ado\CrmDbMetadataReader.cs" />
+    <Compile Include="Dynamics\CrmPublisherRepository.cs" />
     <Compile Include="Metadata\ColumnMetadata.cs" />
     <Compile Include="Core\IOrganisationCommandProvider.cs" />
     <Compile Include="Core\IOrgCommand.cs" />
@@ -318,13 +319,13 @@
     <PasswordProtectedeyFile>"$(ProjectDir)Key.pfx"</PasswordProtectedeyFile>
     <!--<OutputMergedFileDir>$(ProjectDir)$(OutputPath)merged\</OutputMergedFileDir>-->
   </PropertyGroup>
-  
   <!--<Target Name="CreateMergedOutputDir">
-    --><!--Ensure a folder is created for the output of ILMerge--><!--
+    -->
+  <!--Ensure a folder is created for the output of ILMerge-->
+  <!--
     <RemoveDir ContinueOnError="true" Directories="$(OutputMergedFileDir)"/>
     <MakeDir Directories="$(OutputMergedFileDir)"/>
   </Target>-->
-
   <Target Name="ILMerge" Inputs="@(IntermediateAssembly)" Outputs="@(MainAssembly -> '%(RelativeDir)%(Filename).ILMergeTrigger%(Extension)')">
     <!--Merge any dependencies with an ILMerge property = true into this assembly.-->
     <CreateItem Include="@(ReferencePath)" Condition="'%(ReferencePath.ILMerge)'=='True'">
@@ -336,6 +337,5 @@
     <!--Re-sign the assemly using pfx-->
     <Exec Command="$(SnExecutable) -Rca &quot;$(ProjectDir)@(MainAssembly)&quot; $(PfxKeyContainerName)" />
   </Target>
-
   <Import Project="../../lib/CreateSnkFile.1.0.1.1/tools/CreateSnkFile.targets" Condition="Exists('../../lib/CreateSnkFile.1.0.1.1/tools/CreateSnkFile.targets')" />
 </Project>
