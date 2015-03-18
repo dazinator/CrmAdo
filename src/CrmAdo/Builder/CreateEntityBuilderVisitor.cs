@@ -10,8 +10,9 @@ using System.Threading.Tasks;
 using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
-using CrmAdo.Core;
 using CrmAdo.Metadata;
+using CrmAdo.Operations;
+using CrmAdo.Core;
 
 namespace CrmAdo.Visitor
 {
@@ -328,6 +329,12 @@ namespace CrmAdo.Visitor
             }
             var param = Parameters[paramName];
             return param.Value;
+        }
+
+        public override ICrmOperation GetCommand()
+        {
+            var orgCommand = new CreateEntityOperation(ResultColumnMetadata, Request);
+            return orgCommand;
         }
 
     }

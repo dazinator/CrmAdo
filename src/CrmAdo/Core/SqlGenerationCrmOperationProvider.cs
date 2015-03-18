@@ -1,4 +1,5 @@
 ﻿using CrmAdo.Dynamics;
+using CrmAdo.Operations;
 using CrmAdo.Visitor;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace CrmAdo.Core
 {
-    public class SqlGenerationOrganizationCommandProvider : IOrganisationCommandProvider
+    public class SqlGenerationCrmOperationProvider : ICrmOperationProvider
     {
         //  private OrganizationRequestBuilderVisitor _BuilderVisitor;
 
@@ -20,13 +21,13 @@ namespace CrmAdo.Core
 
         public const string ParameterToken = "@";
 
-        public SqlGenerationOrganizationCommandProvider()
+        public SqlGenerationCrmOperationProvider()
             : this(new DynamicsAttributeTypeProvider())
         {
 
         }
 
-        public SqlGenerationOrganizationCommandProvider(IDynamicsAttributeTypeProvider dynamicsAttributeTypeProvider)
+        public SqlGenerationCrmOperationProvider(IDynamicsAttributeTypeProvider dynamicsAttributeTypeProvider)
         {
             if (dynamicsAttributeTypeProvider == null)
             {
@@ -35,10 +36,10 @@ namespace CrmAdo.Core
             _DynamicsAttributeTypeProvider = dynamicsAttributeTypeProvider;
         }
 
-        public IOrgCommand GetOrganisationCommand(CrmDbCommand command, CommandBehavior behavior)
+        public ICrmOperation GetOperation(CrmDbCommand command, CommandBehavior behavior)
         {
             bool schemaOnly = (behavior & CommandBehavior.SchemaOnly) > 0;
-            IOrgCommand result = null;
+            ICrmOperation result = null;
 
             switch (command.CommandType)
             {
@@ -46,10 +47,10 @@ namespace CrmAdo.Core
                     throw new System.NotImplementedException();
 
                 case CommandType.TableDirect:
-                    result = GetTableDirectCommand(command, behavior);
+                    result = GetOperationFromTableDirectCommand(command, behavior);
                     break;
                 case CommandType.Text:
-                    result = GetTextCommand(command, behavior);
+                    result = GetOperationFromTextCommand(command, behavior);
                     break;
                 default:
                     throw new System.NotImplementedException();
@@ -57,7 +58,7 @@ namespace CrmAdo.Core
             return result;
         }
 
-        private IOrgCommand GetTextCommand(CrmDbCommand command, CommandBehavior behavior)
+        private ICrmOperation GetOperationFromTextCommand(CrmDbCommand command, CommandBehavior behavior)
         {
             // We actually need to parse the SQL, and then build the appropriate organisation request.
 
@@ -98,15 +99,15 @@ namespace CrmAdo.Core
             return new OrganizationRequestBuilderVisitor(metaDataProvider, commandParams, _DynamicsAttributeTypeProvider);
         }
 
-        private IOrgCommand GetTableDirectCommand(CrmDbCommand command, CommandBehavior behavior)
+        private ICrmOperation GetOperationFromTableDirectCommand(CrmDbCommand command, CommandBehavior behavior)
         {
             // No need to parse the command text as SQL because table direct commands should just contain the table name.
             // Therefore just construct a command that will execute a retreive multiple for the entity name specified.
-            var result = new OrgCommand();
+            var request = GetRetrieveMultipleRequest(command, behavior);
+            var result = new SelectMultipleEntitiesOperation(null, request);
             result.CommandBehavior = behavior;
             result.DbCommand = command;
-            result.OperationType = Enums.CrmOperation.RetrieveMultiple;
-            result.Request = GetRetrieveMultipleRequest(command, behavior);
+            // result.OperationType = Enums.CrmOperation.RetrieveMultiple;
             return result;
         }
 
@@ -117,7 +118,6 @@ namespace CrmAdo.Core
             {
                 throw new ArgumentException("When CommandType is TableDirect, CommandText should be the name of an entity.");
             }
-
             var request = new RetrieveMultipleRequest()
             {
                 Query = new QueryExpression(entityName) { ColumnSet = new ColumnSet(true), PageInfo = new PagingInfo() { ReturnTotalRecordCount = true } }

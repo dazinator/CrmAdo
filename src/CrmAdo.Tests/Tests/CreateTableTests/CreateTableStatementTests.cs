@@ -9,6 +9,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 using NUnit.Framework;
 using Rhino.Mocks;
 using CrmAdo.Tests.Support;
+using CrmAdo.Core;
 
 namespace CrmAdo.Tests
 {
@@ -27,13 +28,13 @@ namespace CrmAdo.Tests
             // You cannot include any other columns in the create statement.
 
             // The table must then be "altered" to add in your additional custom columns.
-            string entityName = Core.CrmAdoCrmMetadataNamingProvider.Instance.GetEntityLogicalName("testentity");
-            string entitySchemaName = Core.CrmAdoCrmMetadataNamingProvider.Instance.GetEntitySchemaName(entityName);
-            string idAttName = Core.CrmAdoCrmMetadataNamingProvider.Instance.GetEntityIdAttributeLogicalName(entityName);
+            string entityName = CrmAdoCrmMetadataNamingProvider.Instance.GetEntityLogicalName("testentity");
+            string entitySchemaName = CrmAdoCrmMetadataNamingProvider.Instance.GetEntitySchemaName(entityName);
+            string idAttName = CrmAdoCrmMetadataNamingProvider.Instance.GetEntityIdAttributeLogicalName(entityName);
        
             string nameAttName = "name";
-            string nameAttSchemaName = Core.CrmAdoCrmMetadataNamingProvider.Instance.GetAttributeSchemaName(nameAttName);
-            string nameAttDisplayName = Core.CrmAdoCrmMetadataNamingProvider.Instance.GetAttributeDisplayName(nameAttName);
+            string nameAttSchemaName = CrmAdoCrmMetadataNamingProvider.Instance.GetAttributeSchemaName(nameAttName);
+            string nameAttDisplayName = CrmAdoCrmMetadataNamingProvider.Instance.GetAttributeDisplayName(nameAttName);
             // string publisherPrefix = Core.CrmMetadataNamingConvention.DefaultSchemaPrefix;
 
             string commandText = string.Format(@"CREATE TABLE {0}({1} UNIQUEIDENTIFIER PRIMARY KEY, {2} VARCHAR)", entityName, idAttName, nameAttName);

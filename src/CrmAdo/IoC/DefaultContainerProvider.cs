@@ -26,10 +26,10 @@ namespace CrmAdo.IoC
             container.Register<ICrmClientCredentialsProvider, CrmClientCredentialsProvider>();  // singleton instance.
             container.Register<ICrmConnectionProvider, ExplicitConnectionStringProviderWithFallbackToConfig>(); // singleton instance.
 
-            IOrgCommandExecutor commandExecutor = CrmOrgCommandExecutor.Instance;
-            container.Register<IOrgCommandExecutor>(commandExecutor); // singleton instance.
+            IOperationExecutor commandExecutor = CrmOperationExecutor.Instance;
+            container.Register<IOperationExecutor>(commandExecutor); // singleton instance.
 
-            container.Register<IOrganisationCommandProvider, SqlGenerationOrganizationCommandProvider>().AsMultiInstance(); ;
+            container.Register<ICrmOperationProvider, SqlGenerationCrmOperationProvider>().AsMultiInstance(); ;
 
             container.Register<ICrmOrganisationManager, CrmOrganisationManager>();
             container.Register<IEntityMetadataRepository, EntityMetadataRepository>();

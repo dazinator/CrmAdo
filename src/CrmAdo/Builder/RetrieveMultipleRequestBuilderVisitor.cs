@@ -9,8 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using CrmAdo.Dynamics;
 using CrmAdo.Metadata;
-using CrmAdo.Core;
 using CrmAdo.Util;
+using CrmAdo.Core;
+using CrmAdo.Operations;
 
 namespace CrmAdo.Visitor
 {
@@ -1016,6 +1017,12 @@ namespace CrmAdo.Visitor
         #endregion
 
         #endregion
+
+        public override ICrmOperation GetCommand()
+        {
+            var orgCommand = new SelectMultipleEntitiesOperation(ResultColumnMetadata, Request);
+            return orgCommand;
+        }
 
      
 

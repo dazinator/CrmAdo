@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk;
 using CrmAdo.Core;
-using CrmAdo.Enums;
+using CrmAdo.Operations;
 
 namespace CrmAdo.Visitor
 {
@@ -217,6 +217,12 @@ namespace CrmAdo.Visitor
             }
             var param = Parameters[paramName];
             return param.Value;
+        }
+
+        public override ICrmOperation GetCommand()
+        {
+            var orgCommand = new InsertOperation(ResultColumnMetadata, Request, IsExecuteMultiple);
+            return orgCommand;
         }
 
 

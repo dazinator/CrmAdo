@@ -1,5 +1,4 @@
-﻿using CrmAdo.Core;
-using CrmAdo.Dynamics;
+﻿using CrmAdo.Dynamics;
 using CrmAdo.Tests.Support;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -12,13 +11,14 @@ using System.Threading.Tasks;
 using Rhino;
 using Rhino.Mocks;
 using Rhino.Mocks.Constraints;
+using CrmAdo.Core;
 
 namespace CrmAdo.Tests.Tests
 {
 
     [TestFixture()]
     [Category("Command Execution")]
-    public class CrmOrgCommandExecutorTests : BaseTest<CrmOrgCommandExecutor>
+    public class CrmOrgCommandExecutorTests : BaseTest<CrmOperationExecutor>
     {
         [Test()]
         [Category("Insert Statement")]
@@ -34,8 +34,8 @@ namespace CrmAdo.Tests.Tests
                 insertCommand.CommandText = "INSERT INTO contact (firstname, lastname) VALUES ('JO','SCHMO')";
                 insertCommand.CommandType = System.Data.CommandType.Text;
 
-                var provider = new SqlGenerationOrganizationCommandProvider(new DynamicsAttributeTypeProvider());
-                var orgCommand = provider.GetOrganisationCommand(insertCommand, System.Data.CommandBehavior.Default);
+                var provider = new SqlGenerationCrmOperationProvider(new DynamicsAttributeTypeProvider());
+                var orgCommand = provider.GetOperation(insertCommand, System.Data.CommandBehavior.Default);
 
 
 
@@ -67,11 +67,11 @@ namespace CrmAdo.Tests.Tests
 
                 // Act                          
 
-                var sut = CrmOrgCommandExecutor.Instance;
+                var sut = CrmOperationExecutor.Instance;
 
                 dbConnection.Open();
 
-                var result = sut.ExecuteNonQueryCommand(orgCommand);
+                var result = sut.ExecuteNonQueryOperation(orgCommand);
                 Assert.That(result == 1);
 
 
@@ -95,8 +95,8 @@ namespace CrmAdo.Tests.Tests
                 insertCommand.CommandText = "INSERT INTO contact (firstname, lastname) VALUES ('JO','SCHMO')";
                 insertCommand.CommandType = System.Data.CommandType.Text;
 
-                var provider = new SqlGenerationOrganizationCommandProvider(new DynamicsAttributeTypeProvider());
-                var orgCommand = provider.GetOrganisationCommand(insertCommand, System.Data.CommandBehavior.Default);
+                var provider = new SqlGenerationCrmOperationProvider(new DynamicsAttributeTypeProvider());
+                var orgCommand = provider.GetOperation(insertCommand, System.Data.CommandBehavior.Default);
 
                 // This is the fake reponse that the org service will return when its requested to get the data.
                 Guid expectedId = Guid.NewGuid();
@@ -126,11 +126,14 @@ namespace CrmAdo.Tests.Tests
 
                 // Act                          
 
-                var sut = CrmOrgCommandExecutor.Instance;
+                var sut = CrmOperationExecutor.Instance;
 
                 dbConnection.Open();
 
-                var results = sut.ExecuteCommand(orgCommand, System.Data.CommandBehavior.Default);
+                var commandResult = sut.ExecuteOperation(orgCommand);
+                var results = commandResult.ResultSet;
+
+              //  var results = sut.ExecuteCommand(orgCommand, System.Data.CommandBehavior.Default);
                 // results should contain record
 
                 Assert.That(results.ResultCount() == 1);
@@ -167,8 +170,8 @@ namespace CrmAdo.Tests.Tests
                 insertCommand.CommandText = "INSERT INTO contact (contactid, firstname, lastname) OUTPUT INSERTED.createdon, INSERTED.contactid VALUES ('9bf20a16-6034-48e2-80b4-8349bb80c3e2','JO','SCHMO')";
                 insertCommand.CommandType = System.Data.CommandType.Text;
 
-                var provider = new SqlGenerationOrganizationCommandProvider(new DynamicsAttributeTypeProvider());
-                var orgCommand = provider.GetOrganisationCommand(insertCommand, System.Data.CommandBehavior.Default);
+                var provider = new SqlGenerationCrmOperationProvider(new DynamicsAttributeTypeProvider());
+                var orgCommand = provider.GetOperation(insertCommand, System.Data.CommandBehavior.Default);
 
                 // This is a fake CreateResponse that will be returned to our sut at test time.
                 Guid expectedId = Guid.Parse("9bf20a16-6034-48e2-80b4-8349bb80c3e2");
@@ -225,10 +228,10 @@ namespace CrmAdo.Tests.Tests
 
                 // Act                        
 
-                var sut = CrmOrgCommandExecutor.Instance;
+                var sut = CrmOperationExecutor.Instance;
                 dbConnection.Open();
-                var results = sut.ExecuteCommand(orgCommand, System.Data.CommandBehavior.Default);
-
+                var commandResult = sut.ExecuteOperation(orgCommand);
+                var results = commandResult.ResultSet;
                 // Assert  
 
                 // Should have 1 result, with the 2 output fields - createdon, and contactid
@@ -263,8 +266,8 @@ namespace CrmAdo.Tests.Tests
                 command.CommandText = "UPDATE contact SET firstname = 'JO', lastname = 'SCHMO' WHERE contactid = '9bf20a16-6034-48e2-80b4-8349bb80c3e2'";
                 command.CommandType = System.Data.CommandType.Text;
 
-                var provider = new SqlGenerationOrganizationCommandProvider(new DynamicsAttributeTypeProvider());
-                var orgCommand = provider.GetOrganisationCommand(command, System.Data.CommandBehavior.Default);
+                var provider = new SqlGenerationCrmOperationProvider(new DynamicsAttributeTypeProvider());
+                var orgCommand = provider.GetOperation(command, System.Data.CommandBehavior.Default);
                 
 
                 // This is the fake reponse that the org service will return when its requested to get the data.
@@ -283,11 +286,11 @@ namespace CrmAdo.Tests.Tests
 
                 // Act                          
 
-                var sut = CrmOrgCommandExecutor.Instance;
+                var sut = CrmOperationExecutor.Instance;
 
                 dbConnection.Open();
 
-                var result = sut.ExecuteNonQueryCommand(orgCommand);
+                var result = sut.ExecuteNonQueryOperation(orgCommand);
                 Assert.That(result == 1);
 
             }
@@ -309,8 +312,8 @@ namespace CrmAdo.Tests.Tests
                 command.CommandText = "UPDATE contact SET firstname = 'JO', lastname = 'SCHMO' OUTPUT INSERTED.modifiedon, INSERTED.contactid WHERE contactid = '9bf20a16-6034-48e2-80b4-8349bb80c3e2'";
                 command.CommandType = System.Data.CommandType.Text;
 
-                var provider = new SqlGenerationOrganizationCommandProvider(new DynamicsAttributeTypeProvider());
-                var orgCommand = provider.GetOrganisationCommand(command, System.Data.CommandBehavior.Default);
+                var provider = new SqlGenerationCrmOperationProvider(new DynamicsAttributeTypeProvider());
+                var orgCommand = provider.GetOperation(command, System.Data.CommandBehavior.Default);
 
                 // This is a fake CreateResponse that will be returned to our sut at test time.
                 Guid expectedId = Guid.Parse("9bf20a16-6034-48e2-80b4-8349bb80c3e2");
@@ -364,9 +367,13 @@ namespace CrmAdo.Tests.Tests
 
                 // Act                        
 
-                var sut = CrmOrgCommandExecutor.Instance;
+                var sut = CrmOperationExecutor.Instance;
                 dbConnection.Open();
-                var results = sut.ExecuteCommand(orgCommand, System.Data.CommandBehavior.Default);
+
+                var commandResult = sut.ExecuteOperation(orgCommand);
+                var results = commandResult.ResultSet;
+
+                //var results = sut.ExecuteCommand(orgCommand, System.Data.CommandBehavior.Default);
 
                 // Assert  
 

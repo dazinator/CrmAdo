@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk;
+using CrmAdo.Operations;
 using CrmAdo.Core;
 
 namespace CrmAdo.Visitor
@@ -191,6 +192,12 @@ namespace CrmAdo.Visitor
             paramFound = false;
             return null;
 
+        }
+
+        public override ICrmOperation GetCommand()
+        {
+            var orgCommand = new DeleteOperation(ResultColumnMetadata, Request);
+            return orgCommand;
         }
 
     }
