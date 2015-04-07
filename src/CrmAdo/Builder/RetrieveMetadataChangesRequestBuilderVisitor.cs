@@ -10,8 +10,9 @@ using System.Threading.Tasks;
 using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk.Metadata.Query;
 using CrmAdo.Metadata;
-using CrmAdo.Core;
 using CrmAdo.Util;
+using CrmAdo.Core;
+using CrmAdo.Operations;
 
 namespace CrmAdo.Visitor
 {
@@ -1014,6 +1015,12 @@ namespace CrmAdo.Visitor
         #endregion
 
         #endregion
+
+        public override ICrmOperation GetCommand()
+        {
+            var orgCommand = new SelectMetadataChangesOperation(ResultColumnMetadata, Request);
+            return orgCommand;
+        }
     
     }
 }

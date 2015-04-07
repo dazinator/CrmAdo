@@ -1,4 +1,4 @@
-﻿using CrmAdo.Core;
+﻿using CrmAdo.Operations;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace CrmAdo.Core
 {
-    public interface IOrganisationCommandProvider
+    public interface ICrmOperationProvider
     {
-        IOrgCommand GetOrganisationCommand(CrmDbCommand command, CommandBehavior behavior);
+        ICrmOperation GetOperation(CrmDbCommand command, CommandBehavior behavior);
     }
 }

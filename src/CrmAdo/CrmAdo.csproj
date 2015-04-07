@@ -144,11 +144,21 @@
     <Compile Include="Ado\CrmDataAdaptorRowUpdatedEventArgs.cs" />
     <Compile Include="Ado\CrmDataAdaptorRowUpdatingEventArgs.cs" />
     <Compile Include="Ado\CrmDbMetadataReader.cs" />
+    <Compile Include="Operations\CreateAttributeOperation.cs" />
+    <Compile Include="Operations\CreateOneToManyOperation.cs" />
+    <Compile Include="Operations\CreateEntityOperation.cs" />
+    <Compile Include="Operations\DeleteOperation.cs" />
+    <Compile Include="Operations\UpdateEntityOperation.cs" />
+    <Compile Include="Operations\InsertOperation.cs" />
+    <Compile Include="Operations\ICrmOperationResult.cs" />
+    <Compile Include="Operations\CrmOperation.cs" />
+    <Compile Include="Operations\CrmOperationResult.cs" />
+    <Compile Include="Operations\SelectMetadataChangesOperation.cs" />
+    <Compile Include="Operations\SelectMultipleEntitiesOperation.cs" />
     <Compile Include="Metadata\ColumnMetadata.cs" />
-    <Compile Include="Core\IOrganisationCommandProvider.cs" />
-    <Compile Include="Core\IOrgCommand.cs" />
-    <Compile Include="Core\SqlGenerationOrganizationCommandProvider.cs" />
-    <Compile Include="Enums\CrmOperation.cs" />
+    <Compile Include="Core\ICrmOperationProvider.cs" />
+    <Compile Include="Operations\ICrmOperation.cs" />
+    <Compile Include="Core\SqlGenerationCrmOperationProvider.cs" />
     <Compile Include="IoC\Container.cs" />
     <Compile Include="Core\ISchemaCollectionsProvider.cs" />
     <Compile Include="IoC\ContainerServices.cs" />
@@ -176,13 +186,12 @@
     <Compile Include="Metadata\CalendarRulesAttributeInfo.cs" />
     <Compile Include="Metadata\StringAttributeInfo.cs" />
     <Compile Include="Metadata\VirtualAttributeInfo.cs" />
-    <Compile Include="Core\OrgCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Ado\CrmConnectionCache.cs" />
     <Compile Include="Ado\CrmConnectionInfo.cs" />
     <Compile Include="DesignTime\CrmConnectionStringBuilderConverter.cs" />
     <Compile Include="DesignTime\EnumStandardValuesAttribute.cs" />
-    <Compile Include="Core\CrmCommandExecutor.cs" />
+    <Compile Include="Core\CrmOperationExecutor.cs" />
     <Compile Include="Ado\CrmDbCommand.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -247,7 +256,7 @@
     <Compile Include="Core\IEntityMetadataRepository.cs" />
     <Compile Include="Exceptions\OrganisationDoesNotExistException.cs" />
     <Compile Include="Results\EntityResultSet.cs" />
-    <Compile Include="Core\ICrmCommandExecutor.cs" />
+    <Compile Include="Core\IOperationExecutor.cs" />
     <Compile Include="Util\DynamicLinq.cs" />
     <Compile Include="Util\Extensions.cs" />
     <Compile Include="Util\SystemCommandParameters.cs" />
@@ -296,6 +305,7 @@
   <ItemGroup>
     <EmbeddedResource Include="MetaDataCollections.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
@@ -318,13 +328,13 @@
     <PasswordProtectedeyFile>"$(ProjectDir)Key.pfx"</PasswordProtectedeyFile>
     <!--<OutputMergedFileDir>$(ProjectDir)$(OutputPath)merged\</OutputMergedFileDir>-->
   </PropertyGroup>
-  
   <!--<Target Name="CreateMergedOutputDir">
-    --><!--Ensure a folder is created for the output of ILMerge--><!--
+    -->
+  <!--Ensure a folder is created for the output of ILMerge-->
+  <!--
     <RemoveDir ContinueOnError="true" Directories="$(OutputMergedFileDir)"/>
     <MakeDir Directories="$(OutputMergedFileDir)"/>
   </Target>-->
-
   <Target Name="ILMerge" Inputs="@(IntermediateAssembly)" Outputs="@(MainAssembly -> '%(RelativeDir)%(Filename).ILMergeTrigger%(Extension)')">
     <!--Merge any dependencies with an ILMerge property = true into this assembly.-->
     <CreateItem Include="@(ReferencePath)" Condition="'%(ReferencePath.ILMerge)'=='True'">
@@ -336,6 +346,5 @@
     <!--Re-sign the assemly using pfx-->
     <Exec Command="$(SnExecutable) -Rca &quot;$(ProjectDir)@(MainAssembly)&quot; $(PfxKeyContainerName)" />
   </Target>
-
   <Import Project="../../lib/CreateSnkFile.1.0.1.1/tools/CreateSnkFile.targets" Condition="Exists('../../lib/CreateSnkFile.1.0.1.1/tools/CreateSnkFile.targets')" />
 </Project>

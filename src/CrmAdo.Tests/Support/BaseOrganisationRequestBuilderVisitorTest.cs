@@ -1,5 +1,6 @@
 ﻿using CrmAdo.Core;
 using CrmAdo.Dynamics;
+using CrmAdo.Operations;
 using CrmAdo.Visitor;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -17,7 +18,7 @@ using System.Threading.Tasks;
 namespace CrmAdo.Tests.Support
 {
     [Category("Visitor")]
-    public class BaseOrganisationRequestBuilderVisitorTest : BaseTest<SqlGenerationOrganizationCommandProvider>
+    public class BaseOrganisationRequestBuilderVisitorTest : BaseTest<SqlGenerationCrmOperationProvider>
     {
       //  private CrmDbConnection _MockConnection = null;
 
@@ -46,25 +47,25 @@ namespace CrmAdo.Tests.Support
         {
            // List<ColumnMetadata> columnMetadata;
             var subject = this.ResolveTestSubjectInstance();
-            // IoC.ContainerServices.CurrentContainer().Resolve<VisitingCrmRequestProvider>();
-            var orgCommand = subject.GetOrganisationCommand(command, behaviour);
+            // IoC.ContainerServices.GetOperationolve<VisitingCrmRequestProvider>();
+            var orgCommand = subject.GetOperation(command, behaviour);
             return orgCommand.Request as T;
         }
 
-        protected IOrgCommand GetOrgCommand(CrmDbConnection connection, string sql) 
+        protected ICrmOperation GetOperation(CrmDbConnection connection, string sql) 
         {
             var cmd = new CrmDbCommand(connection);
             cmd.CommandText = sql;
-            return GetOrgCommand(cmd);
+            return GetOperation(cmd);
 
         }
 
-        protected IOrgCommand GetOrgCommand(CrmDbCommand command, CommandBehavior behaviour = CommandBehavior.Default)
+        protected ICrmOperation GetOperation(CrmDbCommand command, CommandBehavior behaviour = CommandBehavior.Default)
         {
             // List<ColumnMetadata> columnMetadata;
             var subject = this.ResolveTestSubjectInstance();
-            // IoC.ContainerServices.CurrentContainer().Resolve<VisitingCrmRequestProvider>();
-            var orgCommand = subject.GetOrganisationCommand(command, behaviour);
+            // IoC.ContainerServices.GetOperationolve<VisitingCrmRequestProvider>();
+            var orgCommand = subject.GetOperation(command, behaviour);
             return orgCommand;
         }
 

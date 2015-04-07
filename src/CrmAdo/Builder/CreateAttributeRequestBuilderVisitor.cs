@@ -10,8 +10,9 @@ using System.Threading.Tasks;
 using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
-using CrmAdo.Core;
 using CrmAdo.Util;
+using CrmAdo.Operations;
+using CrmAdo.Core;
 
 namespace CrmAdo.Visitor
 {
@@ -540,6 +541,12 @@ namespace CrmAdo.Visitor
         }
 
         public bool FilterForForeignKeyConstraint { get; set; }
+
+        public override ICrmOperation GetCommand()
+        {
+            var orgCommand = new CreateAttributeOperation(ResultColumnMetadata, Request);
+            return orgCommand;
+        }
 
 
     }

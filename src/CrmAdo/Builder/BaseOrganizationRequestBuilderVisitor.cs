@@ -2,20 +2,21 @@
 using System.Collections.Generic;
 using SQLGeneration.Builders;
 using System.Data.Common;
-using CrmAdo.Core;
 using CrmAdo.Metadata;
 using System.Linq;
 using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
+using CrmAdo.Core;
+using CrmAdo.Operations;
 
 namespace CrmAdo.Visitor
 {
     /// <summary>
     /// Serves as a base <see cref="BuilderVisitor"/> class, for visitors that will build Dynamics Xrm objects from Sql Generation <see cref="IVisitableBuilder"/>'s 
     /// </summary>
-    public class BaseOrganizationRequestBuilderVisitor<TOrgRequest> : BuilderVisitor
+    public abstract class BaseOrganizationRequestBuilderVisitor<TOrgRequest> : BuilderVisitor
         where TOrgRequest : OrganizationRequest, new()
     {
         private int _Level;
@@ -252,6 +253,7 @@ namespace CrmAdo.Visitor
 
         }
 
+        public abstract ICrmOperation GetCommand();
 
     }
 

@@ -8,8 +8,9 @@ using System.Xml;
 using CrmAdo.Dynamics;
 using Microsoft.Xrm.Sdk.Query;
 using NUnit.Framework;
-using CrmAdo.Core;
+using CrmAdo.Operations;
 using CrmAdo.Util;
+using CrmAdo.Core;
 
 namespace CrmAdo.IntegrationTests
 {

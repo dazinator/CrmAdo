@@ -6,6 +6,7 @@ using NUnit.Framework;
 using Rhino.Mocks;
 using CrmAdo.IntegrationTests;
 using System.Configuration;
+using CrmAdo.Operations;
 using CrmAdo.Core;
 
 namespace CrmAdo.IntegrationTests

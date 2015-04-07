@@ -1,4 +1,5 @@
 using CrmAdo.Core;
+using CrmAdo.Operations;
 using CrmAdo.Visitor;
 using System;
 using System.Data;
@@ -15,10 +16,10 @@ namespace CrmAdo
     {
         private DbConnection _DbConnection;
         private string _CommandText = string.Empty;
-        private IOrgCommandExecutor _CrmCommandExecutor;
+        private IOperationExecutor _CrmCommandExecutor;
         private CommandType _CommandType;
         private CrmParameterCollection _ParameterCollection;
-        private IOrganisationCommandProvider _OrganisationCommandProvider;
+        private ICrmOperationProvider _OrganisationCommandProvider;
 
         #region Constructor
         public CrmDbCommand()
@@ -31,16 +32,16 @@ namespace CrmAdo
         }
 
         public CrmDbCommand(CrmDbConnection connection, string commandText)
-            : this(connection, CrmOrgCommandExecutor.Instance)
+            : this(connection, CrmOperationExecutor.Instance)
         {
             _CommandText = commandText;
         }
 
-        public CrmDbCommand(CrmDbConnection connection, IOrgCommandExecutor crmCommandExecutor)
-            : this(connection, crmCommandExecutor, new SqlGenerationOrganizationCommandProvider())
+        public CrmDbCommand(CrmDbConnection connection, IOperationExecutor crmCommandExecutor)
+            : this(connection, crmCommandExecutor, new SqlGenerationCrmOperationProvider())
         {
         }
-        public CrmDbCommand(CrmDbConnection connection, IOrgCommandExecutor crmCommandExecutor, IOrganisationCommandProvider organisationCommandProvider)
+        public CrmDbCommand(CrmDbConnection connection, IOperationExecutor crmCommandExecutor, ICrmOperationProvider organisationCommandProvider)
         {
 
             if (crmCommandExecutor == null)
@@ -107,18 +108,18 @@ namespace CrmAdo
             EnsureOpenConnection();
 
             // Generate the IOrgCommand.
-            IOrgCommand orgCommand = ToOrgCommand(behavior);
+            ICrmOperation orgCommand = ToOrgCommand(behavior);
             // Execute the IOrgCommand and get the results.
-            var results = _CrmCommandExecutor.ExecuteCommand(orgCommand, behavior);
+            var results = _CrmCommandExecutor.ExecuteOperation(orgCommand);
 
             DbDataReader reader;
             if (behavior == CommandBehavior.CloseConnection)
             {
-                reader = results.GetReader(_DbConnection);
+                reader = results.ResultSet.GetReader(_DbConnection);
             }
             else
             {
-                reader = results.GetReader();
+                reader = results.ResultSet.GetReader();
             }
             return reader;
         }
@@ -129,14 +130,14 @@ namespace CrmAdo
             EnsureHasCommandText();
             EnsureOpenConnection();
             // Generate the IOrgCommand.
-            IOrgCommand orgCommand = ToOrgCommand(CommandBehavior.Default);
+            ICrmOperation orgCommand = ToOrgCommand(CommandBehavior.Default);
             // Execute the IOrgCommand and return the result.
-            return _CrmCommandExecutor.ExecuteNonQueryCommand(orgCommand);
+            return _CrmCommandExecutor.ExecuteNonQueryOperation(orgCommand);
         }
 
-        private IOrgCommand ToOrgCommand(CommandBehavior behavior)
+        private ICrmOperation ToOrgCommand(CommandBehavior behavior)
         {
-            var orgCommand = _OrganisationCommandProvider.GetOrganisationCommand(this, behavior);
+            var orgCommand = _OrganisationCommandProvider.GetOperation(this, behavior);
             return orgCommand;
         }
 
@@ -148,11 +149,11 @@ namespace CrmAdo
             // If the first column of the first row in the result set is not found, a null reference is returned. 
             // If the value in the database is null, the query returns DBNull.Value.
             // Generate the IOrgCommand.
-            IOrgCommand orgCommand = ToOrgCommand(CommandBehavior.Default);
+            ICrmOperation orgCommand = ToOrgCommand(CommandBehavior.Default);
             // Execute the IOrgCommand and get the results.
-            var results = _CrmCommandExecutor.ExecuteCommand(orgCommand, CommandBehavior.Default);
+            var results = _CrmCommandExecutor.ExecuteOperation(orgCommand);
             //  var results = _CrmCommandExecutor.ExecuteCommand(this, CommandBehavior.Default);
-            return results.GetScalar();
+            return results.ResultSet.GetScalar();
         }
 
         protected void EnsureOpenConnection()
