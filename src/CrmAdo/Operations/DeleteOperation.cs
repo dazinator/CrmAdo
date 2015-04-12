@@ -16,12 +16,12 @@ namespace CrmAdo.Operations
             this.Request = request;
         }
 
-        protected override OrganisationRequestCommandResult ExecuteCommand()
+        protected override ICrmOperationResult ExecuteCommand()
         {
-            OrganisationRequestCommandResult commandResponse = null;
+            CrmOperationResult commandResponse = null;
             var resultSet = CreateEntityResultSet();
             var response = ExecuteOrganisationRequest();
-            commandResponse = new OrganisationRequestCommandResult(response, resultSet, true);
+            commandResponse = new CrmOperationResult(response, resultSet, true);
             DeleteRequest deleteRequest = Request as DeleteRequest;
             // Expose the deleted entities id / name in the result set.
             var deletedEntity = new Entity(deleteRequest.Target.LogicalName);

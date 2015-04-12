@@ -32,6 +32,7 @@ namespace CrmAdo.Visitor
             //this.CreateRequest = new CreateRequest();
           //  Request = this.CreateRequest;
             Parameters = parameters;
+            IsExecuteMultiple = false;
             //  MetadataProvider = metadataProvider;
         }
 

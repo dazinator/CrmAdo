@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace CrmAdo.Operations
 {
+    /// <summary>
+    /// An operation that creates a new entity in CRM.
+    /// </summary>
     public class CreateEntityOperation : CrmOperation
     {
         public CreateEntityOperation(List<ColumnMetadata> columnMetadata, OrganizationRequest request)
@@ -16,13 +19,13 @@ namespace CrmAdo.Operations
             this.Request = request;
         }
 
-        protected override OrganisationRequestCommandResult ExecuteCommand()
+        protected override ICrmOperationResult ExecuteCommand()
         {                              
 
-            OrganisationRequestCommandResult commandResponse = null;
+            CrmOperationResult commandResponse = null;
             var resultSet = CreateEntityResultSet();
             var response = ExecuteOrganisationRequest();
-            commandResponse = new OrganisationRequestCommandResult(response, resultSet, false);
+            commandResponse = new CrmOperationResult(response, resultSet, false);
 
             var createResponse = response as CreateEntityResponse;
             if (createResponse != null)

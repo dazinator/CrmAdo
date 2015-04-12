@@ -144,10 +144,13 @@
     <Compile Include="Ado\CrmDataAdaptorRowUpdatedEventArgs.cs" />
     <Compile Include="Ado\CrmDataAdaptorRowUpdatingEventArgs.cs" />
     <Compile Include="Ado\CrmDbMetadataReader.cs" />
+    <Compile Include="Operations\BatchCrmOperationResult.cs" />
+    <Compile Include="Operations\BatchOperation.cs" />
     <Compile Include="Operations\CreateAttributeOperation.cs" />
     <Compile Include="Operations\CreateOneToManyOperation.cs" />
     <Compile Include="Operations\CreateEntityOperation.cs" />
     <Compile Include="Operations\DeleteOperation.cs" />
+    <Compile Include="Operations\IMultipartOperation.cs" />
     <Compile Include="Operations\UpdateEntityOperation.cs" />
     <Compile Include="Operations\InsertOperation.cs" />
     <Compile Include="Operations\ICrmOperationResult.cs" />

@@ -12,6 +12,7 @@ namespace CrmAdo.Operations
         OrganizationResponse Response { get; set; }
         ResultSet ResultSet { get; set; }
         int ReturnValue { get; }
+        bool UseResultCountAsReturnValue { get; set; }
 
     }
 }

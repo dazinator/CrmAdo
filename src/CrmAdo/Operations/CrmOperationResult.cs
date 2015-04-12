@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace CrmAdo.Operations
 {
-    public class OrganisationRequestCommandResult : ICrmOperationResult
+    public class CrmOperationResult : ICrmOperationResult
     {
 
         public bool UseResultCountAsReturnValue { get; set; }
 
-        public OrganisationRequestCommandResult(OrganizationResponse response, ResultSet resultSet, bool useResultCountAsReturnValue)
+        public CrmOperationResult(OrganizationResponse response, ResultSet resultSet, bool useResultCountAsReturnValue)
         {
             this.Response = response;
             this.ResultSet = resultSet;

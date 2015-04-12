@@ -18,7 +18,7 @@ namespace CrmAdo.Operations
             this.Request = request;
         }
 
-        protected override OrganisationRequestCommandResult ExecuteCommand()
+        protected override ICrmOperationResult ExecuteCommand()
         {
 
             var command = DbCommand;
@@ -26,16 +26,16 @@ namespace CrmAdo.Operations
 
             CrmAdo.EntityMetadataResultSet.DenormalisedMetadataResult[] results = null;
             var metadataResultSet = new EntityMetadataResultSet(command, Request, Columns);
-            OrganisationRequestCommandResult commandResponse = null;
+            CrmOperationResult commandResponse = null;
 
             if (IsSchemaOnly())
             {
-                commandResponse = new OrganisationRequestCommandResult(null, metadataResultSet, false);
+                commandResponse = new CrmOperationResult(null, metadataResultSet, false);
             }
             else
             {
                 var response = ExecuteOrganisationRequest();
-                commandResponse = new OrganisationRequestCommandResult(response, metadataResultSet, false);
+                commandResponse = new CrmOperationResult(response, metadataResultSet, false);
 
                 var retrieveMultipleResponse = response as RetrieveMetadataChangesResponse;
                 if (retrieveMultipleResponse != null)

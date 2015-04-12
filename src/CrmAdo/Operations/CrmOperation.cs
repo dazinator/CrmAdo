@@ -12,13 +12,9 @@ namespace CrmAdo.Operations
 {
     public abstract class CrmOperation : ICrmOperation
     {
-        //public CrmOperation OperationType { get; set; }
+       
         public List<ColumnMetadata> Columns { get; set; }
         public OrganizationRequest Request { get; set; }
-
-        public int BatchStartPosition { get; set; }
-        public int BatchEndPosition { get; set; }
-
         public ExecuteMultipleRequest BatchRequest
         {
             get
@@ -35,17 +31,23 @@ namespace CrmAdo.Operations
             }
         }
 
+        public int BatchRequestIndex { get; set; }          
+
+        public BatchOperation BatchOperation { get; set; }
+         
+
         public CrmDbCommand DbCommand { get; set; }
         public CommandBehavior CommandBehavior { get; set; }
-        public OrganisationRequestCommandResult Execute()
+     
+        public ICrmOperationResult Execute()
         {
             EnsureDbCommand();
             return this.ExecuteCommand();
         }
 
-        protected abstract OrganisationRequestCommandResult ExecuteCommand();
+        protected abstract ICrmOperationResult ExecuteCommand();
 
-        protected EntityResultSet CreateEntityResultSet()
+        protected virtual EntityResultSet CreateEntityResultSet()
         {
             var resultSet = new EntityResultSet(DbCommand, Request, Columns);
             return resultSet;
@@ -57,7 +59,20 @@ namespace CrmAdo.Operations
             var orgService = dbCommand.CrmDbConnection.OrganizationService;
 
             // Execute the request and obtain the result.
-            var response = orgService.Execute(Request);
+            OrganizationResponse response = null;
+
+            // If this operation is part of a batch of operations, then the request,
+            // is executed allready at the batch level.            
+            if (this.BatchOperation == null)
+            {
+                // otherwise, execute the individual request for this operation.
+                response = orgService.Execute(Request);
+            }
+            else
+            {
+                // grab the response for this operation from the batch responses.
+                response = this.BatchOperation.BatchResponse.Responses[this.BatchRequestIndex].Response;
+            }
 
             // Allow poeople to get access to the response directly via an output paramater.
             AssignResponseParameter(dbCommand, response);
@@ -85,5 +100,8 @@ namespace CrmAdo.Operations
                 throw new InvalidOperationException("DbCommand is null");
             }
         }
+
+
+
     }
 }

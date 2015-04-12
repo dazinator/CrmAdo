@@ -79,7 +79,7 @@ namespace CrmAdo.Core
             sqlCommandBuilder.Accept(visitor);
 
             // The visitor should now have vuild the OrgCommand that we need.
-            var orgCommand = visitor.OrgCommand;
+            var orgCommand = visitor.CrmOperation;
             if (orgCommand == null || orgCommand.Request == null)
             {
                 throw new NotSupportedException("Could not translate the command into the appropriate Organization Service Request Message");
