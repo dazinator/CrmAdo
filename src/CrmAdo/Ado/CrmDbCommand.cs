@@ -115,11 +115,11 @@ namespace CrmAdo
             DbDataReader reader;
             if (behavior == CommandBehavior.CloseConnection)
             {
-                reader = results.ResultSet.GetReader(_DbConnection);
+                reader = results.GetReader(_DbConnection);
             }
             else
             {
-                reader = results.ResultSet.GetReader();
+                reader = results.GetReader();
             }
             return reader;
         }

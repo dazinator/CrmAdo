@@ -25,7 +25,7 @@ namespace CrmAdo.Operations
             var orgService = command.CrmDbConnection.OrganizationService;
 
             CrmAdo.EntityMetadataResultSet.DenormalisedMetadataResult[] results = null;
-            var metadataResultSet = new EntityMetadataResultSet(command, Request, Columns);
+            var metadataResultSet = new EntityMetadataResultSet(command.CrmDbConnection, Request, Columns);
             CrmOperationResult commandResponse = null;
 
             if (IsSchemaOnly())

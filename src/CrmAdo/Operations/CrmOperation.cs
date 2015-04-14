@@ -99,7 +99,7 @@ namespace CrmAdo.Operations
 
         protected virtual EntityResultSet CreateEntityResultSet()
         {
-            var resultSet = new EntityResultSet(DbCommand, Request, Columns);
+            var resultSet = new EntityResultSet(DbCommand.CrmDbConnection, Request, Columns);
             return resultSet;
         }
 

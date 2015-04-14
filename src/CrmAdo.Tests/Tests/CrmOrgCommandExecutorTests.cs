@@ -139,7 +139,7 @@ namespace CrmAdo.Tests.Tests
                 Assert.That(results.ResultCount() == 1);
                 Assert.That(results.HasColumnMetadata());
 
-                var reader = results.GetReader();
+                var reader = commandResult.GetReader();
                 Assert.That(reader.HasRows);
                 Assert.That(reader.FieldCount == 1);
 
@@ -238,7 +238,7 @@ namespace CrmAdo.Tests.Tests
                 Assert.That(results.ResultCount() == 1);
                 Assert.That(results.HasColumnMetadata());
 
-                var reader = results.GetReader();
+                var reader = commandResult.GetReader();
                 Assert.That(reader.HasRows);
                 Assert.That(reader.FieldCount == 2);
 
@@ -381,7 +381,7 @@ namespace CrmAdo.Tests.Tests
                 Assert.That(results.ResultCount() == 1);
                 Assert.That(results.HasColumnMetadata());
 
-                var reader = results.GetReader();
+                var reader = commandResult.GetReader();
                 Assert.That(reader.HasRows);
                 Assert.That(reader.FieldCount == 2);
 
@@ -457,7 +457,7 @@ namespace CrmAdo.Tests.Tests
                 Assert.That(commandResult.ResultSet != null);
 
                 // Should have one row containing inserted record id.
-                var reader = commandResult.ResultSet.GetReader();
+                var reader = commandResult.GetReader();
                 Assert.That(reader.HasRows);
                 Assert.That(reader.FieldCount == 1);
 
@@ -469,11 +469,10 @@ namespace CrmAdo.Tests.Tests
 
 
                 // Move to second result for insert plus output.
-                commandResult.NextOperationResult();
+                reader.NextResult();
                 Assert.That(commandResult.ResultSet != null);
 
-                // Should have one row containing inserted record id.
-                reader = commandResult.ResultSet.GetReader();
+                // Should have one row containing inserted record id.               
                 Assert.That(reader.HasRows);
                 Assert.That(reader.FieldCount == 1);
 
@@ -484,15 +483,14 @@ namespace CrmAdo.Tests.Tests
                 }
 
                 // Move to third result for update.
-                commandResult.NextOperationResult();
+                reader.NextResult();
                 Assert.That(commandResult.ResultSet != null);
 
                 // Move to fourth result for update plus output.
-                commandResult.NextOperationResult();
+                reader.NextResult();
                 Assert.That(commandResult.ResultSet != null);
 
-                // Should have one row containing output clause values.
-                reader = commandResult.ResultSet.GetReader();
+                // Should have one row containing output clause values.               
                 Assert.That(reader.HasRows);
                 Assert.That(reader.FieldCount == 1);
 
@@ -503,19 +501,18 @@ namespace CrmAdo.Tests.Tests
                 }
 
                 // Move to fifth result for delete.
-                commandResult.NextOperationResult();
+                reader.NextResult();
                 Assert.That(commandResult.ResultSet != null);
 
                 // no result set..
 
                 // Move to sixth result for retrieve multiple.
-                commandResult.NextOperationResult();
+                reader.NextResult();
                 Assert.That(commandResult.ResultSet != null);
 
                 Assert.That(commandResult.ResultSet.ResultCount() == 10);
                 Assert.That(commandResult.ResultSet.HasColumnMetadata());
-
-                reader = commandResult.ResultSet.GetReader();
+              
                 Assert.That(reader.HasRows);
                 Assert.That(reader.FieldCount == 2);
                 int recordCount = 0;
@@ -596,7 +593,7 @@ namespace CrmAdo.Tests.Tests
                     Assert.That(commandResult.ResultSet != null);
 
                     // Should have one row containing inserted record id.
-                    var reader = commandResult.ResultSet.GetReader();
+                    var reader = commandResult.GetReader();
                     Assert.That(reader.HasRows);
                     Assert.That(reader.FieldCount == 1);
 
@@ -608,11 +605,10 @@ namespace CrmAdo.Tests.Tests
 
 
                     // Move to second result for insert plus output.
-                    commandResult.NextOperationResult();
+                    reader.NextResult();
                     Assert.That(commandResult.ResultSet != null);
 
-                    // Should have one row containing inserted record id.
-                    reader = commandResult.ResultSet.GetReader();
+                    // Should have one row containing inserted record id.                   
                     Assert.That(reader.HasRows);
                     Assert.That(reader.FieldCount == 1);
 
@@ -623,15 +619,14 @@ namespace CrmAdo.Tests.Tests
                     }
 
                     // Move to third result for update.
-                    commandResult.NextOperationResult();
+                    reader.NextResult();
                     Assert.That(commandResult.ResultSet != null);
 
                     // Move to fourth result for update plus output.
-                    commandResult.NextOperationResult();
+                    reader.NextResult();
                     Assert.That(commandResult.ResultSet != null);
 
-                    // Should have one row containing output clause values.
-                    reader = commandResult.ResultSet.GetReader();
+                    // Should have one row containing output clause values.                 
                     Assert.That(reader.HasRows);
                     Assert.That(reader.FieldCount == 1);
 
@@ -642,18 +637,17 @@ namespace CrmAdo.Tests.Tests
                     }
 
                     // Move to fifth result for delete.
-                    commandResult.NextOperationResult();
+                    reader.NextResult();
                     Assert.That(commandResult.ResultSet != null);
 
                     // no result set..
 
                     // Move to sixth result for retrieve multiple.
-                    commandResult.NextOperationResult();
+                    reader.NextResult();
                     Assert.That(commandResult.ResultSet != null);
                     Assert.That(commandResult.ResultSet.ResultCount() == 10);
                     Assert.That(commandResult.ResultSet.HasColumnMetadata());
-
-                    reader = commandResult.ResultSet.GetReader();
+                    
                     Assert.That(reader.HasRows);
                     Assert.That(reader.FieldCount == 2);
                     int recordCount = 0;

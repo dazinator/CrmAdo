@@ -5,7 +5,6 @@ using System.Data;
 using System.Linq;
 using CrmAdo.Dynamics;
 using CrmAdo.Metadata;
-using CrmAdo.Results;
 using CrmAdo.Util;
 using CrmAdo.Visitor;
 using Microsoft.Xrm.Sdk;

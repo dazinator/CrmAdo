@@ -7,35 +7,53 @@ using System.Linq;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using CrmAdo.Core;
+using CrmAdo.Operations;
 
 namespace CrmAdo
 {
     public class CrmDbDataReader : DbDataReader
-    {
-        //private EntityCollection _Results;
+    {      
         private DbConnection _DbConnection;
         private bool _IsOpen;
         private const int StartPosition = -1;
         private int _Position = StartPosition;
-        private EntityResultSet _Results;
+
+        private ICrmOperationResult _Result;
+
+        public ResultSet CurrentResultSet { get { return _Result.ResultSet; } }       
+
         private ISchemaTableProvider _SchemaTableProvider;
 
-        public CrmDbDataReader(EntityResultSet results)
+        public CrmDbDataReader(ResultSet resultSet)
+            : this(new CrmOperationResult(null, resultSet, true))
+        {
+        }
+
+        public CrmDbDataReader(ResultSet resultSet, DbConnection connection)
+            : this(new CrmOperationResult(null, resultSet, true), connection)
+        {
+        }
+
+        public CrmDbDataReader(ICrmOperationResult results)
             : this(results, null)
         {
         }
 
-        public CrmDbDataReader(EntityResultSet results, DbConnection dbConnection)
-            : this(results, dbConnection, new SchemaTableProvider())
+        public CrmDbDataReader(ICrmOperationResult result, DbConnection dbConnection)
+            : this(result, dbConnection, new SchemaTableProvider())
         {
         }
 
-        public CrmDbDataReader(EntityResultSet results, DbConnection dbConnection, ISchemaTableProvider schemaTableProvider)
+        public CrmDbDataReader(ICrmOperationResult result, DbConnection dbConnection, ISchemaTableProvider schemaTableProvider)
         {
             // TODO: Complete member initialization
-            if (results == null)
+            if (result == null)
             {
-                throw new ArgumentNullException("results");
+                throw new ArgumentNullException("result");
+            }
+            if (result.ResultSet == null)
+            {
+                throw new ArgumentNullException("resultset");
             }
 
             if (schemaTableProvider == null)
@@ -43,12 +61,16 @@ namespace CrmAdo
                 throw new ArgumentNullException("schemaTableProvider");
             }
 
-            this._Results = results;
+            this._Result = result;
             this._SchemaTableProvider = schemaTableProvider;
-
             this._DbConnection = dbConnection; // optional.
-           
-            _IsOpen = true;
+
+            _IsOpen = true;          
+        }
+
+        public override bool IsClosed
+        {
+            get { return !_IsOpen; }
         }
 
         private int _Depth = 0;
@@ -57,17 +79,13 @@ namespace CrmAdo
             get { return _Depth; }
         }
 
-        public override bool IsClosed
-        {
-            get { return !_IsOpen; }
-        }
-
         public override int RecordsAffected
         {
             get
             {
                 // RecordsAffected is only applicable to batch statements
-                // that include inserts/updates/deletes. This always returns -1.
+                // that include inserts/updates/deletes. This always returns -1 for select statements,
+                // and also doesn't return a value until the reader is closed.
                 return -1;
             }
         }
@@ -85,7 +103,12 @@ namespace CrmAdo
 
         public override bool NextResult()
         {
-            // This only supports sinlge result set..
+            if (_Result.HasMoreResults)
+            {
+                _Result.NextOperationResult();              
+                _Position = StartPosition;
+                return true;
+            }
             return false;
         }
 
@@ -93,33 +116,31 @@ namespace CrmAdo
         {
             // Return true if it is possible to advance and if you are still positioned
             // on a valid row.
-            if (++_Position >= _Results.ResultCount())
+            if (++_Position >= CurrentResultSet.ResultCount())
             {
-                // come to end of result set.. if more available need to load them..
-                if (!_Results.Results.MoreRecords)
+                // if the result set supports paging and has more records, load the next page.              
+                if (!CurrentResultSet.HasMoreRecords())
                 {
                     return false;
                 }
                 else
                 {
-                    _Results.LoadNextPage();
-                    _Position = 0;
+                    CurrentResultSet.LoadNextPage();
+                    _Position = StartPosition;
                     return true;
                     //TODO: Look into loading this asynchornously and ahead of time - perhaps 100 rows in advance?
-                    // Could grab the next page of results..
-                    //throw new NotImplementedException("The result set has many pages, and paging has not yet been supported");
+                    // Could grab the next page of results..                      
                 }
             }
             else
             {
                 return true;
             }
-
         }
 
         public override bool HasRows
         {
-            get { return _Results.HasResults(); }
+            get { return CurrentResultSet.HasResults(); }
         }
 
         public override IEnumerator GetEnumerator()
@@ -133,19 +154,19 @@ namespace CrmAdo
         {
             get
             {
-                return _Results.ColumnMetadata.Count;
+                return CurrentResultSet.ColumnMetadata.Count;
             }
         }
 
         public override string GetName(int ordinal)
         {
-            return _Results.ColumnMetadata[ordinal].ColumnName;
+            return CurrentResultSet.ColumnMetadata[ordinal].ColumnName;
         }
 
         public override int GetOrdinal(string name)
         {
             int ordinal = 0;
-            foreach (var m in _Results.ColumnMetadata)
+            foreach (var m in CurrentResultSet.ColumnMetadata)
             {
                 if (m.ColumnName.ToLower() == name.ToLower())
                 {
@@ -156,7 +177,7 @@ namespace CrmAdo
             // ok be nice.. but look for a better way to do this in future..
             // in case they are using an alias for the default entity (crm doesn't support this when using QueryExpression) then check for that..
             ordinal = 0;
-            foreach (var m in _Results.ColumnMetadata)
+            foreach (var m in CurrentResultSet.ColumnMetadata)
             {
                 if (m.IsSameLogicalName(name))
                 {
@@ -166,7 +187,7 @@ namespace CrmAdo
             }
 
             // Throw an exception if the ordinal cannot be found.
-            var availableColumns = string.Join(",", (from c in _Results.ColumnMetadata select c.ColumnName));
+            var availableColumns = string.Join(",", (from c in CurrentResultSet.ColumnMetadata select c.ColumnName));
             throw new IndexOutOfRangeException("The column named " + name + " was not found in the available columns: " + availableColumns);
         }
 
@@ -178,7 +199,7 @@ namespace CrmAdo
         public override string GetDataTypeName(int ordinal)
         {
             // retrun the data type name e.g 'varchar'
-            return _Results.ColumnMetadata[ordinal].AttributeMetadata.GetSqlDataTypeName();
+            return CurrentResultSet.ColumnMetadata[ordinal].AttributeMetadata.GetSqlDataTypeName();
         }
 
         /// <summary>
@@ -188,7 +209,7 @@ namespace CrmAdo
         /// <returns></returns>
         public override Type GetFieldType(int ordinal)
         {
-            return _Results.ColumnMetadata[ordinal].AttributeMetadata.GetFieldType();
+            return CurrentResultSet.ColumnMetadata[ordinal].AttributeMetadata.GetFieldType();
         }
 
         /// <summary>
@@ -197,7 +218,7 @@ namespace CrmAdo
         /// <returns></returns>
         public override DataTable GetSchemaTable()
         {
-            return _SchemaTableProvider.GetSchemaTable(this._Results.ColumnMetadata);
+            return _SchemaTableProvider.GetSchemaTable(CurrentResultSet.ColumnMetadata);
         }
 
         #endregion
@@ -218,43 +239,8 @@ namespace CrmAdo
 
         public override object GetValue(int ordinal)
         {
-            var name = GetName(ordinal);
-            var record = _Results.Results[_Position];
-            if (!record.Attributes.ContainsKey(name))
-            {
-                return DBNull.Value;
-            }
-            var val = record[name];
-            var meta = _Results.ColumnMetadata[ordinal];
-
-            if (meta.HasAlias)
-            {
-                var aliasedVal = val as AliasedValue;
-                if (aliasedVal != null)
-                {
-                    //if (!typeof(T).IsAssignableFrom(typeof(AliasedValue)))
-                    //{
-                    val = aliasedVal.Value;
-                    // }
-                }
-            }
-
-            switch (meta.AttributeMetadata.AttributeType)
-            {
-                case AttributeTypeCode.Lookup:
-                case AttributeTypeCode.Owner:
-                case AttributeTypeCode.Customer:
-                    return ((EntityReference)val).Id;
-                case AttributeTypeCode.Money:
-                    return ((Money)val).Value;
-                case AttributeTypeCode.Picklist:
-                case AttributeTypeCode.State:
-                case AttributeTypeCode.Status:
-                    return ((OptionSetValue)val).Value;
-                default:
-                    return val;
-            }
-
+            var value = CurrentResultSet.GetValue(ordinal, _Position);
+            return value;
         }
 
         public T GetValue<T>(int ordinal)
@@ -376,6 +362,8 @@ namespace CrmAdo
         }
 
         #endregion
+
+
 
 
     }

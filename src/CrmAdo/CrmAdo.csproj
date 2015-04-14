@@ -143,7 +143,6 @@
     </Compile>
     <Compile Include="Ado\CrmDataAdaptorRowUpdatedEventArgs.cs" />
     <Compile Include="Ado\CrmDataAdaptorRowUpdatingEventArgs.cs" />
-    <Compile Include="Ado\CrmDbMetadataReader.cs" />
     <Compile Include="Operations\BatchCrmOperationResult.cs" />
     <Compile Include="Operations\BatchOperation.cs" />
     <Compile Include="Operations\CreateAttributeOperation.cs" />
@@ -231,7 +230,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>EntityMetadataDataSet.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Results\DataTableResultSet.cs" />
     <Compile Include="Results\EntityMetadataResultSet.cs" />
     <Compile Include="Results\ResultSet.cs" />
     <Compile Include="Core\SchemaTableProvider.cs" />

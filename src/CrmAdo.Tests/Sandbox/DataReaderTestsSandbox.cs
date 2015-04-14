@@ -48,6 +48,7 @@ namespace CrmAdo.Tests.Sandbox
             FakeResultSet.Results.Entities.Add(result);
 
             this.Container.Register<EntityResultSet>(FakeResultSet);
+            this.Container.Register<ResultSet>(FakeResultSet);
           
 
         }

@@ -7,6 +7,7 @@ using NUnit.Framework;
 using Rhino.Mocks;
 using CrmAdo.Metadata;
 using CrmAdo.Tests.Sandbox;
+using CrmAdo.Operations;
 
 namespace CrmAdo.Tests
 {
@@ -19,7 +20,7 @@ namespace CrmAdo.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void Should_Throw_Argument_Null_When_Constructed_With_Null_Results()
         {
-            EntityResultSet results = null;
+            EntityResultSet results = null;           
             var subject = new CrmDbDataReader(results);
         }
 

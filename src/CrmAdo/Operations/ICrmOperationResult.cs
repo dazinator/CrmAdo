@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ namespace CrmAdo.Operations
         bool HasMoreResults { get; }
         void NextOperationResult();
 
+        DbDataReader GetReader(DbConnection connection = null);
 
     }
 }

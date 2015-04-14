@@ -2,6 +2,7 @@
 using Microsoft.Xrm.Sdk.Messages;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace CrmAdo.Operations
         {
             _ExecuteMultipleResponse = response;
             CurrentResultIndex = -1;
-            OperationResults = operationResults;
+            OperationResults = operationResults;            
         }
 
         public ExecuteMultipleResponse ExecuteMultipleResponse
@@ -91,6 +92,11 @@ namespace CrmAdo.Operations
             {
                 _CurrentOperationResult.UseResultCountAsReturnValue = value;
             }
-        }
+        }     
+
+        public DbDataReader GetReader(DbConnection connection = null)
+        {
+            return new CrmDbDataReader(this, connection);
+        }      
     }
 }
