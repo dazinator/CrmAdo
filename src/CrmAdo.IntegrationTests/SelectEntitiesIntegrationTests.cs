@@ -27,8 +27,8 @@ namespace CrmAdo.IntegrationTests
 
             try
             {
-                var sqlFormatString = "INSERT INTO CONTACT (contactid, firstname, lastname) VALUES('{0}', '{1}', '{2}')";
-                var insertAlbertEinstenSql = string.Format(sqlFormatString, Guid.Parse("21476b89-41b1-e311-9351-6c3be5be9f98"), "Albert", "Einstein");
+                var sqlFormatString = "INSERT INTO CONTACT (contactid, firstname, lastname, address1_line1) VALUES('{0}', '{1}', '{2}', '{3}')";
+                var insertAlbertEinstenSql = string.Format(sqlFormatString, Guid.Parse("21476b89-41b1-e311-9351-6c3be5be9f98"), "Albert", "Einstein", "Our hearts");
 
                 ExecuteReader(insertAlbertEinstenSql, 1);
 
