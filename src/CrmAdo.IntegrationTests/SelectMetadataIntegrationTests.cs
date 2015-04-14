@@ -209,8 +209,7 @@ namespace CrmAdo.IntegrationTests
             }
 
         }
-
-
+        
         [Test(Description = "Integration test that selects one to many relationship metadata for a particular entity from crm.")]
         public void Should_Be_Able_To_Select_One_To_Many_Relationship_Metadata_For_Entity()
         {

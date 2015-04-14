@@ -15,7 +15,7 @@ using CrmAdo.Core;
 namespace CrmAdo.IntegrationTests
 {
     [TestFixture()]
-    public class IntegrationTests : BaseTest
+    public class SelectEntitiesIntegrationTests : BaseTest
     {
 
         [TestFixtureSetUp]
@@ -120,38 +120,6 @@ namespace CrmAdo.IntegrationTests
                 }
             }
 
-        }
-
-
-        [Test(Description = "Integration tests that gets metadata from crm.")]
-        public void Should_Get_Changed_Metadata()
-        {
-            // arrange
-            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
-            var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
-                                                       new CrmClientCredentialsProvider());
-
-            var sut = new EntityMetadataRepository(serviceProvider);
-            // act
-            var contactMetadata = sut.GetEntityMetadata("contact");
-
-            var serialised = EntityMetadataUtils.SerializeMetaData(contactMetadata, Formatting.Indented);
-            var path = Environment.CurrentDirectory;
-            var fileName = System.IO.Path.Combine(path, "contactMedadata.xml");
-            Console.Write("writing to: " + fileName);
-            using (var writer = new StreamWriter(fileName))
-            {
-                writer.Write(serialised);
-                writer.Flush();
-            }
-
-            // assert
-            Assert.That(contactMetadata, Is.Not.Null);
-            Assert.That(contactMetadata, Is.Not.Null);
-
-            Assert.That(contactMetadata.Attributes, Is.Not.Null);
-            Assert.That(contactMetadata.Attributes.FirstOrDefault(a => a.LogicalName == "firstname"), Is.Not.Null);
-            Assert.That(contactMetadata.Attributes.FirstOrDefault(a => a.LogicalName == "lastname"), Is.Not.Null);
         }
 
 

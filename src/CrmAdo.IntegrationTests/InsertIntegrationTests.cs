@@ -116,8 +116,7 @@ namespace CrmAdo.IntegrationTests
             }
 
         }
-
-
+        
 
         [Category("Insert Statement")]
         [Test(Description = "Integration tests that inserts a new contact into Dynamics CRM contacts with an OUTPUT clause to get the created on date of the inserted record.")]
@@ -168,10 +167,7 @@ namespace CrmAdo.IntegrationTests
             }
 
         }
-
-
-
-
+        
 
         [Category("Insert Statement")]
         [Category("Performance")]
