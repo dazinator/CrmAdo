@@ -36,7 +36,15 @@ namespace CrmAdo.Operations
                 return -1;
             }
         }
+        
+        public virtual bool HasMoreResults
+        {
+            get { return false; }
+        }
 
-
+        public virtual void NextOperationResult()
+        {
+            throw new InvalidOperationException();
+        }
     }
 }

@@ -42,7 +42,7 @@ namespace CrmAdo.Operations
             {
                 // for execute reader and execute scalar purposes, we provide a result that has the newly created id of the entity.
                 //  var execMultipleRequest = (ExecuteMultipleRequest)executeMultipleRequest;
-                int updateOperationBatchPosition = BatchRequestIndex;
+                int updateOperationBatchPosition = 0; // BatchRequestIndex;
 
                 var batchRequest = BatchRequest;
                 if (batchRequest == null)

@@ -14,5 +14,9 @@ namespace CrmAdo.Operations
         int ReturnValue { get; }
         bool UseResultCountAsReturnValue { get; set; }
 
+        bool HasMoreResults { get; }
+        void NextOperationResult();
+
+
     }
 }

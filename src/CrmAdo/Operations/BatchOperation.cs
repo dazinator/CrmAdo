@@ -61,6 +61,8 @@ namespace CrmAdo.Operations
 
             operation.BatchRequestIndex = startPosition;
             operation.BatchOperation = this;
+            operation.DbCommand = this.DbCommand;
+            operation.CommandBehavior = this.CommandBehavior;            
         }
 
         public ExecuteMultipleResponse BatchResponse { get; set; }
@@ -82,6 +84,8 @@ namespace CrmAdo.Operations
 
             throw new NotSupportedException();
         }
+
+       
     }
 
     

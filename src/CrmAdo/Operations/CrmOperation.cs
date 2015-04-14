@@ -12,7 +12,7 @@ namespace CrmAdo.Operations
 {
     public abstract class CrmOperation : ICrmOperation
     {
-       
+
         public List<ColumnMetadata> Columns { get; set; }
         public OrganizationRequest Request { get; set; }
         public ExecuteMultipleRequest BatchRequest
@@ -31,14 +31,64 @@ namespace CrmAdo.Operations
             }
         }
 
-        public int BatchRequestIndex { get; set; }          
+        public int BatchRequestIndex { get; set; }
 
         public BatchOperation BatchOperation { get; set; }
-         
 
-        public CrmDbCommand DbCommand { get; set; }
-        public CommandBehavior CommandBehavior { get; set; }
-     
+        private CrmDbCommand _DbCommand { get; set; }
+        public virtual CrmDbCommand DbCommand
+        {
+            get
+            {
+                if (BatchOperation != null)
+                {
+                    return BatchOperation.DbCommand;
+                }
+                else
+                {
+                    return _DbCommand;
+                }
+            }
+            set
+            {
+                if (BatchOperation != null)
+                {
+                    BatchOperation.DbCommand = value;
+                }
+                else
+                {
+                    _DbCommand = value;
+                }
+            }
+        }
+
+        private CommandBehavior _CommandBehavior { get; set; }
+        public virtual CommandBehavior CommandBehavior
+        {
+            get
+            {
+                if (BatchOperation != null)
+                {
+                    return BatchOperation.CommandBehavior;
+                }
+                else
+                {
+                    return _CommandBehavior;
+                }
+            }
+            set
+            {
+                if (BatchOperation != null)
+                {
+                    BatchOperation.CommandBehavior = value;
+                }
+                else
+                {
+                    _CommandBehavior = value;
+                }
+            }
+        }
+
         public ICrmOperationResult Execute()
         {
             EnsureDbCommand();
@@ -71,7 +121,30 @@ namespace CrmAdo.Operations
             else
             {
                 // grab the response for this operation from the batch responses.
-                response = this.BatchOperation.BatchResponse.Responses[this.BatchRequestIndex].Response;
+                var multiPart = this as IMultipartOperation;
+                if (multiPart != null && multiPart.HasMultipleRequests)
+                {
+                    // rebuild an ExecuteMultipleResponse to contain just the responses for this multipart operation.
+                    var responses = new ExecuteMultipleResponseItemCollection();
+                    ExecuteMultipleResponse multipleResponse = new ExecuteMultipleResponse
+                {
+                    Results = new ParameterCollection
+                    {
+                        { "Responses", responses },
+                        { "IsFaulted", this.BatchOperation.BatchResponse.IsFaulted}
+                    }
+                };
+
+                    for (int i = 0; i < multiPart.RequestCount; i++)
+                    {
+                        var resp = this.BatchOperation.BatchResponse.Responses[this.BatchRequestIndex + i];
+                        responses.Add(resp);
+                    }
+
+                    return multipleResponse;
+                }
+
+                return this.BatchOperation.BatchResponse.Responses[this.BatchRequestIndex].Response;
             }
 
             // Allow poeople to get access to the response directly via an output paramater.
