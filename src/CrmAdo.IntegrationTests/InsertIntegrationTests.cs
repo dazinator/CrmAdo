@@ -69,8 +69,8 @@ namespace CrmAdo.IntegrationTests
 
         [Category("Insert Statement")]
         [Test(Description = "Integration tests that inserts a new contact into Dynamics CRM contacts.")]
-        [TestCase("INSERT INTO [contact] ([contactid],[fullname]) VALUES (@0,@1)", "96fa62d5-9c6a-4178-ae44-1497d0732b7f", "Gödel")]
-        public void Should_Be_Able_To_Insert_A_Contact_With_IndexedParameters(string insertSql, string id, string name)
+        [TestCase("INSERT INTO [contact] ([contactid],[fullname]) VALUES (@0,@1)", "Gödel")]
+        public void Should_Be_Able_To_Insert_A_Contact_With_IndexedParameters(string insertSql, string name)
         {           
 
          //   var sql = string.Format(insertSql, "Derren", "Brown");
@@ -84,6 +84,7 @@ namespace CrmAdo.IntegrationTests
                 Console.WriteLine("Executing command " + insertSql);
                 command.CommandText = insertSql;
                
+                Guid id = Guid.NewGuid();
                 var param =  command.CreateParameter();
                 param.ParameterName = "@0";
                 param.DbType = System.Data.DbType.String;
@@ -120,11 +121,12 @@ namespace CrmAdo.IntegrationTests
 
         [Category("Insert Statement")]
         [Test(Description = "Integration tests that inserts a new contact into Dynamics CRM contacts with an OUTPUT clause to get the created on date of the inserted record.")]
-        [TestCase("INSERT INTO [contact] ([contactid],[fullname]) OUTPUT INSERTED.createdon VALUES (@0,@1)", "605d68f8-9885-4eb6-aa27-33f60f71788d", "Curie")]
-        public void Should_Be_Able_To_Insert_A_Contact_With_OutputClause(string insertSql, string id, string name)
+        [TestCase("INSERT INTO [contact] ([contactid],[fullname]) OUTPUT INSERTED.createdon VALUES (@0,@1)", "Curie")]
+        public void Should_Be_Able_To_Insert_A_Contact_With_OutputClause(string insertSql, string name)
         {
 
             //   var sql = string.Format(insertSql, "Derren", "Brown");
+            Guid id = Guid.NewGuid();
             Console.WriteLine(insertSql);
             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
             using (var conn = new CrmDbConnection(connectionString.ConnectionString))

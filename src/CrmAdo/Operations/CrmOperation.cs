@@ -137,7 +137,8 @@ namespace CrmAdo.Operations
 
                     for (int i = 0; i < multiPart.RequestCount; i++)
                     {
-                        var resp = this.BatchOperation.BatchResponse.Responses[this.BatchRequestIndex + i];
+                        int reqIndex = this.BatchRequestIndex + i;
+                        var resp = this.BatchOperation.BatchResponse.Responses[reqIndex];
                         responses.Add(resp);
                     }
 

@@ -3,12 +3,13 @@ using Microsoft.Xrm.Sdk.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CrmAdo.Operations
 {
-   
+
 
     public class InsertOperation : CrmOperation, IMultipartOperation
     {
@@ -45,6 +46,15 @@ namespace CrmAdo.Operations
                 // for execute reader and execute scalar purposes, we provide a result that has the newly created id of the entity.
                 //  var execMultipleRequest = (ExecuteMultipleRequest)executeMultipleRequest;
                 int createOperationBatchPosition = 0;
+
+                if (executeMultipleResponse.IsFaulted)
+                {
+                    var fault = executeMultipleResponse.Responses.Where(r => r.Fault != null).FirstOrDefault();
+                    //  var errorText = from f in faults select f.Fault.InnerFault.Message;
+                    FaultReason reason = new FaultReason(fault.Fault.Message);
+                    throw new FaultException<OrganizationServiceFault>(fault.Fault, reason);
+                }
+
 
                 var batchRequest = BatchRequest;
                 if (batchRequest == null)
