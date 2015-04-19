@@ -1,6 +1,5 @@
 ﻿using CrmAdo.Dynamics;
 using CrmAdo.Metadata;
-using CrmAdo.Results;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using System;
@@ -148,7 +147,7 @@ namespace CrmAdo
                     default:
                         throw new ArgumentException(propertyname.ToLower() + " is not a recognised property of EntityMetadata");
 
-                       // return null;
+                    // return null;
                 }
             }
 
@@ -300,7 +299,7 @@ namespace CrmAdo
                     case "haschanged":
                         return OneToManyRelationship.HasChanged;
                     case "introducedversion":
-                        return  OneToManyRelationship.IntroducedVersion;
+                        return OneToManyRelationship.IntroducedVersion;
                     case "iscustomizable":
                         return GetBooleanManagedValue(OneToManyRelationship.IsCustomizable);
                     case "iscustomrelationship":
@@ -354,8 +353,8 @@ namespace CrmAdo
         private DenormalisedMetadataResult[] _Results = null;
         private int _ResultCount = 0;
 
-        public EntityMetadataResultSet(CrmDbCommand command, OrganizationRequest request, List<ColumnMetadata> columnMetadata)
-            : base(command, request, columnMetadata)
+        public EntityMetadataResultSet(CrmDbConnection connection, OrganizationRequest request, List<ColumnMetadata> columnMetadata)
+            : base(connection, request, columnMetadata)
         {
 
         }
@@ -372,14 +371,38 @@ namespace CrmAdo
             return _ResultCount;
         }
 
-        public override DbDataReader GetReader(DbConnection connection = null)
-        {
-            return new CrmDbMetadataReader(this, connection);
-        }
-
         public override object GetScalar()
         {
             throw new NotImplementedException();
+        }
+
+        public override object GetValue(int columnOrdinal, int position)
+        {
+            var meta = ColumnMetadata[columnOrdinal];
+            var result = Results[position];
+            if (meta.AttributeMetadata == null)
+            {
+                // unknown property.
+                return null;
+            }
+            var name = meta.AttributeMetadata.LogicalName;
+            switch (meta.AttributeMetadata.EntityLogicalName)
+            {
+                case "entitymetadata":
+                    return result.GetEntityMetadataValue(name);
+
+                case "attributemetadata":
+                    return result.GetAttributeMetadataValue(name);
+
+                case "onetomanyrelationshipmetadata":
+                    return result.GetOneToManyRelationshipValue(name);
+
+                case "manytomanyrelationshipmetadata":
+                    return result.GetManyToManyRelationshipValue(name);
+
+                default:
+                    return null;
+            }
         }
     }
 

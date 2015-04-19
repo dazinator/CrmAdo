@@ -16,18 +16,18 @@ namespace CrmAdo.Operations
             this.Request = request;
         }
 
-        protected override OrganisationRequestCommandResult ExecuteCommand()
+        protected override ICrmOperationResult ExecuteCommand()
         {
-            OrganisationRequestCommandResult commandResponse = null;
+            CrmOperationResult commandResponse = null;
             var resultSet = CreateEntityResultSet();
             if (IsSchemaOnly())
             {
-                commandResponse = new OrganisationRequestCommandResult(null, resultSet, false);
+                commandResponse = new CrmOperationResult(null, resultSet, false);
             }
             else
             {
                 var response = ExecuteOrganisationRequest();
-                commandResponse = new OrganisationRequestCommandResult(response, resultSet, false);
+                commandResponse = new CrmOperationResult(response, resultSet, false);
                 var retrieveMultipleResponse = response as RetrieveMultipleResponse;
                 if (retrieveMultipleResponse != null)
                 {

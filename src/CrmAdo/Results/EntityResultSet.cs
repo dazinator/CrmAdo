@@ -6,24 +6,25 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using System.Data.Common;
 using CrmAdo.Core;
+using Microsoft.Xrm.Sdk.Metadata;
 
 namespace CrmAdo
 {
     public class EntityResultSet : ResultSet
     {
 
-        public EntityResultSet(CrmDbCommand command, OrganizationRequest request, List<ColumnMetadata> columnMetadata)
-            : base(command, request, columnMetadata)
+        public EntityResultSet(CrmDbConnection connection, OrganizationRequest request, List<ColumnMetadata> columnMetadata)
+            : base(connection, request, columnMetadata)
         {
         }
 
         //TODO: Consider return datatable and using datatable reader?
-        public EntityCollection Results { get; set; }     
+        public EntityCollection Results { get; set; }
 
         public override bool HasResults()
         {
             return Results != null && Results.Entities != null && Results.Entities.Any();
-        }   
+        }
 
         public override int ResultCount()
         {
@@ -34,7 +35,7 @@ namespace CrmAdo
             return -1;
         }
 
-        public void LoadNextPage()
+        public override void LoadNextPage()
         {
             if (Results != null && Results.MoreRecords)
             {
@@ -46,16 +47,11 @@ namespace CrmAdo
                     {
                         query.PageInfo.PagingCookie = Results.PagingCookie;
                         query.PageInfo.PageNumber++;
-                        var response = (RetrieveMultipleResponse)Command.CrmDbConnection.OrganizationService.Execute(Request);
+                        var response = (RetrieveMultipleResponse)Connection.OrganizationService.Execute(Request);
                         Results = response.EntityCollection;
                     }
                 }
             }
-        }
-
-        public override DbDataReader GetReader(DbConnection connection = null)
-        {
-            return new CrmDbDataReader(this, connection);
         }
 
         public override object GetScalar()
@@ -70,6 +66,52 @@ namespace CrmAdo
                 }
             }
             return null;
+        }
+
+        public override object GetValue(int columnOrdinal, int position)
+        {
+            var meta = ColumnMetadata[columnOrdinal];
+            var columnName = meta.ColumnName;
+
+            var record = Results[position];
+            if (!record.Attributes.ContainsKey(columnName))
+            {
+                return DBNull.Value;
+            }
+            var val = record[columnName];
+
+            if (meta.HasAlias)
+            {
+                var aliasedVal = val as AliasedValue;
+                if (aliasedVal != null)
+                {
+                    //if (!typeof(T).IsAssignableFrom(typeof(AliasedValue)))
+                    //{
+                    val = aliasedVal.Value;
+                    // }
+                }
+            }
+
+            switch (meta.AttributeMetadata.AttributeType)
+            {
+                case AttributeTypeCode.Lookup:
+                case AttributeTypeCode.Owner:
+                case AttributeTypeCode.Customer:
+                    return ((EntityReference)val).Id;
+                case AttributeTypeCode.Money:
+                    return ((Money)val).Value;
+                case AttributeTypeCode.Picklist:
+                case AttributeTypeCode.State:
+                case AttributeTypeCode.Status:
+                    return ((OptionSetValue)val).Value;
+                default:
+                    return val;
+            }
+        }
+
+        public override bool HasMoreRecords()
+        {
+            return Results.MoreRecords;
         }
     }
 }

@@ -158,6 +158,8 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CommandBatchIntegrationTests.cs" />
+    <Compile Include="EntityMetadataRepositoryTests.cs" />
     <Compile Include="SchemaCollectionProviderTests.cs" />
     <Compile Include="SelectMetadataIntegrationTests.cs" />
     <Compile Include="BaseTest.cs" />
@@ -165,7 +167,7 @@
     <Compile Include="CreateEntityIntegrationTests.cs" />
     <Compile Include="InsertIntegrationTests.cs" />
     <Compile Include="Experiments.cs" />
-    <Compile Include="IntegrationTests.cs" />
+    <Compile Include="SelectEntitiesIntegrationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

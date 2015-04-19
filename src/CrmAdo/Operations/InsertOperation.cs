@@ -3,12 +3,15 @@ using Microsoft.Xrm.Sdk.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CrmAdo.Operations
 {
-    public class InsertOperation : CrmOperation
+
+
+    public class InsertOperation : CrmOperation, IMultipartOperation
     {
         public InsertOperation(List<ColumnMetadata> columnMetadata, OrganizationRequest request, bool hasOutput)
         {
@@ -19,12 +22,12 @@ namespace CrmAdo.Operations
 
         public bool HasOutput { get; set; }
 
-        protected override OrganisationRequestCommandResult ExecuteCommand()
+        protected override ICrmOperationResult ExecuteCommand()
         {
-            OrganisationRequestCommandResult commandResponse = null;
+            CrmOperationResult commandResponse = null;
             var resultSet = CreateEntityResultSet();
             var response = ExecuteOrganisationRequest();
-            commandResponse = new OrganisationRequestCommandResult(response, resultSet, true);
+            commandResponse = new CrmOperationResult(response, resultSet, true);
             if (HasOutput)
             {
                 HandleCreateWithRetreiveResponse(response as ExecuteMultipleResponse, resultSet);
@@ -42,7 +45,16 @@ namespace CrmAdo.Operations
             {
                 // for execute reader and execute scalar purposes, we provide a result that has the newly created id of the entity.
                 //  var execMultipleRequest = (ExecuteMultipleRequest)executeMultipleRequest;
-                int createOperationBatchPosition = BatchStartPosition;
+                int createOperationBatchPosition = 0;
+
+                if (executeMultipleResponse.IsFaulted)
+                {
+                    var fault = executeMultipleResponse.Responses.Where(r => r.Fault != null).FirstOrDefault();
+                    //  var errorText = from f in faults select f.Fault.InnerFault.Message;
+                    FaultReason reason = new FaultReason(fault.Fault.Message);
+                    throw new FaultException<OrganizationServiceFault>(fault.Fault, reason);
+                }
+
 
                 var batchRequest = BatchRequest;
                 if (batchRequest == null)
@@ -77,6 +89,22 @@ namespace CrmAdo.Operations
                 // Add column metadata for the results we are returning, in this case it's just the id.
                 string[] resultattributes = new string[] { idattname };
                 //  AddResultColumnMetadata(orgCommand, resultSet, request.Target.LogicalName, resultattributes);
+            }
+        }
+
+        public bool HasMultipleRequests
+        {
+            get
+            {
+                return HasOutput;
+            }
+        }
+
+        public int RequestCount
+        {
+            get
+            {
+                return HasOutput ? 2 : 1;
             }
         }
     }

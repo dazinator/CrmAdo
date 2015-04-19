@@ -15,8 +15,14 @@ using CrmAdo.Core;
 namespace CrmAdo.IntegrationTests
 {
     [TestFixture()]
-    public class IntegrationTests : BaseTest
+    public class SelectEntitiesIntegrationTests : BaseTest
     {
+
+        public const int DefaultNumberOfCustomerAddressesPerContact = 3;
+        public const int OneContact = DefaultNumberOfCustomerAddressesPerContact * 1;
+        public const int TwoContacts = DefaultNumberOfCustomerAddressesPerContact * 2;
+        public const int ThreeContacts = DefaultNumberOfCustomerAddressesPerContact * 3;
+
 
         [TestFixtureSetUp]
         public void TestDataSetup()
@@ -27,15 +33,15 @@ namespace CrmAdo.IntegrationTests
 
             try
             {
-                var sqlFormatString = "INSERT INTO CONTACT (contactid, firstname, lastname) VALUES('{0}', '{1}', '{2}')";
-                var insertAlbertEinstenSql = string.Format(sqlFormatString, Guid.Parse("21476b89-41b1-e311-9351-6c3be5be9f98"), "Albert", "Einstein");
+                var sqlFormatString = "INSERT INTO CONTACT (contactid, firstname, lastname, address1_line1) VALUES('{0}', '{1}', '{2}', '{3}')";
+                var insertAlbertEinstenSql = string.Format(sqlFormatString, Guid.Parse("21476b89-41b1-e311-9351-6c3be5be9f98"), "Albert", "Einstein", "Our hearts");
 
                 ExecuteReader(insertAlbertEinstenSql, 1);
 
-                var insertMaxPlanck = string.Format(sqlFormatString, Guid.Parse("5f90afbb-41b1-e311-9351-6c3be5be9f98"), "Max", "Planck");
+                var insertMaxPlanck = string.Format(sqlFormatString, Guid.Parse("5f90afbb-41b1-e311-9351-6c3be5be9f98"), "Max", "Planck", "Home1");
                 ExecuteReader(insertMaxPlanck, 1);
 
-                var insertGalileo = string.Format(sqlFormatString, Guid.Parse("6f90afbb-51b1-e311-9351-6c3ce5be9f93"), "Galileo", "Galilei");
+                var insertGalileo = string.Format(sqlFormatString, Guid.Parse("6f90afbb-51b1-e311-9351-6c3ce5be9f93"), "Galileo", "Galilei", "Line1");
                 ExecuteReader(insertGalileo, 1);
 
             }
@@ -123,38 +129,6 @@ namespace CrmAdo.IntegrationTests
         }
 
 
-        [Test(Description = "Integration tests that gets metadata from crm.")]
-        public void Should_Get_Changed_Metadata()
-        {
-            // arrange
-            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
-            var serviceProvider = new CrmServiceProvider(new ExplicitConnectionStringProviderWithFallbackToConfig() { OrganisationServiceConnectionString = connectionString.ConnectionString },
-                                                       new CrmClientCredentialsProvider());
-
-            var sut = new EntityMetadataRepository(serviceProvider);
-            // act
-            var contactMetadata = sut.GetEntityMetadata("contact");
-
-            var serialised = EntityMetadataUtils.SerializeMetaData(contactMetadata, Formatting.Indented);
-            var path = Environment.CurrentDirectory;
-            var fileName = System.IO.Path.Combine(path, "contactMedadata.xml");
-            Console.Write("writing to: " + fileName);
-            using (var writer = new StreamWriter(fileName))
-            {
-                writer.Write(serialised);
-                writer.Flush();
-            }
-
-            // assert
-            Assert.That(contactMetadata, Is.Not.Null);
-            Assert.That(contactMetadata, Is.Not.Null);
-
-            Assert.That(contactMetadata.Attributes, Is.Not.Null);
-            Assert.That(contactMetadata.Attributes.FirstOrDefault(a => a.LogicalName == "firstname"), Is.Not.Null);
-            Assert.That(contactMetadata.Attributes.FirstOrDefault(a => a.LogicalName == "lastname"), Is.Not.Null);
-        }
-
-
         [Test]
         [TestCase("INNER")]
         [TestCase("LEFT")]
@@ -210,15 +184,15 @@ namespace CrmAdo.IntegrationTests
         }
 
 
-        [TestCase("INNER", "((C.firstname = 'Albert' AND C.lastname = 'Einstein') OR (C.lastname = 'Planck' AND C.firstname = 'Max')) AND (C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", 2, TestName = "Should be able to chain filter groups in parenthesis using AND as well as OR conjunctions")]
-        [TestCase("INNER", "(C.firstname = 'Albert' AND C.lastname = 'Einstein') OR (C.lastname = 'Planck' AND C.firstname = 'Max') OR (C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", 4, TestName = "Should be able to chain mutiple filter groups in parenthesis using an OR conjunction")]
-        [TestCase("INNER", "C.firstname = 'Albert' AND (C.lastname = 'Einstein' AND C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", 2, TestName = "Should be able to chain an AND conjunction with a nested filter group containing an AND conjunction")]
-        [TestCase("INNER", "C.firstname = 'Albert' OR (C.lastname = 'Planck' AND C.firstname = 'Max')", 4, TestName = "Should be able to chain an OR conjunction with a nested filter group containing an AND conunction")]
-        [TestCase("INNER", "(C.firstname = 'Albert' AND C.lastname = 'Einstein') OR C.contactid = '5f90afbb-41b1-e311-9351-6c3be5be9f98'", 4, TestName = "Should be able to chain multiple AND conjunctions then a single OR conjunction")]
-        [TestCase("INNER", "C.firstname = 'Albert' OR C.lastname = 'Planck' OR C.lastname = 'Galilei'", 6, TestName = "Should be able to chain OR conjunctions")]
-        [TestCase("INNER", "C.firstname = 'Albert' AND C.lastname = 'Einstein' AND C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98'", 2, TestName = "Should be able to chain AND conjunctions")]
-        [TestCase("INNER", "C.firstname = 'Albert' AND C.lastname = 'Einstein'", 2, TestName = "Should be able to use a single AND conjunction")]
-        [TestCase("INNER", "C.firstname = 'Albert' OR C.firstname = 'Max'", 4, TestName = "Should be able to use a single OR conjunction")]
+        [TestCase("INNER", "((C.firstname = 'Albert' AND C.lastname = 'Einstein') OR (C.lastname = 'Planck' AND C.firstname = 'Max')) AND (C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", OneContact, TestName = "Should be able to chain filter groups in parenthesis using AND as well as OR conjunctions")]
+        [TestCase("INNER", "(C.firstname = 'Albert' AND C.lastname = 'Einstein') OR (C.lastname = 'Planck' AND C.firstname = 'Max') OR (C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", TwoContacts, TestName = "Should be able to chain mutiple filter groups in parenthesis using an OR conjunction")]
+        [TestCase("INNER", "C.firstname = 'Albert' AND (C.lastname = 'Einstein' AND C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98')", OneContact, TestName = "Should be able to chain an AND conjunction with a nested filter group containing an AND conjunction")]
+        [TestCase("INNER", "C.firstname = 'Albert' OR (C.lastname = 'Planck' AND C.firstname = 'Max')", TwoContacts, TestName = "Should be able to chain an OR conjunction with a nested filter group containing an AND conunction")]
+        [TestCase("INNER", "(C.firstname = 'Albert' AND C.lastname = 'Einstein') OR C.contactid = '5f90afbb-41b1-e311-9351-6c3be5be9f98'", TwoContacts, TestName = "Should be able to chain multiple AND conjunctions then a single OR conjunction")]
+        [TestCase("INNER", "C.firstname = 'Albert' OR C.lastname = 'Planck' OR C.lastname = 'Galilei'", ThreeContacts, TestName = "Should be able to chain OR conjunctions")]
+        [TestCase("INNER", "C.firstname = 'Albert' AND C.lastname = 'Einstein' AND C.contactid = '21476b89-41b1-e311-9351-6c3be5be9f98'", OneContact, TestName = "Should be able to chain AND conjunctions")]
+        [TestCase("INNER", "C.firstname = 'Albert' AND C.lastname = 'Einstein'", OneContact, TestName = "Should be able to use a single AND conjunction")]
+        [TestCase("INNER", "C.firstname = 'Albert' OR C.firstname = 'Max'", TwoContacts, TestName = "Should be able to use a single OR conjunction")]
         [Test]
         public void Should_Be_Able_To_Query_Using_Filter_Groups(String joinType, string whereClause, int expectedResults)
         {
@@ -236,7 +210,7 @@ namespace CrmAdo.IntegrationTests
             //}
 
 
-            var sql = string.Format("Select C.contactid, C.firstname, C.lastname, A.line1 From contact C {0} JOIN customeraddress A on C.contactid = A.parentid WHERE {1}", joinType, whereClause);
+            var sql = string.Format("Select C.contactid, C.firstname, C.lastname, A.line1, A.customeraddressid From contact C {0} JOIN customeraddress A on C.contactid = A.parentid WHERE {1}", joinType, whereClause);
 
             var cmd = new CrmDbCommand(null);
             cmd.CommandText = sql;
@@ -262,7 +236,8 @@ namespace CrmAdo.IntegrationTests
                         var lastName = (string)reader.SafeGetString(2);
                         var line1 = (string)reader.SafeGetString(3);
                         var alsoLine1 = (string)reader.SafeGetString("A.line1");
-                        Console.WriteLine(string.Format("{0} {1} {2} {3}", contactId, firstName, lastName, line1));
+                        var customerAddressId = (Guid)reader["A.customeraddressid"];
+                        Console.WriteLine(string.Format("{0} {1} {2} {3} {4}", contactId, firstName, lastName, line1, customerAddressId));
                     }
                     Console.WriteLine("There were " + resultCount + " results..");
                     Assert.That(resultCount, Is.EqualTo(expectedResults));

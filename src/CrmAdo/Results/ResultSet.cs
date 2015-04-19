@@ -5,20 +5,21 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CrmAdo.Operations;
 
 namespace CrmAdo
 {
     public abstract class ResultSet
     {
-        private CrmDbCommand _Command;
+        private CrmDbConnection _Connection;
         private OrganizationRequest _OrgRequest;
 
-        public CrmDbCommand Command { get { return _Command; } set { _Command = value; } }
+        public CrmDbConnection Connection { get { return _Connection; } set { _Connection = value; } }
         public OrganizationRequest Request { get { return _OrgRequest; } set { _OrgRequest = value; } }
 
-        protected ResultSet(CrmDbCommand command, OrganizationRequest request, List<ColumnMetadata> columnMetadata)
+        protected ResultSet(CrmDbConnection connection, OrganizationRequest request, List<ColumnMetadata> columnMetadata)
         {
-            _Command = command;
+            _Connection = connection;
             _OrgRequest = request;
             ColumnMetadata = columnMetadata;
         }
@@ -26,8 +27,6 @@ namespace CrmAdo
         public abstract int ResultCount();
 
         public abstract bool HasResults();
-
-        public abstract DbDataReader GetReader(DbConnection connection = null);
 
         public abstract object GetScalar();
 
@@ -37,6 +36,20 @@ namespace CrmAdo
         {
             return ColumnMetadata != null && ColumnMetadata.Any();
         }
+
+        public abstract object GetValue(int columnOrdinal, int position);
+
+        public virtual void LoadNextPage()
+        {
+            throw new NotSupportedException();
+        }
+
+        public virtual bool HasMoreRecords()
+        {
+            return false;
+        }
+
+
 
     }
 }
