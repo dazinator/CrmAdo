@@ -479,7 +479,8 @@ namespace CrmAdo.Tests.Tests
                 while (reader.Read())
                 {
                     // Assert.That(reader.GetDateTime(0), NUnit.Framework.Is.EqualTo(createdOnDate));
-                    Assert.That(reader.GetGuid(0), NUnit.Framework.Is.EqualTo(id));
+                    // we didn't specify the id, so one should be generated for us.
+                    Assert.That(reader.GetGuid(0), NUnit.Framework.Is.Not.Null);
                 }
 
                 // Move to third result for update.
@@ -674,7 +675,7 @@ namespace CrmAdo.Tests.Tests
             responses.Add(createResponse);
 
             // fake response for second insert.
-            ExecuteMultipleResponseItem createResponseWithOutput = GetCreateResponseItem(1, id);
+            ExecuteMultipleResponseItem createResponseWithOutput = GetCreateResponseItem(1, null);
             responses.Add(createResponseWithOutput);
 
             // fake response for update.
@@ -765,15 +766,21 @@ namespace CrmAdo.Tests.Tests
 
         }
 
-        private ExecuteMultipleResponseItem GetCreateResponseItem(int requestIndex, Guid createdEntityId)
+        private ExecuteMultipleResponseItem GetCreateResponseItem(int requestIndex, Guid? specifiedId = null)
         {
+            if(specifiedId == null)
+            {
+                specifiedId = Guid.NewGuid();
+            }
+
             var createResponse = new CreateResponse
             {
                 Results = new ParameterCollection
                     {
-                        { "id", createdEntityId }
+                        { "id", specifiedId }
                     }
             };
+
             var createResponseItem = new ExecuteMultipleResponseItem();
             createResponseItem.RequestIndex = requestIndex;
             createResponseItem.Response = createResponse;
