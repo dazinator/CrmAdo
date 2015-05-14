@@ -230,10 +230,6 @@
       </Targets>
       <Name>CrmAdo</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CrmEF\CrmAdo.EntityFramework.csproj">
-      <Project>{d9372b45-9334-4997-bf80-3f0383f7bb3c}</Project>
-      <Name>CrmAdo.EntityFramework</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="MetadataFiles\accountMetadata.xml">
