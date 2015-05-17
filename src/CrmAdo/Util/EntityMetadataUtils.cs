@@ -131,7 +131,7 @@ namespace CrmAdo.Util
                 case AttributeTypeCode.State:
                 case AttributeTypeCode.Status:
                 case AttributeTypeCode.Picklist:
-                    return "integer";
+                    return "int";
                 case AttributeTypeCode.Boolean:
                     return "bit";
                 case AttributeTypeCode.DateTime:
