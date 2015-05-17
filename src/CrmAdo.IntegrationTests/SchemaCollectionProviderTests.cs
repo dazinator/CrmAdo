@@ -139,11 +139,11 @@ namespace CrmAdo.IntegrationTests
                 var col = collection.Columns["table_catalog"];
 
                 Assert.That(col, Is.Not.Null);
-                Assert.That(firstRow[col], Is.EqualTo(""));
+                Assert.That(firstRow[col], Is.EqualTo(conn.ConnectionInfo.OrganisationName));
 
                 col = collection.Columns["table_schema"];
                 Assert.That(col, Is.Not.Null);
-                Assert.That(firstRow[col], Is.EqualTo(""));
+                Assert.That(firstRow[col], Is.EqualTo("dbo"));
 
                 col = collection.Columns["table_name"];
                 Assert.That(col, Is.Not.Null);
@@ -185,11 +185,11 @@ namespace CrmAdo.IntegrationTests
                 var col = collection.Columns["table_catalog"];
 
                 Assert.That(col, Is.Not.Null);
-                Assert.That(firstRow[col], Is.EqualTo(""));
+                Assert.That(firstRow[col], Is.EqualTo(conn.ConnectionInfo.OrganisationName));
 
                 col = collection.Columns["table_schema"];
                 Assert.That(col, Is.Not.Null);
-                Assert.That(firstRow[col], Is.EqualTo(""));
+                Assert.That(firstRow[col], Is.EqualTo("dbo"));
 
                 col = collection.Columns["table_name"];
                 Assert.That(col, Is.Not.Null);

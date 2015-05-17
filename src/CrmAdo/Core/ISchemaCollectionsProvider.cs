@@ -45,6 +45,7 @@ namespace CrmAdo.Core
 
     public class SchemaCollectionsProvider : ISchemaCollectionsProvider
     {
+        public const string DefaultSchema = "dbo";
 
         public DataTable GetMetadataCollections()
         {
@@ -309,8 +310,8 @@ namespace CrmAdo.Core
             var adapter = new CrmDataAdapter(command);
             var dataTable = new DataTable();
             adapter.Fill(dataTable);
-            dataTable.Columns.Add("table_catalog", typeof(string), "''");
-            dataTable.Columns.Add("table_schema", typeof(string), "''");
+            dataTable.Columns.Add("table_catalog", typeof(string), string.Format("'{0}'", crmDbConnection.ConnectionInfo.OrganisationName));
+            dataTable.Columns.Add("table_schema", typeof(string), string.Format("'{0}'", DefaultSchema));
             dataTable.Columns["logicalname"].ColumnName = "table_name";
             dataTable.Columns.Add("table_type", typeof(string), "'BASE TABLE'");
             return dataTable;
