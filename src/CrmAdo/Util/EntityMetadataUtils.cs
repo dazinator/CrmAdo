@@ -116,10 +116,14 @@ namespace CrmAdo.Util
             {
                 case AttributeTypeCode.String:
                 case AttributeTypeCode.Memo:
+                case AttributeTypeCode.EntityName:
                     return "nvarchar";
                 case AttributeTypeCode.Lookup:
                 case AttributeTypeCode.Owner:
+                case AttributeTypeCode.Customer:
+                case AttributeTypeCode.Uniqueidentifier:
                     return "uniqueidentifier";
+
                 case AttributeTypeCode.Virtual:
                     if (attTypeDisplayName != null && attTypeDisplayName.Value == AttributeTypeDisplayName.ImageType.Value)
                     {
@@ -128,14 +132,22 @@ namespace CrmAdo.Util
                     return "nvarchar";
                 case AttributeTypeCode.Double:
                     return "float";
+                case AttributeTypeCode.Decimal:
+                    return "decimal";
                 case AttributeTypeCode.State:
                 case AttributeTypeCode.Status:
                 case AttributeTypeCode.Picklist:
+                case AttributeTypeCode.Integer:
                     return "int";
                 case AttributeTypeCode.Boolean:
+                case AttributeTypeCode.ManagedProperty:
                     return "bit";
                 case AttributeTypeCode.DateTime:
                     return "datetime";
+                case AttributeTypeCode.Money:
+                    return "money";
+                case AttributeTypeCode.BigInt:
+                    return "bigint";
                 default:
                     return attType.ToString().ToLower();
             }
