@@ -46,5 +46,25 @@ namespace CrmAdo.Tests
             }
         }
 
+        [Category("Projecting")]
+        [Test(Description = "Should support Column Names")]
+        public void Should_Support_Select_Statement_From_Dbo_Prefixed_Table_Names()
+        {
+            // Arrange
+            var sql = "Select contactid, firstname, lastname From dbo.contact";
+            using (var sandbox = RequestProviderTestsSandbox.Create())
+            {
+
+                // Act
+                var queryExpression = GetQueryExpression(sandbox.FakeCrmDbConnection, sql);
+                // Assert
+                Assert.That(queryExpression.ColumnSet.AllColumns == false);
+                Assert.That(queryExpression.ColumnSet.Columns[0] == "contactid");
+                Assert.That(queryExpression.ColumnSet.Columns[1] == "firstname");
+                Assert.That(queryExpression.ColumnSet.Columns[2] == "lastname");
+                Assert.That(queryExpression.EntityName == "contact");
+            }
+        }
+
     }
 }

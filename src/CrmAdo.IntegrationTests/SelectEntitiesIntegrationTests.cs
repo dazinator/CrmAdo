@@ -15,6 +15,7 @@ using CrmAdo.Core;
 namespace CrmAdo.IntegrationTests
 {
     [TestFixture()]
+    [Category("Select Statement")]
     public class SelectEntitiesIntegrationTests : BaseTest
     {
 
@@ -241,6 +242,47 @@ namespace CrmAdo.IntegrationTests
                     }
                     Console.WriteLine("There were " + resultCount + " results..");
                     Assert.That(resultCount, Is.EqualTo(expectedResults));
+                }
+            }
+
+
+        }
+
+
+
+        [Test]
+        [TestCase("dbo", TestName = "Should be able to use a schema prefix in the from clause, without effecting the query")]
+        [TestCase("abc", TestName = "Should be able to use a schema prefix in the from clause, without effecting the query")]
+        public void Should_Be_Able_To_Select_From_Table_Prefixed_With_Dbo_Schema(String schemaPrefix)
+        {
+
+            var sql = string.Format("Select C.contactid, C.firstname, C.lastname From {0}.contact C", schemaPrefix);
+
+            var cmd = new CrmDbCommand(null);
+            cmd.CommandText = sql;
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                conn.Open();
+                var command = conn.CreateCommand();
+
+                Console.WriteLine("Executing command " + sql);
+                command.CommandText = sql;
+                //   command.CommandType = CommandType.Text;
+
+                using (var reader = command.ExecuteReader())
+                {
+                    int resultCount = 0;
+                    foreach (var result in reader)
+                    {
+                        resultCount++;
+                        var contactId = (Guid)reader["C.contactid"];
+                        var firstName = (string)reader.SafeGetString(1);
+                        var lastName = (string)reader.SafeGetString(2);                       
+                        Console.WriteLine(string.Format("{0} {1} {2}", contactId, firstName, lastName));
+                    }
+                    Console.WriteLine("There were " + resultCount + " results..");
                 }
             }
 
