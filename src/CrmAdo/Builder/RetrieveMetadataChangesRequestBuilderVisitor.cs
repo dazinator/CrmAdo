@@ -13,6 +13,7 @@ using CrmAdo.Metadata;
 using CrmAdo.Util;
 using CrmAdo.Core;
 using CrmAdo.Operations;
+using Microsoft.Xrm.Sdk.Metadata;
 
 namespace CrmAdo.Visitor
 {
@@ -47,8 +48,17 @@ namespace CrmAdo.Visitor
         public const string ManyToManyRelationshipMetadadataTableLogicalName = "manytomanyrelationshipmetadata";
 
         private MetadataConditionExpression _DefaultExcludeFilter = new MetadataConditionExpression("SchemaName", MetadataConditionOperator.Equals, "ThisWillNeverExist");
+        private MetadataConditionExpression _RelationshipTypeFilter = new MetadataConditionExpression("RelationshipType", MetadataConditionOperator.Equals, RelationshipType.OneToManyRelationship);
+
+        private bool _hasEntityMetadataProperties = false;
         private bool _hasAttributes = false;
         private bool _hasRelationships = false;
+        private bool _hasOneToManyRelationships = false;
+        private bool _hasManyToManyRelationships = false;
+
+
+
+
         //  private ICrmMetaDataProvider _MetadataProvider;
 
         public enum VisitMode
@@ -84,6 +94,41 @@ namespace CrmAdo.Visitor
         public bool IsSingleSource { get; set; }
         public AliasedSource SingleSource { get; set; }
         public VisitMode Mode { get; set; }
+
+        public bool HasEntityMetadataProperties
+        {
+            get
+            {
+
+                if (this.QueryExpression.Properties != null)
+                {
+                    if (this.QueryExpression.Properties.AllProperties == true)
+                    {
+                        return true;
+                    }
+
+                    if (this.QueryExpression.Properties.PropertyNames.Any
+                        (a =>
+                            a.ToLowerInvariant() != AttributeMetadadataTableLogicalName &&
+                            a.ToLowerInvariant() != OneToManyRelationshipMetadadataTableLogicalName &&
+                            a.ToLowerInvariant() != ManyToManyRelationshipMetadadataTableLogicalName))
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                return false;
+
+            }
+        }
+        public bool HasAttributes { get { return _hasAttributes; } }
+        public bool HasRelationships { get { return _hasRelationships; } }
+        public bool HasOneToManyRelationships { get { return _hasOneToManyRelationships; } }
+        public bool HasManyToManyRelationships { get { return _hasManyToManyRelationships; } }
+
+        private ClientSideMetadataJoinTypes _ClientSideJoinTypes;
         //  private Dictionary<string, CrmEntityMetadata> EntityMetadata { get; set; }
         // public List<ColumnMetadata> ColumnMetadata { get; set; }
 
@@ -251,42 +296,18 @@ namespace CrmAdo.Visitor
             //}
         }
 
-        public void InitialiseAttributeQuery()
-        {
-            this.QueryExpression.AttributeQuery.Properties = new MetadataPropertiesExpression();
-            this.QueryExpression.AttributeQuery = new AttributeQueryExpression();
-        }
-
-        public void InitialiseRelationshipQuery()
-        {
-            this.QueryExpression.RelationshipQuery.Properties = new MetadataPropertiesExpression();
-            this.QueryExpression.RelationshipQuery = new RelationshipQueryExpression();
-        }
-
         protected override void VisitTable(Table item)
         {
             var name = item.GetTableLogicalEntityName();
             switch (name)
             {
                 case EntityMetadadataTableLogicalName:
-                    //  this.QueryExpression.Properties = new MetadataPropertiesExpression();
                     break;
                 case AttributeMetadadataTableLogicalName:
-                    InitialiseAttributeQuery();
                     break;
                 case OneToManyRelationshipMetadadataTableLogicalName:
-                    if (this.QueryExpression.RelationshipQuery == null)
-                    {
-                        this.QueryExpression.RelationshipQuery = new RelationshipQueryExpression();
-                        this.QueryExpression.RelationshipQuery.Properties = new MetadataPropertiesExpression();
-                    }
                     break;
                 case ManyToManyRelationshipMetadadataTableLogicalName:
-                    if (this.QueryExpression.RelationshipQuery == null)
-                    {
-                        this.QueryExpression.RelationshipQuery = new RelationshipQueryExpression();
-                        this.QueryExpression.RelationshipQuery.Properties = new MetadataPropertiesExpression();
-                    }
                     break;
             }
 
@@ -295,6 +316,7 @@ namespace CrmAdo.Visitor
         #endregion
 
         #region Projection
+
         protected override void VisitColumn(Column item)
         {
             //   bool isAliasedSource = !string.IsNullOrEmpty(item.Source.Alias);
@@ -321,24 +343,45 @@ namespace CrmAdo.Visitor
                     }
                     break;
                 case OneToManyRelationshipMetadadataTableLogicalName:
+                    _hasOneToManyRelationships = true;
                     this.QueryExpression.RelationshipQuery.Properties.PropertyNames.Add(item.Name);
-                    if (!_hasRelationships)
-                    {
-                        SetExcludeFilter(this.QueryExpression.RelationshipQuery.Criteria, false);
-                        _hasRelationships = true;
-                    }
+                    SetRelationshipFilter(this.QueryExpression.RelationshipQuery.Criteria, _RelationshipTypeFilter, _hasOneToManyRelationships, _hasManyToManyRelationships);
                     break;
                 case ManyToManyRelationshipMetadadataTableLogicalName:
+                    _hasManyToManyRelationships = true;
                     this.QueryExpression.RelationshipQuery.Properties.PropertyNames.Add(item.Name);
-                    if (!_hasRelationships)
-                    {
-                        SetExcludeFilter(this.QueryExpression.RelationshipQuery.Criteria, false);
-                        _hasRelationships = true;
-                    }
+                    SetRelationshipFilter(this.QueryExpression.RelationshipQuery.Criteria, _RelationshipTypeFilter, _hasOneToManyRelationships, _hasManyToManyRelationships);
                     break;
             }
 
             AddColumnMetadata(sourceName, aliasedSource.Alias, item.GetColumnLogicalAttributeName());
+        }
+
+        private void SetRelationshipFilter(MetadataFilterExpression metadataFilterExpression, MetadataConditionExpression relationshipTypeCondition, bool includeOneToMany, bool includeManyToMany)
+        {
+            if (includeManyToMany && includeOneToMany)
+            {
+                metadataFilterExpression.Conditions.Remove(relationshipTypeCondition);
+            }
+            else
+            {
+                if (includeManyToMany)
+                {
+                    relationshipTypeCondition.Value = RelationshipType.ManyToManyRelationship;
+                }
+                else if (includeOneToMany)
+                {
+                    relationshipTypeCondition.Value = RelationshipType.OneToManyRelationship;
+                }
+            }
+
+            if (!_hasRelationships)
+            {
+                SetExcludeFilter(metadataFilterExpression, false);
+                metadataFilterExpression.Conditions.Add(relationshipTypeCondition);
+                _hasRelationships = true;
+            }
+
         }
 
         protected override void VisitAllColumns(AllColumns item)
@@ -357,18 +400,19 @@ namespace CrmAdo.Visitor
                     _hasAttributes = true;
                     break;
                 case OneToManyRelationshipMetadadataTableLogicalName:
+                    _hasOneToManyRelationships = true;
                     this.QueryExpression.RelationshipQuery.Properties.AllProperties = true;
-                    SetExcludeFilter(this.QueryExpression.RelationshipQuery.Criteria, false);
-                    _hasRelationships = true;
+                    SetRelationshipFilter(this.QueryExpression.RelationshipQuery.Criteria, _RelationshipTypeFilter, _hasOneToManyRelationships, _hasManyToManyRelationships);
                     break;
                 case ManyToManyRelationshipMetadadataTableLogicalName:
+                    _hasManyToManyRelationships = true;
                     this.QueryExpression.RelationshipQuery.Properties.AllProperties = true;
-                    SetExcludeFilter(this.QueryExpression.RelationshipQuery.Criteria, false);
-                    _hasRelationships = true;
+                    SetRelationshipFilter(this.QueryExpression.RelationshipQuery.Criteria, _RelationshipTypeFilter, _hasOneToManyRelationships, _hasManyToManyRelationships);
                     break;
             }
             AddAllColumnMetadata(sourceName, aliasedSource.Alias);
         }
+
         #endregion
 
         #region Not Supported
@@ -673,6 +717,27 @@ namespace CrmAdo.Visitor
                 throw new NotSupportedException("When using an ON condition in a join, only Equal To operator is supported. For example: INNER JOIN X ON Y.ID = X.ID");
             }
 
+            if(jointype == JoinOperator.Inner)
+            {
+                if(item.LeftHand.ToString() == "SQLGeneration.Builders.JoinStart")
+                {                   
+                    var rightTable = item.RightHand.Source as Table;
+                    if(rightTable!= null)
+                    {
+                        if(rightTable.GetTableLogicalEntityName() == OneToManyRelationshipMetadadataTableLogicalName)
+                        {
+                            _ClientSideJoinTypes = _ClientSideJoinTypes | ClientSideMetadataJoinTypes.OneToManyRelationshipInnerJoin;
+                        }
+                        else if (rightTable.GetTableLogicalEntityName() == ManyToManyRelationshipMetadadataTableLogicalName)
+                        {
+                            _ClientSideJoinTypes = _ClientSideJoinTypes | ClientSideMetadataJoinTypes.ManyToManyRelationshipInnerJoin;
+                        }
+                    }                   
+                }
+                //TODO THIS IS WRONG AS NEED TO CHECK THIS IS AN INNER JOIN FROM ENTITYMETADATA TO ONETOMANYRELATIONSHIP
+               
+              
+            }
             //if (!QueryExpression.LinkEntities.Any())
             //{
             //if (QueryExpression.EntityName != LinkEntity.LinkFromEntityName)
@@ -1055,7 +1120,10 @@ namespace CrmAdo.Visitor
 
         public override ICrmOperation GetCommand()
         {
-            var orgCommand = new SelectMetadataChangesOperation(ResultColumnMetadata, Request);
+
+       
+
+            var orgCommand = new SelectMetadataChangesOperation(ResultColumnMetadata, Request, _ClientSideJoinTypes);
             return orgCommand;
         }
 

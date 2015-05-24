@@ -10,12 +10,24 @@ using System.Threading.Tasks;
 
 namespace CrmAdo.Operations
 {
+    [Flags]
+    public enum ClientSideMetadataJoinTypes
+    {
+        OneToManyRelationshipInnerJoin = 1,
+        ManyToManyRelationshipInnerJoin = 2,
+
+
+    }
     public class SelectMetadataChangesOperation : CrmOperation
     {
-        public SelectMetadataChangesOperation(List<ColumnMetadata> columnMetadata, OrganizationRequest request)
+
+        private ClientSideMetadataJoinTypes _clientSideJoinType;
+
+        public SelectMetadataChangesOperation(List<ColumnMetadata> columnMetadata, OrganizationRequest request, ClientSideMetadataJoinTypes clientSideJoin)
         {
             this.Columns = columnMetadata;
             this.Request = request;
+            _clientSideJoinType = clientSideJoin;
         }
 
         protected override ICrmOperationResult ExecuteCommand()
@@ -49,6 +61,12 @@ namespace CrmAdo.Operations
                                    from o in (r.OneToManyRelationships ?? Enumerable.Empty<OneToManyRelationshipMetadata>()).Union(r.ManyToOneRelationships ?? Enumerable.Empty<OneToManyRelationshipMetadata>()).DefaultIfEmpty()
                                    from m in (r.ManyToManyRelationships ?? Enumerable.Empty<ManyToManyRelationshipMetadata>()).DefaultIfEmpty()
                                    select new CrmAdo.EntityMetadataResultSet.DenormalisedMetadataResult { EntityMetadata = r, AttributeMetadata = attFactory.Create(a), OneToManyRelationship = o, ManyToManyRelationship = m }).ToArray();
+                       
+                        // perform client side joins.
+                        if (_clientSideJoinType.HasFlag(ClientSideMetadataJoinTypes.OneToManyRelationshipInnerJoin))
+                        {
+                            results = (from r in results where r.OneToManyRelationship != null select r).ToArray();
+                        }
                         metadataResultSet.Results = results;
                     }
                 }

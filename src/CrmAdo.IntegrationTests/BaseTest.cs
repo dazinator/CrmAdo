@@ -23,7 +23,7 @@ namespace CrmAdo.IntegrationTests
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="assertResult"></param>
-        protected virtual void ExecuteNonQuery(string sql, int assertResult)
+        protected virtual void ExecuteCrmNonQuery(string sql, int assertResult)
         {
 
             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
@@ -158,7 +158,7 @@ namespace CrmAdo.IntegrationTests
         /// Creates a new entity for testing with in Crm and returns its name.
         /// </summary>
         /// <param name="sqlFormatString"></param>
-        protected string CreateTestEntity()
+        protected virtual string CreateTestEntity()
         {
             // create a random name for the entity. We use half a guid because names cant be too long.
             string randomEntityName = "createtest" + Guid.NewGuid().ToString().Replace("-", "").Remove(0, 16);
@@ -175,7 +175,7 @@ namespace CrmAdo.IntegrationTests
                 Console.WriteLine("Executing command " + sql);
                 command.CommandText = sql;
                 //   command.CommandType = CommandType.Text;
-                ExecuteNonQuery(sql, -1);
+                ExecuteCrmNonQuery(sql, -1);
             }
 
             string entityName = string.Format("{0}{1}", DefaultPublisherPrefix, randomEntityName);

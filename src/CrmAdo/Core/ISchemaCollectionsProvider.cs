@@ -87,15 +87,26 @@ namespace CrmAdo.Core
             dataRow[DbMetaDataColumnNames.DataSourceProductName] = "Dynamics CRM";
             dataRow[DbMetaDataColumnNames.DataSourceProductVersion] = connection.ServerVersion;
             dataRow[DbMetaDataColumnNames.DataSourceProductVersionNormalized] = connection.ServerVersion;
-            dataRow[DbMetaDataColumnNames.GroupByBehavior] = GroupByBehavior.MustContainAll;
-            dataRow[DbMetaDataColumnNames.IdentifierPattern] = @"([\p{L}:?@#_][\p{L}\p{N}@#$_]*)|(""(\.|"""")+"")|(\[[^\]]+\])";  // [A-Za-z0-9_#$] 
+            dataRow[DbMetaDataColumnNames.GroupByBehavior] = GroupByBehavior.Unrelated;
+
+
+
+            dataRow[DbMetaDataColumnNames.IdentifierPattern] = @"(^\[\p{Lo}\p{Lu}\p{Ll}_@#][\p{Lo}\p{Lu}\p{Ll}\p{Nd}@$#_]*$)|(^\[[^\]\0]|\]\]+\]$)|(^\""[^\""\0]|\""\""+\""$)";
+            //  dataRow[DbMetaDataColumnNames.IdentifierPattern] = @"([\p{L}:?@#_][\p{L}\p{N}@#$_]*)|(""(\.|"""")+"")|(\[[^\]]+\])";  // [A-Za-z0-9_#$] 
             dataRow[DbMetaDataColumnNames.IdentifierCase] = IdentifierCase.Insensitive;
-            dataRow[DbMetaDataColumnNames.OrderByColumnsInSelect] = true;
+            dataRow[DbMetaDataColumnNames.OrderByColumnsInSelect] = false;
             dataRow[DbMetaDataColumnNames.ParameterMarkerFormat] = "{0}";
-            dataRow[DbMetaDataColumnNames.ParameterMarkerPattern] = "(@[A-Za-z0-9_$#]*)";
+
+
+            dataRow[DbMetaDataColumnNames.ParameterMarkerPattern] = @"@[\p{Lo}\p{Lu}\p{Ll}\p{Lm}_@#][\p{Lo}\p{Lu}\p{Ll}\p{Lm}\p{Nd}\uff3f_@#\$]*(?=\s+|$)";
+            //dataRow[DbMetaDataColumnNames.ParameterMarkerPattern] = "(@[A-Za-z0-9_$#]*)";
             dataRow[DbMetaDataColumnNames.ParameterNameMaxLength] = 128;
             dataRow[DbMetaDataColumnNames.ParameterNamePattern] = @"^[\p{Lo}\p{Lu}\p{Ll}\p{Lm}_@#][\p{Lo}\p{Lu}\p{Ll}\p{Lm}\p{Nd}\uff3f_@#\$]*(?=\s+|$)"; //  \p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}\p{Nd}
-            dataRow[DbMetaDataColumnNames.QuotedIdentifierPattern] = @"\[(.*?)\]"; //TODO THIS IS WRONG AS IT MATCHES THE QUOTES AND I NEED TO EXLCUDE THEM..;
+
+
+            dataRow[DbMetaDataColumnNames.QuotedIdentifierPattern] = @"(([^\[]|\]\])*)";
+            // dataRow[DbMetaDataColumnNames.QuotedIdentifierPattern] = @"\[(.*?)\]"; //TODO THIS IS WRONG AS IT MATCHES THE QUOTES AND I NEED TO EXLCUDE THEM..;
+
             dataRow[DbMetaDataColumnNames.QuotedIdentifierCase] = IdentifierCase.Insensitive;
             dataRow[DbMetaDataColumnNames.StatementSeparatorPattern] = @";";
             dataRow[DbMetaDataColumnNames.StringLiteralPattern] = @"('([^']|'')*')"; //TODO THIS IS WRONG AS IT MATCHES THE QUOTES AND I NEED TO EXLCUDE THEM..;

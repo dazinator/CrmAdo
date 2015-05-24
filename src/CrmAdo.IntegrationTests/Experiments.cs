@@ -24,7 +24,7 @@ namespace CrmAdo.IntegrationTests
     [Category("Experimental")]
     public class Experiments : BaseTest
     {
-      
+
         [Test]
         [TestCase(TestName = "Experiment for contains and not contains")]
         public void Experiment_For_Contains_And_Not_Contains()
@@ -63,7 +63,7 @@ namespace CrmAdo.IntegrationTests
 
 
         }
-      
+
         [Test]
         public void Experiment_For_Filters_1()
         {
@@ -136,7 +136,7 @@ namespace CrmAdo.IntegrationTests
 
 
         }
-     
+
         [Test]
         public void Experiment_For_Filters_2_With_Linq_Conversion()
         {
@@ -187,7 +187,7 @@ namespace CrmAdo.IntegrationTests
 
 
         }
-    
+
         [Test]
         public void Experiment_For_Filters_3()
         {
@@ -233,7 +233,7 @@ namespace CrmAdo.IntegrationTests
 
 
         }
-   
+
         [Test]
         public void Experiment_For_Filters_4()
         {
@@ -281,7 +281,7 @@ namespace CrmAdo.IntegrationTests
 
 
         }
-      
+
         [Test]
         [TestCase(TestName = "Experiment for filter groups")]
         public void Experiment_For_Filter_Groups()
@@ -330,7 +330,7 @@ namespace CrmAdo.IntegrationTests
 
 
         }
-     
+
         [Test]
         [TestCase(TestName = "Experiment for min active row version")]
         public void Experiment_For_Min_Active_Row_Version()
@@ -373,7 +373,7 @@ namespace CrmAdo.IntegrationTests
             }
 
         }
-      
+
         [Test]
         [TestCase(TestName = "Experiment for selecting highest version number")]
         public void Experiment_For_Selecting_Highest_Version_Number()
@@ -417,7 +417,7 @@ namespace CrmAdo.IntegrationTests
 
 
         }
-      
+
         [Test]
         [TestCase(TestName = "Experiment for selecting version number greater than")]
         public void Experiment_For_Selecting_Version_Number_Greater_Than()
@@ -461,7 +461,7 @@ namespace CrmAdo.IntegrationTests
 
 
         }
-       
+
         [Test]
         [TestCase(TestName = "Experiment for creating publisher")]
         public void Experiment_For_Creating_Publisher()
@@ -518,7 +518,7 @@ namespace CrmAdo.IntegrationTests
 
 
         }
-      
+
         [Test]
         [TestCase(TestName = "Experiment for selecting entity metadata")]
         public void Experiment_For_Selecting_Entity_Metadata()
@@ -533,7 +533,7 @@ namespace CrmAdo.IntegrationTests
             using (orgService as IDisposable)
             {
                 MetadataFilterExpression entityFilter = new MetadataFilterExpression(LogicalOperator.And);
-                entityFilter.Conditions.Add(new MetadataConditionExpression("LogicalName", MetadataConditionOperator.Equals, "contact"));
+              //  entityFilter.Conditions.Add(new MetadataConditionExpression("OneToManyRelationships", MetadataConditionOperator.NotEquals, null));
 
 
                 var relationShipQuery = new RelationshipQueryExpression();
@@ -541,11 +541,14 @@ namespace CrmAdo.IntegrationTests
                 relationShipFilter.Conditions.Add(new MetadataConditionExpression("RelationshipType", MetadataConditionOperator.Equals, RelationshipType.OneToManyRelationship));
                 relationShipQuery.Criteria = relationShipFilter;
 
+                var props = new MetadataPropertiesExpression();
+                props.AllProperties = false;
+                props.PropertyNames.Add("OneToManyRelationships");              
+
                 EntityQueryExpression entityQueryExpression = new EntityQueryExpression()
                 {
                     Criteria = entityFilter,
-                    Properties = new MetadataPropertiesExpression() { AllProperties = true }
-                    ,
+                    Properties = props,
                     RelationshipQuery = relationShipQuery
                 };
                 RetrieveMetadataChangesRequest retrieveMetadataChangesRequest = new RetrieveMetadataChangesRequest()
@@ -559,7 +562,7 @@ namespace CrmAdo.IntegrationTests
 
 
         }
-    
+
         [Test]
         [TestCase("customeraddress", TestName = "Experiment for saving address entity metadata to a local file.")]
         [TestCase("account", TestName = "Experiment for saving account metadata to a local file.")]
@@ -622,7 +625,7 @@ namespace CrmAdo.IntegrationTests
 
 
         }
-      
+
         [Test]
         [TestCase(TestName = "Experiment for selecting plugins")]
         public void Experiment_For_Selecting_Plugins()
@@ -665,7 +668,7 @@ namespace CrmAdo.IntegrationTests
 
 
         }
-        
+
         private void DoSomeWork(object o)
         {
             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
@@ -681,7 +684,7 @@ namespace CrmAdo.IntegrationTests
                 orgService.Create(account);
             }
         }
-       
+
         [Test]
         [TestCase(TestName = "Experiment for retrieving crm version")]
         public void Experiment_For_Crm_Version_Request()
@@ -702,7 +705,7 @@ namespace CrmAdo.IntegrationTests
             }
 
         }
-       
+
         [Test]
         [TestCase(TestName = "Experiment for sql connection get datatyoes schema collection")]
         public void Experiment_For_Sql_Connection_Schema()
@@ -746,7 +749,7 @@ namespace CrmAdo.IntegrationTests
             }
 
         }
-       
+
         [Test]
         [TestCase(TestName = "Experiment for sql command with an output clause")]
         public void Experiment_For_Sql_Command_With_An_Output_Clause()
@@ -786,7 +789,7 @@ namespace CrmAdo.IntegrationTests
             }
 
         }
-       
+
         [Test(Description = "Experiment for perforing an Insert, and a Retrieve in a Bulk Request.")]
         public void Should_Be_Able_To_Insert_And_Retrieve_Inserted_Account_In_Single_Bulk_Request()
         {
@@ -829,7 +832,7 @@ namespace CrmAdo.IntegrationTests
 
                 // Execute all the requests in the request collection using a single web method call.
                 ExecuteMultipleResponse responseWithResults = (ExecuteMultipleResponse)orgService.Execute(multipleRequests);
-                             
+
                 var createResponseItem = responseWithResults.Responses[0];
                 CreateResponse createResponse = null;
                 if (createResponseItem.Response != null)
@@ -849,10 +852,10 @@ namespace CrmAdo.IntegrationTests
 
             }
 
-          
+
 
         }
-        
+
         /// <summary>
         /// Display the response of an organization message request.
         /// </summary>
@@ -880,7 +883,7 @@ namespace CrmAdo.IntegrationTests
             Console.WriteLine("A fault occurred when processing {1} request, at index {0} in the request collection with a fault message: {2}", count + 1,
                 organizationRequest.RequestName,
                 organizationServiceFault.Message);
-        }      
+        }
 
     }
 }

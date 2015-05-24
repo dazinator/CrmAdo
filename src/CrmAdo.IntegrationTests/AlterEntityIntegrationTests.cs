@@ -65,7 +65,7 @@ namespace CrmAdo.IntegrationTests
              //   Console.WriteLine("Executing command " + sql);
                 command.CommandText = sql;
                 //   command.CommandType = CommandType.Text;
-                base.ExecuteNonQuery(sql, -1);
+                base.ExecuteCrmNonQuery(sql, -1);
             }
 
         }

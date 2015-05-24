@@ -8,6 +8,8 @@ using CrmAdo.IntegrationTests;
 using System.Configuration;
 using CrmAdo.Operations;
 using CrmAdo.Core;
+using System.Text;
+using System.Data.Common;
 
 namespace CrmAdo.IntegrationTests
 {
@@ -21,6 +23,41 @@ namespace CrmAdo.IntegrationTests
         {
             var sut = new SchemaCollectionsProvider();
         }
+
+        [Test]
+        public void Write_Schema_Collections_To_Html_Files()
+        {
+            var sut = new SchemaCollectionsProvider();
+
+             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+             using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+             {
+                 WriteDataTableToHtmlFile("MetaDataCollections", sut.GetMetadataCollections());
+                 WriteDataTableToHtmlFile("Restrictions", sut.GetRestrictions());
+                 WriteDataTableToHtmlFile("DataSourceInformation", sut.GetDataSourceInfo(conn));
+                 //WriteDataTableToHtmlFile("DataTypes", connection);
+                 WriteDataTableToHtmlFile("ReservedWords", sut.GetReservedWords());
+                 //    WriteDataTableToHtmlFile("Databases", sut.getdata);
+                 WriteDataTableToHtmlFile("Schemata", sut.GetSchema(conn, "Schemata", null));
+                 WriteDataTableToHtmlFile("Tables", sut.GetTables(conn,null));
+                 WriteDataTableToHtmlFile("Columns", sut.GetColumns(conn, null));
+                 WriteDataTableToHtmlFile("Views", sut.GetViews(conn, null));
+                 WriteDataTableToHtmlFile("Users", sut.GetUsers(conn, null));
+                 WriteDataTableToHtmlFile("Indexes", sut.GetIndexes(conn, null));
+                 WriteDataTableToHtmlFile("IndexColumns", sut.GetIndexColumns(conn, null));
+                 //   WriteDataTableToHtmlFile("Constraints", sut.get);
+                 //  WriteDataTableToHtmlFile("PrimaryKey", sut.pr();
+                 //  WriteDataTableToHtmlFile("UniqueKeys", sut.Get);
+                 WriteDataTableToHtmlFile("ForeignKeys", sut.GetForeignKeys(conn, null));
+
+                 // WriteDataTableToHtmlFile("ConstraintColumns", sut.get);       
+
+
+             }
+           
+
+        }
+
 
         [Test]
         public void Should_Be_Able_To_Get_MetaDataCollections()
@@ -723,6 +760,99 @@ namespace CrmAdo.IntegrationTests
         //    }
 
         //}
+
+        public static void WriteDataTableToHtmlFile(string schemaCollectionName, DataTable datatable)
+        {
+            //  var dt = connection.GetSchema(schemaCollectionName);
+            var htmlOutput = DumpDataTableToHtml(GetHtmlStringBuilder(schemaCollectionName), datatable);
+            var path = System.IO.Path.Combine(Environment.CurrentDirectory, schemaCollectionName + ".html");
+            System.IO.File.WriteAllText(path, htmlOutput);
+            Console.WriteLine("file written: " + path);
+        }
+
+
+        /// <summary>
+        /// Dumps the passed DataSet obj for debugging as list of html tables
+        /// </summary>
+        /// <param name="msg"> the msg attached </param>
+        /// <param name="ds"> the DataSet object passed for Dumping </param>
+        /// <returns> the nice looking dump of the DataSet obj in html format</returns>
+        public static string DumpDatasetToHtml(string msg, ref System.Data.DataSet ds)
+        {
+            var builder = GetHtmlStringBuilder(msg);
+            if (ds != null)
+            {
+                if (ds.Tables != null)
+                {
+                    foreach (System.Data.DataTable dt in ds.Tables)
+                    {
+                        DumpDataTableToHtml(builder, dt);
+                    }
+                }
+            }
+            return builder.ToString();
+
+        }
+
+        public static StringBuilder GetHtmlStringBuilder(string name)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("<html><body>");
+            sb.AppendLine("<p>" + name + " START </p>");
+            return sb;
+        }
+
+        /// <summary>
+        /// Dumps the passed DataSet obj for debugging as list of html tables
+        /// </summary>
+        /// <param name="msg"> the msg attached </param>
+        /// <param name="ds"> the DataSet object passed for Dumping </param>
+        /// <returns> the nice looking dump of the DataSet obj in html format</returns>
+        public static string DumpDataTableToHtml(StringBuilder stringBuilder, System.Data.DataTable dt)
+        {
+            stringBuilder.AppendLine("<table>");
+
+            //objStringBuilder.AppendLine("================= My TableName is  " +
+            //dt.TableName + " ========================= START");
+            int colNumberInRow = 0;
+            stringBuilder.Append("<tr><th>row number</th>");
+            foreach (System.Data.DataColumn dc in dt.Columns)
+            {
+                if (dc == null)
+                {
+                    stringBuilder.AppendLine("DataColumn is null ");
+                    continue;
+                }
+
+
+                stringBuilder.Append(" <th> |" + colNumberInRow.ToString() + " | ");
+                stringBuilder.Append(dc.ColumnName.ToString() + " </th> ");
+                colNumberInRow++;
+            } //eof foreach (DataColumn dc in dt.Columns)
+            stringBuilder.Append("</tr>");
+
+            int rowNum = 0;
+            foreach (System.Data.DataRow dr in dt.Rows)
+            {
+                stringBuilder.Append("<tr><td> row - | " + rowNum.ToString() + " | </td>");
+                int colNumber = 0;
+                foreach (System.Data.DataColumn dc in dt.Columns)
+                {
+                    stringBuilder.Append(" <td> |" + colNumber + "|");
+                    stringBuilder.Append(dr[dc].ToString() + "  </td>");
+                    colNumber++;
+                } //eof foreach (DataColumn dc in dt.Columns)
+                rowNum++;
+                stringBuilder.AppendLine(" </tr>");
+            }   //eof foreach (DataRow dr in dt.Rows)
+
+            stringBuilder.AppendLine("</table>");
+            //  stringBuilder.AppendLine("<p>" + msg + " END </p>");
+            //eof foreach (DataTable dt in ds.Tables)
+
+            return stringBuilder.ToString();
+
+        }
 
         private object AssertColVal(DataTable table, DataRow row, string columnName)
         {

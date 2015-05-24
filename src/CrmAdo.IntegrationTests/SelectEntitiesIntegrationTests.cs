@@ -297,7 +297,7 @@ namespace CrmAdo.IntegrationTests
 
             try
             {
-                ExecuteNonQuery(deleteAlbertEinstenSql, 1);
+                ExecuteCrmNonQuery(deleteAlbertEinstenSql, 1);
             }
             catch (Exception e)
             {
@@ -308,7 +308,7 @@ namespace CrmAdo.IntegrationTests
             var deleteMaxPlanck = string.Format(sqlFormatString, Guid.Parse("5f90afbb-41b1-e311-9351-6c3be5be9f98"));
             try
             {
-                ExecuteNonQuery(deleteMaxPlanck, 1);
+                ExecuteCrmNonQuery(deleteMaxPlanck, 1);
             }
             catch (Exception e)
             {
@@ -318,7 +318,7 @@ namespace CrmAdo.IntegrationTests
             var deleteGalileo = string.Format(sqlFormatString, Guid.Parse("6f90afbb-51b1-e311-9351-6c3ce5be9f93"));
             try
             {
-                ExecuteNonQuery(deleteGalileo, 1);
+                ExecuteCrmNonQuery(deleteGalileo, 1);
             }
             catch (Exception e)
             {

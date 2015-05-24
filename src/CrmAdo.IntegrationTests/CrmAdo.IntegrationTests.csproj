@@ -132,6 +132,9 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Services" />
     <Reference Include="System.Data.Services.Client" />
+    <Reference Include="System.Data.SqlLocalDb">
+      <HintPath>..\..\lib\System.Data.SqlLocalDb.1.14.0\lib\net20\System.Data.SqlLocalDb.dll</HintPath>
+    </Reference>
     <Reference Include="System.Design" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
@@ -160,6 +163,7 @@
     </Compile>
     <Compile Include="CommandBatchIntegrationTests.cs" />
     <Compile Include="EntityMetadataRepositoryTests.cs" />
+    <Compile Include="SchemaComparisonWithSqlServerTests.cs" />
     <Compile Include="SchemaCollectionProviderTests.cs" />
     <Compile Include="SelectMetadataIntegrationTests.cs" />
     <Compile Include="BaseTest.cs" />
