@@ -553,11 +553,15 @@ namespace CrmAdo.Core
 
             dataTable.Columns.Add("constraint_catalog", typeof(string), string.Format("'{0}'", crmDbConnection.ConnectionInfo.OrganisationName)).SetOrdinal(0);
             dataTable.Columns.Add("constraint_schema", typeof(string), string.Format("'{0}'", DefaultSchema)).SetOrdinal(1);
-            dataTable.Columns.Add("constraint_name", typeof(string), "'PK__' + table_name + '_' + primaryidattribute").SetOrdinal(2);
+            dataTable.Columns.Add("constraint_name", typeof(string), "'PK__' + [LogicalName] + '_' + [PrimaryIdAttribute]").SetOrdinal(2);
+
             dataTable.Columns.Add("table_catalog", typeof(string), string.Format("'{0}'", crmDbConnection.ConnectionInfo.OrganisationName)).SetOrdinal(3);
             dataTable.Columns.Add("table_schema", typeof(string), string.Format("'{0}'", DefaultSchema)).SetOrdinal(4);
-            dataTable.Columns["LogicalName"].ColumnName = "table_name";
-            dataTable.Columns["table_name"].SetOrdinal(5);
+            dataTable.Columns.Add("table_name", typeof(string),"'[LogicalName]'").SetOrdinal(5);
+
+            //dataTable.Columns["LogicalName"].ColumnName = "table_name";
+           // dataTable.Columns["table_name"].SetOrdinal(5);
+           
             dataTable.Columns.Add("index_name", typeof(string), "constraint_name").SetOrdinal(6);
             dataTable.Columns.Add("type_desc", typeof(string), "'CLUSTERED'").SetOrdinal(7);
 

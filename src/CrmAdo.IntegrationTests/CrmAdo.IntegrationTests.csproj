@@ -188,13 +188,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CrmAdo\CrmAdo.csproj">
-      <Project>{61D9051D-4C85-419F-97DC-D56D4A72C5E3}</Project>
-      <Name>CrmAdo</Name>
-    </ProjectReference>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+    <ProjectReference Include="..\CrmAdo\CrmAdo.csproj">
+      <Project>{61d9051d-4c85-419f-97dc-d56d4a72c5e3}</Project>
+      <Name>CrmAdo</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
