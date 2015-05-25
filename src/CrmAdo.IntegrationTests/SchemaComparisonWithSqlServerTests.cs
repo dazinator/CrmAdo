@@ -202,7 +202,10 @@ namespace CrmAdo.IntegrationTests
                     WriteDataTableToCsv("CrmAdo Columns", builder, sut.GetColumns(conn, null));
 
                     WriteDataTableToCsv("Sql Views", builder, connection.GetSchema("Views"));
+                    WriteDataTableToCsv("CrmAdo Views", builder, sut.GetViews(conn, null));
+
                     WriteDataTableToCsv("Sql ViewColumns", builder, connection.GetSchema("ViewColumns"));
+                    WriteDataTableToCsv("CrmAdo View Columns", builder, sut.GetViewColumns(conn, null));
 
                     WriteDataTableToCsv("Sql Indexes", builder, connection.GetSchema("Indexes"));
                     WriteDataTableToCsv("CrmAdo Indexes", builder, sut.GetIndexes(conn, null));
