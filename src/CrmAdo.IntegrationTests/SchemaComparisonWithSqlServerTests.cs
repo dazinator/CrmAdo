@@ -253,7 +253,7 @@ namespace CrmAdo.IntegrationTests
         public static string DumpDataTableToCsv(StringBuilder sb, System.Data.DataTable dt)
         {
             string[] columnNames = dt.Columns.Cast<DataColumn>().
-                                              Select(column => column.ColumnName).
+                                              Select(column => string.Format("{0} ({1})",column.ColumnName, column.DataType.ToString())).
                                               ToArray();
             sb.AppendLine(string.Join(",", columnNames));
 

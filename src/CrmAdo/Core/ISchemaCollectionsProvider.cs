@@ -124,7 +124,7 @@ namespace CrmAdo.Core
             //dataTable.Columns.Add("ParameterPrefix", typeof(string));
             //dataTable.Columns.Add("ParameterPrefixInName", typeof(bool));         
 
-            dataRow["ColumnAliasSupported"] = false;          
+            dataRow["ColumnAliasSupported"] = false;
             dataRow["TableAliasSupported"] = true;
             dataRow["SchemaSupported"] = false;
             dataRow["CatalogSupported"] = false;
@@ -132,7 +132,7 @@ namespace CrmAdo.Core
             //dataTable.Columns.Add("TableSupported", typeof(bool));
             //dataTable.Columns.Add("UserSupported", typeof(bool));         
             //dataTable.Columns.Add("SupportsVerifySQL", typeof(bool));            
-           
+
 
             //dataRow["IdentifierOpenQuote"] = "[";
             //dataRow["IdentifierCloseQuote"] = "]";
@@ -314,13 +314,12 @@ namespace CrmAdo.Core
             var adapter = new CrmDataAdapter(command);
             var dataTable = new DataTable();
             adapter.Fill(dataTable);
-            dataTable.Columns.Add("table_catalog", typeof(string), string.Format("'{0}'", crmDbConnection.ConnectionInfo.OrganisationName));
-            dataTable.Columns.Add("table_schema", typeof(string), string.Format("'{0}'", DefaultSchema));
-            dataTable.Columns["logicalname"].ColumnName = "table_name";
-            dataTable.Columns.Add("table_type", typeof(string), "'BASE TABLE'");
+            dataTable.Columns.Add("TABLE_CATALOG", typeof(string), string.Format("'{0}'", crmDbConnection.ConnectionInfo.OrganisationName)).SetOrdinal(0);
+            dataTable.Columns.Add("TABLE_SCHEMA", typeof(string), string.Format("'{0}'", DefaultSchema)).SetOrdinal(1);
+            dataTable.Columns["logicalname"].ColumnName = "TABLE_NAME";
+            dataTable.Columns["TABLE_NAME"].SetOrdinal(2);
+            dataTable.Columns.Add("TABLE_TYPE", typeof(string), "'BASE TABLE'").SetOrdinal(3);
             return dataTable;
-
-
 
         }
 
@@ -394,34 +393,52 @@ namespace CrmAdo.Core
             var adapter = new CrmDataAdapter(command);
             var dataTable = new DataTable();
             adapter.Fill(dataTable);
-            dataTable.Columns.Add("table_catalog", typeof(string), "''");
-            dataTable.Columns.Add("table_schema", typeof(string), "''");
-            dataTable.Columns["entitylogicalname"].ColumnName = "table_name";
-            dataTable.Columns["logicalname"].ColumnName = "column_name";
-            dataTable.Columns["columnnumber"].ColumnName = "ordinal_position";
-            dataTable.Columns["defaultvalue"].ColumnName = "column_default";
-            dataTable.Columns["isnullable"].ColumnName = "is_nullable";
-            dataTable.Columns["datatype"].ColumnName = "data_type";
+            dataTable.Columns.Add("TABLE_CATALOG", typeof(string), string.Format("'{0}'", crmDbConnection.ConnectionInfo.OrganisationName)).SetOrdinal(0);
+            dataTable.Columns.Add("TABLE_SCHEMA", typeof(string), string.Format("'{0}'", DefaultSchema)).SetOrdinal(1);
+            dataTable.Columns["entitylogicalname"].ColumnName = "TABLE_NAME";
+            dataTable.Columns["TABLE_NAME"].SetOrdinal(2);
+
+            dataTable.Columns["logicalname"].ColumnName = "COLUMN_NAME";
+            dataTable.Columns["COLUMN_NAME"].SetOrdinal(3);
+
+            dataTable.Columns["columnnumber"].ColumnName = "ORDINAL_POSITION";
+            dataTable.Columns["ORDINAL_POSITION"].SetOrdinal(4);
+
+            // dataTable.Columns["defaultvalue"].ColumnName = "COLUMN_DEFAULT";
+            dataTable.Columns.Add("COLUMN_DEFAULT", dataTable.Columns["defaultvalue"].DataType, "IIF([defaultvalue] = '-1', '', IIF([defaultvalue] = 'TRUE', '((' + 1 + '))', IIF([defaultvalue] = 'FALSE', '((0))', '((' + [defaultvalue] + '))')))").SetOrdinal(5);
+
+            // dataTable.Columns["COLUMN_DEFAULT"].SetOrdinal(5);
+            //  dataTable.Columns["isnullable"].ColumnName = "IS_NULLABLE";
+            dataTable.Columns.Add("IS_NULLABLE", typeof(string), "IIF([isnullable] = True, 'YES', 'NO')").SetOrdinal(6);
+            //dataTable.Columns["IS_NULLABLE"].SetOrdinal(6);
+
+            dataTable.Columns["datatype"].ColumnName = "DATA_TYPE";
+            dataTable.Columns["DATA_TYPE"].SetOrdinal(7);
 
             // dataTable.Columns["attributemetadata.length"].ColumnName = "character_maximum_length";
-            dataTable.Columns.Add("character_maximum_length", typeof(int), "IIF(data_type = 'nvarchar', [maxlength], NULL)");
-            dataTable.Columns.Add("character_octet_length", typeof(int), "IIF(data_type ='nvarchar',ISNULL(character_maximum_length, 0) * 2, character_maximum_length)");
+            dataTable.Columns.Add("CHARACTER_MAXIMUM_LENGTH", typeof(int), "IIF(data_type = 'nvarchar', [maxlength], NULL)").SetOrdinal(8);
+            dataTable.Columns.Add("CHARACTER_OCTET_LENGTH", typeof(int), "IIF(data_type ='nvarchar',ISNULL(character_maximum_length, 0) * 2, character_maximum_length)").SetOrdinal(9);
 
-            dataTable.Columns["numericprecision"].ColumnName = "numeric_precision";
-            dataTable.Columns["numericprecisionradix"].ColumnName = "numeric_precision_radix";
-            dataTable.Columns["numericscale"].ColumnName = "numeric_scale";
+            dataTable.Columns["numericprecision"].ColumnName = "NUMERIC_PRECISION";
+            dataTable.Columns["NUMERIC_PRECISION"].SetOrdinal(10);
 
-            dataTable.Columns.Add("datetime_precision", typeof(int), "IIF(data_type = 'datetime', 3, NULL)");
+            dataTable.Columns["numericprecisionradix"].ColumnName = "NUMERIC_PRECISION_RADIX";
+            dataTable.Columns["NUMERIC_PRECISION_RADIX"].SetOrdinal(11);
 
-            dataTable.Columns.Add("character_set_catalog", typeof(string), "NULL");
-            dataTable.Columns.Add("character_set_schema", typeof(string), "NULL");
+            dataTable.Columns["numericscale"].ColumnName = "NUMERIC_SCALE";
+            dataTable.Columns["NUMERIC_SCALE"].SetOrdinal(12);
 
-            dataTable.Columns.Add("character_set_name", typeof(string), "IIF(data_type ='nvarchar', 'UNICODE', NULL)");
+            dataTable.Columns.Add("DATETIME_PRECISION", typeof(int), "IIF(data_type = 'datetime', 3, NULL)").SetOrdinal(13);
 
-            dataTable.Columns.Add("collation_catalog", typeof(string), "NULL");
-            dataTable.Columns.Add("is_sparse", typeof(bool), "false");
-            dataTable.Columns.Add("is_column_set", typeof(bool), "false");
-            dataTable.Columns.Add("is_filestream", typeof(bool), "false");
+            dataTable.Columns.Add("CHARACTER_SET_CATALOG", typeof(string), "NULL").SetOrdinal(14);
+            dataTable.Columns.Add("CHARACTER_SET_SCHEMA", typeof(string), "NULL").SetOrdinal(15);
+
+            dataTable.Columns.Add("CHARACTER_SET_NAME", typeof(string), "IIF(data_type ='nvarchar', 'UNICODE', NULL)").SetOrdinal(16);
+
+            dataTable.Columns.Add("COLLATION_CATALOG", typeof(string), "NULL").SetOrdinal(17);
+            dataTable.Columns.Add("IS_SPARSE", typeof(bool), "false").SetOrdinal(18);
+            dataTable.Columns.Add("IS_COLUMN_SET", typeof(bool), "false").SetOrdinal(19);
+            dataTable.Columns.Add("IS_FILESTREAM", typeof(bool), "false").SetOrdinal(20);
 
             return dataTable;
 
