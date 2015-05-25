@@ -54,7 +54,7 @@ namespace CrmAdo.Tests
             // Assert
             Assert.That(collection, Is.Not.Null);
             Assert.That(collection.Columns, Is.Not.Null);
-            Assert.That(collection.Columns.Count, Is.EqualTo(17));
+            Assert.That(collection.Columns.Count, Is.AtLeast(17));
 
         }
 
