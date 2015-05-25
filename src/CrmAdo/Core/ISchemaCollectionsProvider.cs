@@ -81,6 +81,11 @@ namespace CrmAdo.Core
             dataTable.Columns.Add(DbMetaDataColumnNames.StatementSeparatorPattern, typeof(string));
             dataTable.Columns.Add(DbMetaDataColumnNames.StringLiteralPattern, typeof(string));
             dataTable.Columns.Add(DbMetaDataColumnNames.SupportedJoinOperators, typeof(SupportedJoinOperators));
+            dataTable.Columns.Add("ColumnAliasSupported", typeof(bool));
+            dataTable.Columns.Add("TableAliasSupported", typeof(bool));
+            dataTable.Columns.Add("SchemaSupported", typeof(bool));
+            dataTable.Columns.Add("CatalogSupported", typeof(bool));
+
 
             DataRow dataRow = dataTable.NewRow();
             dataRow[DbMetaDataColumnNames.CompositeIdentifierSeparatorPattern] = @"\.";
@@ -96,8 +101,6 @@ namespace CrmAdo.Core
             dataRow[DbMetaDataColumnNames.IdentifierCase] = IdentifierCase.Insensitive;
             dataRow[DbMetaDataColumnNames.OrderByColumnsInSelect] = false;
             dataRow[DbMetaDataColumnNames.ParameterMarkerFormat] = "{0}";
-
-
             dataRow[DbMetaDataColumnNames.ParameterMarkerPattern] = @"@[\p{Lo}\p{Lu}\p{Ll}\p{Lm}_@#][\p{Lo}\p{Lu}\p{Ll}\p{Lm}\p{Nd}\uff3f_@#\$]*(?=\s+|$)";
             //dataRow[DbMetaDataColumnNames.ParameterMarkerPattern] = "(@[A-Za-z0-9_$#]*)";
             dataRow[DbMetaDataColumnNames.ParameterNameMaxLength] = 128;
@@ -109,7 +112,7 @@ namespace CrmAdo.Core
 
             dataRow[DbMetaDataColumnNames.QuotedIdentifierCase] = IdentifierCase.Insensitive;
             dataRow[DbMetaDataColumnNames.StatementSeparatorPattern] = @";";
-            dataRow[DbMetaDataColumnNames.StringLiteralPattern] = @"('([^']|'')*')"; //TODO THIS IS WRONG AS IT MATCHES THE QUOTES AND I NEED TO EXLCUDE THEM..;
+            dataRow[DbMetaDataColumnNames.StringLiteralPattern] = @"'(([^']|'')*)'"; //TODO THIS IS WRONG AS IT MATCHES THE QUOTES AND I NEED TO EXLCUDE THEM..;
             dataRow[DbMetaDataColumnNames.SupportedJoinOperators] = SupportedJoinOperators.Inner | SupportedJoinOperators.LeftOuter;
 
             #region probably none of this needed
@@ -119,36 +122,26 @@ namespace CrmAdo.Core
             //dataTable.Columns.Add("SupportsAnsi92Sql", typeof(bool));
             //dataTable.Columns.Add("SupportsQuotedIdentifierParts", typeof(bool));
             //dataTable.Columns.Add("ParameterPrefix", typeof(string));
-            //dataTable.Columns.Add("ParameterPrefixInName", typeof(bool));
-            //dataTable.Columns.Add("ColumnAliasSupported", typeof(bool));
-            //dataTable.Columns.Add("TableAliasSupported", typeof(bool));
+            //dataTable.Columns.Add("ParameterPrefixInName", typeof(bool));         
+
+            dataRow["ColumnAliasSupported"] = false;          
+            dataRow["TableAliasSupported"] = true;
+            dataRow["SchemaSupported"] = false;
+            dataRow["CatalogSupported"] = false;
+
             //dataTable.Columns.Add("TableSupported", typeof(bool));
-            //dataTable.Columns.Add("UserSupported", typeof(bool));
-            //dataTable.Columns.Add("SchemaSupported", typeof(bool));
-            //dataTable.Columns.Add("CatalogSupported", typeof(bool));
-            //dataTable.Columns.Add("SupportsVerifySQL", typeof(bool));
-
-            ////dataRow[DbMetaDataColumnNames.SupportedJoinOperators] = 3; // Inner join and Left joins
-            ////dataRow[DbMetaDataColumnNames.ParameterNamePattern] = @"^[\p{Lo}\p{Lu}\p{Ll}\p{Lm}_@#][\p{Lo}\p{Lu}\p{Ll}\p{Lm}\p{Nd}\uff3f_@#\$]*(?=\s+|$)";
-            ////dataRow[DbMetaDataColumnNames.ParameterMarkerFormat] = "{0}";
-            ////dataRow[DbMetaDataColumnNames.ParameterNameMaxLength] = 128;        
-
-            ////dataRow[DbMetaDataColumnNames.DataSourceProductName] = "CrmAdo Provider for Dynamics CRM";
-            ////var version = Assembly.GetExecutingAssembly().GetName().Version;
-            ////dataRow[DbMetaDataColumnNames.DataSourceProductVersion] = version.ToString();
+            //dataTable.Columns.Add("UserSupported", typeof(bool));         
+            //dataTable.Columns.Add("SupportsVerifySQL", typeof(bool));            
+           
 
             //dataRow["IdentifierOpenQuote"] = "[";
             //dataRow["IdentifierCloseQuote"] = "]";
             //dataRow["SupportsAnsi92Sql"] = false;
             //dataRow["SupportsQuotedIdentifierParts"] = true;
             //dataRow["ParameterPrefix"] = "@";
-            //dataRow["ParameterPrefixInName"] = true;
-            //dataRow["ColumnAliasSupported"] = false;
-            //dataRow["TableAliasSupported"] = true;
+            //dataRow["ParameterPrefixInName"] = true;        
             //dataRow["TableSupported"] = true;
-            //dataRow["UserSupported"] = false;
-            //dataRow["SchemaSupported"] = false;
-            //dataRow["CatalogSupported"] = false;
+            //dataRow["UserSupported"] = false;          
             //dataRow["SupportsVerifySQL"] = false;
 
             #endregion
