@@ -26,13 +26,13 @@
     <RestrictionDefault>name</RestrictionDefault>
     <RestrictionNumber>1</RestrictionNumber>
   </Restrictions>
-  <!--<Restrictions>
+  <Restrictions>
     <CollectionName>Databases</CollectionName>
     <RestrictionName>Name</RestrictionName>
     <ParameterName>@Name</ParameterName>
     <RestrictionDefault>Name</RestrictionDefault>
     <RestrictionNumber>1</RestrictionNumber>
-  </Restrictions>-->
+  </Restrictions>
   <!--<Restrictions>
     <CollectionName>Tables</CollectionName>
     <RestrictionName>Catalog</RestrictionName>

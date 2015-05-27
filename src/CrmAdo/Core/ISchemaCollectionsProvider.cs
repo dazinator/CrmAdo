@@ -41,6 +41,8 @@ namespace CrmAdo.Core
         DataTable GetIndexes(CrmDbConnection crmDbConnection, string[] restrictions);
 
         DataTable GetIndexColumns(CrmDbConnection crmDbConnection, string[] restrictions);
+
+        DataTable GetDatabases(CrmDbConnection crmDbConnection, string[] restrictions);
     }
 
     public class SchemaCollectionsProvider : ISchemaCollectionsProvider
@@ -282,6 +284,12 @@ namespace CrmAdo.Core
         {
             var command = new CrmDbCommand(crmDbConnection);
             command.CommandText = "SELECT su.systemuserid, su.fullname, su.domainname, su.createdon, su.modifiedon FROM systemuser su";
+           
+            if(restrictions != null && restrictions.Any())
+            {
+                string userName = restrictions[0];
+                command.CommandText = string.Format("{0} WHERE su.fullname = {1}", command.CommandText, userName);
+            }
             var adapter = new CrmDataAdapter(command);
             var dataTable = new DataTable();
             dataTable.Locale = CultureInfo.InvariantCulture;
@@ -753,8 +761,6 @@ namespace CrmAdo.Core
             return dataTable;
         }
 
-
-
         public DataTable GetSchema(CrmDbConnection crmDbConnection, string collectionName, string[] restrictions)
         {
             DataTable result = null;
@@ -776,6 +782,10 @@ namespace CrmAdo.Core
 
                 case "reservedwords":
                     result = GetReservedWords();
+                    break;
+
+                case "databases":
+                    result = GetDatabases(crmDbConnection, restrictions);
                     break;
 
                 case "datatypes":
@@ -830,6 +840,26 @@ namespace CrmAdo.Core
             }
 
             return result;
+        }
+
+        public DataTable GetDatabases(CrmDbConnection crmDbConnection, string[] restrictions)
+        {
+
+            // database_name (System.String)	dbid (System.Int16)	create_date (System.DateTime)
+            DataTable dataTable = new DataTable("Databases");
+            dataTable.Locale = CultureInfo.InvariantCulture;
+            dataTable.Columns.AddRange(
+                new DataColumn[]
+                    {
+                        new DataColumn("database_name"), 
+                        new DataColumn("dbid",typeof(Int16)), 
+                        new DataColumn("create_date", typeof(DateTime)),
+                        new DataColumn("organisationid",typeof(Guid)),
+                        new DataColumn("serverversion")
+                    });
+
+            dataTable.Rows.Add(crmDbConnection.ConnectionInfo.OrganisationName, 1, DateTime.UtcNow, crmDbConnection.ConnectionInfo.OrganisationId, crmDbConnection.ConnectionInfo.ServerVersion);
+            return dataTable;       
         }
     }
 }

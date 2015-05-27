@@ -218,6 +218,9 @@ namespace CrmAdo.IntegrationTests
 
                     WriteDataTableToCsv("Sql Users", builder, connection.GetSchema("Users"));
                     WriteDataTableToCsv("CrmAdo Users", builder, sut.GetUsers(conn, null));
+
+                    WriteDataTableToCsv("Sql Databases", builder, connection.GetSchema("Databases"));
+                    WriteDataTableToCsv("CrmAdo Databases", builder, sut.GetDatabases(conn, null));
                 }
 
                 _SqlLocalDbInstance.Stop();

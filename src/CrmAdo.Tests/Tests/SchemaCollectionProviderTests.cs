@@ -59,6 +59,31 @@ namespace CrmAdo.Tests
         }
 
         [Test]
+        public void Should_Be_Able_To_Get_Databases()
+        {
+            // Arrange
+            var sut = ResolveTestSubjectInstance();
+            // Act
+
+            var fakeMetadataProvider = new FakeContactMetadataProvider();
+            var typeProvider = new DynamicsAttributeTypeProvider();
+
+            var fakeConn = MockRepository.GenerateMock<CrmDbConnection>();
+            fakeConn.Stub(a => a.ConnectionInfo).Return(new CrmConnectionInfo() { OrganisationId = Guid.NewGuid(), OrganisationName = "unittest", ServerVersion = "1.0.0.0" });
+            fakeConn.Stub(a => a.MetadataProvider).Return(fakeMetadataProvider);
+            fakeConn.Stub(a => a.ServerVersion).Return("1.0.0.0");
+
+            var collection = sut.GetDatabases(fakeConn, null);
+            // Assert
+            Assert.That(collection, Is.Not.Null);
+            Assert.That(collection.Columns, Is.Not.Null);
+            Assert.That(collection.Columns.Count, Is.AtLeast(3));
+            Assert.That(collection.Rows.Count, Is.AtLeast(1));
+            var value = collection.Rows[0][0];
+            Assert.That((string)value == "unittest");          
+        }
+
+        [Test]
         public void Should_Be_Able_To_Get_DataTypeCollection()
         {
             // Arrange
