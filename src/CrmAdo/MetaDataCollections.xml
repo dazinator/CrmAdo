@@ -47,11 +47,11 @@
     <NumberOfRestrictions>1</NumberOfRestrictions>
     <NumberOfIdentifierParts>1</NumberOfIdentifierParts>
   </MetaDataCollections>
-  <!--<MetaDataCollections>
+  <MetaDataCollections>
     <CollectionName>Databases</CollectionName>
     <NumberOfRestrictions>1</NumberOfRestrictions>
     <NumberOfIdentifierParts>1</NumberOfIdentifierParts>
-  </MetaDataCollections>-->
+  </MetaDataCollections>
   <MetaDataCollections>
     <CollectionName>Tables</CollectionName>
     <NumberOfRestrictions>2</NumberOfRestrictions>

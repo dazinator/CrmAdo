@@ -557,11 +557,11 @@ namespace CrmAdo.Core
 
             dataTable.Columns.Add("table_catalog", typeof(string), string.Format("'{0}'", crmDbConnection.ConnectionInfo.OrganisationName)).SetOrdinal(3);
             dataTable.Columns.Add("table_schema", typeof(string), string.Format("'{0}'", DefaultSchema)).SetOrdinal(4);
-            dataTable.Columns.Add("table_name", typeof(string),"'[LogicalName]'").SetOrdinal(5);
+            dataTable.Columns.Add("table_name", typeof(string), "'[LogicalName]'").SetOrdinal(5);
 
             //dataTable.Columns["LogicalName"].ColumnName = "table_name";
-           // dataTable.Columns["table_name"].SetOrdinal(5);
-           
+            // dataTable.Columns["table_name"].SetOrdinal(5);
+
             dataTable.Columns.Add("index_name", typeof(string), "constraint_name").SetOrdinal(6);
             dataTable.Columns.Add("type_desc", typeof(string), "'CLUSTERED'").SetOrdinal(7);
 
@@ -642,13 +642,17 @@ namespace CrmAdo.Core
 
             dataTable.Columns.Add("constraint_catalog", typeof(string), string.Format("'{0}'", crmDbConnection.ConnectionInfo.OrganisationName)).SetOrdinal(0);
             dataTable.Columns.Add("constraint_schema", typeof(string), string.Format("'{0}'", DefaultSchema)).SetOrdinal(1);
+
+            dataTable.Columns["LogicalName"].ColumnName = "table_name";
+            dataTable.Columns.Add("column_name", typeof(string), "IsNull([a.LogicalName], [PrimaryIdAttribute])");
+
             dataTable.Columns.Add("constraint_name", typeof(string), "'PK__' + IsNull(table_name, '') + '_' + IsNull(column_name, PrimaryIdAttribute)").SetOrdinal(2);
             dataTable.Columns.Add("table_catalog", typeof(string), string.Format("'{0}'", crmDbConnection.ConnectionInfo.OrganisationName)).SetOrdinal(3);
             dataTable.Columns.Add("table_schema", typeof(string), string.Format("'{0}'", DefaultSchema)).SetOrdinal(4);
-            dataTable.Columns["LogicalName"].ColumnName = "table_name";
+
             dataTable.Columns["table_name"].SetOrdinal(5);
+            dataTable.Columns["column_name"].SetOrdinal(6);
             // dataTable.Columns["a.LogicalName"].ColumnName = "column_name";
-            dataTable.Columns.Add("column_name", typeof(string), "IsNull([a.LogicalName], [PrimaryIdAttribute])").SetOrdinal(6);
 
             dataTable.Columns["a.columnnumber"].ColumnName = "ordinal_position";
             dataTable.Columns["ordinal_position"].SetOrdinal(7);
