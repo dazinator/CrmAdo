@@ -29,32 +29,32 @@ namespace CrmAdo.IntegrationTests
         {
             var sut = new SchemaCollectionsProvider();
 
-             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
-             using (var conn = new CrmDbConnection(connectionString.ConnectionString))
-             {
-                 WriteDataTableToHtmlFile("MetaDataCollections", sut.GetMetadataCollections());
-                 WriteDataTableToHtmlFile("Restrictions", sut.GetRestrictions());
-                 WriteDataTableToHtmlFile("DataSourceInformation", sut.GetDataSourceInfo(conn));
-                 //WriteDataTableToHtmlFile("DataTypes", connection);
-                 WriteDataTableToHtmlFile("ReservedWords", sut.GetReservedWords());
-                 //    WriteDataTableToHtmlFile("Databases", sut.getdata);
-                 WriteDataTableToHtmlFile("Schemata", sut.GetSchema(conn, "Schemata", null));
-                 WriteDataTableToHtmlFile("Tables", sut.GetTables(conn,null));
-                 WriteDataTableToHtmlFile("Columns", sut.GetColumns(conn, null));
-                 WriteDataTableToHtmlFile("Views", sut.GetViews(conn, null));
-                 WriteDataTableToHtmlFile("Users", sut.GetUsers(conn, null));
-                 WriteDataTableToHtmlFile("Indexes", sut.GetIndexes(conn, null));
-                 WriteDataTableToHtmlFile("IndexColumns", sut.GetIndexColumns(conn, null));
-                 //   WriteDataTableToHtmlFile("Constraints", sut.get);
-                 //  WriteDataTableToHtmlFile("PrimaryKey", sut.pr();
-                 //  WriteDataTableToHtmlFile("UniqueKeys", sut.Get);
-                 WriteDataTableToHtmlFile("ForeignKeys", sut.GetForeignKeys(conn, null));
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                WriteDataTableToHtmlFile("MetaDataCollections", sut.GetMetadataCollections());
+                WriteDataTableToHtmlFile("Restrictions", sut.GetRestrictions());
+                WriteDataTableToHtmlFile("DataSourceInformation", sut.GetDataSourceInfo(conn));
+                //WriteDataTableToHtmlFile("DataTypes", connection);
+                WriteDataTableToHtmlFile("ReservedWords", sut.GetReservedWords());
+                //    WriteDataTableToHtmlFile("Databases", sut.getdata);
+             //   WriteDataTableToHtmlFile("Schemata", sut.GetSchema(conn, "Schemata", null));
+                WriteDataTableToHtmlFile("Tables", sut.GetTables(conn, null));
+                WriteDataTableToHtmlFile("Columns", sut.GetColumns(conn, null));
+                WriteDataTableToHtmlFile("Views", sut.GetViews(conn, null));
+                WriteDataTableToHtmlFile("Users", sut.GetUsers(conn, null));
+                WriteDataTableToHtmlFile("Indexes", sut.GetIndexes(conn, null));
+                WriteDataTableToHtmlFile("IndexColumns", sut.GetIndexColumns(conn, null));
+                //   WriteDataTableToHtmlFile("Constraints", sut.get);
+                //  WriteDataTableToHtmlFile("PrimaryKey", sut.pr();
+                //  WriteDataTableToHtmlFile("UniqueKeys", sut.Get);
+                WriteDataTableToHtmlFile("ForeignKeys", sut.GetForeignKeys(conn, null));
 
-                 // WriteDataTableToHtmlFile("ConstraintColumns", sut.get);       
+                // WriteDataTableToHtmlFile("ConstraintColumns", sut.get);       
 
 
-             }
-           
+            }
+
 
         }
 
@@ -88,7 +88,7 @@ namespace CrmAdo.IntegrationTests
                 // Assert
                 Assert.That(collection, Is.Not.Null);
                 Assert.That(collection.Columns, Is.Not.Null);
-                Assert.That(collection.Columns.Count, Is.EqualTo(17));
+                Assert.That(collection.Columns.Count, Is.AtLeast(17));
             }
 
         }
@@ -163,7 +163,7 @@ namespace CrmAdo.IntegrationTests
             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
             using (var conn = new CrmDbConnection(connectionString.ConnectionString))
             {
-                var restrictions = new string[] { "" };
+                var restrictions = new string[] { null,null,null,null };
                 // Act
                 var collection = sut.GetTables(conn, restrictions);
                 // Assert
@@ -209,7 +209,7 @@ namespace CrmAdo.IntegrationTests
             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
             using (var conn = new CrmDbConnection(connectionString.ConnectionString))
             {
-                var restrictions = new string[] { tableName };
+                var restrictions = new string[] { null, null, tableName, null };
                 // Act
                 var collection = sut.GetTables(conn, restrictions);
                 // Assert
@@ -269,10 +269,10 @@ namespace CrmAdo.IntegrationTests
                 {
 
                     var val = AssertColVal(collection, row, "table_catalog");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That(val, Is.EqualTo(conn.ConnectionInfo.OrganisationName));
 
                     val = AssertColVal(collection, row, "table_schema");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That(val, Is.EqualTo("dbo"));
 
                     val = AssertColVal(collection, row, "table_name");
                     Assert.That(val, Is.EqualTo(tableName));
@@ -363,10 +363,10 @@ namespace CrmAdo.IntegrationTests
                 {
 
                     var val = AssertColVal(collection, row, "table_catalog");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That((string)val, Is.EqualTo(conn.ConnectionInfo.OrganisationName));
 
                     val = AssertColVal(collection, row, "table_schema");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That(val, Is.EqualTo("dbo"));
 
                     val = AssertColVal(collection, row, "table_name");
                     Assert.That(val, Is.EqualTo(tableName));
@@ -460,20 +460,20 @@ namespace CrmAdo.IntegrationTests
                 {
 
                     var val = AssertColVal(collection, row, "constraint_catalog");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That(val, Is.EqualTo(conn.ConnectionInfo.OrganisationName));
 
                     val = AssertColVal(collection, row, "constraint_schema");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That(val, Is.EqualTo("dbo"));
 
                     val = AssertColVal(collection, row, "constraint_name");
                     Assert.IsFalse(string.IsNullOrEmpty((string)val));
                     Console.WriteLine(val);
 
                     val = AssertColVal(collection, row, "table_catalog");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That(val, Is.EqualTo(conn.ConnectionInfo.OrganisationName));
 
                     val = AssertColVal(collection, row, "table_schema");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That(val, Is.EqualTo("dbo"));
 
                     val = AssertColVal(collection, row, "table_name");
                     Assert.That(val, Is.EqualTo(tableName));
@@ -527,10 +527,10 @@ namespace CrmAdo.IntegrationTests
                     //<type_desc>CLUSTERED</type_desc>
 
                     var val = AssertColVal(collection, row, "constraint_catalog");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That(val, Is.EqualTo(conn.ConnectionInfo.OrganisationName));
 
                     val = AssertColVal(collection, row, "constraint_schema");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That(val, Is.EqualTo("dbo"));
 
                     var constraintName = AssertColVal(collection, row, "constraint_name");
                     Assert.IsFalse(string.IsNullOrEmpty((string)constraintName));
@@ -539,10 +539,10 @@ namespace CrmAdo.IntegrationTests
                     Console.WriteLine(constraintName);
 
                     val = AssertColVal(collection, row, "table_catalog");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That(val, Is.EqualTo(conn.ConnectionInfo.OrganisationName));
 
                     val = AssertColVal(collection, row, "table_schema");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That(val, Is.EqualTo("dbo"));
 
                     val = AssertColVal(collection, row, "table_name");
                     Assert.That(val, Is.Not.EqualTo(""));
@@ -593,10 +593,10 @@ namespace CrmAdo.IntegrationTests
                     //<type_desc>CLUSTERED</type_desc>
 
                     var val = AssertColVal(collection, row, "constraint_catalog");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That(val, Is.EqualTo(conn.ConnectionInfo.OrganisationName));
 
                     val = AssertColVal(collection, row, "constraint_schema");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That(val, Is.EqualTo("dbo"));
 
                     var constraintName = AssertColVal(collection, row, "constraint_name");
                     Assert.IsFalse(string.IsNullOrEmpty((string)constraintName));
@@ -605,10 +605,10 @@ namespace CrmAdo.IntegrationTests
                     Console.WriteLine(constraintName);
 
                     val = AssertColVal(collection, row, "table_catalog");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That(val, Is.EqualTo(conn.ConnectionInfo.OrganisationName));
 
                     val = AssertColVal(collection, row, "table_schema");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That(val, Is.EqualTo("dbo"));
 
                     val = AssertColVal(collection, row, "table_name");
                     Assert.That(val, Is.Not.EqualTo(""));
@@ -662,10 +662,10 @@ namespace CrmAdo.IntegrationTests
                     //</IndexColumns>
 
                     var val = AssertColVal(collection, row, "constraint_catalog");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That(val, Is.EqualTo(conn.ConnectionInfo.OrganisationName));
 
                     val = AssertColVal(collection, row, "constraint_schema");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That(val, Is.EqualTo("dbo"));
 
                     var constraintName = AssertColVal(collection, row, "constraint_name");
                     Assert.IsFalse(string.IsNullOrEmpty((string)constraintName));
@@ -674,10 +674,10 @@ namespace CrmAdo.IntegrationTests
                     Console.WriteLine(constraintName);
 
                     val = AssertColVal(collection, row, "table_catalog");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That(val, Is.EqualTo(conn.ConnectionInfo.OrganisationName));
 
                     val = AssertColVal(collection, row, "table_schema");
-                    Assert.That(val, Is.EqualTo(""));
+                    Assert.That(val, Is.EqualTo("dbo"));
 
                     val = AssertColVal(collection, row, "table_name");
                     Assert.That(val, Is.Not.EqualTo(""));

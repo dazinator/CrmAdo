@@ -54,8 +54,8 @@
   </MetaDataCollections>
   <MetaDataCollections>
     <CollectionName>Tables</CollectionName>
-    <NumberOfRestrictions>2</NumberOfRestrictions>
-    <NumberOfIdentifierParts>1</NumberOfIdentifierParts>
+    <NumberOfRestrictions>4</NumberOfRestrictions>
+    <NumberOfIdentifierParts>3</NumberOfIdentifierParts>
   </MetaDataCollections>
   <MetaDataCollections>
     <CollectionName>Columns</CollectionName>

@@ -284,8 +284,8 @@ namespace CrmAdo.Core
         {
             var command = new CrmDbCommand(crmDbConnection);
             command.CommandText = "SELECT su.systemuserid, su.fullname, su.domainname, su.createdon, su.modifiedon FROM systemuser su";
-           
-            if(restrictions != null && restrictions.Any())
+
+            if (restrictions != null && restrictions.Any())
             {
                 string userName = restrictions[0];
                 command.CommandText = string.Format("{0} WHERE su.fullname = {1}", command.CommandText, userName);
@@ -295,6 +295,23 @@ namespace CrmAdo.Core
             dataTable.Locale = CultureInfo.InvariantCulture;
             adapter.Fill(dataTable);
             return dataTable;
+        }
+
+        private static string GetRestrictionOrNull(int index, string[] restrictions)
+        {
+            if (restrictions != null)
+            {
+                int length = restrictions.Length;
+                if (length > 0)
+                {
+                    if (length - 1 >= index)
+                    {
+                        return restrictions[index];
+                    }
+                }
+            }
+
+            return null;
         }
 
         public DataTable GetTables(CrmDbConnection crmDbConnection, string[] restrictions)
@@ -308,19 +325,27 @@ namespace CrmAdo.Core
             var command = new CrmDbCommand(crmDbConnection);
             string commandText = "SELECT * FROM EntityMetadata";
 
-            string tableName = null;
-            if (restrictions != null)
+            string catalog = GetRestrictionOrNull(0, restrictions); 
+            string schema = GetRestrictionOrNull(1, restrictions);
+            string tableName = GetRestrictionOrNull(2, restrictions);
+            string tableType = GetRestrictionOrNull(3, restrictions); // doesn't matter currently what tabletype restriction is specified, we only return "base tables" not views.
+
+            if (catalog != null && catalog.ToLowerInvariant() != crmDbConnection.ConnectionInfo.OrganisationName.ToLowerInvariant())
             {
-                if (restrictions.Length > 0)
-                {
-                    tableName = restrictions[0];
-                }
+                // we only support the catalog currently connected to, can't query accross other catalogs.
+                throw new ArgumentException("invalid catalog restriction. no such catalog.");
+            }
+
+            if (schema != null && schema.ToLowerInvariant() != DefaultSchema.ToLowerInvariant())
+            { 
+                // we only support a single schema "dbo".
+                throw new ArgumentException("invalid schema restriction. no such schema.");
             }
 
             if (!string.IsNullOrEmpty(tableName))
             {
                 commandText = commandText + " WHERE LogicalName = '" + tableName + "'";
-            }
+            }         
 
             command.CommandText = commandText;
 
@@ -859,7 +884,7 @@ namespace CrmAdo.Core
                     });
 
             dataTable.Rows.Add(crmDbConnection.ConnectionInfo.OrganisationName, 1, DateTime.UtcNow, crmDbConnection.ConnectionInfo.OrganisationId, crmDbConnection.ConnectionInfo.ServerVersion);
-            return dataTable;       
+            return dataTable;
         }
     }
 }

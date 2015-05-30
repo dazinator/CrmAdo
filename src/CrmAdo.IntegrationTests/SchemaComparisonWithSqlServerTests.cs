@@ -17,7 +17,7 @@ using System.Collections.Generic;
 
 namespace CrmAdo.IntegrationTests
 {
-    [Category("Schema")]
+    [Category("Experimental")]
     [TestFixture()]
     public class SchemaComparisonWithSqlServerTests : BaseTest
     {
