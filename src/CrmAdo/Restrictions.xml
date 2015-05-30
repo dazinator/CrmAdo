@@ -33,61 +33,61 @@
     <RestrictionDefault>Name</RestrictionDefault>
     <RestrictionNumber>1</RestrictionNumber>
   </Restrictions>
-  <!--<Restrictions>
+  <Restrictions>
     <CollectionName>Tables</CollectionName>
     <RestrictionName>Catalog</RestrictionName>
     <ParameterName>@Catalog</ParameterName>
     <RestrictionDefault>TABLE_CATALOG</RestrictionDefault>
     <RestrictionNumber>1</RestrictionNumber>
-  </Restrictions>-->
-  <!--<Restrictions>
+  </Restrictions>
+  <Restrictions>
     <CollectionName>Tables</CollectionName>
     <RestrictionName>Owner</RestrictionName>
     <ParameterName>@Owner</ParameterName>
     <RestrictionDefault>TABLE_SCHEMA</RestrictionDefault>
     <RestrictionNumber>2</RestrictionNumber>
-  </Restrictions>-->
+  </Restrictions>
   <Restrictions>
     <CollectionName>Tables</CollectionName>
     <RestrictionName>Table</RestrictionName>
     <ParameterName>@Name</ParameterName>
     <RestrictionDefault>TABLE_NAME</RestrictionDefault>
-    <RestrictionNumber>1</RestrictionNumber>
+    <RestrictionNumber>3</RestrictionNumber>
   </Restrictions>
   <Restrictions>
     <CollectionName>Tables</CollectionName>
     <RestrictionName>TableType</RestrictionName>
     <ParameterName>@TableType</ParameterName>
     <RestrictionDefault>TABLE_TYPE</RestrictionDefault>
-    <RestrictionNumber>2</RestrictionNumber>
+    <RestrictionNumber>4</RestrictionNumber>
   </Restrictions>
-  <!--<Restrictions>
+  <Restrictions>
     <CollectionName>Columns</CollectionName>
     <RestrictionName>Catalog</RestrictionName>
     <ParameterName>@Catalog</ParameterName>
     <RestrictionDefault>TABLE_CATALOG</RestrictionDefault>
     <RestrictionNumber>1</RestrictionNumber>
-  </Restrictions>-->
-  <!--<Restrictions>
+  </Restrictions>
+  <Restrictions>
     <CollectionName>Columns</CollectionName>
     <RestrictionName>Owner</RestrictionName>
     <ParameterName>@Owner</ParameterName>
     <RestrictionDefault>TABLE_SCHEMA</RestrictionDefault>
     <RestrictionNumber>2</RestrictionNumber>
-  </Restrictions>-->
+  </Restrictions>
   <Restrictions>
     <CollectionName>Columns</CollectionName>
     <RestrictionName>Table</RestrictionName>
     <ParameterName>@Table</ParameterName>
     <RestrictionDefault>TABLE_NAME</RestrictionDefault>
-    <RestrictionNumber>1</RestrictionNumber>
+    <RestrictionNumber>3</RestrictionNumber>
   </Restrictions>
   <Restrictions>
     <CollectionName>Columns</CollectionName>
     <RestrictionName>Column</RestrictionName>
     <ParameterName>@Column</ParameterName>
     <RestrictionDefault>COLUMN_NAME</RestrictionDefault>
-    <RestrictionNumber>2</RestrictionNumber>
+    <RestrictionNumber>4</RestrictionNumber>
   </Restrictions>
   <!--<Restrictions>
     <CollectionName>AllColumns</CollectionName>

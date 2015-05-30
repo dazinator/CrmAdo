@@ -59,7 +59,7 @@
   </MetaDataCollections>
   <MetaDataCollections>
     <CollectionName>Columns</CollectionName>
-    <NumberOfRestrictions>2</NumberOfRestrictions>
+    <NumberOfRestrictions>4</NumberOfRestrictions>
     <NumberOfIdentifierParts>2</NumberOfIdentifierParts>
   </MetaDataCollections>
   <!--<MetaDataCollections>

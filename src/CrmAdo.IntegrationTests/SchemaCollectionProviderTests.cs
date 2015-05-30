@@ -255,7 +255,7 @@ namespace CrmAdo.IntegrationTests
             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
             using (var conn = new CrmDbConnection(connectionString.ConnectionString))
             {
-                var restrictions = new string[] { tableName };
+                var restrictions = new string[] { null, null, tableName };
                 // Act
                 var collection = sut.GetColumns(conn, restrictions);
 
@@ -349,7 +349,7 @@ namespace CrmAdo.IntegrationTests
             var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
             using (var conn = new CrmDbConnection(connectionString.ConnectionString))
             {
-                var restrictions = new string[] { tableName, columnName };
+                var restrictions = new string[] { null, null, tableName, columnName };
                 // Act
                 var collection = sut.GetColumns(conn, restrictions);
 

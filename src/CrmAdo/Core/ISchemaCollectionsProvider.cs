@@ -387,22 +387,23 @@ namespace CrmAdo.Core
             //IS_SPARSE
             //IS_COLUMN_SET
             //IS_FILESTREAM
-
-            string entityName = null;
-            string attributeName = null;
+            string catalog = GetRestrictionOrNull(0, restrictions);
+            string schema = GetRestrictionOrNull(1, restrictions);
+            string entityName = GetRestrictionOrNull(2, restrictions);
+            string attributeName = GetRestrictionOrNull(3, restrictions);
             bool hasEntityFilter = false;
             bool hasAttributeFilter = false;
 
-            if (restrictions != null)
+            if (catalog != null && catalog.ToLowerInvariant() != crmDbConnection.ConnectionInfo.OrganisationName.ToLowerInvariant())
             {
-                if (restrictions.Length > 0)
-                {
-                    entityName = restrictions[0];
-                }
-                if (restrictions.Length > 1)
-                {
-                    attributeName = restrictions[1];
-                }
+                // we only support the catalog currently connected to, can't query accross other catalogs.
+                throw new ArgumentException("invalid catalog restriction. no such catalog.");
+            }
+
+            if (schema != null && schema.ToLowerInvariant() != DefaultSchema.ToLowerInvariant())
+            {
+                // we only support a single schema "dbo".
+                throw new ArgumentException("invalid schema restriction. no such schema.");
             }
 
             hasEntityFilter = !string.IsNullOrEmpty(entityName);
