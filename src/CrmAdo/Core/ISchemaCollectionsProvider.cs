@@ -924,9 +924,13 @@ namespace CrmAdo.Core
                     result = GetUsers(crmDbConnection, restrictions);
                     break;
 
+                case "uniquekeys":
+                    result = GetUniqueKeys(crmDbConnection, restrictions);
+                    break;
+
                 //case "constraints":
                 //case "primarykey":
-                //case "uniquekeys":
+              
 
                 //case "constraintcolumns":
                 //    break;
