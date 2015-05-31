@@ -26,22 +26,47 @@ namespace CrmAdo.IntegrationTests
         ISqlLocalDbInstance _SqlLocalDbInstance;
 
         public string TestEntityName { get; set; }
+        public string TestEntityName2 { get; set; }
 
-        public SchemaComparisonWithSqlServerTests()
+
+
+        //public override void SetUp()
+        //{
+        //    try
+        //    {
+        //        base.SetUp();
+
+        //        // Start a Local DB instance.
+        //        _SqlLocalDbInstance = _SqlLocalDbProvider.GetOrCreateInstance("SchemaTesting");
+        //        _SqlLocalDbInstance.Start();
+
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine(e.ToString());
+        //        throw;
+        //    }
+
+        //}
+
+        private void PrepareTestData()
         {
             _SqlLocalDbProvider = new SqlLocalDbProvider();
-        }
-
-        public override void SetUp()
-        {
-            base.SetUp();
-
-            // Start a Local DB instance.
             _SqlLocalDbInstance = _SqlLocalDbProvider.GetOrCreateInstance("SchemaTesting");
             _SqlLocalDbInstance.Start();
 
-            // Create a test entity in CRM
-            string createTableSql = GetCreateTestTableSql();
+            // Get the SQL to create a couple of differen tables
+            string tableOneName;
+            string createTableSql1 = GetCreateTestTableSql(out tableOneName);
+            TestEntityName = tableOneName;
+
+            string table2Name;
+            string createTableSql2 = GetCreateTestTableSql(out table2Name);
+            TestEntityName2 = table2Name;
+
+            // create a foreign key column between them.
+            var alterTableAddForeignKey = string.Format("ALTER TABLE {0} ADD {1}Id UNIQUEIDENTIFIER CONSTRAINT {0}_{1} REFERENCES {1}", tableOneName, table2Name);
+
 
             //  CreateTestEntity();
 
@@ -50,28 +75,54 @@ namespace CrmAdo.IntegrationTests
             {
                 connection.Open();
 
+                // create the first table
                 var command = connection.CreateCommand();
                 command.CommandType = CommandType.Text;
 
-                Console.WriteLine("Executing local db command " + createTableSql);
-                command.CommandText = createTableSql;
+                Console.WriteLine("Executing local db command " + createTableSql1);
+                command.CommandText = createTableSql1;
 
                 var result = command.ExecuteNonQuery();
                 Assert.AreEqual(result, -1);
+
+                // create the second table
+                command.CommandText = createTableSql2;
+                result = command.ExecuteNonQuery();
+                Assert.AreEqual(result, -1);
+
+                // create a column in the first table that is a foreign key so it references the second table
+                command.CommandText = alterTableAddForeignKey;
+                result = command.ExecuteNonQuery();
+                Assert.AreEqual(result, -1);
+
             }
 
-            // Create same table in Crm
-            ExecuteCrmNonQuery(createTableSql, -1);
+            // Create first table in Crm
+            ExecuteCrmNonQuery(createTableSql1, -1);
+
+            // Create second table in Crm
+            ExecuteCrmNonQuery(createTableSql2, -1);
+
+            // create a column in the first table that is a foreign key so it references the second table
+            ExecuteCrmNonQuery(alterTableAddForeignKey, -1);
         }
 
-        private string GetCreateTestTableSql()
+        private string GetCreateTestTableSql(out string tableName)
+        {
+            // Crm only supports creating an entity with default columsn first (id and name) and then subsequent alter to add in additional columns, so do this.
+            var entName = "createtest" + Guid.NewGuid().ToString().Replace("-", "").Remove(0, 16);
+            tableName = string.Format("{0}{1}", DefaultPublisherPrefix, entName);
+            return GetCreateTestTableSql(entName);
+        }
+
+        private string GetCreateTestTableSql(string tableName)
         {
             // Crm only supports creating an entity with default columsn first (id and name) and then subsequent alter to add in additional columns, so do this.
 
-            string randomEntityName = "createtest" + Guid.NewGuid().ToString().Replace("-", "").Remove(0, 16);
+
 
             string createEntitySqlFormatString = "CREATE TABLE {0}{1}({0}{1}id UNIQUEIDENTIFIER PRIMARY KEY, {0}{1}name NVARCHAR(125));";
-            var createTableSql = string.Format(createEntitySqlFormatString, DefaultPublisherPrefix, randomEntityName);
+            var createTableSql = string.Format(createEntitySqlFormatString, DefaultPublisherPrefix, tableName);
 
             var addBoolSql = "ALTER TABLE {0} ADD {1}MyBool BIT;"; // BOOL ATT
             var addBoolDefaultTrueSql = "ALTER TABLE {0} ADD {1}MyBoolTrue BIT DEFAULT 1;"; // BOOL AT WITH DEFAULT TRUE
@@ -95,7 +146,7 @@ namespace CrmAdo.IntegrationTests
             var addStringWithMaxLengthSql = "ALTER TABLE {0} ADD {1}MyStringMaxSize NVARCHAR(300);"; // STRING WITH MAX SIZE
 
             string lookupToEntity = "contact";
-            string testEntityName = string.Format("{0}{1}", DefaultPublisherPrefix, randomEntityName);
+            string testEntityName = string.Format("{0}{1}", DefaultPublisherPrefix, tableName);
             TestEntityName = testEntityName;
 
             var createTableWithColumnsSqlBuilder = new StringBuilder();
@@ -125,11 +176,11 @@ namespace CrmAdo.IntegrationTests
 
         }
 
-        private string GetDropTestTableSql()
+        private string GetDropTestTableSql(string tableName)
         {
 
             string dropTable = "DROP TABLE {0}";
-            var dropTableSql = string.Format(dropTable, TestEntityName);
+            var dropTableSql = string.Format(dropTable, tableName);
             return dropTableSql;
 
         }
@@ -137,28 +188,41 @@ namespace CrmAdo.IntegrationTests
         public override void TearDown()
         {
             // Drop test entity.
-            using (SqlConnection connection = _SqlLocalDbInstance.CreateConnection())
+            if (_SqlLocalDbInstance != null)
             {
-                connection.Open();
+                using (SqlConnection connection = _SqlLocalDbInstance.CreateConnection())
+                {
+                    connection.Open();
 
-                var command = connection.CreateCommand();
-                command.CommandType = CommandType.Text;
-                var sql = GetDropTestTableSql();
-                Console.WriteLine("Executing local db command " + sql);
-                command.CommandText = sql;
-                var result = command.ExecuteNonQuery();
-                Assert.AreEqual(result, -1);
+                    var command = connection.CreateCommand();
+                    command.CommandType = CommandType.Text;
+                    var sql = GetDropTestTableSql(TestEntityName2);
+                    Console.WriteLine("Executing local db command " + sql);
+                    command.CommandText = sql;
+                    var result = command.ExecuteNonQuery();
+                    Assert.AreEqual(result, -1);
+
+                    sql = GetDropTestTableSql(TestEntityName);
+                    Console.WriteLine("Executing local db command " + sql);
+                    command.CommandText = sql;
+                    result = command.ExecuteNonQuery();
+                    Assert.AreEqual(result, -1);
+                }
+
+                // Stop localdb instance.
+                _SqlLocalDbInstance.Stop();
             }
-
-            // Stop localdb instance.
-            _SqlLocalDbInstance.Stop();
+          
 
             base.TearDown();
         }
 
         [Test]
-        public void Write_Schema_Files_For_Comparison()
+        public void WriteSchemaFilesForComparison()
         {
+
+            PrepareTestData();
+
             var sut = new SchemaCollectionsProvider();
 
             _SqlLocalDbInstance = _SqlLocalDbProvider.GetOrCreateInstance("SchemaTesting");
@@ -243,12 +307,12 @@ namespace CrmAdo.IntegrationTests
             var output = DumpDataTableToCsv(builder, dataTable);
             builder.AppendLine();
         }
-               
+
         public static StringBuilder GetStringBuilder()
         {
             StringBuilder sb = new StringBuilder();
             return sb;
-        }      
+        }
 
         /// <summary>
         /// Dumps the passed DataSet obj for debugging as list of html tables
@@ -259,7 +323,7 @@ namespace CrmAdo.IntegrationTests
         public static string DumpDataTableToCsv(StringBuilder sb, System.Data.DataTable dt)
         {
             string[] columnNames = dt.Columns.Cast<DataColumn>().
-                                              Select(column => string.Format("{0} ({1})",column.ColumnName, column.DataType.ToString())).
+                                              Select(column => string.Format("{0} ({1})", column.ColumnName, column.DataType.ToString())).
                                               ToArray();
             sb.AppendLine(string.Join(",", columnNames));
 

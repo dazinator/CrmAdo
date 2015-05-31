@@ -99,22 +99,28 @@
   </MetaDataCollections>-->
   <MetaDataCollections>
     <CollectionName>ForeignKeys</CollectionName>
-    <NumberOfRestrictions>2</NumberOfRestrictions>
-    <NumberOfIdentifierParts>1</NumberOfIdentifierParts>
+    <NumberOfRestrictions>4</NumberOfRestrictions>
+    <NumberOfIdentifierParts>3</NumberOfIdentifierParts>
   </MetaDataCollections>
   <MetaDataCollections>
     <CollectionName>IndexColumns</CollectionName>
-    <NumberOfRestrictions>2</NumberOfRestrictions>
-    <NumberOfIdentifierParts>1</NumberOfIdentifierParts>
+    <NumberOfRestrictions>5</NumberOfRestrictions>
+    <NumberOfIdentifierParts>4</NumberOfIdentifierParts>
   </MetaDataCollections>
   <MetaDataCollections>
     <CollectionName>Indexes</CollectionName>
-    <NumberOfRestrictions>2</NumberOfRestrictions>
-    <NumberOfIdentifierParts>1</NumberOfIdentifierParts>
+    <NumberOfRestrictions>4</NumberOfRestrictions>
+    <NumberOfIdentifierParts>3</NumberOfIdentifierParts>
   </MetaDataCollections>
   <!--<MetaDataCollections>
     <CollectionName>UserDefinedTypes</CollectionName>
     <NumberOfRestrictions>2</NumberOfRestrictions>
     <NumberOfIdentifierParts>1</NumberOfIdentifierParts>
   </MetaDataCollections>-->
+
+  <MetaDataCollections>
+    <CollectionName>UniqueKeys</CollectionName>
+    <NumberOfRestrictions>2</NumberOfRestrictions>
+    <NumberOfIdentifierParts>3</NumberOfIdentifierParts>
+  </MetaDataCollections>
 </NewDataSet>

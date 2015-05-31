@@ -43,6 +43,9 @@ namespace CrmAdo.Core
         DataTable GetIndexColumns(CrmDbConnection crmDbConnection, string[] restrictions);
 
         DataTable GetDatabases(CrmDbConnection crmDbConnection, string[] restrictions);
+
+        DataTable GetUniqueKeys(CrmDbConnection crmDbConnection, string[] restrictions);
+
     }
 
     public class SchemaCollectionsProvider : ISchemaCollectionsProvider
@@ -325,7 +328,7 @@ namespace CrmAdo.Core
             var command = new CrmDbCommand(crmDbConnection);
             string commandText = "SELECT * FROM EntityMetadata";
 
-            string catalog = GetRestrictionOrNull(0, restrictions); 
+            string catalog = GetRestrictionOrNull(0, restrictions);
             string schema = GetRestrictionOrNull(1, restrictions);
             string tableName = GetRestrictionOrNull(2, restrictions);
             string tableType = GetRestrictionOrNull(3, restrictions); // doesn't matter currently what tabletype restriction is specified, we only return "base tables" not views.
@@ -337,7 +340,7 @@ namespace CrmAdo.Core
             }
 
             if (schema != null && schema.ToLowerInvariant() != DefaultSchema.ToLowerInvariant())
-            { 
+            {
                 // we only support a single schema "dbo".
                 throw new ArgumentException("invalid schema restriction. no such schema.");
             }
@@ -345,7 +348,7 @@ namespace CrmAdo.Core
             if (!string.IsNullOrEmpty(tableName))
             {
                 commandText = commandText + " WHERE LogicalName = '" + tableName + "'";
-            }         
+            }
 
             command.CommandText = commandText;
 
@@ -526,44 +529,31 @@ namespace CrmAdo.Core
         public DataTable GetIndexes(CrmDbConnection crmDbConnection, string[] restrictions)
         {
 
-            string entityName = null;
-            string constraintName = null;
-            bool hasEntityFilter = false;
-            bool hasConstraintNameFilter = false;
+            string catalog = GetRestrictionOrNull(0, restrictions);
+            string schema = GetRestrictionOrNull(1, restrictions);
+            string table = GetRestrictionOrNull(2, restrictions);           
+            string constraintName = GetRestrictionOrNull(3, restrictions);
 
-            if (restrictions != null)
-            {
-                if (restrictions.Length > 0)
-                {
-                    entityName = restrictions[0];
-                }
-                if (restrictions.Length > 1)
-                {
-                    constraintName = restrictions[1];
-                }
-            }
-
-            hasEntityFilter = !string.IsNullOrEmpty(entityName);
-            hasConstraintNameFilter = !string.IsNullOrEmpty(constraintName);
+            bool hasEntityFilter = !string.IsNullOrEmpty(table);
+            bool hasConstraintNameFilter = !string.IsNullOrEmpty(constraintName);            
 
             string commandText = "SELECT LogicalName, PrimaryIdAttribute FROM entitymetadata ";
-
 
             if (hasEntityFilter || hasConstraintNameFilter)
             {
                 commandText += "WHERE ";
                 if (hasEntityFilter)
                 {
-                    commandText += " (LogicalName = '" + entityName + "')";
+                    commandText += " (LogicalName = '" + table + "')";
                 }
-                if (hasEntityFilter && hasConstraintNameFilter)
-                {
-                    commandText += " AND ";
-                }
-                if (hasConstraintNameFilter)
-                {
-                    commandText += " (PrimaryIdAttribute = '" + constraintName + "')";
-                }
+                //if (hasEntityFilter && hasConstraintNameFilter)
+                //{
+                //    commandText += " AND ";
+                //}
+                //if (hasConstraintNameFilter)
+                //{
+                //    commandText += " (PrimaryIdAttribute = '" + constraintName + "')";
+                //}
             }
 
             var command = new CrmDbCommand(crmDbConnection);
@@ -591,7 +581,7 @@ namespace CrmAdo.Core
 
             dataTable.Columns.Add("table_catalog", typeof(string), string.Format("'{0}'", crmDbConnection.ConnectionInfo.OrganisationName)).SetOrdinal(3);
             dataTable.Columns.Add("table_schema", typeof(string), string.Format("'{0}'", DefaultSchema)).SetOrdinal(4);
-            dataTable.Columns.Add("table_name", typeof(string), "'[LogicalName]'").SetOrdinal(5);
+            dataTable.Columns.Add("table_name", typeof(string), "[LogicalName]").SetOrdinal(5);
 
             //dataTable.Columns["LogicalName"].ColumnName = "table_name";
             // dataTable.Columns["table_name"].SetOrdinal(5);
@@ -599,6 +589,12 @@ namespace CrmAdo.Core
             dataTable.Columns.Add("index_name", typeof(string), "constraint_name").SetOrdinal(6);
             dataTable.Columns.Add("type_desc", typeof(string), "'CLUSTERED'").SetOrdinal(7);
 
+            if (hasConstraintNameFilter)
+            {
+                var filteredView = dataTable.AsDataView();
+                filteredView.RowFilter = "constraint_name = '" + constraintName + "'";
+                dataTable = filteredView.ToTable(true);
+            }
 
             return dataTable;
         }
@@ -606,44 +602,33 @@ namespace CrmAdo.Core
         public DataTable GetIndexColumns(CrmDbConnection crmDbConnection, string[] restrictions)
         {
 
-            string entityName = null;
-            string constraintName = null;
-            bool hasEntityFilter = false;
-            bool hasConstraintNameFilter = false;
+            string catalog = GetRestrictionOrNull(0, restrictions);
+            string schema = GetRestrictionOrNull(1, restrictions);
+            string table = GetRestrictionOrNull(2, restrictions);
+            string constraintname = GetRestrictionOrNull(3, restrictions);
+            string columnname = GetRestrictionOrNull(4, restrictions);         
 
-            if (restrictions != null)
-            {
-                if (restrictions.Length > 0)
-                {
-                    entityName = restrictions[0];
-                }
-                if (restrictions.Length > 1)
-                {
-                    constraintName = restrictions[1];
-                }
-            }
-
-            hasEntityFilter = !string.IsNullOrEmpty(entityName);
-            hasConstraintNameFilter = !string.IsNullOrEmpty(constraintName);
+            bool hasEntityFilter = !string.IsNullOrEmpty(table);
+            bool hasColumnFilter = !string.IsNullOrEmpty(columnname);
+            bool hasConstraintNameFilter = !string.IsNullOrEmpty(constraintname);
 
 
             string commandText = "SELECT entitymetadata.PrimaryIdAttribute, entitymetadata.LogicalName, a.LogicalName, a.ColumnNumber FROM entitymetadata JOIN attributemetadata a on entitymetadata.MetadataId = a.MetadataId WHERE (a.isprimaryid = @isPrimaryId)";
 
-
-            if (hasEntityFilter || hasConstraintNameFilter)
+            if (hasEntityFilter || hasColumnFilter)
             {
                 commandText += "AND ";
                 if (hasEntityFilter)
                 {
-                    commandText += " (entitymetadata.LogicalName = '" + entityName + "')";
+                    commandText += " (entitymetadata.LogicalName = '" + table + "')";
                 }
-                if (hasEntityFilter && hasConstraintNameFilter)
+                if (hasEntityFilter && hasColumnFilter)
                 {
                     commandText += " AND ";
                 }
-                if (hasConstraintNameFilter)
+                if (hasColumnFilter)
                 {
-                    commandText += " (a.LogicalName = '" + constraintName + "')";
+                    commandText += " (a.LogicalName = '" + columnname + "')";
                 }
             }
 
@@ -695,6 +680,13 @@ namespace CrmAdo.Core
             dataTable.Columns.Add("index_name", typeof(string), "constraint_name").SetOrdinal(9);
             //  dataTable.Columns.Add("type_desc", typeof(string), "'CLUSTERED'");
 
+            if (hasConstraintNameFilter)
+            {
+                var filteredView = dataTable.AsDataView();
+                filteredView.RowFilter = "constraint_name = '" + constraintname + "'";
+                dataTable = filteredView.ToTable(true);
+            }
+
 
             return dataTable;
         }
@@ -703,37 +695,26 @@ namespace CrmAdo.Core
         {
             // throw new NotImplementedException();
 
-            string entityName = null;
-            string constraintName = null;
-            bool hasEntityFilter = false;
-            bool hasConstraintNameFilter = false;
+            string catalog = GetRestrictionOrNull(0, restrictions);
+            string schema = GetRestrictionOrNull(1, restrictions);
+            string constraintTable = GetRestrictionOrNull(2, restrictions);
+            string constraintName = GetRestrictionOrNull(3, restrictions);
 
-            if (restrictions != null)
-            {
-                if (restrictions.Length > 0)
-                {
-                    entityName = restrictions[0];
-                }
-                if (restrictions.Length > 1)
-                {
-                    constraintName = restrictions[1];
-                }
-            }
-
-            hasEntityFilter = !string.IsNullOrEmpty(entityName);
-            hasConstraintNameFilter = !string.IsNullOrEmpty(constraintName);
+          //  string entityName = GetRestrictionOrNull(0, restrictions);
+           // string constraintName = GetRestrictionOrNull(1, restrictions);
+            bool hasConstraintTableFilter = !string.IsNullOrEmpty(constraintTable);
+            bool hasConstraintNameFilter = !string.IsNullOrEmpty(constraintName);           
 
             string commandText = "SELECT o.* FROM entitymetadata e INNER JOIN onetomanyrelationshipmetadata o ON e.MetadataId = o.MetadataId ";
 
-
-            if (hasEntityFilter || hasConstraintNameFilter)
+            if (hasConstraintTableFilter || hasConstraintNameFilter)
             {
                 commandText += "WHERE ";
-                if (hasEntityFilter)
+                if (hasConstraintTableFilter)
                 {
-                    commandText += " (e.LogicalName = '" + entityName + "')";
+                    commandText += " (e.LogicalName = '" + constraintTable + "') AND (o.referencingentity = '" + constraintTable + "')";
                 }
-                if (hasEntityFilter && hasConstraintNameFilter)
+                if (hasConstraintTableFilter && hasConstraintNameFilter)
                 {
                     commandText += " AND ";
                 }
@@ -756,8 +737,10 @@ namespace CrmAdo.Core
             dataTable.Columns.Add("CONSTRAINT_CATALOG", typeof(string), string.Format("'{0}'", crmDbConnection.ConnectionInfo.OrganisationName)).SetOrdinal(0);
             dataTable.Columns.Add("CONSTRAINT_SCHEMA", typeof(string), string.Format("'{0}'", DefaultSchema)).SetOrdinal(1);
 
-            dataTable.Columns["o.schemaname"].ColumnName = "CONSTRAINT_NAME";
-            dataTable.Columns["CONSTRAINT_NAME"].SetOrdinal(2);
+            dataTable.Columns.Add("CONSTRAINT_NAME", typeof(string), "o.schemaname").SetOrdinal(2);
+
+            //dataTable.Columns["o.schemaname"].ColumnName = "CONSTRAINT_NAME";
+            //dataTable.Columns["CONSTRAINT_NAME"].SetOrdinal(2);
 
             //   dataTable.Columns.Add("CONSTRAINT_NAME", typeof(string), "''");
 
@@ -772,12 +755,20 @@ namespace CrmAdo.Core
             dataTable.Columns.Add("IS_DEFERRABLE", typeof(string), "'NO'").SetOrdinal(7);
             dataTable.Columns.Add("INITIALLY_DEFERRED", typeof(string), "'NO'").SetOrdinal(8);
 
-            var filteredView = dataTable.AsDataView();
-            if (hasEntityFilter)
+            
+            //if (hasEntityFilter)
+            //{
+            //    filteredView.RowFilter = "TABLE_NAME = '" + entityName + "'";
+            //}
+            //dataTable = filteredView.ToTable(true);
+
+            if (hasConstraintNameFilter)
             {
-                filteredView.RowFilter = "TABLE_NAME = '" + entityName + "'";
+                var filteredView = dataTable.AsDataView();
+                filteredView.RowFilter = "CONSTRAINT_NAME = '" + constraintName + "'";
+                dataTable = filteredView.ToTable(true);
             }
-            dataTable = filteredView.ToTable(true);
+           
 
             //else
             //{               
@@ -785,6 +776,85 @@ namespace CrmAdo.Core
             //}
 
             return dataTable;
+        }
+
+        public DataTable GetUniqueKeys(CrmDbConnection crmDbConnection, string[] restrictions)
+        {
+            // throw new NotImplementedException();
+
+            string entityName = GetRestrictionOrNull(0, restrictions);
+            bool hasEntityFilter = !string.IsNullOrEmpty(entityName);
+
+            string constraintName = GetRestrictionOrNull(1, restrictions);
+            bool hasConstraintNameFilter = !string.IsNullOrEmpty(constraintName);       
+
+            string commandText = "SELECT * FROM entitymetadata";
+
+            if (hasEntityFilter || hasConstraintNameFilter)
+            {
+                commandText += " WHERE";
+                if (hasEntityFilter)
+                {
+                    commandText += " (LogicalName = '" + entityName + "')";
+                }
+                //if (hasEntityFilter && hasConstraintNameFilter)
+                //{
+                //    commandText += " AND ";
+                //}
+                //if (hasConstraintNameFilter)
+                //{
+                //    commandText += " (SchemaName = '" + constraintName + "')";
+                //}
+            }
+
+
+            var command = new CrmDbCommand(crmDbConnection);
+            command.CommandText = commandText;
+            var adapter = new CrmDataAdapter(command);
+            var dataTable = new DataTable();
+            dataTable.Locale = CultureInfo.InvariantCulture;
+            adapter.Fill(dataTable);
+
+            //  dataTable.AsDataView().RowFilter = "ReferencingEntity = '" + entityName + 
+
+            dataTable.Columns.Add("CONSTRAINT_CATALOG", typeof(string), string.Format("'{0}'", crmDbConnection.ConnectionInfo.OrganisationName)).SetOrdinal(0);
+            dataTable.Columns.Add("CONSTRAINT_SCHEMA", typeof(string), string.Format("'{0}'", DefaultSchema)).SetOrdinal(1);
+
+            dataTable.Columns.Add("CONSTRAINT_NAME", typeof(string), "'PK__' + LogicalName + '_' + IsNull(PrimaryIdAttribute, LogicalName + 'id')").SetOrdinal(2);
+
+
+            // dataTable.Columns["SchemaName"].ColumnName = "CONSTRAINT_NAME";
+            // dataTable.Columns["CONSTRAINT_NAME"].SetOrdinal(2);
+
+            //   dataTable.Columns.Add("CONSTRAINT_NAME", typeof(string), "''");
+
+            dataTable.Columns.Add("TABLE_CATALOG", typeof(string), string.Format("'{0}'", crmDbConnection.ConnectionInfo.OrganisationName)).SetOrdinal(3);
+            dataTable.Columns.Add("TABLE_SCHEMA", typeof(string), string.Format("'{0}'", DefaultSchema)).SetOrdinal(4);
+            dataTable.Columns.Add("TABLE_NAME", typeof(string), "LogicalName").SetOrdinal(5);
+
+            //    dataTable.Columns["LogicalName"].ColumnName = "TABLE_NAME";
+            //      dataTable.Columns["TABLE_NAME"].SetOrdinal(5);
+
+            dataTable.Columns.Add("CONSTRAINT_TYPE", typeof(string), "'PRIMARY KEY'").SetOrdinal(6);
+
+            dataTable.Columns.Add("IS_DEFERRABLE", typeof(string), "'NO'").SetOrdinal(7);
+            dataTable.Columns.Add("INITIALLY_DEFERRED", typeof(string), "'NO'").SetOrdinal(8);
+
+            if (hasConstraintNameFilter)
+            {
+                var filteredView = dataTable.AsDataView();
+                filteredView.RowFilter = "CONSTRAINT_NAME = '" + constraintName + "'";
+                dataTable = filteredView.ToTable(true);
+            }
+         
+            return dataTable;
+
+            //else
+            //{               
+            //    dataTable = filteredView.ToTable(true);  
+            //}
+
+           
         }
 
         public DataTable GetSchema(CrmDbConnection crmDbConnection, string collectionName, string[] restrictions)

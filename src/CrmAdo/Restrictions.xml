@@ -271,68 +271,68 @@
     <RestrictionDefault>ROUTINE_TYPE</RestrictionDefault>
     <RestrictionNumber>4</RestrictionNumber>
   </Restrictions>-->
-  <!--<Restrictions>
+  <Restrictions>
     <CollectionName>IndexColumns</CollectionName>
     <RestrictionName>Catalog</RestrictionName>
     <ParameterName>@Catalog</ParameterName>
-    <RestrictionDefault>db_name()</RestrictionDefault>
+    <RestrictionDefault></RestrictionDefault>
     <RestrictionNumber>1</RestrictionNumber>
   </Restrictions>
   <Restrictions>
     <CollectionName>IndexColumns</CollectionName>
     <RestrictionName>Owner</RestrictionName>
     <ParameterName>@Owner</ParameterName>
-    <RestrictionDefault>user_name()</RestrictionDefault>
+    <RestrictionDefault></RestrictionDefault>
     <RestrictionNumber>2</RestrictionNumber>
   </Restrictions>
   <Restrictions>
     <CollectionName>IndexColumns</CollectionName>
     <RestrictionName>Table</RestrictionName>
     <ParameterName>@Table</ParameterName>
-    <RestrictionDefault>o.name</RestrictionDefault>
+    <RestrictionDefault></RestrictionDefault>
     <RestrictionNumber>3</RestrictionNumber>
   </Restrictions>
   <Restrictions>
     <CollectionName>IndexColumns</CollectionName>
     <RestrictionName>ConstraintName</RestrictionName>
     <ParameterName>@ConstraintName</ParameterName>
-    <RestrictionDefault>x.name</RestrictionDefault>
+    <RestrictionDefault>e</RestrictionDefault>
     <RestrictionNumber>4</RestrictionNumber>
   </Restrictions>
   <Restrictions>
     <CollectionName>IndexColumns</CollectionName>
     <RestrictionName>Column</RestrictionName>
     <ParameterName>@Column</ParameterName>
-    <RestrictionDefault>c.name</RestrictionDefault>
+    <RestrictionDefault></RestrictionDefault>
     <RestrictionNumber>5</RestrictionNumber>
-  </Restrictions>-->
-  <!--<Restrictions>
+  </Restrictions>
+  <Restrictions>
     <CollectionName>Indexes</CollectionName>
     <RestrictionName>Catalog</RestrictionName>
     <ParameterName>@Catalog</ParameterName>
-    <RestrictionDefault>db_name()</RestrictionDefault>
+    <RestrictionDefault></RestrictionDefault>
     <RestrictionNumber>1</RestrictionNumber>
   </Restrictions>
   <Restrictions>
     <CollectionName>Indexes</CollectionName>
     <RestrictionName>Owner</RestrictionName>
     <ParameterName>@Owner</ParameterName>
-    <RestrictionDefault>user_name()</RestrictionDefault>
+    <RestrictionDefault></RestrictionDefault>
     <RestrictionNumber>2</RestrictionNumber>
-  </Restrictions>-->
+  </Restrictions>
     <Restrictions>
       <CollectionName>Indexes</CollectionName>
       <RestrictionName>Table</RestrictionName>
       <ParameterName>@Table</ParameterName>
-      <RestrictionDefault>o.name</RestrictionDefault>
-      <RestrictionNumber>1</RestrictionNumber>
+      <RestrictionDefault></RestrictionDefault>
+      <RestrictionNumber>3</RestrictionNumber>
     </Restrictions>
     <Restrictions>
       <CollectionName>Indexes</CollectionName>
       <RestrictionName>Name</RestrictionName>
       <ParameterName>@Name</ParameterName>
-      <RestrictionDefault>x.name</RestrictionDefault>
-      <RestrictionNumber>2</RestrictionNumber>
+      <RestrictionDefault></RestrictionDefault>
+      <RestrictionNumber>4</RestrictionNumber>
     </Restrictions>
   <!--<Restrictions>
     <CollectionName>UserDefinedTypes</CollectionName>
@@ -348,7 +348,7 @@
     <RestrictionDefault>types.assembly_class</RestrictionDefault>
     <RestrictionNumber>2</RestrictionNumber>
   </Restrictions>-->
-  <!--<Restrictions>
+  <Restrictions>
     <CollectionName>ForeignKeys</CollectionName>
     <RestrictionName>Catalog</RestrictionName>
     <ParameterName>@Catalog</ParameterName>
@@ -361,16 +361,30 @@
     <ParameterName>@Owner</ParameterName>
     <RestrictionDefault>CONSTRAINT_SCHEMA</RestrictionDefault>
     <RestrictionNumber>2</RestrictionNumber>
-  </Restrictions>-->
+  </Restrictions>
   <Restrictions>
     <CollectionName>ForeignKeys</CollectionName>
+    <RestrictionName>Table</RestrictionName>
+    <ParameterName>@Table</ParameterName>
+    <RestrictionDefault>TABLE_NAME</RestrictionDefault>
+    <RestrictionNumber>3</RestrictionNumber>
+  </Restrictions>
+  <Restrictions>
+    <CollectionName>ForeignKeys</CollectionName>
+    <RestrictionName>Name</RestrictionName>
+    <ParameterName>@Name</ParameterName>
+    <RestrictionDefault>CONSTRAINT_NAME</RestrictionDefault>
+    <RestrictionNumber>4</RestrictionNumber>
+  </Restrictions>
+  <Restrictions>
+    <CollectionName>UniqueKeys</CollectionName>
     <RestrictionName>Table</RestrictionName>
     <ParameterName>@Table</ParameterName>
     <RestrictionDefault>TABLE_NAME</RestrictionDefault>
     <RestrictionNumber>1</RestrictionNumber>
   </Restrictions>
   <Restrictions>
-    <CollectionName>ForeignKeys</CollectionName>
+    <CollectionName>UniqueKeys</CollectionName>
     <RestrictionName>Name</RestrictionName>
     <ParameterName>@Name</ParameterName>
     <RestrictionDefault>CONSTRAINT_NAME</RestrictionDefault>
