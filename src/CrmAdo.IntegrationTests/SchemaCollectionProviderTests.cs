@@ -477,6 +477,7 @@ namespace CrmAdo.IntegrationTests
 
                     val = AssertColVal(collection, row, "table_name");
                     Assert.That(val, Is.EqualTo(tableName));
+                    Console.WriteLine(tableName);
 
                     val = AssertColVal(collection, row, "constraint_type");
                     Assert.That(val, Is.EqualTo("FOREIGN KEY"));
@@ -543,6 +544,88 @@ namespace CrmAdo.IntegrationTests
 
                     val = AssertColVal(collection, row, "initially_deferred");
                     Assert.That(val, Is.EqualTo("NO"));
+
+                }
+
+            }
+
+        }
+
+        [Test]
+        [TestCase("account")]
+        public void Should_Be_Able_To_Get_UniqeKeyColumns_For_A_Table(string tableName)
+        {
+            // Arrange
+            var sut = new SchemaCollectionsProvider();
+
+            var connectionString = ConfigurationManager.ConnectionStrings["CrmOrganisation"];
+            using (var conn = new CrmDbConnection(connectionString.ConnectionString))
+            {
+                var restrictions = new string[] { null, null, tableName, null, null };
+                // Act
+                var collection = sut.GetUniqueKeyColumns(conn, restrictions);
+
+                // Assert
+                Assert.That(collection, Is.Not.Null);
+                Assert.That(collection.Columns, Is.Not.Null);
+                Assert.That(collection.Rows.Count, Is.EqualTo(1)); // In Dynamics crm, only the primary key is a unique key. You cannot add additional unique keys to an entity.
+
+
+                foreach (DataRow row in collection.Rows)
+                {
+
+                    //         <IndexColumns>
+                    //  <constraint_catalog>PortalDarrellDev</constraint_catalog>
+                    //  <constraint_schema>dbo</constraint_schema>
+                    //  <constraint_name>PK__tmp_ms_x__3214EC0737311087</constraint_name>
+                    //  <table_catalog>PortalDarrellDev</table_catalog>
+                    //  <table_schema>dbo</table_schema>
+                    //  <table_name>Table</table_name>
+                    //  <column_name>Id</column_name>
+                    //  <ordinal_position>1</ordinal_position>
+                    //  <KeyType>36</KeyType>
+                    //  <index_name>PK__tmp_ms_x__3214EC0737311087</index_name>
+                    //</IndexColumns>
+
+                    var val = AssertColVal(collection, row, "constraint_catalog");
+                    Assert.That(val, Is.EqualTo(conn.ConnectionInfo.OrganisationName));
+
+                    val = AssertColVal(collection, row, "constraint_schema");
+                    Assert.That(val, Is.EqualTo("dbo"));
+
+                    var constraintName = AssertColVal(collection, row, "constraint_name");
+                    Assert.IsFalse(string.IsNullOrEmpty((string)constraintName));
+                    Assert.That((string)constraintName, Is.StringStarting("PK__"));
+
+                    Console.WriteLine(constraintName);
+
+                    val = AssertColVal(collection, row, "table_catalog");
+                    Assert.That(val, Is.EqualTo(conn.ConnectionInfo.OrganisationName));
+
+                    val = AssertColVal(collection, row, "table_schema");
+                    Assert.That(val, Is.EqualTo("dbo"));
+
+                    val = AssertColVal(collection, row, "table_name");
+                    Assert.That(val, Is.Not.EqualTo(""));
+                    Console.Write(" - ");
+                    Console.Write(val);
+
+                    val = AssertColVal(collection, row, "column_name");
+                    Assert.That(val, Is.Not.EqualTo(""));
+
+                    val = AssertColVal(collection, row, "ordinal_position");
+                    Assert.That(val, Is.Not.EqualTo(default(int)));
+
+                    //val = AssertColVal(collection, row, "KeyType");
+                    //Assert.That(val, Is.EqualTo(36)); // unique identifier.
+
+                    val = AssertColVal(collection, row, "index_name");
+                    Assert.That(val, Is.EqualTo(constraintName));
+
+                    val = AssertColVal(collection, row, "constraint_type");
+                    Assert.That(val, Is.EqualTo("PRIMARY KEY"));
+
+
 
                 }
 

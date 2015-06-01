@@ -123,4 +123,9 @@
     <NumberOfRestrictions>2</NumberOfRestrictions>
     <NumberOfIdentifierParts>3</NumberOfIdentifierParts>
   </MetaDataCollections>
+  <MetaDataCollections>
+    <CollectionName>UniqueKeyColumns</CollectionName>
+    <NumberOfRestrictions>5</NumberOfRestrictions>
+    <NumberOfIdentifierParts>3</NumberOfIdentifierParts>
+  </MetaDataCollections>
 </NewDataSet>
