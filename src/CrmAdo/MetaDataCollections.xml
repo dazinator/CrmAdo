@@ -103,6 +103,11 @@
     <NumberOfIdentifierParts>3</NumberOfIdentifierParts>
   </MetaDataCollections>
   <MetaDataCollections>
+    <CollectionName>ForeignKeyColumns</CollectionName>
+    <NumberOfRestrictions>5</NumberOfRestrictions>
+    <NumberOfIdentifierParts>3</NumberOfIdentifierParts>
+  </MetaDataCollections>
+  <MetaDataCollections>
     <CollectionName>IndexColumns</CollectionName>
     <NumberOfRestrictions>5</NumberOfRestrictions>
     <NumberOfIdentifierParts>4</NumberOfIdentifierParts>

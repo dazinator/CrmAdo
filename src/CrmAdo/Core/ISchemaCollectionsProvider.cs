@@ -38,6 +38,8 @@ namespace CrmAdo.Core
 
         DataTable GetForeignKeys(CrmDbConnection crmDbConnection, string[] restrictions);
 
+        DataTable GetForeignKeyColumns(CrmDbConnection crmDbConnection, string[] restrictions);
+
         DataTable GetIndexes(CrmDbConnection crmDbConnection, string[] restrictions);
 
         DataTable GetIndexColumns(CrmDbConnection crmDbConnection, string[] restrictions);
@@ -682,7 +684,7 @@ namespace CrmAdo.Core
             dataTable.Columns.Add("index_name", typeof(string), "constraint_name").SetOrdinal(9);
             //  dataTable.Columns.Add("type_desc", typeof(string), "'CLUSTERED'");
 
-       
+
             var filteredView = dataTable.AsDataView();
             filteredView.RowFilter = "column_name = PrimaryIdAttribute";  // necessary due to #68
             dataTable = filteredView.ToTable(true);
@@ -783,6 +785,95 @@ namespace CrmAdo.Core
             //}
 
             return dataTable;
+        }
+
+        public DataTable GetForeignKeyColumns(CrmDbConnection crmDbConnection, string[] restrictions)
+        {
+            string catalog = GetRestrictionOrNull(0, restrictions);
+            string schema = GetRestrictionOrNull(1, restrictions);
+            string table = GetRestrictionOrNull(2, restrictions);
+            string constraintname = GetRestrictionOrNull(3, restrictions);
+            string columnname = GetRestrictionOrNull(4, restrictions);
+
+            bool hasEntityFilter = !string.IsNullOrEmpty(table);
+            bool hasColumnFilter = !string.IsNullOrEmpty(columnname);
+            bool hasConstraintNameFilter = !string.IsNullOrEmpty(constraintname);
+
+            string commandText = "SELECT e.*, o.* FROM entitymetadata e INNER JOIN onetomanyrelationshipmetadata o ON e.MetadataId = o.MetadataId ";
+
+            if (hasEntityFilter || hasColumnFilter || hasConstraintNameFilter)
+            {
+                commandText += "WHERE ";
+                if (hasEntityFilter)
+                {
+                    commandText += " (e.LogicalName = '" + table + "') AND (o.ReferencingEntity = '" + table + "')";
+                }
+                if (hasEntityFilter && (hasConstraintNameFilter || hasColumnFilter))
+                {
+                    commandText += " AND ";
+                }
+                if (hasConstraintNameFilter)
+                {
+                    commandText += " (o.SchemaName = '" + constraintname + "')";
+                }
+                if (hasConstraintNameFilter && hasColumnFilter)
+                {
+                    commandText += " AND ";
+                }
+                if (hasColumnFilter)
+                {
+                    commandText += " (o.ReferencingAttribute = '" + columnname + "')";
+                }
+            }
+
+
+            var command = new CrmDbCommand(crmDbConnection);
+            command.CommandText = commandText;
+            var adapter = new CrmDataAdapter(command);
+            var dataTable = new DataTable();
+            dataTable.Locale = CultureInfo.InvariantCulture;
+            adapter.Fill(dataTable);
+
+
+            dataTable.Columns.Add("constraint_catalog", typeof(string), string.Format("'{0}'", crmDbConnection.ConnectionInfo.OrganisationName)).SetOrdinal(0);
+            dataTable.Columns.Add("constraint_schema", typeof(string), string.Format("'{0}'", DefaultSchema)).SetOrdinal(1);
+            dataTable.Columns.Add("constraint_name", typeof(string), "o.schemaname").SetOrdinal(2);
+
+            dataTable.Columns.Add("table_catalog", typeof(string), string.Format("'{0}'", crmDbConnection.ConnectionInfo.OrganisationName)).SetOrdinal(3);
+            dataTable.Columns.Add("table_schema", typeof(string), string.Format("'{0}'", DefaultSchema)).SetOrdinal(4);
+            dataTable.Columns["e.LogicalName"].ColumnName = "table_name";
+            dataTable.Columns["table_name"].SetOrdinal(5);
+
+            dataTable.Columns.Add("column_name", typeof(string), "o.ReferencingAttribute").SetOrdinal(6);
+            dataTable.Columns["a.columnnumber"].ColumnName = "ordinal_position";
+            dataTable.Columns["ordinal_position"].SetOrdinal(7);
+
+            dataTable.Columns.Add("constraint_type", typeof(string), "'FOREIGN KEY'").SetOrdinal(8);
+            dataTable.Columns.Add("index_name", typeof(string), "constraint_name").SetOrdinal(9);
+
+            //  dataTable.Columns.Add("constraint_name", typeof(string), "'FK__' + IsNull(table_name, '') + '_' + IsNull(column_name, PrimaryIdAttribute)").SetOrdinal(2);
+
+            //  dataTable.Columns["column_name"].SetOrdinal(6);       
+
+
+
+            //   dataTable.Columns.Add("KeyType", typeof(Byte), "36").SetOrdinal(8); // 36 = uniqueidentitifer datatype - all pk indexes in crm are uniqueidentifiers.
+            //  dataTable.Columns.Add("type_desc", typeof(string), "'CLUSTERED'");
+
+            //var filteredView = dataTable.AsDataView();
+            //filteredView.RowFilter = "column_name = PrimaryIdAttribute";  // necessary due to #68
+            //dataTable = filteredView.ToTable(true);
+
+            //if (hasConstraintNameFilter)
+            //{
+            //    var filteredView = dataTable.AsDataView();
+            //    filteredView.RowFilter = "constraint_name = '" + constraintname + "'";
+            //    dataTable = filteredView.ToTable(true);
+            //}
+
+            return dataTable;
+
+
         }
 
         public DataTable GetUniqueKeys(CrmDbConnection crmDbConnection, string[] restrictions)
@@ -910,36 +1001,20 @@ namespace CrmAdo.Core
             adapter.Fill(dataTable);
 
 
-            //         <IndexColumns>
-            //  <constraint_catalog>PortalDarrellDev</constraint_catalog>
-            //  <constraint_schema>dbo</constraint_schema>
-            //  <constraint_name>PK__tmp_ms_x__3214EC0737311087</constraint_name>
-            //  <table_catalog>PortalDarrellDev</table_catalog>
-            //  <table_schema>dbo</table_schema>
-            //  <table_name>Table</table_name>
-            //  <column_name>Id</column_name>
-            //  <ordinal_position>1</ordinal_position>
-            //  <constraint_type>PRIMARY KEY</constraint_type>
-            //  <index_name>PK__tmp_ms_x__3214EC0737311087</index_name>
-            //</IndexColumns>
-
             dataTable.Columns.Add("constraint_catalog", typeof(string), string.Format("'{0}'", crmDbConnection.ConnectionInfo.OrganisationName)).SetOrdinal(0);
             dataTable.Columns.Add("constraint_schema", typeof(string), string.Format("'{0}'", DefaultSchema)).SetOrdinal(1);
 
             dataTable.Columns["LogicalName"].ColumnName = "table_name";
             dataTable.Columns.Add("column_name", typeof(string), "IsNull([a.LogicalName], [PrimaryIdAttribute])");
-
             dataTable.Columns.Add("constraint_name", typeof(string), "'PK__' + IsNull(table_name, '') + '_' + IsNull(column_name, PrimaryIdAttribute)").SetOrdinal(2);
             dataTable.Columns.Add("table_catalog", typeof(string), string.Format("'{0}'", crmDbConnection.ConnectionInfo.OrganisationName)).SetOrdinal(3);
             dataTable.Columns.Add("table_schema", typeof(string), string.Format("'{0}'", DefaultSchema)).SetOrdinal(4);
-
             dataTable.Columns["table_name"].SetOrdinal(5);
             dataTable.Columns["column_name"].SetOrdinal(6);
-
             dataTable.Columns["a.columnnumber"].ColumnName = "ordinal_position";
             dataTable.Columns["ordinal_position"].SetOrdinal(7);
 
-            dataTable.Columns.Add("constraint_type", typeof(string), "'PRIMARY KEY'").SetOrdinal(8);
+            dataTable.Columns.Add("constraint_type", typeof(string), "'FOREIGN KEY'").SetOrdinal(8);
 
             //   dataTable.Columns.Add("KeyType", typeof(Byte), "36").SetOrdinal(8); // 36 = uniqueidentitifer datatype - all pk indexes in crm are uniqueidentifiers.
             dataTable.Columns.Add("index_name", typeof(string), "constraint_name").SetOrdinal(9);
@@ -956,9 +1031,7 @@ namespace CrmAdo.Core
                 dataTable = filteredView.ToTable(true);
             }
 
-
             return dataTable;
-
 
         }
 
@@ -1025,12 +1098,20 @@ namespace CrmAdo.Core
                     result = GetForeignKeys(crmDbConnection, restrictions);
                     break;
 
+                case "foreignkeycolumns":
+                    result = GetForeignKeyColumns(crmDbConnection, restrictions);
+                    break;
+
                 case "users":
                     result = GetUsers(crmDbConnection, restrictions);
                     break;
 
                 case "uniquekeys":
                     result = GetUniqueKeys(crmDbConnection, restrictions);
+                    break;
+
+                case "uniquekeycolumns":
+                    result = GetUniqueKeyColumns(crmDbConnection, restrictions);
                     break;
 
                 //case "constraints":

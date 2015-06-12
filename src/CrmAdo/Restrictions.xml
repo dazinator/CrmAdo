@@ -428,5 +428,41 @@
     <RestrictionNumber>5</RestrictionNumber>
   </Restrictions>
 
+  <Restrictions>
+    <CollectionName>ForeignKeyColumns</CollectionName>
+    <RestrictionName>Catalog</RestrictionName>
+    <ParameterName>@Catalog</ParameterName>
+    <RestrictionDefault></RestrictionDefault>
+    <RestrictionNumber>1</RestrictionNumber>
+  </Restrictions>
+  <Restrictions>
+    <CollectionName>ForeignKeyColumns</CollectionName>
+    <RestrictionName>Owner</RestrictionName>
+    <ParameterName>@Owner</ParameterName>
+    <RestrictionDefault></RestrictionDefault>
+    <RestrictionNumber>2</RestrictionNumber>
+  </Restrictions>
+  <Restrictions>
+    <CollectionName>ForeignKeyColumns</CollectionName>
+    <RestrictionName>Table</RestrictionName>
+    <ParameterName>@Table</ParameterName>
+    <RestrictionDefault></RestrictionDefault>
+    <RestrictionNumber>3</RestrictionNumber>
+  </Restrictions>
+  <Restrictions>
+    <CollectionName>ForeignKeyColumns</CollectionName>
+    <RestrictionName>ConstraintName</RestrictionName>
+    <ParameterName>@ConstraintName</ParameterName>
+    <RestrictionDefault>e</RestrictionDefault>
+    <RestrictionNumber>4</RestrictionNumber>
+  </Restrictions>
+  <Restrictions>
+    <CollectionName>ForeignKeyColumns</CollectionName>
+    <RestrictionName>Column</RestrictionName>
+    <ParameterName>@Column</ParameterName>
+    <RestrictionDefault></RestrictionDefault>
+    <RestrictionNumber>5</RestrictionNumber>
+  </Restrictions>
+
 
 </NewDataSet>
