@@ -77,7 +77,15 @@ namespace CrmAdo.Core
                 bool isPrimaryId = attMeta.IsPrimaryId.HasValue && attMeta.IsPrimaryId.Value;
                 row[SchemaTableColumn.AllowDBNull] = !isPrimaryId;
 
-                row[SchemaTableOptionalColumn.BaseCatalogName] = conn.ConnectionInfo.OrganisationName;
+                if (conn != null)
+                {
+                    row[SchemaTableOptionalColumn.BaseCatalogName] = conn.ConnectionInfo.OrganisationName;
+                }
+                else
+                {
+                    row[SchemaTableOptionalColumn.BaseCatalogName] = null;
+                }
+
                 row[SchemaTableColumn.BaseColumnName] = attMeta.LogicalName;
                 row[SchemaTableColumn.BaseSchemaName] = "dbo";
                 //   row[SchemaTableOptionalColumn.BaseServerName] = "dbo";
@@ -91,7 +99,7 @@ namespace CrmAdo.Core
                 row[SchemaTableColumn.IsAliased] = columnMetadata.HasAlias;
                 row["IsColumnSet"] = false;
                 row[SchemaTableColumn.IsExpression] = false;
-                
+
                 row[SchemaTableColumn.DataType] = attMeta.GetFieldType();
                 row[SchemaTableOptionalColumn.IsAutoIncrement] = false;
                 row["IsHidden"] = false; // !attMeta.IsValidForRead;

@@ -8,6 +8,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Rhino.Mocks;
 
 namespace CrmAdo.Tests.Sandbox
 {
@@ -20,6 +21,15 @@ namespace CrmAdo.Tests.Sandbox
             // Arrange by registering our fake services into the test container.
             FakeCrmDbConnection = this.RegisterMockInstance<CrmDbConnection>();
             this.Container.Register<DbConnection>(FakeCrmDbConnection);
+
+            CrmConnectionInfo connInfo = new CrmConnectionInfo();
+            connInfo.BusinessUnitId = Guid.NewGuid();
+            connInfo.OrganisationId = Guid.NewGuid();
+            connInfo.OrganisationName = "UnitTesting";
+            connInfo.ServerVersion = "1.0.0.0";
+            connInfo.UserId = Guid.NewGuid();
+
+            FakeCrmDbConnection.Stub(c => c.ConnectionInfo).Return(connInfo);
 
             SchemaTableProvider = new SchemaTableProvider();
             this.Container.Register<ISchemaTableProvider>(SchemaTableProvider); // Singleton.
