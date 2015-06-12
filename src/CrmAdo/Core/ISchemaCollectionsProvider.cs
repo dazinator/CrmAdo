@@ -109,7 +109,7 @@ namespace CrmAdo.Core
             //  dataRow[DbMetaDataColumnNames.IdentifierPattern] = @"([\p{L}:?@#_][\p{L}\p{N}@#$_]*)|(""(\.|"""")+"")|(\[[^\]]+\])";  // [A-Za-z0-9_#$] 
             dataRow[DbMetaDataColumnNames.IdentifierCase] = IdentifierCase.Insensitive;
             dataRow[DbMetaDataColumnNames.OrderByColumnsInSelect] = false;
-            dataRow[DbMetaDataColumnNames.ParameterMarkerFormat] = "{0}";
+            dataRow[DbMetaDataColumnNames.ParameterMarkerFormat] = "@{0}";
             dataRow[DbMetaDataColumnNames.ParameterMarkerPattern] = @"@[\p{Lo}\p{Lu}\p{Ll}\p{Lm}_@#][\p{Lo}\p{Lu}\p{Ll}\p{Lm}\p{Nd}\uff3f_@#\$]*(?=\s+|$)";
             //dataRow[DbMetaDataColumnNames.ParameterMarkerPattern] = "(@[A-Za-z0-9_$#]*)";
             dataRow[DbMetaDataColumnNames.ParameterNameMaxLength] = 128;
@@ -135,8 +135,8 @@ namespace CrmAdo.Core
 
             dataRow["ColumnAliasSupported"] = false;
             dataRow["TableAliasSupported"] = true;
-            dataRow["SchemaSupported"] = false;
-            dataRow["CatalogSupported"] = false;
+            dataRow["SchemaSupported"] = true;
+            dataRow["CatalogSupported"] = true;
 
             //dataTable.Columns.Add("TableSupported", typeof(bool));
             //dataTable.Columns.Add("UserSupported", typeof(bool));         
