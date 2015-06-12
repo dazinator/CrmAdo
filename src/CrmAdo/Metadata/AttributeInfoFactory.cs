@@ -149,8 +149,9 @@ namespace CrmAdo.Metadata
 
         protected virtual AttributeInfo CreateLookup(AttributeMetadata attributeMetadata)
         {
-            var attMeta = (LookupAttributeMetadata)attributeMetadata;
+            var attMeta = (LookupAttributeMetadata)attributeMetadata;           
             var attInfo = new LookupAttributeInfo();
+            attInfo.Targets = attMeta.Targets;
             return attInfo;
         }
 
@@ -258,7 +259,7 @@ namespace CrmAdo.Metadata
             else
             {
                 newAtt = CreateVirtual(attributeMetadata);
-            }           
+            }
 
             newAtt.AttributeOf = attributeMetadata.AttributeOf;
             newAtt.AttributeType = attributeMetadata.AttributeType;

@@ -218,7 +218,7 @@ namespace CrmAdo
         /// <returns></returns>
         public override DataTable GetSchemaTable()
         {
-            return _SchemaTableProvider.GetSchemaTable(CurrentResultSet.ColumnMetadata);
+            return _SchemaTableProvider.GetSchemaTable(_DbConnection, CurrentResultSet.ColumnMetadata);
         }
 
         #endregion

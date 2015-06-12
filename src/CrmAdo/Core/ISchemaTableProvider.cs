@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 
 namespace CrmAdo.Core
 {
@@ -8,6 +9,6 @@ namespace CrmAdo.Core
     /// </summary>
     public interface ISchemaTableProvider
     {
-        DataTable GetSchemaTable(IEnumerable<ColumnMetadata> columns);
+        DataTable GetSchemaTable(DbConnection connection, IEnumerable<ColumnMetadata> columns);
     }
 }

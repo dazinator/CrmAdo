@@ -799,11 +799,11 @@ namespace CrmAdo.Core
             bool hasColumnFilter = !string.IsNullOrEmpty(columnname);
             bool hasConstraintNameFilter = !string.IsNullOrEmpty(constraintname);
 
-            string commandText = "SELECT e.*, o.* FROM entitymetadata e INNER JOIN onetomanyrelationshipmetadata o ON e.MetadataId = o.MetadataId ";
+            string commandText = "SELECT o.* FROM entitymetadata e INNER JOIN onetomanyrelationshipmetadata o ON e.MetadataId = o.MetadataId";
 
             if (hasEntityFilter || hasColumnFilter || hasConstraintNameFilter)
             {
-                commandText += "WHERE ";
+                commandText += " WHERE ";
                 if (hasEntityFilter)
                 {
                     commandText += " (e.LogicalName = '" + table + "') AND (o.ReferencingEntity = '" + table + "')";
@@ -834,6 +834,47 @@ namespace CrmAdo.Core
             dataTable.Locale = CultureInfo.InvariantCulture;
             adapter.Fill(dataTable);
 
+            // need to get columns seperately then join to get column ordinal  
+            commandText = "SELECT entitymetadata.LogicalName, a.LogicalName, a.ColumnNumber FROM entitymetadata JOIN attributemetadata a on entitymetadata.MetadataId = a.MetadataId";
+
+            if (hasEntityFilter || hasColumnFilter)
+            {
+                commandText += "AND ";
+                if (hasEntityFilter)
+                {
+                    commandText += " (entitymetadata.LogicalName = '" + table + "')";
+                }
+                if (hasEntityFilter && hasColumnFilter)
+                {
+                    commandText += " AND ";
+                }
+                if (hasColumnFilter)
+                {
+                    commandText += " (a.LogicalName = '" + columnname + "')";
+                }
+            }
+
+            //var columnsCommand = new CrmDbCommand(crmDbConnection);
+            //columnsCommand.CommandText = commandText;
+            //var columnsAdaptor = new CrmDataAdapter(columnsCommand);
+            //var columnsDatatable = new DataTable();
+            //columnsDatatable.Locale = CultureInfo.InvariantCulture;
+            //columnsAdaptor.Fill(columnsDatatable);
+
+
+            //DataSet fkInfoDataset = new DataSet();
+            //fkInfoDataset.Tables.Add(dataTable);
+            //fkInfoDataset.Tables.Add(columnsDatatable);
+
+
+            //var parentCols = new DataColumn[] { dataTable.Columns["e.LogicalName"], dataTable.Columns["o.ReferencingAttribute"] };
+            //var childCols = new DataColumn[] { columnsDatatable.Columns["LogicalName"], columnsDatatable.Columns["a.LogicalName"] };
+            //DataRelation columnInfoRelation = new DataRelation("columnJoin", parentCols, childCols);
+            //fkInfoDataset.Relations.Add(columnInfoRelation);
+
+
+            //var view = dataTable.AsDataView();
+            //view.j
 
             dataTable.Columns.Add("constraint_catalog", typeof(string), string.Format("'{0}'", crmDbConnection.ConnectionInfo.OrganisationName)).SetOrdinal(0);
             dataTable.Columns.Add("constraint_schema", typeof(string), string.Format("'{0}'", DefaultSchema)).SetOrdinal(1);
@@ -841,15 +882,34 @@ namespace CrmAdo.Core
 
             dataTable.Columns.Add("table_catalog", typeof(string), string.Format("'{0}'", crmDbConnection.ConnectionInfo.OrganisationName)).SetOrdinal(3);
             dataTable.Columns.Add("table_schema", typeof(string), string.Format("'{0}'", DefaultSchema)).SetOrdinal(4);
-            dataTable.Columns["e.LogicalName"].ColumnName = "table_name";
+            dataTable.Columns["o.ReferencingEntity"].ColumnName = "table_name";
             dataTable.Columns["table_name"].SetOrdinal(5);
 
             dataTable.Columns.Add("column_name", typeof(string), "o.ReferencingAttribute").SetOrdinal(6);
-            dataTable.Columns["a.columnnumber"].ColumnName = "ordinal_position";
-            dataTable.Columns["ordinal_position"].SetOrdinal(7);
+
+            dataTable.Columns.Add("ordinal_position", typeof(int)).SetOrdinal(7); // TODO: FIX THIS ORDINAL!
+
+            //  dataTable.Columns["a.columnnumber"].ColumnName = "ordinal_position";
+            // dataTable.Columns["ordinal_position"].SetOrdinal(7);
 
             dataTable.Columns.Add("constraint_type", typeof(string), "'FOREIGN KEY'").SetOrdinal(8);
             dataTable.Columns.Add("index_name", typeof(string), "constraint_name").SetOrdinal(9);
+
+
+            //foreach (DataRow item in dataTable.Rows)
+            //{
+            //    var columnName = (string)item["column_name"];
+
+            //    var columnAttInfos = item.GetChildRows(columnInfoRelation);
+            //    if (columnAttInfos == null || !columnAttInfos.Any())
+            //    {
+            //        throw new InvalidOperationException("Could not find column attribute information for a one to many relationsnip column: " + columnName);
+            //    }
+
+            //    var singleColumnInfo = columnAttInfos.Single();
+            //    item["ordinal_position"] = (int)singleColumnInfo["a.columnnumber"];
+            //    // var columnResult = columnsDatatable.Rows.Find(myUserID);
+            //}
 
             //  dataTable.Columns.Add("constraint_name", typeof(string), "'FK__' + IsNull(table_name, '') + '_' + IsNull(column_name, PrimaryIdAttribute)").SetOrdinal(2);
 

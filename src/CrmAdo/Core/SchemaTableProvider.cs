@@ -14,12 +14,13 @@ namespace CrmAdo.Core
     /// </summary>
     public class SchemaTableProvider : ISchemaTableProvider
     {
-        public DataTable GetSchemaTable(IEnumerable<ColumnMetadata> columns)
+        public DataTable GetSchemaTable(DbConnection connection, IEnumerable<ColumnMetadata> columns)
         {
             //Note to self: See here for an alternate implementation info: http://msdn.microsoft.com/en-us/library/system.data.sqlclient.sqldatareader.getschematable(v=vs.110).aspx
+            CrmDbConnection conn = (CrmDbConnection)connection;
 
             var schemaTable = new DataTable("SchemaTable");
-            schemaTable.Locale = CultureInfo.InvariantCulture;        
+            schemaTable.Locale = CultureInfo.InvariantCulture;
 
 
             schemaTable.Columns.Add(new DataColumn(SchemaTableColumn.AllowDBNull, typeof(bool)));
@@ -73,10 +74,13 @@ namespace CrmAdo.Core
             {
                 var row = schemaTable.Rows.Add();
                 var attMeta = columnMetadata.AttributeMetadata;
-               bool isPrimaryId  = attMeta.IsPrimaryId.HasValue && attMeta.IsPrimaryId.Value;
-               row[SchemaTableColumn.AllowDBNull] = !isPrimaryId;
+                bool isPrimaryId = attMeta.IsPrimaryId.HasValue && attMeta.IsPrimaryId.Value;
+                row[SchemaTableColumn.AllowDBNull] = !isPrimaryId;
+
+                row[SchemaTableOptionalColumn.BaseCatalogName] = conn.ConnectionInfo.OrganisationName;
                 row[SchemaTableColumn.BaseColumnName] = attMeta.LogicalName;
-                row[SchemaTableColumn.BaseSchemaName] = "";
+                row[SchemaTableColumn.BaseSchemaName] = "dbo";
+                //   row[SchemaTableOptionalColumn.BaseServerName] = "dbo";
                 row[SchemaTableColumn.BaseTableName] = attMeta.EntityLogicalName;
                 row[SchemaTableColumn.ColumnName] = columnMetadata.ColumnName;
                 row[SchemaTableColumn.ColumnOrdinal] = ordinal; // columnMetadata.AttributeMetadata.ColumnNumber;
@@ -87,8 +91,7 @@ namespace CrmAdo.Core
                 row[SchemaTableColumn.IsAliased] = columnMetadata.HasAlias;
                 row["IsColumnSet"] = false;
                 row[SchemaTableColumn.IsExpression] = false;
-
-
+                
                 row[SchemaTableColumn.DataType] = attMeta.GetFieldType();
                 row[SchemaTableOptionalColumn.IsAutoIncrement] = false;
                 row["IsHidden"] = false; // !attMeta.IsValidForRead;
@@ -132,7 +135,7 @@ namespace CrmAdo.Core
                 row["XmlSchemaCollectionDatabase"] = null;
                 row["XmlSchemaCollectionName"] = null;
                 row["XmlSchemaCollectionOwningSchema"] = null;
-               
+
                 // some other optional columns..
 
                 // row[SchemaTableOptionalColumn.IsRowVersion] = false;

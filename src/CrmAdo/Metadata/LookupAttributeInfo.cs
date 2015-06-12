@@ -29,5 +29,7 @@ namespace CrmAdo.Metadata
                 throw new NotImplementedException();
             }
         }
+
+        public string[] Targets { get; set; }
     }
 }
