@@ -1,0 +1,20 @@
+﻿v1.5.0
+Designer support added for 'New Query' and 'Show Data' as per https://github.com/dazinator/CrmAdo.Ddex/issues/5
+
+v1.4.0
+Added support for VS 2012.
+
+v1.3.1
+Minor correction to package metadata 'summary'.
+
+v1.3.0
+Completely revamped the installation process. Now has a dependency on a seperate CrmAdo package. 
+
+v1.2.0
+Added ability to see registered plugin assemblies.
+
+v1.1.0
+Added ability to see the options for option set attributes.
+
+v1.0.0
+Initial Release.

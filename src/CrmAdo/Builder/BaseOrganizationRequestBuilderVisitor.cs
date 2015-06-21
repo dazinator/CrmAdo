@@ -103,7 +103,12 @@ namespace CrmAdo.Visitor
             if (entityMetadata != null)
             {
                 // Populate metadata for these columns.
-                ResultColumnMetadata.AddRange((from c in entityMetadata.Attributes orderby c.LogicalName select new ColumnMetadata(c, entityAlias)));
+                var atts = from c in entityMetadata.Attributes
+                           //where c.IsValidForRead.HasValue && c.IsValidForRead.Value && c.LinkedAttributeId == null
+                           orderby c.LogicalName
+                           select new ColumnMetadata(c, entityAlias);
+
+                ResultColumnMetadata.AddRange(atts);
             }
             else
             {
@@ -111,7 +116,7 @@ namespace CrmAdo.Visitor
             }
         }
 
-        protected void AddColumnMetadata(string entityName, string entityAlias, string attributeName)
+        protected ColumnMetadata AddColumnMetadata(string entityName, string entityAlias, string attributeName)
         {
             // Add the metadata for this column.
             var entityMetadata = GetEntityMetadata(entityName);
@@ -128,14 +133,24 @@ namespace CrmAdo.Visitor
                 }
                 else
                 {
+
                     columnMetadata = new ColumnMetadata(colMeta, entityAlias);
+
+                    //if (colMeta.IsValidForRead.HasValue && !colMeta.IsValidForRead.Value)
+                    //{
+                    //    // this column cannot be read..
+
+                    //}
                 }
                 ResultColumnMetadata.Add(columnMetadata);
+                return columnMetadata;
             }
             else
             {
                 // Could throw an exceptiton as no metadata found for this entity.
             }
+            return null;
+
         }
 
         //protected void AddPrimaryIdMetadata(string entityName, string entityAlias)

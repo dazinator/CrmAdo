@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Id="7a1193f1-db85-4bef-ba54-604efcb169a3" Version="1.5.92" Language="en-US" Publisher="Darrell Tunnell"/>
+    <DisplayName>CrmAdo DDEX Provider</DisplayName>
+    <Description xml:space="preserve">This allows you to connect to Dynamics CRM 2011 &amp; 2013 instances from within Visual Studio via Server Explorer. See entities, attributes, plugins etc. More features being added.
+    </Description>
+    <MoreInfo>https://github.com/dazinator/CrmAdo.Ddex/wiki/Getting-Started</MoreInfo>
+    <License>eula.txt</License>
+    <GettingStartedGuide>https://github.com/dazinator/CrmAdo.Ddex/wiki/Getting-Started</GettingStartedGuide>
+    <ReleaseNotes>ReleaseNotes.txt</ReleaseNotes>
+    <Icon>Resources\Package.ico</Icon>
+    <Tags>CrmAdo Ado EF DDEX Design Dynamics Crm DynamicsCrm</Tags>
+  </Metadata>
+  <Installation InstalledByMsi="false">
+    <InstallationTarget Version="[11.0,13.0)" Id="Microsoft.VisualStudio.Pro" />
+    <InstallationTarget Version="[11.0,13.0)" Id="Microsoft.VisualStudio.Premium" />
+    <InstallationTarget Version="[11.0,13.0)" Id="Microsoft.VisualStudio.Ultimate" />
+  </Installation>
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="4.5" />
+    <Dependency Id="Microsoft.VisualStudio.MPF.11.0" DisplayName="Visual Studio MPF 11.0" d:Source="Installed" Version="11.0" />
+    <Dependency d:Source="Installed" d:ProjectName="CrmAdo.Vs" Version="[1.2.15,2.0)" d:InstallSource="Download" Id="CrmAdo..844f4586-0bfb-44a2-874f-f464eb4f2ea1" DisplayName="CrmAdo " Location="https://github.com/dazinator/CrmAdo/releases/latest" />
+  </Dependencies>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+  </Assets>
+</PackageManifest>

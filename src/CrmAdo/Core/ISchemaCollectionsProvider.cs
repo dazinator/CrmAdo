@@ -288,7 +288,7 @@ namespace CrmAdo.Core
         }
 
         public DataTable GetUsers(CrmDbConnection crmDbConnection, string[] restrictions)
-        {
+        {           
             var command = new CrmDbCommand(crmDbConnection);
             command.CommandText = "SELECT su.systemuserid, su.fullname, su.domainname, su.createdon, su.modifiedon FROM systemuser su";
 
@@ -313,7 +313,8 @@ namespace CrmAdo.Core
                 {
                     if (length - 1 >= index)
                     {
-                        return restrictions[index];
+                        var restriction = restrictions[index];
+                        return UnquoteIdentifier(restriction);
                     }
                 }
             }
@@ -1206,6 +1207,16 @@ namespace CrmAdo.Core
 
             dataTable.Rows.Add(crmDbConnection.ConnectionInfo.OrganisationName, 1, DateTime.UtcNow, crmDbConnection.ConnectionInfo.OrganisationId, crmDbConnection.ConnectionInfo.ServerVersion);
             return dataTable;
+        }
+
+
+        private static string UnquoteIdentifier(string identifier)
+        {
+            if (!string.IsNullOrEmpty(identifier))
+            {
+                return identifier.TrimEnd(']').TrimStart('[');
+            }
+            return identifier;
         }
     }
 }

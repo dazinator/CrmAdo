@@ -342,7 +342,7 @@ namespace CrmAdo.Metadata
             newAtt.IsSecured = false;
             newAtt.IsValidForAdvancedFind = false;
             newAtt.IsValidForCreate = false;
-            newAtt.IsValidForRead = false;
+            newAtt.IsValidForRead = true;
             newAtt.IsValidForUpdate = false;
             //newAtt.Length
             newAtt.LinkedAttributeId = null;

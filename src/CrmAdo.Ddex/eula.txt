@@ -1,0 +1,50 @@
+﻿CrmAdo DDEX Provider 
+Software License Agreement
+Effective October 27, 2014
+
+By using the software, you accept these terms. If you do not accept them, do not use the software.
+
+1. Definitions.
+	a. "Licensor" means the individual: Darrell Tunnell, whom is the author / creator of the software.
+	b. "Licensee" means the individual, company, corportation or organisation that is using the software.   
+	c. "Software" means "CrmAdo DDEX Provider" in object code form, documentation, and updates included in software maintenance.
+
+2. License Grant.
+Subject to the terms of this Agreement, Licensor hereby grants Licensee a non-transferable, non-exclusive, non-sub-licensable, limited license that allows:
+	a. Licensee to install (and use) the licensed version of the Software on computer PCs where potential use of the Software is restricted exclusively to the Licensee.
+
+3. Restrictions.
+Licensee will not, and will have no right to:	
+	a. modify, translate (except to the extent applicable laws specifically prohibit such restriction), create derivative works based on the Software.
+	b. sell, rent, lease, distribute, or otherwise transfer rights to the Software without prior written consent from Licensor.
+	c. remove any proprietary notices or labels from the Software.
+
+4. Title and Copyright.
+Title, ownership rights, intellectual property rights, and copyright to the Software, and any copies or portions thereof, shall remain with Licensor.
+
+5. Termination.
+The Term of this license shall be until terminated. If Licensee fails to comply with any of the terms of this Agreement, this Agreement and the rights granted herein will terminate immediately. 
+Licensor may, at their sole discretion and at any time, terminate this Agreement. 
+On termination, Licensee must cease using and destroy all copies of the Software.
+
+6. Support.
+Software is provided under an AS-IS basis and without any support, updates or maintenance. 
+Nothing in this Agreement shall require Licensor to provide Licensee with support or fixes to any bug, failure, mis-performance or other defect in The Software.
+
+7. Disclaimer of Warranty.
+THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. 
+EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. 
+THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. 
+SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+
+8. Limitation of Liability.
+IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, LICENSOR, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+9. Interpretation of Sections 7 and 8.
+If the disclaimer of warranty and limitation of liability provided above cannot be given local legal effect according to their terms, reviewing courts shall apply local law that most closely approximates an absolute waiver of all civil liability in connection with the Program, unless a warranty or assumption of liability accompanies a copy of the Program in return for a fee.
+
+10. Indemnification.
+Licensee hereby warrants to hold Licensor harmless and indemnify Licensor for any lawsuit brought against it in regards to Licensee’s use of The Software in means that violate, breach or otherwise circumvent this license, Licensor's intellectual property rights or Licensor's title in The Software. Licensor shall promptly notify Licensee in case of such legal action and request Licensee’s consent prior to any settlement in relation to such lawsuit or claim.
+
+11. Governing Law, Jurisdiction.
+Licensee hereby agrees not to initiate class-action lawsuits against Licensor in relation to this license and to compensate Licensor for any legal fees, cost or attorney fees should any claim brought by Licensee against Licensor be denied, in part or in full.

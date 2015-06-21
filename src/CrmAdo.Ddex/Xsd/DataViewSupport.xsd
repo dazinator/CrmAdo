@@ -1,0 +1,758 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" xmlns:dvs="http://schemas.microsoft.com/VisualStudio/2007/07/Data/DataViewSupport" targetNamespace="http://schemas.microsoft.com/VisualStudio/2007/07/Data/DataViewSupport" elementFormDefault="qualified">
+    <xs:annotation>
+        <xs:documentation>
+        </xs:documentation>
+    </xs:annotation>
+    <xs:element name="DataViewSupport" type="dvs:DataViewSupportType" />
+    <xs:complexType name="DataViewSupportType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Import" type="dvs:ImportType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="Define" type="dvs:DefineType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:choice minOccurs="0">
+                <xs:element name="Views" type="dvs:ViewsType" />
+                <xs:element name="ViewsRef" type="dvs:InsertType" />
+            </xs:choice>
+            <xs:choice minOccurs="0">
+                <xs:element name="Resources" type="dvs:ResourcesType" />
+                <xs:element name="ResourcesRef" type="dvs:InsertType" />
+            </xs:choice>
+        </xs:sequence>
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+    </xs:complexType>
+    <xs:complexType name="ImportType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+    </xs:complexType>
+    <xs:complexType name="DefineType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice>
+            <xs:element name="Views" type="dvs:ViewsType" minOccurs="0" />
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="Default" type="dvs:DefaultType" />
+                <xs:element name="DefaultRef" type="dvs:InsertType" />
+                <xs:element name="DefaultListRef" type="dvs:InsertType" />
+            </xs:choice>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="View" type="dvs:ViewType" />
+                <xs:element name="ViewRef" type="dvs:InsertType" />
+                <xs:element name="ViewListRef" type="dvs:InsertType" />
+            </xs:choice>
+            <xs:element name="GlobalCommands" type="dvs:GlobalCommandsType" minOccurs="0" />
+            <xs:element name="ConnectionNode" type="dvs:ConnectionNodeType" />
+            <xs:element name="SelectionNode" type="dvs:SelectionNodeType" minOccurs="0" />
+            <xs:element name="Properties" type="dvs:PropertiesType" minOccurs="0" />
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="Property" type="dvs:PropertyType" />
+                <xs:element name="PropertyRef" type="dvs:InsertType" />
+                <xs:element name="PropertyListRef" type="dvs:InsertType" />
+            </xs:choice>
+            <xs:element name="StandardValues" type="dvs:StandardValuesType" minOccurs="0" />
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="StandardValue" type="dvs:StandardValueType" />
+                <xs:element name="StandardValueRef" type="dvs:InsertType" />
+                <xs:element name="StandardValueListRef" type="dvs:InsertType" />
+            </xs:choice>
+            <xs:element name="Commands" type="dvs:CommandsType" minOccurs="0" />
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="Command" type="dvs:CommandType" />
+                <xs:element name="CommandRef" type="dvs:InsertType" />
+                <xs:element name="CommandListRef" type="dvs:InsertType" />
+            </xs:choice>
+            <xs:element name="Parameters" type="dvs:ParametersType" minOccurs="0" />
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="Parameter" type="dvs:ParameterType" />
+                <xs:element name="ParameterRef" type="dvs:InsertType" />
+                <xs:element name="ParametersRef" type="dvs:InsertType" />
+            </xs:choice>
+            <xs:element name="Children" type="dvs:ChildrenType" minOccurs="0" />
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="StaticNode" type="dvs:StaticNodeType" />
+                <xs:element name="StaticNodeRef" type="dvs:InsertType" />
+                <xs:element name="Selection" type="dvs:SelectionType" />
+                <xs:element name="SelectionRef" type="dvs:InsertType" />
+                
+
+                <xs:element name="ChildListRef" type="dvs:InsertType" />
+            </xs:choice>
+            <xs:element name="Resources" type="dvs:ResourcesType" minOccurs="0" />
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="Resource" type="dvs:ResourceType" />
+                <xs:element name="ResourceRef" type="dvs:InsertType" />
+                <xs:element name="ResourceListRef" type="dvs:InsertType" />
+            </xs:choice>
+        </xs:choice>
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="parameters" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+    </xs:complexType>
+    <xs:complexType name="InsertType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="arguments" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+    </xs:complexType>
+    <xs:complexType name="ViewsType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="Default" type="dvs:DefaultType" />
+                <xs:element name="DefaultRef" type="dvs:InsertType" />
+                <xs:element name="DefaultListRef" type="dvs:InsertType" />
+            </xs:choice>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="View" type="dvs:ViewType" />
+                <xs:element name="ViewRef" type="dvs:InsertType" />
+                <xs:element name="ViewListRef" type="dvs:InsertType" />
+            </xs:choice>
+        </xs:sequence>
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+    </xs:complexType>
+    <xs:complexType name="DefaultType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="dvs:VersionableElementType">
+                <xs:attribute name="name" type="xs:string" use="required">
+                    <xs:annotation>
+                        <xs:documentation>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:anyAttribute namespace="##other" processContents="lax" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ViewType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="dvs:VersionableElementType">
+                <xs:sequence>
+                    <xs:element name="DisplayName" type="dvs:ResourceElementType" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:choice minOccurs="0">
+                        <xs:element name="GlobalCommands" type="dvs:GlobalCommandsType" />
+                        <xs:element name="GlobalCommandsRef" type="dvs:InsertType" />
+                    </xs:choice>
+                    <xs:choice>
+                        <xs:element name="ConnectionNode" type="dvs:ConnectionNodeType" />
+                        <xs:element name="ConnectionNodeRef" type="dvs:InsertType" />
+                    </xs:choice>
+                </xs:sequence>
+                <xs:attribute name="name" type="xs:string" use="required">
+                    <xs:annotation>
+                        <xs:documentation>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="dragSourceProvider" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:anyAttribute namespace="##other" processContents="lax" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="GlobalCommandsType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="Command" type="dvs:CommandType" />
+            <xs:element name="CommandRef" type="dvs:InsertType" />
+            <xs:element name="CommandListRef" type="dvs:InsertType" />
+        </xs:choice>
+        <xs:attribute name="provider" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+    </xs:complexType>
+    <xs:complexType name="ConnectionNodeType">
+        <xs:sequence>
+            <xs:element name="InitialDisplayName" type="dvs:DisplayNameType" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:group ref="dvs:CommonNodeElements" />
+        </xs:sequence>
+        <xs:attributeGroup ref="dvs:CommonNodeAttributes" />
+        <xs:attribute name="type" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+    </xs:complexType>
+    <xs:complexType name="StaticNodeType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="dvs:VersionableElementType">
+                <xs:sequence>
+                    <xs:element name="DisplayName" type="dvs:DisplayNameType" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation>
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:group ref="dvs:NodeElements" />
+                </xs:sequence>
+                <xs:attributeGroup ref="dvs:NodeAttributes" />
+                <xs:attribute name="skipWhen" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:anyAttribute namespace="##other" processContents="lax" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="SelectionNodeType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="DisplayName" type="dvs:DisplayNameType" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:group ref="dvs:NodeElements" />
+        </xs:sequence>
+        <xs:attributeGroup ref="dvs:NodeAttributes" />
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+    </xs:complexType>
+    <xs:complexType name="DisplayNameType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="dvs:ResourceElementType">
+                <xs:attribute name="when" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="provider" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:anyAttribute namespace="##other" processContents="lax" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:group name="NodeElements">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Icon" type="dvs:IconType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:group ref="dvs:CommonNodeElements" />
+        </xs:sequence>
+    </xs:group>
+    <xs:complexType name="IconType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="when" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="assembly" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="provider" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+    </xs:complexType>
+    <xs:attributeGroup name="NodeAttributes">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attributeGroup ref="dvs:CommonNodeAttributes" />
+        <xs:attribute name="visibilityProvider" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:attributeGroup>
+    <xs:group name="CommonNodeElements">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice minOccurs="0">
+                <xs:element name="Properties" type="dvs:PropertiesType" />
+                <xs:element name="PropertiesRef" type="dvs:InsertType" />
+            </xs:choice>
+            <xs:choice minOccurs="0">
+                <xs:element name="Commands" type="dvs:CommandsType" />
+                <xs:element name="CommandsRef" type="dvs:InsertType" />
+            </xs:choice>
+            <xs:choice minOccurs="0">
+                <xs:element name="Children" type="dvs:ChildrenType" />
+                <xs:element name="ChildrenRef" type="dvs:InsertType" />
+            </xs:choice>
+        </xs:sequence>
+    </xs:group>
+    <xs:attributeGroup name="CommonNodeAttributes">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="nodeId" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="userContextProvider" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="dropTargetProvider" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:attributeGroup>
+    <xs:complexType name="PropertiesType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="TypeDisplayName" type="dvs:ResourceElementType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="Property" type="dvs:PropertyType" />
+                <xs:element name="PropertyRef" type="dvs:InsertType" />
+                <xs:element name="PropertyListRef" type="dvs:InsertType" />
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="provider" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="createAutoBrowseObject" type="xs:boolean" default="true">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+    </xs:complexType>
+    <xs:complexType name="PropertyType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="DisplayName" type="dvs:ResourceElementType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Category" type="dvs:ResourceElementType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Description" type="dvs:ResourceElementType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Value" type="dvs:ResourceElementType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:choice minOccurs="0">
+                <xs:element name="StandardValues" type="dvs:StandardValuesType" />
+                <xs:element name="StandardValuesRef" type="dvs:InsertType" />
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+    </xs:complexType>
+    <xs:complexType name="StandardValuesType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="StandardValue" type="dvs:StandardValueType" />
+            <xs:element name="StandardValueRef" type="dvs:InsertType" />
+            <xs:element name="StandardValueListRef" type="dvs:InsertType" />
+        </xs:choice>
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+    </xs:complexType>
+    <xs:complexType name="StandardValueType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="dvs:ResourceElementType">
+                <xs:attribute name="value" type="xs:string" use="required">
+                    <xs:annotation>
+                        <xs:documentation>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:anyAttribute namespace="##other" processContents="lax" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="CommandsType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="Command" type="dvs:CommandType" />
+            <xs:element name="CommandRef" type="dvs:InsertType" />
+            <xs:element name="CommandListRef" type="dvs:InsertType" />
+        </xs:choice>
+        <xs:attribute name="provider" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+    </xs:complexType>
+    <xs:complexType name="CommandType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="0">
+            <xs:element name="Parameters" type="dvs:ParametersType" />
+            <xs:element name="ParametersRef" type="dvs:InsertType" />
+        </xs:choice>
+        <xs:attribute name="guid" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="cmdid" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="provider" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="isDefault" type="xs:boolean" default="false">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+    </xs:complexType>
+    <xs:complexType name="ParametersType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="Parameter" type="dvs:ParameterType" />
+            <xs:element name="ParameterRef" type="dvs:InsertType" />
+            <xs:element name="ParameterListRef" type="dvs:InsertType" />
+        </xs:choice>
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+    </xs:complexType>
+    <xs:complexType name="ParameterType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="Parameter" type="dvs:ParameterType" />
+            <xs:element name="ParameterRef" type="dvs:InsertType" />
+            <xs:element name="ParameterListRef" type="dvs:InsertType" />
+        </xs:choice>
+        <xs:attribute name="type" type="xs:string" default="System.String">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="value" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+    </xs:complexType>
+    <xs:complexType name="SelectionType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="dvs:VersionableElementType">
+                <xs:choice minOccurs="0">
+                    <xs:element name="SelectionNode" type="dvs:SelectionNodeType" />
+                    <xs:element name="SelectionNodeRef" type="dvs:InsertType" />
+                </xs:choice>
+                <xs:attribute name="type" type="xs:string" use="required">
+                    <xs:annotation>
+                        <xs:documentation>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="restrictions" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="properties" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="filter" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="ordering" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="skipWhen" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:anyAttribute namespace="##other" processContents="lax" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+
+    <xs:complexType name="ChildrenType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="StaticNode" type="dvs:StaticNodeType" />
+            <xs:element name="StaticNodeRef" type="dvs:InsertType" />
+            <xs:element name="Selection" type="dvs:SelectionType" />
+            <xs:element name="SelectionRef" type="dvs:InsertType" />
+            
+
+            <xs:element name="ChildListRef" type="dvs:InsertType" />
+        </xs:choice>
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+    </xs:complexType>
+    <xs:complexType name="ResourcesType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="Resource" type="dvs:ResourceType" />
+            <xs:element name="ResourceRef" type="dvs:InsertType" />
+            <xs:element name="ResourceListRef" type="dvs:InsertType" />
+        </xs:choice>
+        <xs:attribute name="baseName" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="assembly" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="manager" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+    </xs:complexType>
+    <xs:complexType name="ResourceType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="name" type="xs:string" use="required">
+                    <xs:annotation>
+                        <xs:documentation>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:anyAttribute namespace="##other" processContents="lax" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="ResourceElementType">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="resource" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:anyAttribute namespace="##other" processContents="lax" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="VersionableElementType" abstract="true">
+        <xs:annotation>
+            <xs:documentation>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="minSourceVersion" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="maxSourceVersion" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:anyAttribute namespace="##other" processContents="lax" />
+    </xs:complexType>
+</xs:schema>

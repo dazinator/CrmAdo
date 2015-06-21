@@ -19,7 +19,7 @@ namespace CrmAdo.Visitor
     /// A <see cref="BuilderVisitor"/> that builds a <see cref="RetrieveMultipleRequest"/> when it visits a <see cref="SelectBuilder"/> 
     /// </summary>
     public class RetrieveMultipleRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor<RetrieveMultipleRequest>
-    {      
+    {
 
         public enum VisitMode
         {
@@ -40,17 +40,17 @@ namespace CrmAdo.Visitor
             : base(metadataProvider)
         {
             Parameters = parameters;
-           // Request = new RetrieveMultipleRequest();
+            // Request = new RetrieveMultipleRequest();
             QueryExpression = new QueryExpression();
-            CurrentRequest.Query = QueryExpression;           
-               
+            CurrentRequest.Query = QueryExpression;
+
         }
 
-    //    public RetrieveMultipleRequest Request { get; set; }
+        //    public RetrieveMultipleRequest Request { get; set; }
         public QueryExpression QueryExpression { get; set; }
         public DbParameterCollection Parameters { get; set; }
         public bool IsSingleSource { get; set; }
-        public AliasedSource SingleSource { get; set; }              
+        public AliasedSource SingleSource { get; set; }
 
         public VisitMode Mode { get; set; }
 
@@ -191,19 +191,38 @@ namespace CrmAdo.Visitor
             var attributeName = item.GetColumnLogicalAttributeName();
             string entityName = null;
             string alias = null;
+
+            // bool addToQueryExpression = false;
+
             if (linkItem == null)
             {
-                QueryExpression.ColumnSet.AddColumn(attributeName);
+                // addToQueryExpression = true;
                 entityName = MainSourceTable.GetTableLogicalEntityName();
             }
             else
-            {
-                linkItem.Columns.AddColumn(attributeName);
+            {                
                 alias = linkItem.EntityAlias;
                 entityName = linkItem.LinkToEntityName.ToLower();
             }
 
-            AddColumnMetadata(entityName, alias, attributeName);
+            var columnMetadata = AddColumnMetadata(entityName, alias, attributeName);
+            if (columnMetadata != null && columnMetadata.AttributeMetadata != null && columnMetadata.AttributeMetadata.IsValidForRead.HasValue && !columnMetadata.AttributeMetadata.IsValidForRead.Value)
+            {
+                // this column is not valid for select statements.
+                //    throw new InvalidOperationException("Column named: " + attributeName + " is not valid for Read, co cannot be included in Select statements.");
+                return;
+            }
+
+            if (linkItem == null)
+            {
+                QueryExpression.ColumnSet.AddColumn(attributeName);
+            }
+            else
+            {
+                linkItem.Columns.AddColumn(attributeName);
+            }
+
+
 
         }
 
@@ -1024,7 +1043,7 @@ namespace CrmAdo.Visitor
             return orgCommand;
         }
 
-     
+
 
     }
 }

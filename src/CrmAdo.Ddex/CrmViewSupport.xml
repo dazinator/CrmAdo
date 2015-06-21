@@ -1,0 +1,515 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DataViewSupport xmlns="http://schemas.microsoft.com/VisualStudio/2007/07/Data/DataViewSupport">
+
+  <Define name="AttributeProperties">
+    <Properties>
+      <Property name="IsPrimaryKey">
+        <DisplayName resource="AttributeProperty_IsPrimaryKey_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_IsPrimaryKey_Description" />
+      </Property>
+      <Property name="table_name">
+        <DisplayName resource="AttributeProperty_EntityLogicalName_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_EntityLogicalName_Description" />
+      </Property>
+      <Property name="column_name">
+        <DisplayName resource="AttributeProperty_LogicalName_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_LogicalName_Description" />
+      </Property>
+      <Property name="AttributeOf">
+        <DisplayName resource="AttributeProperty_AttributeOf_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_AttributeOf_Description" />
+      </Property>
+      <Property name="AttributeType">
+        <DisplayName resource="AttributeProperty_AttributeType_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_AttributeType_Description" />
+      </Property>
+      <Property name="AttributeTypeName">
+        <DisplayName resource="AttributeProperty_AttributeTypeName_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_AttributeTypeName_Description" />
+      </Property>
+      <Property name="CanBeSecuredForCreate">
+        <DisplayName resource="AttributeProperty_CanBeSecuredForCreate_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_CanBeSecuredForCreate_Description" />
+      </Property>
+      <Property name="CanBeSecuredForRead">
+        <DisplayName resource="AttributeProperty_CanBeSecuredForRead_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_CanBeSecuredForRead_Description" />
+      </Property>
+      <Property name="CanBeSecuredForUpdate">
+        <DisplayName resource="AttributeProperty_CanBeSecuredForUpdate_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_CanBeSecuredForUpdate_Description" />
+      </Property>
+      <Property name="CanModifyAdditionalSettings">
+        <DisplayName resource="AttributeProperty_CanModifyAdditionalSettings_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_CanModifyAdditionalSettings_Description" />
+      </Property>
+      <Property name="ordinal_position">
+        <DisplayName resource="AttributeProperty_ColumnNumber_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_ColumnNumber_Description" />
+      </Property>
+      <Property name="DeprecatedVersion">
+        <DisplayName resource="AttributeProperty_DeprecatedVersion_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_DeprecatedVersion_Description" />
+      </Property>
+      <Property name="Description">
+        <DisplayName resource="AttributeProperty_Description_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_Description_Description" />
+      </Property>
+      <Property name="DisplayName">
+        <DisplayName resource="AttributeProperty_DisplayName_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_DisplayName_Description" />
+      </Property>
+      <Property name="IntroducedVersion">
+        <DisplayName resource="AttributeProperty_IntroducedVersion_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_IntroducedVersion_Description" />
+      </Property>
+      <Property name="IsAuditEnabled">
+        <DisplayName resource="AttributeProperty_IsAuditEnabled_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_IsAuditEnabled_Description" />
+      </Property>
+      <Property name="IsCustomAttribute">
+        <DisplayName resource="AttributeProperty_IsCustomAttribute_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_IsCustomAttribute_Description" />
+      </Property>
+      <Property name="IsCustomizable">
+        <DisplayName resource="AttributeProperty_IsCustomizable_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_IsCustomizable_Description" />
+      </Property>
+      <Property name="IsManaged">
+        <DisplayName resource="AttributeProperty_IsManaged_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_IsManaged_Description" />
+      </Property>
+      <Property name="IsPrimaryid">
+        <DisplayName resource="AttributeProperty_IsPrimaryid_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_IsPrimaryid_Description" />
+      </Property>
+      <Property name="IsPrimaryName">
+        <DisplayName resource="AttributeProperty_IsPrimaryName_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_IsPrimaryName_Description" />
+      </Property>
+      <Property name="IsRenameable">
+        <DisplayName resource="AttributeProperty_IsRenameable_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_IsRenameable_Description" />
+      </Property>
+      <Property name="IsSecured">
+        <DisplayName resource="AttributeProperty_IsSecured_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_IsSecured_Description" />
+      </Property>
+      <Property name="IsValidforAdvancedFind">
+        <DisplayName resource="AttributeProperty_IsValidforAdvancedFind_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_IsValidforAdvancedFind_Description" />
+      </Property>
+      <Property name="IsValidForCreate">
+        <DisplayName resource="AttributeProperty_IsValidForCreate_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_IsValidForCreate_Description" />
+      </Property>
+      <Property name="IsValidForRead">
+        <DisplayName resource="AttributeProperty_IsValidForRead_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_IsValidForRead_Description" />
+      </Property>
+      <Property name="IsValidForUpdate">
+        <DisplayName resource="AttributeProperty_IsValidForUpdate_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_IsValidForUpdate_Description" />
+      </Property>
+      <Property name="LinkedAttributeId">
+        <DisplayName resource="AttributeProperty_LinkedAttributeId_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_LinkedAttributeId_Description" />
+      </Property>
+      <Property name="MetadataId">
+        <DisplayName resource="AttributeProperty_MetadataId_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_MetadataId_Description" />
+      </Property>
+      <Property name="RequiredLevel">
+        <DisplayName resource="AttributeProperty_RequiredLevel_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_RequiredLevel_Description" />
+      </Property>
+      <Property name="SchemaName">
+        <DisplayName resource="AttributeProperty_SchemaName_DisplayName"></DisplayName>
+        <Description resource="AttributeProperty_SchemaName_Description" />
+      </Property>
+      <PropertyListRef name="OptionSetAttributeProperties"/>
+    </Properties>
+  </Define>
+
+  <Define name="OptionSetAttributeProperties">
+    <Property name="OptionSetName">
+      <DisplayName resource="AttributeProperty_OptionSetName_DisplayName"></DisplayName>
+      <Category>Option Set</Category>
+      <Description resource="AttributeProperty_OptionSetName_Description" />
+    </Property>
+    <Property name="OptionSetOptions">
+      <DisplayName resource="AttributeProperty_OptionSetOptions_DisplayName"></DisplayName>
+      <Category>Option Set</Category>
+      <Description resource="AttributeProperty_OptionSetOptions_Description" />
+    </Property>
+  </Define>
+
+  <Define name="EntityProperties">
+    <Properties>
+
+      <Property name="table_name">
+        <DisplayName resource="EntityProperty_Name_DisplayName"></DisplayName>
+        <Description resource="EntityProperty_Name_Description" />
+        <!--<Category>Table</Category>-->
+      </Property>
+
+      <Property name="table_catalog">
+        <DisplayName resource="EntityProperty_Catalog_DisplayName"></DisplayName>
+        <Description resource="EntityProperty_Catalog_Description" />
+        <!--<Category>Table</Category>-->
+      </Property>
+
+      <Property name="table_schema">
+        <DisplayName resource="EntityProperty_Schema_DisplayName"></DisplayName>
+        <Description resource="EntityProperty_Schema_Description" />
+        <!--<Category>Table</Category>-->
+      </Property>
+
+      <Property name="table_type">
+        <DisplayName resource="EntityProperty_Type_DisplayName"></DisplayName>
+        <Description resource="EntityProperty_Type_Description" />
+        <!--<Category>Table</Category>-->
+      </Property>
+
+
+      <Property name="MetadataId">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="ActivityTypeMask">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="AutoCreateAccessTeams">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="AutoRouteToOwnerQueue">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="CanBeInManyToMany">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="CanBePrimaryEntityInRelationship">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="CanBeRelatedEntityInRelationship">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="CanCreateAttributes">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="CanCreateCharts">
+        <Category>Additional Info</Category>
+      </Property>
+
+
+      <Property name="CanCreateForms">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="CanCreateViews">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="CanModifyAdditionalSettings">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="CanTriggerWorkflow">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="Description">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="DisplayCollectionName">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="DisplayName">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="HasChanged">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IconLargeName">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IconMediumName">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IconSmallName">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IntroducedVersion">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IsActivity">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IsActivityParty">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IsAIRUpdated">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IsAuditEnabled">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IsAvailableOffline">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IsBusinessProcessEnabled">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IsChildEntity">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IsConnectionsEnabled">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IsCustomEntity">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IsCustomizable">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="IsDocumentManagementEnabled">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="IsDuplicateDetectionEnabled">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="IsEnabledForCharts">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="IsEnabledForTrace">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="IsImportable">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="IsIntersect">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="IsMailMergeEnabled">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="IsManaged">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IsMappable">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="IsQuickCreateEnabled">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="IsReadingPaneEnabled">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IsReadOnlyInMobileClient">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IsRenameable">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IsValidForAdvancedFind">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IsValidForQueue">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="IsVisibleInMobile">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="IsVisibleInMobileClient">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="ObjectTypeCode">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="OwnershipType">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="PrimaryIdAttribute">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="PrimaryImageAttribute">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="PrimaryNameAttribute">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="RecurrenceBaseEntityLogicalName">
+        <Category>Additional Info</Category>
+      </Property>
+
+      <Property name="ReportViewName">
+        <Category>Additional Info</Category>
+      </Property>
+      <Property name="SchemaName">
+        <Category>Additional Info</Category>
+      </Property>
+
+
+    </Properties>
+  </Define>
+
+  <Define name="UserProperties">
+    <Properties>
+      <Property name="FullName">
+        <DisplayName resource="UserProperty_FullName_DisplayName"></DisplayName>
+        <Description resource="UserProperty_FullName_Description" />      
+      </Property>
+      <Property name="DomainName">
+        <DisplayName resource="UserProperty_DomainName_DisplayName"></DisplayName>
+        <Description resource="UserProperty_DomainName_Description" />      
+      </Property>
+      <Property name="SystemUserId">
+        <DisplayName resource="UserProperty_SystemUserId_DisplayName"></DisplayName>
+        <Description resource="UserProperty_SystemUserId_Description" />      
+      </Property>
+      <Property name="CreatedOn">
+        <DisplayName resource="UserProperty_CreatedOn_DisplayName"></DisplayName>
+        <Description resource="UserProperty_CreatedOn_Description" />       
+      </Property>
+      <Property name="ModifiedOn">
+        <DisplayName resource="UserProperty_ModifiedOn_DisplayName"></DisplayName>
+        <Description resource="UserProperty_ModifiedOn_Description" />       
+      </Property>    
+    </Properties>
+  </Define>
+
+  <Views>
+    <View name="Dynamics Crm">
+      <DisplayName>CrmAdo Dynamics Crm</DisplayName>
+      <ConnectionNode>
+        <InitialDisplayName resource="Node_InitialDisplayName"></InitialDisplayName>
+        <Commands>
+          <!--
+                        This command is a built-in command that can launch the Visual
+                        Studio Query Designer to allow building a new query.  The command
+                        provider is specified using a COM class ID registered in the
+                        Visual Studio local registry hive.
+                    -->
+          <Command guid="501822E1-B5AF-11d0-B4DC-00A0C91506EF" cmdid="13608" provider="884DD964-5327-461f-9F06-6484DD540F8F" />
+        </Commands>
+        <Children>
+          <StaticNode>
+            <DisplayName resource="Node_Entities" />
+            <Commands>
+              <Command guid="501822E1-B5AF-11d0-B4DC-00A0C91506EF" cmdid="13608" provider="884DD964-5327-461f-9F06-6484DD540F8F" />
+            </Commands>
+            <Children>
+              <Selection type="Tables" restrictions="{Root.Name}">
+                <SelectionNode nodeId="Table">
+                  <DisplayName resource="Node_Entity" />
+                  <Icon name="Table"  />
+                  <PropertiesRef name="EntityProperties"/>
+                  <Commands>
+                    <Command guid="501822E1-B5AF-11d0-B4DC-00A0C91506EF" cmdid="13608" provider="884DD964-5327-461f-9F06-6484DD540F8F" />
+                  </Commands>
+                  <Children>
+                    <StaticNode>
+                      <DisplayName resource="Node_EntityAttributes" />
+                      <Icon name="Folder" />
+                      <Children>
+                        <Selection type="Columns" restrictions="{Table.table_catalog},{Table.table_schema},{Table.table_name}">
+                          <SelectionNode>
+                            <DisplayName resource="Node_EntityAttribute"/>
+                            <Icon name="PrimaryKey" when ="{IsPrimaryKey} = 'true'"/>
+                            <Icon name="Column" when ="{IsPrimaryKey} = 'false'"/>
+                            <PropertiesRef name="AttributeProperties"/>
+                          </SelectionNode>
+                        </Selection>
+                      </Children>
+                    </StaticNode>
+
+                    <!--<Selection type="AttributeMetadata" restrictions="{Table.LogicalName}">
+                      <SelectionNode>
+                        <DisplayName resource="Node_Column" />
+                        -->
+                    <!--<DisplayName>{Name}</DisplayName>-->
+                    <!--
+                        <DisplayName>{Table.LogicalName}{Column.LogicalName}</DisplayName>
+                        <Icon name="Column" />
+                        -->
+                    <!--<Properties>
+                          <TypeDisplayName>{LogicalName}</TypeDisplayName>                         
+                          <Property name="Name">
+                            <DisplayName>{LogicalName}</DisplayName>
+                            <Category>Column Info</Category>
+                            <Value>{LogicalName}</Value>
+                          </Property>
+                        </Properties>-->
+                    <!--
+                      </SelectionNode>
+                    </Selection>-->
+                  </Children>
+                </SelectionNode>
+              </Selection>
+            </Children>
+          </StaticNode>
+
+          <StaticNode>
+            <DisplayName resource="Node_PluginAssemblies" />
+            <Children>
+              <Selection type="PluginAssembly" >
+                <SelectionNode nodeId="PluginAssembly">
+                  <DisplayName resource="Node_PluginAssembly" />
+                  <Icon name="Component"/>
+                </SelectionNode>
+              </Selection>
+            </Children>
+          </StaticNode>
+
+          <StaticNode>
+            <DisplayName resource="Node_Users" />
+            <Children>
+              <Selection type="User">
+                <SelectionNode nodeId="User">
+                  <DisplayName resource="Node_User" />
+                  <Icon name="Default"/>
+                </SelectionNode>
+              </Selection>
+            </Children>
+          </StaticNode>
+
+
+
+          <!--<StaticNode>
+            <DisplayName>Tables</DisplayName>
+            <Children>
+              <Selection type="Table">
+                <SelectionNode nodeId="Table">
+                  <DisplayName>{LogicalName}</DisplayName>
+                  <Icon name="Table" />
+                  <Commands>
+                    <Command guid="501822E1-B5AF-11d0-B4DC-00A0C91506EF" cmdid="0x3060" provider="884DD964-5327-461f-9F06-6484DD540F8F" />
+                  </Commands>
+                </SelectionNode>
+              </Selection>
+            </Children>
+          </StaticNode>-->
+        </Children>
+      </ConnectionNode>
+    </View>
+  </Views>
+
+  <Resources baseName="CrmAdo.DdexProvider.Resources"/>
+
+</DataViewSupport>
