@@ -51,6 +51,10 @@
     <Reference Include="AntiXSSLibrary">
       <HintPath>..\..\lib\Microsoft.CrmSdk.Extensions.6.0.4.1\lib\net40\AntiXSSLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="CData.DynamicsCRM.System, Version=2.0.0.40, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files\CData\CData ADO.NET Provider for Dynamics CRM 2015\lib\4.0\CData.DynamicsCRM.System.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\..\lib\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -130,6 +134,17 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.CData.DynamicsCRM, Version=15.0.0.40, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files\CData\CData ADO.NET Provider for Dynamics CRM 2015\lib\4.0\System.Data.CData.DynamicsCRM.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.CData.DynamicsCRM.Entities, Version=15.0.0.40, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files\CData\CData ADO.NET Provider for Dynamics CRM 2015\lib\4.0\System.Data.CData.DynamicsCRM.Entities.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.CData.DynamicsCRM.Entities.EF6">
+      <HintPath>..\..\..\..\..\..\..\Program Files\CData\CData ADO.NET Provider for Dynamics CRM 2015\lib\4.0\System.Data.CData.DynamicsCRM.Entities.EF6.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data.Services" />
     <Reference Include="System.Data.Services.Client" />
     <Reference Include="System.Data.SqlLocalDb">
@@ -163,6 +178,7 @@
     </Compile>
     <Compile Include="CommandBatchIntegrationTests.cs" />
     <Compile Include="EntityMetadataRepositoryTests.cs" />
+    <Compile Include="SchemaComparisonWithRssBusTests.cs" />
     <Compile Include="SchemaComparisonWithSqlServerTests.cs" />
     <Compile Include="SchemaCollectionProviderTests.cs" />
     <Compile Include="SelectMetadataIntegrationTests.cs" />

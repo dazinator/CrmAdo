@@ -191,6 +191,7 @@ namespace CrmAdo
 
         protected override void ApplyParameterInfo(DbParameter parameter, DataRow dataRow, StatementType statementType, bool whereClause)
         {
+           
         }
     }
 }

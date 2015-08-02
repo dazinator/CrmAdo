@@ -98,63 +98,71 @@ namespace CrmAdo
 
         private DbType _inferType(Object value)
         {
-            var type = value.GetType();
-            switch (Type.GetTypeCode(type))
+            if (value != null)
             {
-                case TypeCode.Empty:
-                    throw new SystemException("Invalid data type");
+                var type = value.GetType();
+                switch (Type.GetTypeCode(type))
+                {
+                    case TypeCode.Empty:
+                        throw new SystemException("Invalid data type");
 
-                case TypeCode.Object:
+                    case TypeCode.Object:
 
-                    if (type == typeof(Guid))
-                    {
-                        return DbType.Guid;
-                    }
+                        if (type == typeof(Guid))
+                        {
+                            return DbType.Guid;
+                        }
 
-                    return DbType.Object;
+                        return DbType.Object;
 
-                case TypeCode.Boolean:
-                    return DbType.Boolean;
+                    case TypeCode.Boolean:
+                        return DbType.Boolean;
 
-                case TypeCode.Byte:
-                    return DbType.Byte;
+                    case TypeCode.Byte:
+                        return DbType.Byte;
 
-                case TypeCode.Int16:
-                    return DbType.Int16;
+                    case TypeCode.Int16:
+                        return DbType.Int16;
 
-                case TypeCode.Int32:
-                    return DbType.Int32;
+                    case TypeCode.Int32:
+                        return DbType.Int32;
 
-                case TypeCode.Int64:
-                    return DbType.Int64;
+                    case TypeCode.Int64:
+                        return DbType.Int64;
 
-                case TypeCode.Single:
-                    return DbType.Single;
+                    case TypeCode.Single:
+                        return DbType.Single;
 
-                case TypeCode.Double:
-                    return DbType.Double;
+                    case TypeCode.Double:
+                        return DbType.Double;
 
-                case TypeCode.Decimal:
-                    return DbType.Decimal;
+                    case TypeCode.Decimal:
+                        return DbType.Decimal;
 
-                case TypeCode.DateTime:
-                    return DbType.DateTime;
+                    case TypeCode.DateTime:
+                        return DbType.DateTime;
 
-                case TypeCode.String:
-                    return DbType.String;
+                    case TypeCode.String:
+                        return DbType.String;
 
-                //case TypeCode.DBNull:
-                //case TypeCode.Char:
-                //case TypeCode.SByte:
-                //case TypeCode.UInt16:
-                //case TypeCode.UInt32:
-                //case TypeCode.UInt64:
-                //    // Throw a SystemException for unsupported data types.
-                //    throw new SystemException("Invalid data type");
+                    //case TypeCode.DBNull:
+                    //case TypeCode.Char:
+                    //case TypeCode.SByte:
+                    //case TypeCode.UInt16:
+                    //case TypeCode.UInt32:
+                    //case TypeCode.UInt64:
+                    //    // Throw a SystemException for unsupported data types.
+                    //    throw new SystemException("Invalid data type");
 
-                default:
-                    return DbType.String;   
-                   // throw new SystemException("Value is of unknown data type");
+                    default:
+                        return DbType.String;
+                    // throw new SystemException("Value is of unknown data type");
+                }
+            }
+            else
+            {
+                return DbType.String;
+                // throw new SystemException("Value is of unknown data type");
             }
         }
 
