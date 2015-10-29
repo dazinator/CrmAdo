@@ -32,6 +32,7 @@ namespace CrmAdo.Tests
 
             // Arrange
             var sql = sqlBuilder.ToString();
+            Console.Write(sql);
             // Act
             using (var sandbox = RequestProviderTestsSandbox.Create())
             {

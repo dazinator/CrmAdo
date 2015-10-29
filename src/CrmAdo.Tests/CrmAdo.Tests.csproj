@@ -100,24 +100,8 @@
     <Reference Include="Microsoft.Xrm.Sdk.Deployment" Condition=" '$(Configuration)|$(Platform)' == 'Release 4.0|AnyCPU' ">
       <HintPath>..\..\lib\Microsoft.CrmSdk.Deployment.6.1.1\lib\net40\Microsoft.Xrm.Sdk.Deployment.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.core">
-      <HintPath>..\..\lib\NUnitTestAdapter.2.0.0\lib\nunit.core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="nunit.core.interfaces">
-      <HintPath>..\..\lib\NUnitTestAdapter.2.0.0\lib\nunit.core.interfaces.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\lib\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.util">
-      <HintPath>..\..\lib\NUnitTestAdapter.2.0.0\lib\nunit.util.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="NUnit.VisualStudio.TestAdapter">
-      <HintPath>..\..\lib\NUnitTestAdapter.2.0.0\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -125,8 +109,8 @@
       <HintPath>..\..\lib\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
     </Reference>
     <Reference Include="SQLGeneration, Version=2.6.2.0, Culture=neutral, PublicKeyToken=22ea15b5a3c0e6aa, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\SQLGeneration.DazinatorFork.2.6.2\lib\net40\SQLGeneration.dll</HintPath>
+      <HintPath>..\packages\SQLGeneration.DazinatorFork.2.7.0\lib\portable-net40+win+MonoAndroid10+xamarinios10+MonoTouch10\SQLGeneration.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />

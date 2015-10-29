@@ -1074,7 +1074,7 @@ namespace CrmAdo.Core
             dataTable.Columns["a.columnnumber"].ColumnName = "ordinal_position";
             dataTable.Columns["ordinal_position"].SetOrdinal(7);
 
-            dataTable.Columns.Add("constraint_type", typeof(string), "'FOREIGN KEY'").SetOrdinal(8);
+            dataTable.Columns.Add("constraint_type", typeof(string), "'PRIMARY KEY'").SetOrdinal(8);
 
             //   dataTable.Columns.Add("KeyType", typeof(Byte), "36").SetOrdinal(8); // 36 = uniqueidentitifer datatype - all pk indexes in crm are uniqueidentifiers.
             dataTable.Columns.Add("index_name", typeof(string), "constraint_name").SetOrdinal(9);

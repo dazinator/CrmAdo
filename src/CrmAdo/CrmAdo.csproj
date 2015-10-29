@@ -101,9 +101,8 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="SQLGeneration, Version=2.6.2.0, Culture=neutral, PublicKeyToken=22ea15b5a3c0e6aa, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\SQLGeneration.DazinatorFork.2.6.2\lib\net40\SQLGeneration.dll</HintPath>
-      <ILMerge>True</ILMerge>
+      <HintPath>..\packages\SQLGeneration.DazinatorFork.2.7.0\lib\portable-net40+win+MonoAndroid10+xamarinios10+MonoTouch10\SQLGeneration.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
