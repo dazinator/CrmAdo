@@ -11,6 +11,6 @@ CrmAdo is an ADO.NET data provider for Dynamics Crm.
 
 It allows you to use standard ADO.NET code to interact with a Dynamics CRM 2011 / 2013 / 2015. This is often a million times quicker and easier than using the Dynamics CRM SDK directly. To Get Started see: [here](http://dazinator.github.io/CrmAdo/) or you can also check the [wiki](https://github.com/dazinator/CrmAdo/wiki/Getting-Started)
 
-Available on (NuGet)[https://www.nuget.org/packages/CrmAdo/]
+Available on [NuGet](https://www.nuget.org/packages/CrmAdo/)
 
-You may also be interested in the companion Visual Studio Extension available here: https://visualstudiogallery.msdn.microsoft.com/6c46df0c-253b-4022-8e15-d9df03df8d76
+You may also be interested in the companion Visual Studio Extension [available here](https://visualstudiogallery.msdn.microsoft.com/6c46df0c-253b-4022-8e15-d9df03df8d76)
