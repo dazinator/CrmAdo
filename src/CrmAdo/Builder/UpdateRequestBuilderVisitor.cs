@@ -14,6 +14,7 @@ using CrmAdo.Operations;
 
 namespace CrmAdo.Visitor
 {
+    
     /// <summary>
     /// A <see cref="BuilderVisitor"/> that builds a <see cref="UpdateRequest"/> when it visits a <see cref="UpdateBuilder"/> 
     /// </summary>
@@ -33,22 +34,20 @@ namespace CrmAdo.Visitor
             RightHand = 1,
         }
 
-        public UpdateRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider)
-            : this(null, metadataProvider)
+        public UpdateRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider, ConnectionSettings settings)
+            : this(null, metadataProvider, settings)
         {
 
         }
 
-        public UpdateRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider)
-            : base(metadataProvider)
+        public UpdateRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider, ConnectionSettings settings)
+           : base(metadataProvider, settings)
         {
-          //  Request = new UpdateRequest();
+            //  Request = new UpdateRequest();
             Parameters = parameters;
             //  IsVisitingRightFilterItem = false;
         }
-
-        //  public UpdateRequest UpdateRequest { get; set; }
-        // public RetrieveRequest RetrieveOutputRequest { get; set; }
+            
 
         public DbParameterCollection Parameters { get; set; }
         private EntityBuilder EntityBuilder { get; set; }
@@ -57,17 +56,11 @@ namespace CrmAdo.Visitor
         private EqualToFilter EqualToFilter { get; set; }
 
         private UpdateStatementPart CurrentUpdateStatementPart { get; set; }
-        private WhereFilterPart CurrentWhereFilterPart { get; set; }
-
-        //  private bool IsVisitingWhereFilter { get; set; }
-        // private bool IsVisitingRightFilterItem { get; set; }
-        //   private bool IsVisitingFilterItem { get; set; }
+        private WhereFilterPart CurrentWhereFilterPart { get; set; }      
 
         private Column IdFilterColumn { get; set; }
         private object IdFilterValue { get; set; }
-        private Column CurrentSetterColumn { get; set; }
-
-        // private AliasedProjection[] OutputColumns { get; set; }
+        private Column CurrentSetterColumn { get; set; }       
 
         #region Visit Methods
 
@@ -97,7 +90,7 @@ namespace CrmAdo.Visitor
             {
                 throw new NotSupportedException("The update statement has an unsupported filter in it's where clause. The'equal to' filter should specify the entity id column on one side.");
             }
-            var idAttName = IdFilterColumn.GetColumnLogicalAttributeName();
+            var idAttName = GetColumnLogicalAttributeName(IdFilterColumn);
             var expectedIdAttributeName = string.Format("{0}id", EntityName.ToLower());
             if (idAttName != expectedIdAttributeName)
             {
@@ -139,7 +132,7 @@ namespace CrmAdo.Visitor
 
         protected override void VisitTable(Table item)
         {
-            EntityName = item.GetTableLogicalEntityName();
+            EntityName = GetTableLogicalEntityName(item);
             EntityBuilder = EntityBuilder.WithNewEntity(MetadataProvider, EntityName);
         }
 
@@ -151,9 +144,9 @@ namespace CrmAdo.Visitor
             }
             else
             {
-                var attName = item.GetColumnLogicalAttributeName();
+                var attName = GetColumnLogicalAttributeName(item);
                 var entityName = this.CurrentRequest.Target.LogicalName;
-                this.AddColumnMetadata(entityName, null, attName);                
+                this.AddColumnMetadata(entityName, null, attName);
                 RetrieveOutputRequest.ColumnSet.AddColumn(attName);
             }
         }
@@ -164,31 +157,31 @@ namespace CrmAdo.Visitor
             base.AddAllColumnMetadata(entityName, null);
             RetrieveOutputRequest.ColumnSet.AllColumns = true;
         }
-         
+
         protected override void VisitStringLiteral(StringLiteral item)
         {
-            var sqlValue = item.ParseStringLiteralValue();
+            var sqlValue = ParseStringLiteralValue(item);
             if (CurrentUpdateStatementPart == UpdateStatementPart.WhereClause)
             {
                 IdFilterValue = sqlValue;
             }
             else
             {
-                var attName = this.CurrentSetterColumn.GetColumnLogicalAttributeName();
+                var attName = GetColumnLogicalAttributeName(this.CurrentSetterColumn);
                 EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(sqlValue);
             }
         }
 
         protected override void VisitNumericLiteral(NumericLiteral item)
         {
-            var sqlValue = item.ParseNumericLiteralValue();
+            var sqlValue = ParseNumericLiteralValue(item);
             if (CurrentUpdateStatementPart == UpdateStatementPart.WhereClause)
             {
                 IdFilterValue = sqlValue;
             }
             else
             {
-                var attName = this.CurrentSetterColumn.GetColumnLogicalAttributeName();
+                var attName = GetColumnLogicalAttributeName(this.CurrentSetterColumn);
                 EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(sqlValue);
             }
         }
@@ -201,7 +194,7 @@ namespace CrmAdo.Visitor
             }
             else
             {
-                var attName = this.CurrentSetterColumn.GetColumnLogicalAttributeName();
+                var attName = GetColumnLogicalAttributeName(this.CurrentSetterColumn);
                 EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(null);
             }
         }
@@ -215,7 +208,7 @@ namespace CrmAdo.Visitor
             }
             else
             {
-                var attName = this.CurrentSetterColumn.GetColumnLogicalAttributeName();
+                var attName = GetColumnLogicalAttributeName(this.CurrentSetterColumn);
                 EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(paramVal);
             }
 
@@ -234,7 +227,7 @@ namespace CrmAdo.Visitor
             {
                 filter.Accept(this);
             }
-           // base.VisitFilterGroup(item);
+            // base.VisitFilterGroup(item);
         }
 
         #endregion

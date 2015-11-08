@@ -28,20 +28,20 @@ namespace CrmAdo.Visitor
 
         private CrmMetadataNamingConvention _NamingConvention;
 
-        public CreateEntityRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider)
-            : this(null, metadataProvider)
+        public CreateEntityRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider, ConnectionSettings settings)
+            : this(null, metadataProvider, settings)
         {
 
         }
 
-        public CreateEntityRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider)
-            : this(parameters, metadataProvider, new CrmAdoCrmMetadataNamingProvider())
+        public CreateEntityRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider, ConnectionSettings settings)
+            : this(parameters, metadataProvider, new CrmAdoCrmMetadataNamingProvider(), settings)
         {
 
         }
 
-        public CreateEntityRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider, ICrmMetadataNamingConventionProvider schemaNameProvider)
-            : base(metadataProvider)
+        public CreateEntityRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider, ICrmMetadataNamingConventionProvider schemaNameProvider, ConnectionSettings settings)
+            : base(metadataProvider, settings)
         {
            // Request = new CreateEntityRequest();
             Parameters = parameters;

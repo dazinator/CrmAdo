@@ -238,7 +238,24 @@ namespace CrmAdo
             {
                 this.SetProperty("UserTokenExpiryWindow", value);
             }
-        }               
+        }
+
+        [Category("Other Options")]
+        [DefaultValue(false)]
+        [Description("False by default, enabling this means that any column names used in your command text will not be converted to lower case when sent to Crm - instead the casing will be preserved. This is useful if for some reason you have logical attribute names in CRM that are not lower case.")]
+        [DisplayName("Case Sensitive Column Names")]
+        [RefreshProperties(RefreshProperties.All)]
+        public bool CaseSensitiveColumnNames
+        {
+            get
+            {
+                return this.GetPropertyValue<bool>("CaseSensitiveColumnNames");
+            }
+            set
+            {
+                this.SetProperty("CaseSensitiveColumnNames", value);
+            }
+        }
 
         /// <summary>
         /// Gets the property value.
@@ -309,7 +326,9 @@ namespace CrmAdo
             [Description("Caller Id")]
             CallerId,
             [Description("Service Configuration Instance Mode")]
-            ServiceConfigurationInstanceMode
+            ServiceConfigurationInstanceMode,
+            [Description("Case Sensitive Column Names")]
+            CaseSensitiveColumnNames
         }
 
 

@@ -20,14 +20,14 @@ namespace CrmAdo.Visitor
     public class DeleteRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor<DeleteRequest>
     {
 
-        public DeleteRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider)
-            : this(null, metadataProvider, new DynamicsAttributeTypeProvider())
+        public DeleteRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider, ConnectionSettings settings)
+            : this(null, metadataProvider, new DynamicsAttributeTypeProvider(), settings)
         {
 
         }
 
-        public DeleteRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider, IDynamicsAttributeTypeProvider typeProvider)
-            : base(metadataProvider)
+        public DeleteRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider, IDynamicsAttributeTypeProvider typeProvider, ConnectionSettings settings)
+            : base(metadataProvider, settings)
         {
             //Request = new DeleteRequest();
             Parameters = parameters;
@@ -35,6 +35,8 @@ namespace CrmAdo.Visitor
             IsVisitingRightFilterItem = false;
             DynamicsTypeProvider = typeProvider;
         }
+
+
 
         private IDynamicsAttributeTypeProvider DynamicsTypeProvider { get; set; }
        // public DeleteRequest Request { get; set; }
@@ -74,7 +76,7 @@ namespace CrmAdo.Visitor
             {
                 throw new NotSupportedException("The delete statement has an unsupported filter in it's where clause. The'equal to' filter should specify the entity id column on one side.");
             }
-            var idAttName = IdFilterColumn.GetColumnLogicalAttributeName();
+            var idAttName = GetColumnLogicalAttributeName(IdFilterColumn);
 
             var expectedIdAttributeName = string.Format("{0}id", EntityName.ToLower());
             if (idAttName != expectedIdAttributeName)
@@ -102,7 +104,7 @@ namespace CrmAdo.Visitor
 
         protected override void VisitTable(Table item)
         {
-            EntityName = item.GetTableLogicalEntityName();
+            EntityName = GetTableLogicalEntityName(item);
         }
 
         protected override void VisitColumn(Column item)
@@ -115,7 +117,7 @@ namespace CrmAdo.Visitor
 
         protected override void VisitStringLiteral(StringLiteral item)
         {
-            var sqlValue = item.ParseStringLiteralValue();
+            var sqlValue = ParseStringLiteralValue(item);
             if (IsVisitingFilterItem)
             {
                 IdFilterValue = sqlValue;
@@ -128,7 +130,7 @@ namespace CrmAdo.Visitor
 
         protected override void VisitNumericLiteral(NumericLiteral item)
         {
-            var sqlValue = item.ParseNumericLiteralValue();
+            var sqlValue = ParseNumericLiteralValue(item);
             if (IsVisitingFilterItem)
             {
                 IdFilterValue = sqlValue;

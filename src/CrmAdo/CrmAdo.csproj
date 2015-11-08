@@ -269,7 +269,6 @@
     <Compile Include="Builder\OrganizationRequestBuilderVisitor.cs" />
     <Compile Include="Builder\RetrieveMetadataChangesRequestBuilderVisitor.cs" />
     <Compile Include="Builder\RetrieveMultipleRequestBuilderVisitor.cs" />
-    <Compile Include="Builder\SqlGenerationCrmExtensions.cs" />
     <Compile Include="Builder\UpdateRequestBuilderVisitor.cs" />
   </ItemGroup>
   <ItemGroup>

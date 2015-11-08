@@ -30,23 +30,24 @@ namespace CrmAdo.Visitor
             OrderBy = 4
         }
 
-        public RetrieveMultipleRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider)
-            : this(null, metadataProvider)
+        public RetrieveMultipleRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider, ConnectionSettings settings)
+            : this(null, metadataProvider, settings)
         {
 
         }
+      
 
-        public RetrieveMultipleRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider)
-            : base(metadataProvider)
+        public RetrieveMultipleRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider, ConnectionSettings settings)
+           : base(metadataProvider, settings)
         {
             Parameters = parameters;
-           // Request = new RetrieveMultipleRequest();
+            // Request = new RetrieveMultipleRequest();
             QueryExpression = new QueryExpression();
-            CurrentRequest.Query = QueryExpression;           
-               
+            CurrentRequest.Query = QueryExpression;
+
         }
 
-    //    public RetrieveMultipleRequest Request { get; set; }
+        //    public RetrieveMultipleRequest Request { get; set; }
         public QueryExpression QueryExpression { get; set; }
         public DbParameterCollection Parameters { get; set; }
         public bool IsSingleSource { get; set; }
@@ -174,7 +175,7 @@ namespace CrmAdo.Visitor
                 MainSource = aliasedSource;
                 MainSourceTable = aliasedSource.Source as Table;
                 // source should be a table.                 
-                QueryExpression.EntityName = MainSourceTable.GetTableLogicalEntityName();
+                QueryExpression.EntityName = GetTableLogicalEntityName(MainSourceTable);
             }
         }
         #endregion
@@ -185,16 +186,16 @@ namespace CrmAdo.Visitor
             bool isAliasedSource = !string.IsNullOrEmpty(item.Source.Alias);
             var sourceTable = item.Source.Source as Table;
             var sourceName = !isAliasedSource
-                                 ? sourceTable.GetTableLogicalEntityName()
+                                 ? GetTableLogicalEntityName(sourceTable)
                                  : item.Source.Alias;
             var linkItem = QueryExpression.FindLinkEntity(sourceName, isAliasedSource);
-            var attributeName = item.GetColumnLogicalAttributeName();
+            var attributeName = GetColumnLogicalAttributeName(item);
             string entityName = null;
             string alias = null;
             if (linkItem == null)
             {
                 QueryExpression.ColumnSet.AddColumn(attributeName);
-                entityName = MainSourceTable.GetTableLogicalEntityName();
+                entityName = GetTableLogicalEntityName(MainSourceTable);
             }
             else
             {
@@ -214,7 +215,7 @@ namespace CrmAdo.Visitor
             var aliasedSource = IsSingleSource ? SingleSource : item.Source;
             var sourceTable = aliasedSource.Source as Table;
 
-            var entityName = sourceTable.GetTableLogicalEntityName();
+            var entityName = GetTableLogicalEntityName(sourceTable);
             var alias = aliasedSource.Alias;
             AddAllColumnMetadata(entityName, alias);
         }
@@ -233,7 +234,7 @@ namespace CrmAdo.Visitor
             {
                 throw new ArgumentException("The TOP Clause should specify the number of records to limit the resultset to as a numeric literal.");
             }
-            var topCountInt = (int)topCount.GitLiteralValue();
+            var topCountInt = (int)GitLiteralValue(topCount);
             if (topCountInt > 5000)
             {
                 //TODO: To get around the fact that dynamics wont support TOP that is greater than 5000,
@@ -258,7 +259,7 @@ namespace CrmAdo.Visitor
             {
                 throw new InvalidOperationException("Can only apply Order By clause to a column.");
             }
-            var attName = column.GetColumnLogicalAttributeName();
+            var attName = GetColumnLogicalAttributeName(column);
             QueryExpression.AddOrder(attName, orderType);
         }
         #endregion
@@ -328,10 +329,10 @@ namespace CrmAdo.Visitor
                 RightTable = RightColumn.Source.Source as Table;
                 //  LeftEntityName = 
 
-                LinkEntity.LinkFromEntityName = LeftTable.GetTableLogicalEntityName();
-                LinkEntity.LinkToEntityName = RightTable.GetTableLogicalEntityName();
-                LinkEntity.LinkFromAttributeName = LeftColumn.GetColumnLogicalAttributeName();
-                LinkEntity.LinkToAttributeName = RightColumn.GetColumnLogicalAttributeName();
+                LinkEntity.LinkFromEntityName = GetTableLogicalEntityName(LeftTable);
+                LinkEntity.LinkToEntityName = GetTableLogicalEntityName(RightTable);
+                LinkEntity.LinkFromAttributeName = GetColumnLogicalAttributeName(LeftColumn);
+                LinkEntity.LinkToAttributeName = GetColumnLogicalAttributeName(RightColumn);
             }
         }
 
@@ -706,7 +707,7 @@ namespace CrmAdo.Visitor
                         {
                             throw new ArgumentException("The values list must contain literals.");
                         }
-                        inValues[index] = literal.GitLiteralValue();
+                        inValues[index] = GitLiteralValue(literal);
                         index++;
                     }
                     SetConditionExpressionValue(condition, conditionOperator, inValues);
@@ -898,7 +899,7 @@ namespace CrmAdo.Visitor
 
             if (lit != null)
             {
-                return (T)lit.GitLiteralValue();
+                return (T)GitLiteralValue(lit);
             }
 
             // check for placeholders..
@@ -999,7 +1000,7 @@ namespace CrmAdo.Visitor
             {
                 isAlias = !string.IsNullOrEmpty(source.Alias);
                 var sourceTable = source.Source as Table;
-                var sourceName = string.IsNullOrEmpty(source.Alias) ? sourceTable.GetTableLogicalEntityName() : source.Alias;
+                var sourceName = string.IsNullOrEmpty(source.Alias) ? GetTableLogicalEntityName(sourceTable) : source.Alias;
                 linkEntity = this.QueryExpression.FindLinkEntity(sourceName, isAlias);
                 if (linkEntity == null)
                 {

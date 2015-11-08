@@ -10,6 +10,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using CrmAdo.Core;
 using CrmAdo.Operations;
+using CrmAdo.Util;
 
 namespace CrmAdo.Visitor
 {
@@ -25,6 +26,8 @@ namespace CrmAdo.Visitor
             get { return _Level; }
             protected set { _Level = value; }
         }
+
+        public ConnectionSettings Settings { get; set; }
 
         protected readonly CommandType _CommandType;
         protected enum CommandType
@@ -54,9 +57,10 @@ namespace CrmAdo.Visitor
 
         }
 
-        protected BaseOrganizationRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider)
+        protected BaseOrganizationRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider, ConnectionSettings settings)
         {
             MetadataProvider = metadataProvider;
+            Settings = settings;
             ResultColumnMetadata = new List<ColumnMetadata>();
             EntityMetadata = new Dictionary<string, CrmEntityMetadata>();
             var req = new TOrgRequest();
@@ -255,6 +259,120 @@ namespace CrmAdo.Visitor
 
         public abstract ICrmOperation GetCommand();
 
+
+        #region Helper Methods
+
+        /// <summary>
+        /// Returns the entity logical name for the table.
+        /// </summary>
+        /// <param name="table"></param>
+        /// <returns></returns>
+        public string GetTableLogicalEntityName(Table table)
+        {
+            var tableName = table.Name;
+            var unQuoted = SqlUtils.GetUnquotedIdentifier(tableName);
+            return unQuoted.ToLower();
+        }
+
+        /// <summary>
+        /// Returns the attribute logical name for the Column.
+        /// </summary>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        public string GetColumnLogicalAttributeName(Column column)
+        {
+            var columnName = column.Name;
+            var unQuoted = SqlUtils.GetUnquotedIdentifier(columnName);
+            if (Settings.CaseSensitiveColumnNames)
+            {
+                return unQuoted;
+            }
+            return unQuoted.ToLower();
+        }
+
+        /// <summary>
+        /// Returns the object value of the literal.
+        /// </summary>
+        /// <param name="lit"></param>
+        /// <returns></returns>
+        public object GitLiteralValue(Literal lit)
+        {
+            // Support string literals.
+            StringLiteral stringLit = null;
+            NumericLiteral numberLiteral = null;
+
+            stringLit = lit as StringLiteral;
+            if (stringLit != null)
+            {
+                return ParseStringLiteralValue(stringLit);
+            }
+
+            numberLiteral = lit as NumericLiteral;
+            if (numberLiteral != null)
+            {
+                return ParseNumericLiteralValue(numberLiteral);
+            }
+
+            var nullLiteral = lit as NullLiteral;
+            if (nullLiteral != null)
+            {
+                return null;
+            }
+
+            throw new NotSupportedException("Unknown Literal");
+
+        }
+
+        /// <summary>
+        /// Returns the object value of the string literal.
+        /// </summary>
+        /// <param name="literal"></param>
+        /// <returns></returns>
+        public object ParseStringLiteralValue(StringLiteral literal)
+        {
+            // cast to GUID?
+            Guid val;
+            if (Guid.TryParse(literal.Value, out val))
+            {
+                return val;
+            }
+            return literal.Value;
+        }
+
+        /// <summary>
+        /// Returns the object value of the numeric literal.
+        /// </summary>
+        /// <param name="literal"></param>
+        /// <returns></returns>
+        public object ParseNumericLiteralValue( NumericLiteral literal)
+        {
+            // cast down from double to int if possible..
+            checked
+            {
+                try
+                {
+                    if ((literal.Value % 1) == 0)
+                    {
+                        int intValue = (int)literal.Value;
+                        if (intValue == literal.Value)
+                        {
+                            return intValue;
+                        }
+                    }
+
+                    // can we return a decimal instead?
+                    var decVal = Convert.ToDecimal(literal.Value);
+                    return decVal;
+                }
+                catch (OverflowException)
+                {
+                    //   can't down cast to int so remain as double.
+                    return literal.Value;
+                }
+            }
+        }
+
+        #endregion
     }
 
 }

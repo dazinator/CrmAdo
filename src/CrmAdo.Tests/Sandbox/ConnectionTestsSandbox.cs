@@ -25,7 +25,7 @@ namespace CrmAdo.Tests
             FakeServiceProvider.Stub(c => c.GetOrganisationService()).Return(FakeOrgService);
 
             FakeConnectionProvider = this.RegisterMockInstance<ICrmConnectionProvider>();
-            FakeConnectionProvider.Stub(c => c.OrganisationServiceConnectionString).Return("fakeconn");
+            FakeConnectionProvider.Stub(c => c.OrganisationServiceConnectionString).Return("fakeconn=true");
             FakeServiceProvider.Stub(c => c.ConnectionProvider).Return(FakeConnectionProvider);           
 
             FakeMetadataProvider = new FakeContactMetadataProvider();

@@ -29,6 +29,7 @@ namespace CrmAdo.Tests
             sut.Url = "www.dyanmicscrm.com/org";
             sut.Username = "testuser";
             sut.UserTokenExpiryWindow = new TimeSpan(0, 1, 30);
+            sut.CaseSensitiveColumnNames = true;
 
             var connectionString = sut.ToString();
 
@@ -47,6 +48,7 @@ namespace CrmAdo.Tests
             Assert.AreEqual(sut.Url, newSut.Url);
             Assert.AreEqual(sut.Username, newSut.Username);
             Assert.AreEqual(sut.UserTokenExpiryWindow, newSut.UserTokenExpiryWindow);
+            Assert.AreEqual(sut.CaseSensitiveColumnNames, newSut.CaseSensitiveColumnNames);
 
             Console.WriteLine(newSut.ConnectionString);
 

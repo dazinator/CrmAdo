@@ -168,6 +168,7 @@
     <Compile Include="Support\FakeContactMetadataProvider.cs" />
     <Compile Include="Tests\EfTests\BasicTests.cs" />
     <Compile Include="Support\Utils.cs" />
+    <Compile Include="Tests\IssueTests.cs" />
     <Compile Include="Tests\SelectTests\SelectMetadataVisitorTests.cs" />
     <Compile Include="Tests\DynamicsAttributeTypeProviderTests.cs" />
     <Compile Include="Support\AssertUtils.cs" />

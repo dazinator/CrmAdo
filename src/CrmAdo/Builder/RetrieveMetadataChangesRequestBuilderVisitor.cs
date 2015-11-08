@@ -70,22 +70,18 @@ namespace CrmAdo.Visitor
             OrderBy = 4
         }
 
-        public RetrieveMetadataChangesRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider)
-            : this(null, metadataProvider)
+        public RetrieveMetadataChangesRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider, ConnectionSettings settings)
+            : this(null, metadataProvider, settings)
         {
 
-        }
+        }      
 
-        public RetrieveMetadataChangesRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider)
-            : base(metadataProvider)
+        public RetrieveMetadataChangesRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider, ConnectionSettings settings)
+         : base(metadataProvider, settings)
         {
-            Parameters = parameters;
-            //  Request = new RetrieveMetadataChangesRequest();          
-
-            //  ColumnMetadata = new List<ColumnMetadata>();
-            //  QueryExpression = new EntityQueryExpression();          
-            // Request.Query = QueryExpression;
+            Parameters = parameters;           
         }
+      
 
         // public RetrieveMetadataChangesRequest Request { get; set; }
         public EntityQueryExpression QueryExpression { get; set; }
@@ -298,7 +294,7 @@ namespace CrmAdo.Visitor
 
         protected override void VisitTable(Table item)
         {
-            var name = item.GetTableLogicalEntityName();
+            var name = GetTableLogicalEntityName(item);
             switch (name)
             {
                 case EntityMetadadataTableLogicalName:
@@ -324,7 +320,7 @@ namespace CrmAdo.Visitor
             var sourceTable = aliasedSource.Source as Table;
 
             //var sourceTable = item.Source.Source as Table;
-            var sourceName = sourceTable.GetTableLogicalEntityName();
+            var sourceName = GetTableLogicalEntityName(sourceTable);
             switch (sourceName)
             {
                 case EntityMetadadataTableLogicalName:
@@ -354,7 +350,7 @@ namespace CrmAdo.Visitor
                     break;
             }
 
-            AddColumnMetadata(sourceName, aliasedSource.Alias, item.GetColumnLogicalAttributeName());
+            AddColumnMetadata(sourceName, aliasedSource.Alias, GetColumnLogicalAttributeName(item));
         }
 
         private void SetRelationshipFilter(MetadataFilterExpression metadataFilterExpression, MetadataConditionExpression relationshipTypeCondition, bool includeOneToMany, bool includeManyToMany)
@@ -388,7 +384,7 @@ namespace CrmAdo.Visitor
         {
             var aliasedSource = IsSingleSource ? SingleSource : item.Source;
             var sourceTable = aliasedSource.Source as Table;
-            var sourceName = sourceTable.GetTableLogicalEntityName();
+            var sourceName = GetTableLogicalEntityName(sourceTable);
             switch (sourceName)
             {
                 case EntityMetadadataTableLogicalName:
@@ -724,11 +720,11 @@ namespace CrmAdo.Visitor
                     var rightTable = item.RightHand.Source as Table;
                     if(rightTable!= null)
                     {
-                        if(rightTable.GetTableLogicalEntityName() == OneToManyRelationshipMetadadataTableLogicalName)
+                        if(GetTableLogicalEntityName(rightTable) == OneToManyRelationshipMetadadataTableLogicalName)
                         {
                             _ClientSideJoinTypes = _ClientSideJoinTypes | ClientSideMetadataJoinTypes.OneToManyRelationshipInnerJoin;
                         }
-                        else if (rightTable.GetTableLogicalEntityName() == ManyToManyRelationshipMetadadataTableLogicalName)
+                        else if (GetTableLogicalEntityName(rightTable) == ManyToManyRelationshipMetadadataTableLogicalName)
                         {
                             _ClientSideJoinTypes = _ClientSideJoinTypes | ClientSideMetadataJoinTypes.ManyToManyRelationshipInnerJoin;
                         }
@@ -815,7 +811,7 @@ namespace CrmAdo.Visitor
         {
 
             var sourceTable = (Table)attColumn.Source.Source;
-            var sourceTableName = sourceTable.GetTableLogicalEntityName();
+            var sourceTableName = GetTableLogicalEntityName(sourceTable);
 
             MetadataFilterType filterType = MetadataFilterType.Entity;
 
@@ -919,7 +915,7 @@ namespace CrmAdo.Visitor
                         {
                             throw new ArgumentException("The values list must contain literals.");
                         }
-                        inValues[index] = literal.GitLiteralValue();
+                        inValues[index] = GitLiteralValue(literal);
                         index++;
                     }
                     SetConditionExpressionValue(condition, conditionOperator, inValues);
@@ -1089,7 +1085,7 @@ namespace CrmAdo.Visitor
 
             if (lit != null)
             {
-                return (T)lit.GitLiteralValue();
+                return (T)GitLiteralValue(lit);
             }
 
             // check for placeholders..

@@ -16,6 +16,29 @@ using CrmAdo.Core;
 namespace CrmAdo
 {
 
+    public class ConnectionSettings
+    {
+        public bool CaseSensitiveColumnNames { get; set; }
+
+        public static ConnectionSettings Default()
+        {
+            return ConnectionSettings.Parse(null);
+        }
+
+        public static ConnectionSettings Parse(string connectionString)
+        {
+            var connSettings = new ConnectionSettings();
+            if (!string.IsNullOrEmpty(connectionString))
+            {
+                var connBuilder = new CrmConnectionStringBuilder();
+                connBuilder.ConnectionString = connectionString;
+                connSettings.CaseSensitiveColumnNames = connBuilder.CaseSensitiveColumnNames;
+            }
+            return connSettings;
+        }
+
+    }
+
     /// <summary>
     /// Represents a connection to Dynamics Crm.
     /// </summary>
@@ -25,13 +48,14 @@ namespace CrmAdo
         private ICrmMetaDataProvider _MetadataProvider = null;
         private ICrmServiceProvider _CrmServiceProvider = null;
         private ISchemaCollectionsProvider _SchemaCollectionsProvider = null;
-       // private IOrgCommandExecutor _OrgCommandExecutor = null;
+        // private IOrgCommandExecutor _OrgCommandExecutor = null;
 
         private IOrganizationService _OrganizationService = null;
         private ConnectionState _State = ConnectionState.Closed;
 
         private CrmConnectionCache _ConnectionCache = null;
         private CrmConnectionInfo _ConnectionInfo = null;
+        private ConnectionSettings _ConnectionSettings = null;
 
         #region Constructor
 
@@ -95,12 +119,12 @@ namespace CrmAdo
         #endregion
 
         #region Properties
-       
+
         public override ConnectionState State
         {
             get { return _State; }
         }
-              
+
         public IOrganizationService OrganizationService
         {
             get { return _OrganizationService; }
@@ -110,6 +134,18 @@ namespace CrmAdo
         {
             get { return CrmServiceProvider.ConnectionProvider.OrganisationServiceConnectionString; }
             set { CrmServiceProvider.ConnectionProvider.OrganisationServiceConnectionString = value; }
+        }
+
+        public ConnectionSettings Settings
+        {
+            get
+            {
+                if (_ConnectionSettings == null)
+                {
+                    _ConnectionSettings = ConnectionSettings.Parse(this.ConnectionString);
+                }
+                return _ConnectionSettings;
+            }
         }
 
         #endregion

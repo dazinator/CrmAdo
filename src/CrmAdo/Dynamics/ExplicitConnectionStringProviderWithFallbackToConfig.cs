@@ -5,6 +5,7 @@ using Microsoft.Xrm.Client;
 namespace CrmAdo.Dynamics
 {
 
+   
     /// <summary>
     /// Single Responsibility: This class is responsible for providing "Crm Connnection" information for the Crm services.
     /// This implementation uses explicitly provided connection string information (properties must be set), or falls back to using the AppConfig if
@@ -61,6 +62,7 @@ namespace CrmAdo.Dynamics
                 throw new ArgumentException("Connection string cannot be null or empty.");
 
             }
+            this.OrganisationServiceConnectionString = connectionString;
             return CrmConnection.Parse(connectionString);
         }
 

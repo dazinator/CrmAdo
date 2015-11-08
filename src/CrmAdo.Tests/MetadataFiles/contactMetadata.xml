@@ -7170,6 +7170,78 @@
       </FormatName>
     </AttributeMetadata>
     <AttributeMetadata i:type="StringAttributeMetadata">
+      <MetadataId>4c67e065-ea3b-408e-b9c8-d10ba4232e18</MetadataId>
+      <HasChanged i:nil="true" />
+      <AttributeOf i:nil="true" />
+      <AttributeType>String</AttributeType>
+      <CanBeSecuredForCreate>false</CanBeSecuredForCreate>
+      <CanBeSecuredForRead>false</CanBeSecuredForRead>
+      <CanBeSecuredForUpdate>false</CanBeSecuredForUpdate>
+      <CanModifyAdditionalSettings xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+        <d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+        <d4p1:ManagedPropertyLogicalName>canmodifyadditionalsettings</d4p1:ManagedPropertyLogicalName>
+        <d4p1:Value>false</d4p1:Value>
+      </CanModifyAdditionalSettings>
+      <ColumnNumber>999</ColumnNumber>
+      <DeprecatedVersion i:nil="true" />
+      <Description xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+        <d4p1:LocalizedLabels />
+        <d4p1:UserLocalizedLabel i:nil="true" />
+      </Description>
+      <DisplayName xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+        <d4p1:LocalizedLabels />
+        <d4p1:UserLocalizedLabel i:nil="true" />
+      </DisplayName>
+      <EntityLogicalName>contact</EntityLogicalName>
+      <IsAuditEnabled xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+        <d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+        <d4p1:ManagedPropertyLogicalName>canmodifyauditsettings</d4p1:ManagedPropertyLogicalName>
+        <d4p1:Value>false</d4p1:Value>
+      </IsAuditEnabled>
+      <IsCustomAttribute>false</IsCustomAttribute>
+      <IsCustomizable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+        <d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+        <d4p1:ManagedPropertyLogicalName>iscustomizable</d4p1:ManagedPropertyLogicalName>
+        <d4p1:Value>false</d4p1:Value>
+      </IsCustomizable>
+      <IsManaged>true</IsManaged>
+      <IsPrimaryId>false</IsPrimaryId>
+      <IsPrimaryName>false</IsPrimaryName>
+      <IsRenameable xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+        <d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+        <d4p1:ManagedPropertyLogicalName>isrenameable</d4p1:ManagedPropertyLogicalName>
+        <d4p1:Value>false</d4p1:Value>
+      </IsRenameable>
+      <IsSecured>false</IsSecured>
+      <IsValidForAdvancedFind xmlns:d4p1="http://schemas.microsoft.com/xrm/2011/Contracts">
+        <d4p1:CanBeChanged>false</d4p1:CanBeChanged>
+        <d4p1:ManagedPropertyLogicalName>canmodifysearchsettings</d4p1:ManagedPropertyLogicalName>
+        <d4p1:Value>false</d4p1:Value>
+      </IsValidForAdvancedFind>
+      <IsValidForCreate>false</IsValidForCreate>
+      <IsValidForRead>true</IsValidForRead>
+      <IsValidForUpdate>false</IsValidForUpdate>
+      <LinkedAttributeId i:nil="true" />
+      <LogicalName>MADE_UpField</LogicalName>
+      <RequiredLevel>
+        <CanBeChanged xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">false</CanBeChanged>
+        <ManagedPropertyLogicalName xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">canmodifyrequirementlevelsettings</ManagedPropertyLogicalName>
+        <Value xmlns="http://schemas.microsoft.com/xrm/2011/Contracts">None</Value>
+      </RequiredLevel>
+      <SchemaName>MADE_UpField</SchemaName>
+      <AttributeTypeName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+        <d4p1:Value>StringType</d4p1:Value>
+      </AttributeTypeName>
+      <IntroducedVersion>5.0.0.0</IntroducedVersion>
+      <Format>Text</Format>
+      <ImeMode>Auto</ImeMode>
+      <MaxLength>100</MaxLength>
+      <YomiOf i:nil="true" />
+      <FormatName xmlns:d4p1="http://schemas.microsoft.com/xrm/2013/Metadata">
+        <d4p1:Value>Text</d4p1:Value>
+      </FormatName>
+    </AttributeMetadata>
+    <AttributeMetadata i:type="StringAttributeMetadata">
       <MetadataId>6512eab4-d2d6-4d19-a1b9-a9087545d9e8</MetadataId>
       <HasChanged i:nil="true" />
       <AttributeOf i:nil="true" />

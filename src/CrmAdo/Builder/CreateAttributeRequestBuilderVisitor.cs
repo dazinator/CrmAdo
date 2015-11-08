@@ -22,14 +22,14 @@ namespace CrmAdo.Visitor
     public class CreateAttributeRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor<CreateAttributeRequest>
     {
 
-        public CreateAttributeRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider)
-            : this(null, metadataProvider)
+        public CreateAttributeRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider, ConnectionSettings settings)
+            : this(null, metadataProvider, settings)
         {
 
         }
 
-        public CreateAttributeRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider)
-            : base(metadataProvider)
+        public CreateAttributeRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider, ConnectionSettings settings)
+            : base(metadataProvider, settings)
         {
             // Request = new CreateAttributeRequest();
             Parameters = parameters;

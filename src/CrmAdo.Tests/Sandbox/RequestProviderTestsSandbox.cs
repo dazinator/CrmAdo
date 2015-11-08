@@ -17,11 +17,13 @@ namespace CrmAdo.Tests.Sandbox
         {
             FakeMetadataProvider = new FakeContactMetadataProvider();
             this.Container.Register<ICrmMetaDataProvider>(FakeMetadataProvider);
-
             this.Container.Register<IDynamicsAttributeTypeProvider, DynamicsAttributeTypeProvider>();   // singleton
+
+            FakeSettings = this.RegisterMockInstance<ConnectionSettings>();
 
             FakeCrmDbConnection = this.RegisterMockInstance<CrmDbConnection>();
             FakeCrmDbConnection.Stub(a => a.MetadataProvider).Return(FakeMetadataProvider);
+            FakeCrmDbConnection.Stub(a => a.Settings).Return(FakeSettings);
         }
 
 
@@ -30,6 +32,8 @@ namespace CrmAdo.Tests.Sandbox
         public IDynamicsAttributeTypeProvider DynamicsAttributeTypeProvider { get; private set; }
 
         public CrmDbConnection FakeCrmDbConnection { get; private set; }
+
+        public ConnectionSettings FakeSettings { get; private set; }
 
         public static RequestProviderTestsSandbox Create()
         {

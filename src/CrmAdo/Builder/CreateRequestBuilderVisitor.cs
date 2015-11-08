@@ -20,14 +20,14 @@ namespace CrmAdo.Visitor
     public class CreateRequestBuilderVisitor : BaseOrganizationRequestBuilderVisitor<CreateRequest>
     {
 
-        public CreateRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider)
-            : this(null, metadataProvider)
+        public CreateRequestBuilderVisitor(ICrmMetaDataProvider metadataProvider, ConnectionSettings settings)
+            : this(null, metadataProvider, settings)
         {
 
         }
 
-        public CreateRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider)
-            : base(metadataProvider)
+        public CreateRequestBuilderVisitor(DbParameterCollection parameters, ICrmMetaDataProvider metadataProvider, ConnectionSettings settings)
+            : base(metadataProvider, settings)
         {
             //this.CreateRequest = new CreateRequest();
           //  Request = this.CreateRequest;
@@ -110,7 +110,7 @@ namespace CrmAdo.Visitor
 
         protected override void VisitTable(Table item)
         {
-            var entityName = item.GetTableLogicalEntityName();
+            var entityName = GetTableLogicalEntityName(item);
             EntityBuilder = EntityBuilder.WithNewEntity(MetadataProvider, entityName);
         }
 
@@ -128,34 +128,34 @@ namespace CrmAdo.Visitor
 
         protected override void VisitStringLiteral(StringLiteral item)
         {
-            var sqlValue = item.ParseStringLiteralValue();
-            var attName = this.CurrentColumn.GetColumnLogicalAttributeName();
+            var sqlValue = ParseStringLiteralValue(item);
+            var attName = GetColumnLogicalAttributeName(this.CurrentColumn);
             this.EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(sqlValue);
         }
 
         protected override void VisitNumericLiteral(NumericLiteral item)
         {
-            var sqlValue = item.ParseNumericLiteralValue();
-            var attName = this.CurrentColumn.GetColumnLogicalAttributeName();
+            var sqlValue = ParseNumericLiteralValue(item);
+            var attName = GetColumnLogicalAttributeName(this.CurrentColumn);
             this.EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(sqlValue);
         }
 
         protected override void VisitNullLiteral(NullLiteral item)
         {
-            var attName = this.CurrentColumn.GetColumnLogicalAttributeName();
+            var attName = GetColumnLogicalAttributeName(this.CurrentColumn);
             this.EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(null);
         }
 
         protected override void VisitPlaceholder(Placeholder item)
         {
             var paramVal = GetParamaterValue(item.Value);
-            var attName = this.CurrentColumn.GetColumnLogicalAttributeName();
+            var attName = GetColumnLogicalAttributeName(this.CurrentColumn);
             this.EntityBuilder.WithAttribute(attName).SetValueWithTypeCoersion(paramVal);
         }
 
         protected override void VisitColumn(Column item)
         {
-            var attName = item.GetColumnLogicalAttributeName();
+            var attName = GetColumnLogicalAttributeName(item);
 
             var entityName = this.CurrentRequest.Target.LogicalName;
             this.AddColumnMetadata(entityName, null, attName);

@@ -32,11 +32,14 @@ namespace CrmAdo.Visitor
         private bool _DetectingMetadataQuery = false;
         public ICrmOperation CrmOperation { get; private set; }
 
-        public OrganizationRequestBuilderVisitor(ICrmMetaDataProvider crmMetadataProvider, DbParameterCollection parameters, IDynamicsAttributeTypeProvider typeProvider)
+        public ConnectionSettings Settings { get; set; }
+
+        public OrganizationRequestBuilderVisitor(ICrmMetaDataProvider crmMetadataProvider, DbParameterCollection parameters, IDynamicsAttributeTypeProvider typeProvider, ConnectionSettings settings = null)
         {
             CrmMetadataProvider = crmMetadataProvider;
             Parameters = parameters;
             TypeProvider = typeProvider;
+            Settings = settings ?? ConnectionSettings.Default();
             // OrgCommand = new OrganisationRequestCommand();
         }
 
@@ -57,14 +60,14 @@ namespace CrmAdo.Visitor
             bool isMetadataQuery = CheckIsMetadataQuery(item);
             if (!isMetadataQuery)
             {
-                var visitor = new RetrieveMultipleRequestBuilderVisitor(Parameters, CrmMetadataProvider);
+                var visitor = new RetrieveMultipleRequestBuilderVisitor(Parameters, CrmMetadataProvider, Settings);
                 IVisitableBuilder visitable = item;
                 visitable.Accept(visitor);
                 SetOperation(visitor.GetCommand());
             }
             else
             {
-                var visitor = new RetrieveMetadataChangesRequestBuilderVisitor(Parameters, CrmMetadataProvider);
+                var visitor = new RetrieveMetadataChangesRequestBuilderVisitor(Parameters, CrmMetadataProvider, Settings);
                 IVisitableBuilder visitable = item;
                 visitable.Accept(visitor);
                 SetOperation(visitor.GetCommand());
@@ -74,7 +77,7 @@ namespace CrmAdo.Visitor
 
         protected override void VisitInsert(InsertBuilder item)
         {
-            var visitor = new CreateRequestBuilderVisitor(Parameters, CrmMetadataProvider);
+            var visitor = new CreateRequestBuilderVisitor(Parameters, CrmMetadataProvider, Settings);
             IVisitableBuilder visitable = item;
             visitable.Accept(visitor);
             SetOperation(visitor.GetCommand());
@@ -82,7 +85,7 @@ namespace CrmAdo.Visitor
 
         protected override void VisitUpdate(UpdateBuilder item)
         {
-            var visitor = new UpdateRequestBuilderVisitor(Parameters, CrmMetadataProvider);
+            var visitor = new UpdateRequestBuilderVisitor(Parameters, CrmMetadataProvider, Settings);
             IVisitableBuilder visitable = item;
             visitable.Accept(visitor);
             SetOperation(visitor.GetCommand());
@@ -90,7 +93,7 @@ namespace CrmAdo.Visitor
 
         protected override void VisitDelete(DeleteBuilder item)
         {
-            var visitor = new DeleteRequestBuilderVisitor(Parameters, CrmMetadataProvider, TypeProvider);
+            var visitor = new DeleteRequestBuilderVisitor(Parameters, CrmMetadataProvider, TypeProvider, Settings);
             IVisitableBuilder visitable = item;
             visitable.Accept(visitor);
             SetOperation(visitor.GetCommand());
@@ -98,7 +101,7 @@ namespace CrmAdo.Visitor
 
         protected override void VisitCreate(CreateBuilder item)
         {
-            var visitor = new CreateEntityRequestBuilderVisitor(Parameters, CrmMetadataProvider);
+            var visitor = new CreateEntityRequestBuilderVisitor(Parameters, CrmMetadataProvider, Settings);
             IVisitableBuilder visitable = item;
             visitable.Accept(visitor);
             SetOperation(visitor.GetCommand());
@@ -114,7 +117,7 @@ namespace CrmAdo.Visitor
 
         protected override void VisitAlterTableDefinition(AlterTableDefinition item)
         {
-            var visitor = new CreateAttributeRequestBuilderVisitor(Parameters, CrmMetadataProvider);
+            var visitor = new CreateAttributeRequestBuilderVisitor(Parameters, CrmMetadataProvider, Settings);
             IVisitableBuilder visitable = item;
             visitable.Accept(visitor);
             SetOperation(visitor.GetCommand());
@@ -192,7 +195,7 @@ namespace CrmAdo.Visitor
         }
 
         protected void CreateBatchOperation()
-        {            
+        {
             CrmOperation = new BatchOperation();
             IsBatchOperation = true;
         }

@@ -96,7 +96,8 @@ namespace CrmAdo.Core
         {
             var metaDataProvider = command.CrmDbConnection.MetadataProvider;
             var commandParams = command.Parameters;
-            return new OrganizationRequestBuilderVisitor(metaDataProvider, commandParams, _DynamicsAttributeTypeProvider);
+            var settings = command.CrmDbConnection.Settings;
+            return new OrganizationRequestBuilderVisitor(metaDataProvider, commandParams, _DynamicsAttributeTypeProvider, settings);
         }
 
         private ICrmOperation GetOperationFromTableDirectCommand(CrmDbCommand command, CommandBehavior behavior)
