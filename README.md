@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/dazinator/CrmAdo.png?label=ready&title=Ready)](https://waffle.io/dazinator/CrmAdo)
 CrmAdo
 ======
 
